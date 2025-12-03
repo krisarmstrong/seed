@@ -19,17 +19,19 @@ import (
 
 	"github.com/krisarmstrong/netscope/internal/auth"
 	"github.com/krisarmstrong/netscope/internal/config"
+	"github.com/krisarmstrong/netscope/internal/discovery"
 	"github.com/krisarmstrong/netscope/internal/network"
 )
 
 // Server represents the HTTP/HTTPS server.
 type Server struct {
-	config      *config.Config
-	httpServer  *http.Server
-	authManager *auth.Manager
-	wsHub       *Hub
-	mux         *http.ServeMux
-	netManager  *network.Manager
+	config           *config.Config
+	httpServer       *http.Server
+	authManager      *auth.Manager
+	wsHub            *Hub
+	mux              *http.ServeMux
+	netManager       *network.Manager
+	discoveryManager *discovery.Manager
 }
 
 // NewServer creates a new server instance.
@@ -44,6 +46,7 @@ func NewServer(cfg *config.Config, netMgr *network.Manager) *Server {
 			cfg.Auth.DefaultUsername,
 			cfg.Auth.DefaultPasswordHash,
 		),
+		discoveryManager: discovery.NewManager(cfg.Interface.Default),
 	}
 
 	s.wsHub = NewHub()
@@ -62,6 +65,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/interfaces", s.handleInterfaces)
 	s.mux.HandleFunc("/api/export", s.handleExport)
 	s.mux.HandleFunc("/api/link", s.handleLink)
+	s.mux.HandleFunc("/api/discovery", s.handleDiscovery)
 
 	// WebSocket
 	s.mux.HandleFunc("/ws", s.handleWebSocket)
@@ -103,6 +107,13 @@ func (s *Server) Start() error {
 
 	// Start WebSocket hub
 	go s.wsHub.Run()
+
+	// Start discovery capture (requires root/CAP_NET_RAW)
+	if err := s.discoveryManager.Start(); err != nil {
+		log.Printf("Warning: Discovery capture failed to start (may require root): %v", err)
+	} else {
+		log.Println("Discovery capture started")
+	}
 
 	if s.config.Server.HTTPS {
 		return s.startHTTPS()
@@ -218,6 +229,7 @@ func (s *Server) ensureSelfSignedCert() (certFile, keyFile string, err error) {
 // Shutdown gracefully shuts down the server.
 func (s *Server) Shutdown(ctx context.Context) error {
 	s.wsHub.Shutdown()
+	s.discoveryManager.Stop()
 	return s.httpServer.Shutdown(ctx)
 }
 

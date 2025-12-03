@@ -220,3 +220,62 @@ func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename=netscope-export.json")
 	json.NewEncoder(w).Encode(export)
 }
+
+// DiscoveryResponse contains all discovered neighbors.
+type DiscoveryResponse struct {
+	Running   bool                    `json:"running"`
+	Neighbors []DiscoveryNeighborInfo `json:"neighbors"`
+}
+
+// DiscoveryNeighborInfo represents a discovered neighbor in the API.
+type DiscoveryNeighborInfo struct {
+	Protocol          string   `json:"protocol"`
+	ChassisID         string   `json:"chassisId"`
+	PortID            string   `json:"portId"`
+	PortDescription   string   `json:"portDescription,omitempty"`
+	SystemName        string   `json:"systemName,omitempty"`
+	SystemDescription string   `json:"systemDescription,omitempty"`
+	Capabilities      []string `json:"capabilities,omitempty"`
+	ManagementAddress string   `json:"managementAddress,omitempty"`
+	TTL               int      `json:"ttl"`
+	LastSeen          string   `json:"lastSeen"`
+	SourceMAC         string   `json:"sourceMAC"`
+}
+
+// handleDiscovery returns discovery protocol neighbors.
+func (s *Server) handleDiscovery(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.discoveryManager == nil {
+		http.Error(w, "Discovery manager not available", http.StatusServiceUnavailable)
+		return
+	}
+
+	neighbors := s.discoveryManager.GetNeighbors()
+	resp := DiscoveryResponse{
+		Running:   s.discoveryManager.IsRunning(),
+		Neighbors: make([]DiscoveryNeighborInfo, 0, len(neighbors)),
+	}
+
+	for _, n := range neighbors {
+		resp.Neighbors = append(resp.Neighbors, DiscoveryNeighborInfo{
+			Protocol:          string(n.Protocol),
+			ChassisID:         n.ChassisID,
+			PortID:            n.PortID,
+			PortDescription:   n.PortDescription,
+			SystemName:        n.SystemName,
+			SystemDescription: n.SystemDescription,
+			Capabilities:      n.Capabilities,
+			ManagementAddress: n.ManagementAddress,
+			TTL:               n.TTL,
+			LastSeen:          n.LastSeen.Format("2006-01-02T15:04:05Z07:00"),
+			SourceMAC:         n.SourceMAC,
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
