@@ -25,6 +25,8 @@ type Neighbor struct {
 	Capabilities      []string  `json:"capabilities,omitempty"`
 	ManagementAddress string    `json:"managementAddress,omitempty"`
 	VLAN              int       `json:"vlan,omitempty"`
+	NativeVLAN        int       `json:"nativeVlan,omitempty"`
+	VoiceVLAN         int       `json:"voiceVlan,omitempty"`
 	TTL               int       `json:"ttl"`
 	LastSeen          time.Time `json:"lastSeen"`
 	SourceMAC         string    `json:"sourceMAC"`

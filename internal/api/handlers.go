@@ -627,3 +627,59 @@ func (s *Server) handleGateway(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
+
+// VLANResponse represents the VLAN information for the API.
+type VLANResponse struct {
+	NativeVlan  *int  `json:"nativeVlan"`
+	TaggedVlans []int `json:"taggedVlans"`
+	VoiceVlan   *int  `json:"voiceVlan"`
+	Configured  struct {
+		Enabled bool `json:"enabled"`
+		ID      int  `json:"id"`
+	} `json:"configured"`
+}
+
+// handleVLAN returns VLAN information for the current interface.
+func (s *Server) handleVLAN(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.vlanManager == nil {
+		http.Error(w, "VLAN manager not available", http.StatusServiceUnavailable)
+		return
+	}
+
+	// Get VLAN info from LLDP/CDP if available
+	var nativeVlan, voiceVlan *int
+	if s.discoveryManager != nil {
+		neighbors := s.discoveryManager.GetNeighbors()
+		for _, n := range neighbors {
+			// LLDP can carry VLAN information in TLVs
+			if n.NativeVLAN > 0 {
+				v := n.NativeVLAN
+				nativeVlan = &v
+			}
+			if n.VoiceVLAN > 0 {
+				v := n.VoiceVLAN
+				voiceVlan = &v
+			}
+			break // Use first neighbor
+		}
+	}
+
+	// Get VLAN info (including detected subinterfaces)
+	info := s.vlanManager.GetInfoWithLLDP(nativeVlan, voiceVlan)
+
+	resp := VLANResponse{
+		NativeVlan:  info.NativeVlan,
+		TaggedVlans: info.TaggedVlans,
+		VoiceVlan:   info.VoiceVlan,
+	}
+	resp.Configured.Enabled = info.Configured.Enabled
+	resp.Configured.ID = info.Configured.ID
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}

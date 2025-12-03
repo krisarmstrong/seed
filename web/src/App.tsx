@@ -200,6 +200,29 @@ function App() {
     }
   }, []);
 
+  // Fetch VLAN data
+  const fetchVLANData = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/vlan`, {
+        headers: getAuthHeaders(),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCards((prev) => ({
+          ...prev,
+          vlan: {
+            nativeVlan: data.nativeVlan || null,
+            taggedVlans: data.taggedVlans || [],
+            voiceVlan: data.voiceVlan || null,
+            configured: data.configured || { enabled: false, id: 0 },
+          },
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch VLAN data:', err);
+    }
+  }, []);
+
   // Fetch Gateway ping data
   const fetchGatewayData = useCallback(async () => {
     try {
@@ -249,11 +272,12 @@ function App() {
         fetchDiscoveryData();
         fetchDNSData();
         fetchGatewayData();
+        fetchVLANData();
       }
     } catch (err) {
       console.error('Failed to change interface:', err);
     }
-  }, [fetchLinkData, fetchIPConfig, fetchDiscoveryData, fetchDNSData, fetchGatewayData]);
+  }, [fetchLinkData, fetchIPConfig, fetchDiscoveryData, fetchDNSData, fetchGatewayData, fetchVLANData]);
 
   // Fetch data on mount and periodically
   useEffect(() => {
@@ -265,6 +289,7 @@ function App() {
     fetchDiscoveryData();
     fetchDNSData();
     fetchGatewayData();
+    fetchVLANData();
     setLoading(false);
 
     const interval = setInterval(() => {
@@ -273,10 +298,11 @@ function App() {
       fetchDiscoveryData();
       fetchDNSData();
       fetchGatewayData();
+      fetchVLANData();
     }, 10000); // Refresh every 10 seconds (gateway ping takes time)
 
     return () => clearInterval(interval);
-  }, [isAuthenticated, fetchLinkData, fetchIPConfig, fetchInterfaces, fetchDiscoveryData, fetchDNSData, fetchGatewayData]);
+  }, [isAuthenticated, fetchLinkData, fetchIPConfig, fetchInterfaces, fetchDiscoveryData, fetchDNSData, fetchGatewayData, fetchVLANData]);
 
   const { status, reconnect } = useWebSocket({
     url: '/ws',
@@ -356,10 +382,10 @@ function App() {
         {/* Development notice */}
         <div className="mt-8 rounded-lg border border-surface-border bg-surface-raised p-6 text-center">
           <h2 className="text-lg font-semibold text-text-muted">
-            NetScope v0.5.0 - Gateway Ping Testing
+            NetScope v0.5.1 - VLAN Detection
           </h2>
           <p className="mt-2 text-sm text-text-muted">
-            Link, DHCP, DNS, and Gateway ping testing active.
+            Link, DHCP, DNS, Gateway ping, and VLAN detection active.
             <br />
             Run as root for packet capture capabilities.
           </p>
