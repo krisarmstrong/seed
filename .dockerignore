@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Build outputs
+netscope
+*.exe
+web/dist
+
+# Dependencies (will be installed in container)
+web/node_modules
+
+# Test and coverage
+coverage/
+*.test
+*.out
+
+# Config overrides
+configs/*.local.yaml
+.env
+.env.*
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# CI/CD
+.github
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Certs (generated at runtime)
+certs/
