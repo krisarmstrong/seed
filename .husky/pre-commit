@@ -1,13 +1,20 @@
 #!/usr/bin/env sh
 
-# Run Go linting on staged .go files
+# Skip hooks in CI
+[ -n "$CI" ] && exit 0
+
+# Run Go linting on staged .go files (if golangci-lint is installed)
 STAGED_GO_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$')
 if [ -n "$STAGED_GO_FILES" ]; then
-  echo "Running Go linter..."
-  golangci-lint run --new-from-rev=HEAD~1 || exit 1
+  if command -v golangci-lint >/dev/null 2>&1; then
+    echo "Running Go linter..."
+    golangci-lint run --new-from-rev=HEAD~1 || exit 1
+  fi
 fi
 
-# Run frontend lint-staged
-if [ -d "web" ]; then
+# Run frontend lint-staged (if in web directory and lint-staged exists)
+if [ -d "web" ] && [ -f "web/node_modules/.bin/lint-staged" ]; then
   cd web && npx lint-staged
 fi
+
+exit 0
