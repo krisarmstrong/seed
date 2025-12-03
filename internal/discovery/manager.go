@@ -35,9 +35,9 @@ type Manager struct {
 	interfaceName string
 	lldp          *LLDPCapture
 	cdp           *CDPCapture
-	// edp  *EDPCapture  // Will be added in #8
-	mu      sync.RWMutex
-	started bool
+	edp           *EDPCapture
+	mu            sync.RWMutex
+	started       bool
 }
 
 // NewManager creates a new discovery manager.
@@ -46,6 +46,7 @@ func NewManager(interfaceName string) *Manager {
 		interfaceName: interfaceName,
 		lldp:          NewLLDPCapture(interfaceName),
 		cdp:           NewCDPCapture(interfaceName),
+		edp:           NewEDPCapture(interfaceName),
 	}
 }
 
@@ -70,7 +71,13 @@ func (m *Manager) Start() error {
 		return err
 	}
 
-	// EDP will be added later
+	// Start EDP capture
+	if err := m.edp.Start(); err != nil {
+		// Don't fail completely if EDP fails, other protocols may still work
+		m.lldp.Stop()
+		m.cdp.Stop()
+		return err
+	}
 
 	m.started = true
 	return nil
@@ -87,7 +94,7 @@ func (m *Manager) Stop() {
 
 	m.lldp.Stop()
 	m.cdp.Stop()
-	// EDP will be stopped here
+	m.edp.Stop()
 
 	m.started = false
 }
@@ -130,7 +137,25 @@ func (m *Manager) GetNeighbors() []*Neighbor {
 		})
 	}
 
-	// EDP neighbors will be added here
+	// Get EDP neighbors
+	for _, n := range m.edp.GetNeighbors() {
+		systemName := n.DisplayName
+		if systemName == "" {
+			systemName = n.DeviceID
+		}
+		neighbors = append(neighbors, &Neighbor{
+			Protocol:          ProtocolEDP,
+			ChassisID:         n.DeviceID,
+			PortID:            n.PortID,
+			SystemName:        systemName,
+			SystemDescription: n.Platform + " " + n.SoftwareVersion,
+			ManagementAddress: n.ManagementAddress,
+			VLAN:              n.VLAN,
+			TTL:               n.TTL,
+			LastSeen:          n.LastSeen,
+			SourceMAC:         n.SourceMAC,
+		})
+	}
 
 	return neighbors
 }
@@ -145,6 +170,11 @@ func (m *Manager) GetCDPNeighbors() []*CDPNeighbor {
 	return m.cdp.GetNeighbors()
 }
 
+// GetEDPNeighbors returns only EDP neighbors.
+func (m *Manager) GetEDPNeighbors() []*EDPNeighbor {
+	return m.edp.GetNeighbors()
+}
+
 // SetInterface changes the capture interface.
 func (m *Manager) SetInterface(interfaceName string) error {
 	wasRunning := m.started
@@ -157,6 +187,7 @@ func (m *Manager) SetInterface(interfaceName string) error {
 	m.interfaceName = interfaceName
 	m.lldp = NewLLDPCapture(interfaceName)
 	m.cdp = NewCDPCapture(interfaceName)
+	m.edp = NewEDPCapture(interfaceName)
 	m.mu.Unlock()
 
 	if wasRunning {
