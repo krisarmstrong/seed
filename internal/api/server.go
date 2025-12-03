@@ -24,6 +24,7 @@ import (
 	"github.com/krisarmstrong/netscope/internal/dns"
 	"github.com/krisarmstrong/netscope/internal/gateway"
 	"github.com/krisarmstrong/netscope/internal/network"
+	"github.com/krisarmstrong/netscope/internal/vlan"
 )
 
 // Server represents the HTTP/HTTPS server.
@@ -38,6 +39,7 @@ type Server struct {
 	dnsTester        *dns.Tester
 	dhcpMonitor      *dhcp.Monitor
 	gatewayTester    *gateway.Tester
+	vlanManager      *vlan.Manager
 }
 
 // NewServer creates a new server instance.
@@ -56,6 +58,7 @@ func NewServer(cfg *config.Config, netMgr *network.Manager) *Server {
 		dnsTester:        dns.NewTester("", "google.com", dns.DefaultThresholds()),
 		dhcpMonitor:      dhcp.NewMonitor(cfg.Interface.Default),
 		gatewayTester:    gateway.NewTester(gateway.DefaultThresholds()),
+		vlanManager:      vlan.NewManager(cfg.Interface.Default),
 	}
 
 	s.wsHub = NewHub()
@@ -79,6 +82,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/discovery", s.handleDiscovery)
 	s.mux.HandleFunc("/api/dns", s.handleDNS)
 	s.mux.HandleFunc("/api/gateway", s.handleGateway)
+	s.mux.HandleFunc("/api/vlan", s.handleVLAN)
 
 	// WebSocket
 	s.mux.HandleFunc("/ws", s.handleWebSocket)
