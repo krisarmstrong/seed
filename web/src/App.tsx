@@ -68,7 +68,7 @@ function App() {
     }));
   }, []);
 
-  // Fetch link data
+  // Fetch link data (Layer 2 only)
   const fetchLinkData = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE}/api/link`, {
@@ -83,9 +83,8 @@ function App() {
             speed: data.speed || '',
             duplex: data.duplex || '',
             advertisedSpeeds: data.advertisedSpeeds || [],
-            mac: data.mac || '',
             mtu: data.mtu || 0,
-            addresses: data.addresses || [],
+            autoNeg: data.autoNeg,
           },
         }));
         setCurrentInterface(data.interface || 'unknown');
@@ -93,6 +92,31 @@ function App() {
       }
     } catch (err) {
       console.error('Failed to fetch link data:', err);
+    }
+  }, []);
+
+  // Fetch IP configuration (DHCP card - Layer 3)
+  const fetchIPConfig = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/ipconfig`, {
+        headers: getAuthHeaders(),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCards((prev) => ({
+          ...prev,
+          dhcp: {
+            mac: data.mac || '',
+            mode: data.mode || 'auto',
+            ipv4: data.ipv4 || null,
+            ipv6: data.ipv6 || [],
+            dns: data.dns || [],
+            timing: data.timing || null,
+          },
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch IP config:', err);
     }
   }, []);
 
@@ -161,29 +185,32 @@ function App() {
         setIsWifi(interfaceName.startsWith('wl'));
         // Refresh data for new interface
         fetchLinkData();
+        fetchIPConfig();
         fetchDiscoveryData();
       }
     } catch (err) {
       console.error('Failed to change interface:', err);
     }
-  }, [fetchLinkData, fetchDiscoveryData]);
+  }, [fetchLinkData, fetchIPConfig, fetchDiscoveryData]);
 
   // Fetch data on mount and periodically
   useEffect(() => {
     if (!isAuthenticated) return;
 
     fetchLinkData();
+    fetchIPConfig();
     fetchInterfaces();
     fetchDiscoveryData();
     setLoading(false);
 
     const interval = setInterval(() => {
       fetchLinkData();
+      fetchIPConfig();
       fetchDiscoveryData();
     }, 5000); // Refresh every 5 seconds
 
     return () => clearInterval(interval);
-  }, [isAuthenticated, fetchLinkData, fetchInterfaces, fetchDiscoveryData]);
+  }, [isAuthenticated, fetchLinkData, fetchIPConfig, fetchInterfaces, fetchDiscoveryData]);
 
   const { status, reconnect } = useWebSocket({
     url: '/ws',

@@ -193,16 +193,15 @@ func (s *Server) handleInterface(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// LinkResponse represents the link status for an interface.
+// LinkResponse represents the link status for an interface (Layer 2 only).
 type LinkResponse struct {
-	Interface   string   `json:"interface"`
-	LinkUp      bool     `json:"linkUp"`
-	Speed       string   `json:"speed"`
-	Duplex      string   `json:"duplex"`
-	Advertised  []string `json:"advertisedSpeeds"`
-	MAC         string   `json:"mac"`
-	MTU         int      `json:"mtu"`
-	Addresses   []string `json:"addresses"`
+	Interface  string   `json:"interface"`
+	LinkUp     bool     `json:"linkUp"`
+	Speed      string   `json:"speed"`
+	Duplex     string   `json:"duplex"`
+	Advertised []string `json:"advertisedSpeeds"`
+	MTU        int      `json:"mtu"`
+	AutoNeg    bool     `json:"autoNeg"`
 }
 
 // handleLink returns link status for the current interface.
@@ -230,21 +229,197 @@ func (s *Server) handleLink(w http.ResponseWriter, r *http.Request) {
 
 	resp := LinkResponse{
 		Interface: currentIface,
-		LinkUp:    false, // Default to false
-		MAC:       ifaceInfo.HardwareAddr,
+		LinkUp:    false,
 		MTU:       ifaceInfo.MTU,
-		Addresses: ifaceInfo.Addresses,
 	}
 
 	if linkStatus != nil {
-		resp.LinkUp = linkStatus.LinkUp // Use the improved detection
+		resp.LinkUp = linkStatus.LinkUp
 		resp.Speed = linkStatus.Speed
 		resp.Duplex = linkStatus.Duplex
 		resp.Advertised = linkStatus.Advertised
+		resp.AutoNeg = linkStatus.AutoNeg
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
+}
+
+// IPv4Info represents IPv4 address configuration.
+type IPv4Info struct {
+	Address    string `json:"address"`
+	Subnet     string `json:"subnet"`
+	Gateway    string `json:"gateway,omitempty"`
+	DHCPServer string `json:"dhcpServer,omitempty"`
+	LeaseTime  int    `json:"leaseTime,omitempty"`
+}
+
+// IPv6Info represents an IPv6 address configuration.
+type IPv6Info struct {
+	Address string `json:"address"`
+	Prefix  int    `json:"prefix"`
+	Scope   string `json:"scope"`  // global, link-local, unique-local
+	Source  string `json:"source"` // slaac, dhcpv6, static, temporary
+}
+
+// IPConfigResponse represents the full IP configuration.
+type IPConfigResponse struct {
+	Interface string     `json:"interface"`
+	MAC       string     `json:"mac"`
+	Mode      string     `json:"mode"` // dhcp, static, auto
+	IPv4      *IPv4Info  `json:"ipv4,omitempty"`
+	IPv6      []IPv6Info `json:"ipv6"`
+	DNS       []string   `json:"dns"`
+}
+
+// handleIPConfig returns IP configuration for the current interface.
+func (s *Server) handleIPConfig(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.netManager == nil {
+		http.Error(w, "Network manager not available", http.StatusServiceUnavailable)
+		return
+	}
+
+	s.netManager.RefreshInterfaces()
+	currentIface := s.netManager.GetCurrentInterface()
+
+	ifaceInfo, err := s.netManager.GetInterface(currentIface)
+	if err != nil {
+		http.Error(w, "Interface not found", http.StatusNotFound)
+		return
+	}
+
+	resp := IPConfigResponse{
+		Interface: currentIface,
+		MAC:       ifaceInfo.HardwareAddr,
+		Mode:      "auto", // We'll detect this properly later
+		IPv6:      []IPv6Info{},
+		DNS:       []string{},
+	}
+
+	// Parse addresses into IPv4 and IPv6
+	for _, addr := range ifaceInfo.Addresses {
+		ipInfo := parseIPAddress(addr)
+		if ipInfo.isIPv4 {
+			resp.IPv4 = &IPv4Info{
+				Address: ipInfo.address,
+				Subnet:  ipInfo.subnet,
+			}
+		} else {
+			resp.IPv6 = append(resp.IPv6, IPv6Info{
+				Address: ipInfo.address,
+				Prefix:  ipInfo.prefix,
+				Scope:   ipInfo.scope,
+				Source:  ipInfo.source,
+			})
+		}
+	}
+
+	// Try to get DNS servers from system
+	resp.DNS = getSystemDNS()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+// ipAddrInfo holds parsed IP address information.
+type ipAddrInfo struct {
+	isIPv4  bool
+	address string
+	subnet  string
+	prefix  int
+	scope   string
+	source  string
+}
+
+// parseIPAddress parses an IP address string (with CIDR) into components.
+func parseIPAddress(addr string) ipAddrInfo {
+	info := ipAddrInfo{
+		scope:  "global",
+		source: "static",
+	}
+
+	// Split address and prefix
+	parts := splitCIDR(addr)
+	info.address = parts[0]
+	prefixStr := parts[1]
+
+	// Determine if IPv4 or IPv6
+	if isIPv4Address(info.address) {
+		info.isIPv4 = true
+		info.subnet = prefixStr
+	} else {
+		info.isIPv4 = false
+		info.prefix = parsePrefix(prefixStr)
+
+		// Determine IPv6 scope
+		if isLinkLocal(info.address) {
+			info.scope = "link-local"
+		} else if isUniqueLocal(info.address) {
+			info.scope = "unique-local"
+		} else {
+			info.scope = "global"
+		}
+
+		// Determine source (simplified - would need more info for accurate detection)
+		info.source = "slaac"
+	}
+
+	return info
+}
+
+func splitCIDR(addr string) [2]string {
+	for i := len(addr) - 1; i >= 0; i-- {
+		if addr[i] == '/' {
+			return [2]string{addr[:i], addr[i+1:]}
+		}
+	}
+	return [2]string{addr, ""}
+}
+
+func isIPv4Address(addr string) bool {
+	for _, c := range addr {
+		if c == ':' {
+			return false
+		}
+	}
+	return true
+}
+
+func parsePrefix(s string) int {
+	var result int
+	for _, c := range s {
+		if c >= '0' && c <= '9' {
+			result = result*10 + int(c-'0')
+		}
+	}
+	return result
+}
+
+func isLinkLocal(addr string) bool {
+	// IPv6 link-local starts with fe80::
+	return len(addr) >= 4 && (addr[:4] == "fe80" || addr[:4] == "FE80")
+}
+
+func isUniqueLocal(addr string) bool {
+	// IPv6 unique local starts with fc or fd
+	if len(addr) < 2 {
+		return false
+	}
+	c := addr[0]
+	c2 := addr[1]
+	return (c == 'f' || c == 'F') && (c2 == 'c' || c2 == 'C' || c2 == 'd' || c2 == 'D')
+}
+
+func getSystemDNS() []string {
+	// This is platform-specific. For now, return common defaults.
+	// A full implementation would read /etc/resolv.conf on Linux
+	// or use scutil on macOS.
+	return []string{}
 }
 
 // handleExport exports current diagnostic data as JSON.
