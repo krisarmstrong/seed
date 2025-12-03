@@ -66,6 +66,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/interface", s.handleInterface)
 	s.mux.HandleFunc("/api/export", s.handleExport)
 	s.mux.HandleFunc("/api/link", s.handleLink)
+	s.mux.HandleFunc("/api/ipconfig", s.handleIPConfig)
 	s.mux.HandleFunc("/api/discovery", s.handleDiscovery)
 
 	// WebSocket

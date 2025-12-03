@@ -5,9 +5,8 @@ export interface LinkData {
   speed: string;
   duplex: string;
   advertisedSpeeds: string[];
-  mac?: string;
   mtu?: number;
-  addresses?: string[];
+  autoNeg?: boolean;
 }
 
 interface LinkCardProps {
@@ -37,23 +36,13 @@ export function LinkCard({ data, loading }: LinkCardProps) {
         <>
           <CardDivider />
           <CardRow label="Duplex" value={data.duplex || 'Unknown'} />
-          {data.mac && <CardRow label="MAC" value={data.mac} />}
           {data.mtu && <CardRow label="MTU" value={data.mtu.toString()} />}
-          {data.addresses && data.addresses.length > 0 && (
-            <div className="mt-2">
-              <p className="text-xs text-text-muted mb-1">IP Addresses</p>
-              <div className="flex flex-col gap-0.5">
-                {data.addresses.map((addr) => (
-                  <span key={addr} className="text-xs font-mono text-text-secondary">
-                    {addr}
-                  </span>
-                ))}
-              </div>
-            </div>
+          {data.autoNeg !== undefined && (
+            <CardRow label="Auto-Neg" value={data.autoNeg ? 'On' : 'Off'} />
           )}
           {data.advertisedSpeeds && data.advertisedSpeeds.length > 0 && (
             <div className="mt-2">
-              <p className="text-xs text-text-muted mb-1">Advertised</p>
+              <p className="text-xs text-text-muted mb-1">Advertised Speeds</p>
               <div className="flex flex-wrap gap-1">
                 {data.advertisedSpeeds.map((speed) => (
                   <span
