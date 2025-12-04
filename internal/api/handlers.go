@@ -14,6 +14,7 @@ import (
 
 	"github.com/krisarmstrong/netscope/internal/config"
 	"github.com/krisarmstrong/netscope/internal/dhcp"
+	"github.com/krisarmstrong/netscope/internal/iperf"
 	"github.com/krisarmstrong/netscope/internal/network"
 )
 
@@ -2125,4 +2126,203 @@ func (s *Server) handleSpeedtestStatus(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
+}
+
+// iperf3 handlers
+
+// IperfInfoResponse contains iperf3 installation info
+type IperfInfoResponse struct {
+	Installed bool   `json:"installed"`
+	Version   string `json:"version,omitempty"`
+	Error     string `json:"error,omitempty"`
+}
+
+// handleIperfInfo returns iperf3 installation status and version
+func (s *Server) handleIperfInfo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	resp := IperfInfoResponse{}
+	version, err := iperf.GetVersion()
+	if err != nil {
+		resp.Installed = false
+		resp.Error = err.Error()
+	} else {
+		resp.Installed = true
+		resp.Version = version
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+// IperfClientRequest is the request body for running an iperf3 client test
+type IperfClientRequest struct {
+	Server   string `json:"server"`
+	Port     int    `json:"port"`
+	Protocol string `json:"protocol"` // "tcp" or "udp"
+	Reverse  bool   `json:"reverse"`  // true = download, false = upload
+	Duration int    `json:"duration"` // seconds
+	Parallel int    `json:"parallel"` // number of streams
+}
+
+// IperfResultResponse is the response for an iperf3 test result
+type IperfResultResponse struct {
+	Bandwidth   float64 `json:"bandwidth"`   // Mbps
+	Transfer    float64 `json:"transfer"`    // MB
+	Retransmits int     `json:"retransmits"` // TCP only
+	Jitter      float64 `json:"jitter"`      // UDP only, ms
+	LostPackets int     `json:"lostPackets"` // UDP only
+	LostPercent float64 `json:"lostPercent"` // UDP only
+	Protocol    string  `json:"protocol"`
+	Direction   string  `json:"direction"`
+	Duration    float64 `json:"duration"`
+	Server      string  `json:"server"`
+	Port        int     `json:"port"`
+	Timestamp   string  `json:"timestamp"`
+}
+
+// handleIperfClient runs an iperf3 client test
+func (s *Server) handleIperfClient(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req IperfClientRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if req.Server == "" {
+		http.Error(w, "Server address required", http.StatusBadRequest)
+		return
+	}
+
+	config := iperf.ClientConfig{
+		Server:   req.Server,
+		Port:     req.Port,
+		Protocol: req.Protocol,
+		Reverse:  req.Reverse,
+		Duration: req.Duration,
+		Parallel: req.Parallel,
+	}
+
+	// Run test in background and return immediately
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(req.Duration+30)*time.Second)
+		defer cancel()
+		s.iperfManager.RunClient(ctx, config)
+	}()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "iperf3 test started. Poll /api/iperf/client/status for results.",
+	})
+}
+
+// IperfClientStatusResponse is the status of an iperf3 client test
+type IperfClientStatusResponse struct {
+	Running  bool                 `json:"running"`
+	Phase    string               `json:"phase"`
+	Progress float64              `json:"progress"`
+	Last     *IperfResultResponse `json:"last,omitempty"`
+}
+
+// handleIperfClientStatus returns the status of the iperf3 client test
+func (s *Server) handleIperfClientStatus(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	status := s.iperfManager.GetClientStatus()
+	resp := IperfClientStatusResponse{
+		Running:  status.Running,
+		Phase:    status.Phase,
+		Progress: status.Progress,
+	}
+
+	if lastResult := s.iperfManager.GetLastResult(); lastResult != nil {
+		resp.Last = &IperfResultResponse{
+			Bandwidth:   lastResult.Bandwidth,
+			Transfer:    lastResult.Transfer,
+			Retransmits: lastResult.Retransmits,
+			Jitter:      lastResult.Jitter,
+			LostPackets: lastResult.LostPackets,
+			LostPercent: lastResult.LostPercent,
+			Protocol:    lastResult.Protocol,
+			Direction:   lastResult.Direction,
+			Duration:    lastResult.Duration,
+			Server:      lastResult.Server,
+			Port:        lastResult.Port,
+			Timestamp:   lastResult.Timestamp.Format(time.RFC3339),
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+// IperfServerRequest is the request body for starting/stopping the iperf3 server
+type IperfServerRequest struct {
+	Action string `json:"action"` // "start" or "stop"
+	Port   int    `json:"port"`
+}
+
+// handleIperfServer starts or stops the iperf3 server
+func (s *Server) handleIperfServer(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req IperfServerRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	switch req.Action {
+	case "start":
+		port := req.Port
+		if port == 0 {
+			port = 5201
+		}
+		if err := s.iperfManager.StartServer(port); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": fmt.Sprintf("iperf3 server started on port %d", port),
+			"port":    port,
+		})
+	case "stop":
+		if err := s.iperfManager.StopServer(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "iperf3 server stopped",
+		})
+	default:
+		http.Error(w, "Invalid action (use 'start' or 'stop')", http.StatusBadRequest)
+	}
+}
+
+// handleIperfServerStatus returns the iperf3 server status
+func (s *Server) handleIperfServerStatus(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	status := s.iperfManager.GetServerStatus()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(status)
 }
