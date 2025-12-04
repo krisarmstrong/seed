@@ -27,6 +27,7 @@ import (
 	"github.com/krisarmstrong/netscope/internal/vlan"
 	"github.com/krisarmstrong/netscope/internal/wifi"
 	"github.com/krisarmstrong/netscope/internal/cable"
+	"github.com/krisarmstrong/netscope/internal/speedtest"
 )
 
 // Server represents the HTTP/HTTPS server.
@@ -45,6 +46,7 @@ type Server struct {
 	vlanManager      *vlan.Manager
 	wifiManager      *wifi.Manager
 	cableTester      *cable.Tester
+	speedtestTester  *speedtest.Tester
 }
 
 // NewServer creates a new server instance.
@@ -67,6 +69,7 @@ func NewServer(cfg *config.Config, netMgr *network.Manager) *Server {
 		vlanManager:      vlan.NewManager(cfg.Interface.Default),
 		wifiManager:      wifi.NewManager(cfg.Interface.Default),
 		cableTester:      cable.NewTester(cfg.Interface.Default),
+		speedtestTester:  speedtest.NewTester(),
 	}
 
 	// Set up link state change callback
@@ -132,6 +135,8 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/vlan", s.handleVLAN)
 	s.mux.HandleFunc("/api/wifi", s.handleWiFi)
 	s.mux.HandleFunc("/api/cable", s.handleCable)
+	s.mux.HandleFunc("/api/speedtest", s.handleSpeedtest)
+	s.mux.HandleFunc("/api/speedtest/status", s.handleSpeedtestStatus)
 
 	// WebSocket
 	s.mux.HandleFunc("/ws", s.handleWebSocket)

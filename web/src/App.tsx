@@ -23,6 +23,7 @@ import {
   CableCard,
   CableData,
 } from './components/cards';
+import { SpeedtestCard } from './components/cards/SpeedtestCard';
 
 interface CardState {
   link: LinkData | null;
@@ -500,15 +501,18 @@ function App() {
 
           {/* Layer 7: Application */}
           <DNSCard data={cards.dns} loading={loading} />
+
+          {/* Performance Testing */}
+          <SpeedtestCard loading={loading} />
         </div>
 
         {/* Development notice */}
         <div className="mt-6 sm:mt-8 rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 text-center">
           <h2 className="text-base sm:text-lg font-semibold text-text-muted">
-            NetScope v0.7.0 - Settings & Polish
+            NetScope v0.7.3 - Speedtest
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-text-muted">
-            All diagnostic cards active with configurable thresholds.
+            All diagnostic cards active with speedtest support.
             <span className="hidden sm:inline"><br /></span>
             <span className="sm:hidden"> </span>
             Run as root for packet capture and TDR cable testing.

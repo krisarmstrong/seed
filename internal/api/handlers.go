@@ -1160,3 +1160,104 @@ func (s *Server) handleCable(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
+
+// SpeedtestResponse represents the speedtest results for the API.
+type SpeedtestResponse struct {
+	Download     float64 `json:"download"`     // Mbps
+	Upload       float64 `json:"upload"`       // Mbps
+	Latency      float64 `json:"latency"`      // ms
+	Server       string  `json:"server"`       // Server name
+	Location     string  `json:"location"`     // Server location
+	Host         string  `json:"host"`         // Server host
+	Distance     float64 `json:"distance"`     // km
+	Timestamp    string  `json:"timestamp"`
+	TestDuration float64 `json:"testDuration"` // seconds
+}
+
+// SpeedtestStatusResponse represents the current speedtest status.
+type SpeedtestStatusResponse struct {
+	Running  bool                   `json:"running"`
+	Phase    string                 `json:"phase"`
+	Progress float64                `json:"progress"`
+	Last     *SpeedtestResponse     `json:"last,omitempty"`
+}
+
+// handleSpeedtest starts a speedtest and returns results.
+func (s *Server) handleSpeedtest(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed - use POST to start a speedtest", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.speedtestTester == nil {
+		http.Error(w, "Speedtest not available", http.StatusServiceUnavailable)
+		return
+	}
+
+	// Check if already running
+	status := s.speedtestTester.GetStatus()
+	if status.Running {
+		http.Error(w, "Speedtest already in progress", http.StatusConflict)
+		return
+	}
+
+	// Run the test (this can take 30-60 seconds)
+	result, err := s.speedtestTester.RunTest(r.Context())
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Speedtest failed: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	resp := SpeedtestResponse{
+		Download:     result.Download,
+		Upload:       result.Upload,
+		Latency:      result.Latency,
+		Server:       result.Server,
+		Location:     result.Location,
+		Host:         result.Host,
+		Distance:     result.Distance,
+		Timestamp:    result.Timestamp.Format(time.RFC3339),
+		TestDuration: result.TestDuration,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+// handleSpeedtestStatus returns the current speedtest status.
+func (s *Server) handleSpeedtestStatus(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.speedtestTester == nil {
+		http.Error(w, "Speedtest not available", http.StatusServiceUnavailable)
+		return
+	}
+
+	status := s.speedtestTester.GetStatus()
+	resp := SpeedtestStatusResponse{
+		Running:  status.Running,
+		Phase:    status.Phase,
+		Progress: status.Progress,
+	}
+
+	// Include last result if available
+	if lastResult := s.speedtestTester.GetLastResult(); lastResult != nil {
+		resp.Last = &SpeedtestResponse{
+			Download:     lastResult.Download,
+			Upload:       lastResult.Upload,
+			Latency:      lastResult.Latency,
+			Server:       lastResult.Server,
+			Location:     lastResult.Location,
+			Host:         lastResult.Host,
+			Distance:     lastResult.Distance,
+			Timestamp:    lastResult.Timestamp.Format(time.RFC3339),
+			TestDuration: lastResult.TestDuration,
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
