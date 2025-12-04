@@ -1,66 +1,82 @@
-# NetScope Configuration
-# Copy to netscope.local.yaml for local overrides
-
 server:
-  port: 8080
-  https: false
-  # cert_file: /path/to/cert.pem
-  # key_file: /path/to/key.pem
-
+    port: 8080
+    https: false
+    cert_file: ""
+    key_file: ""
 interface:
-  default: eth0
-  # Fallback interfaces to try if default not found
-  fallbacks:
-    - enp0s3
-    - wlan0
-
+    default: eth0
+    fallbacks:
+        - enp0s3
+        - wlan0
 vlan:
-  enabled: false
-  id: 0
-
+    enabled: false
+    id: 0
 ip:
-  mode: dhcp  # dhcp or static
-  # Static IP configuration (used when mode: static)
-  # static:
-  #   address: 192.168.1.100
-  #   netmask: 255.255.255.0
-  #   gateway: 192.168.1.1
-  #   dns:
-  #     - 8.8.8.8
-  #     - 8.8.4.4
-
+    mode: dhcp
 discovery:
-  # Protocol preference: auto, lldp, cdp, edp, fdp
-  protocol: auto
-  timeout: 30s
-
+    protocol: auto
+    timeout: 30s
 dns:
-  test_hostname: google.com
-  timeout: 5s
-
+    test_hostname: google.com
+    timeout: 5s
+tests:
+    ping_targets:
+        - name: ""
+          host: www.google.com
+          enabled: true
+    tcp_ports:
+        - name: ""
+          host: www.google.com
+          port: 80
+          enabled: true
+    udp_ports:
+        - name: ""
+          host: ""
+          port: 53
+          enabled: true
+    http_endpoints:
+        - name: ""
+          url: https://www.google.com
+          expected_status: 200
+          enabled: true
+speedtest:
+    server_id: ""
+    auto_run_on_link: false
 thresholds:
-  dhcp:
-    total:
-      warning: 500ms
-      critical: 2s
-    per_phase:
-      warning: 200ms
-      critical: 1s
-  dns:
-    warning: 100ms
-    critical: 500ms
-  ping:
-    warning: 50ms
-    critical: 200ms
-  wifi:
-    signal:
-      warning: -70  # dBm
-      critical: -80
-
+    dhcp:
+        total:
+            warning: 500ms
+            critical: 2s
+        per_phase:
+            warning: 200ms
+            critical: 1s
+    dns:
+        warning: 100ms
+        critical: 500ms
+    ping:
+        warning: 50ms
+        critical: 200ms
+    wifi:
+        signal:
+            warning: -70
+            critical: -80
+    custom_tests:
+        ping:
+            warning: 50ms
+            critical: 100ms
+        tcp:
+            warning: 100ms
+            critical: 500ms
+        udp:
+            warning: 100ms
+            critical: 500ms
+        http:
+            warning: 500ms
+            critical: 2s
+        cert_expiry:
+            warning: 30
+            critical: 7
 auth:
-  # Default credentials - CHANGE ON FIRST LOGIN
-  default_username: admin
-  # Password hash (bcrypt) - default: "netscope"
-  # Generate new hash: htpasswd -nbBC 10 "" "newpassword" | tr -d ':\n' | sed 's/$2y/$2a/'
-  default_password_hash: "$2a$10$Dmw4tbpvJ3hoxg4ln8fl6uUCnhUIeXBm7Xy6txdvgwNAjhtYgzmsi"
-  session_timeout: 24h
+    default_username: admin
+    default_password_hash: $2a$10$Dmw4tbpvJ3hoxg4ln8fl6uUCnhUIeXBm7Xy6txdvgwNAjhtYgzmsi
+    session_timeout: 24h0m0s
