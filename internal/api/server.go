@@ -37,6 +37,7 @@ type Server struct {
 	wsHub            *Hub
 	mux              *http.ServeMux
 	netManager       *network.Manager
+	linkMonitor      *network.LinkMonitor
 	discoveryManager *discovery.Manager
 	dnsTester        *dns.Tester
 	dhcpMonitor      *dhcp.Monitor
@@ -58,6 +59,7 @@ func NewServer(cfg *config.Config, netMgr *network.Manager) *Server {
 			cfg.Auth.DefaultUsername,
 			cfg.Auth.DefaultPasswordHash,
 		),
+		linkMonitor:      network.NewLinkMonitor(cfg.Interface.Default),
 		discoveryManager: discovery.NewManager(cfg.Interface.Default),
 		dnsTester:        dns.NewTester("", "google.com", dns.DefaultThresholds()),
 		dhcpMonitor:      dhcp.NewMonitor(cfg.Interface.Default),
@@ -67,10 +69,48 @@ func NewServer(cfg *config.Config, netMgr *network.Manager) *Server {
 		cableTester:      cable.NewTester(cfg.Interface.Default),
 	}
 
+	// Set up link state change callback
+	s.linkMonitor.OnStateChange(s.onLinkStateChange)
+
 	s.wsHub = NewHub()
 	s.setupRoutes()
 
 	return s
+}
+
+// onLinkStateChange handles link up/down events.
+func (s *Server) onLinkStateChange(event network.LinkEvent) {
+	log.Printf("Link state change: %s -> %s", event.Interface, event.State)
+
+	if event.State == network.LinkStateUp {
+		// Link came up - restart discovery to catch LLDP/CDP frames
+		log.Println("Link up - restarting discovery capture")
+		s.discoveryManager.Stop()
+		if err := s.discoveryManager.Start(); err != nil {
+			log.Printf("Warning: Failed to restart discovery: %v", err)
+		}
+
+		// Notify WebSocket clients
+		s.wsHub.Broadcast(Message{
+			Type: "linkState",
+			Payload: map[string]interface{}{
+				"interface": event.Interface,
+				"state":     "up",
+				"timestamp": event.Timestamp.Format(time.RFC3339),
+			},
+		})
+	} else if event.State == network.LinkStateDown {
+		// Link went down - notify clients
+		log.Println("Link down - notifying clients")
+		s.wsHub.Broadcast(Message{
+			Type: "linkState",
+			Payload: map[string]interface{}{
+				"interface": event.Interface,
+				"state":     "down",
+				"timestamp": event.Timestamp.Format(time.RFC3339),
+			},
+		})
+	}
 }
 
 // setupRoutes configures all HTTP routes.
@@ -133,6 +173,14 @@ func (s *Server) Start() error {
 
 	// Start WebSocket hub
 	go s.wsHub.Run()
+
+	// Start link state monitor
+	if err := s.linkMonitor.Start(); err != nil {
+		log.Printf("Warning: Link monitor failed to start: %v", err)
+	} else {
+		log.Printf("Link monitor started for %s (state: %s)",
+			s.config.Interface.Default, s.linkMonitor.GetState())
+	}
 
 	// Start discovery capture (requires root/CAP_NET_RAW)
 	if err := s.discoveryManager.Start(); err != nil {
@@ -255,6 +303,7 @@ func (s *Server) ensureSelfSignedCert() (certFile, keyFile string, err error) {
 // Shutdown gracefully shuts down the server.
 func (s *Server) Shutdown(ctx context.Context) error {
 	s.wsHub.Shutdown()
+	s.linkMonitor.Stop()
 	s.discoveryManager.Stop()
 	return s.httpServer.Shutdown(ctx)
 }
