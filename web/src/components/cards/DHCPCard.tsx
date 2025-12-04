@@ -119,8 +119,39 @@ export function DHCPCard({ data, loading, thresholds }: DHCPCardProps) {
   const hasIPv6 = data.ipv6.length > 0;
   const globalIPv6 = data.ipv6.filter(ip => ip.scope === 'global');
 
-  // Determine overall status
-  const status: Status = hasIPv4 || globalIPv6.length > 0 ? 'success' : 'warning';
+  // Determine overall status using priority: error > warning > success
+  const getOverallStatus = (): Status => {
+    // No IP at all is a warning (might be in progress)
+    if (!hasIPv4 && globalIPv6.length === 0) {
+      return 'warning';
+    }
+
+    // If we have timing data, check for errors/warnings
+    if (data.timing) {
+      const timingStatuses = [
+        getTimingStatus(data.timing.discover, t.perPhase),
+        getTimingStatus(data.timing.offer, t.perPhase),
+        getTimingStatus(data.timing.request, t.perPhase),
+        getTimingStatus(data.timing.ack, t.perPhase),
+        getTimingStatus(data.timing.total, t.total),
+      ];
+
+      // Any error = card is error
+      if (timingStatuses.some((s) => s === 'error')) {
+        return 'error';
+      }
+
+      // Any warning = card is warning
+      if (timingStatuses.some((s) => s === 'warning')) {
+        return 'warning';
+      }
+    }
+
+    // All good
+    return 'success';
+  };
+
+  const status: Status = getOverallStatus();
 
   // Primary display value
   const primaryIP = data.ipv4?.address || globalIPv6[0]?.address || 'No IP';
