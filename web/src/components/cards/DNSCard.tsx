@@ -99,7 +99,7 @@ export function DNSCard({ data, loading }: DNSCardProps) {
         <p className="text-xs text-text-muted mb-1">DNS Servers</p>
         <div className="space-y-0.5">
           {servers.map((server, idx) => (
-            <p key={idx} className="text-sm truncate" title={server}>
+            <p key={idx} className="text-sm font-mono break-all" title={server}>
               {server}
             </p>
           ))}
