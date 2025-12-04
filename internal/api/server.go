@@ -27,6 +27,7 @@ import (
 	"github.com/krisarmstrong/netscope/internal/vlan"
 	"github.com/krisarmstrong/netscope/internal/wifi"
 	"github.com/krisarmstrong/netscope/internal/cable"
+	"github.com/krisarmstrong/netscope/internal/iperf"
 	"github.com/krisarmstrong/netscope/internal/speedtest"
 )
 
@@ -48,6 +49,7 @@ type Server struct {
 	wifiManager      *wifi.Manager
 	cableTester      *cable.Tester
 	speedtestTester  *speedtest.Tester
+	iperfManager     *iperf.Manager
 }
 
 // NewServer creates a new server instance.
@@ -72,6 +74,7 @@ func NewServer(cfg *config.Config, configPath string, netMgr *network.Manager) *
 		wifiManager:      wifi.NewManager(cfg.Interface.Default),
 		cableTester:      cable.NewTester(cfg.Interface.Default),
 		speedtestTester:  speedtest.NewTesterWithConfig(cfg.Speedtest.ServerID),
+		iperfManager:     iperf.NewManager(),
 	}
 
 	// Set up link state change callback
@@ -142,6 +145,11 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/speedtest/status", s.handleSpeedtestStatus)
 	s.mux.HandleFunc("/api/tests/settings", s.handleTestsSettings)
 	s.mux.HandleFunc("/api/tests/run", s.handleCustomTests)
+	s.mux.HandleFunc("/api/iperf/info", s.handleIperfInfo)
+	s.mux.HandleFunc("/api/iperf/client", s.handleIperfClient)
+	s.mux.HandleFunc("/api/iperf/client/status", s.handleIperfClientStatus)
+	s.mux.HandleFunc("/api/iperf/server", s.handleIperfServer)
+	s.mux.HandleFunc("/api/iperf/server/status", s.handleIperfServerStatus)
 
 	// WebSocket
 	s.mux.HandleFunc("/ws", s.handleWebSocket)

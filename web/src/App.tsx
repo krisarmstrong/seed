@@ -23,7 +23,7 @@ import {
   CableCard,
   CableData,
 } from './components/cards';
-import { SpeedtestCard } from './components/cards/SpeedtestCard';
+import { PerformanceCard } from './components/cards/PerformanceCard';
 import { CustomTestsCard } from './components/cards/CustomTestsCard';
 
 interface CardState {
@@ -504,7 +504,7 @@ function App() {
           <DNSCard data={cards.dns} loading={loading} />
 
           {/* Performance Testing */}
-          <SpeedtestCard loading={loading} />
+          <PerformanceCard loading={loading} />
 
           {/* Custom Tests - only shows when tests are configured */}
           <CustomTestsCard loading={loading} />
@@ -513,10 +513,10 @@ function App() {
         {/* Development notice */}
         <div className="mt-6 sm:mt-8 rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 text-center">
           <h2 className="text-base sm:text-lg font-semibold text-text-muted">
-            NetScope v0.7.3 - Speedtest
+            NetScope v0.8.0 - Performance
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-text-muted">
-            All diagnostic cards active with speedtest support.
+            All diagnostic cards active with iperf3 LAN speed testing.
             <span className="hidden sm:inline"><br /></span>
             <span className="sm:hidden"> </span>
             Run as root for packet capture and TDR cable testing.
