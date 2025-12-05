@@ -21,7 +21,7 @@
   --color-text-inverse: #f8fafc;
 
   --color-status-success: #047857;
-  --color-status-warning: #b45309;
+  --color-status-warning: #92400e;
   --color-status-error: #b91c1c;
   --color-status-info: #1d4ed8;
 }
@@ -42,9 +42,9 @@
   --color-text-accent: #93c5fd;
   --color-text-inverse: #0f172a;
 
-  --color-status-success: #4ade80;
-  --color-status-warning: #fbbf24;
-  --color-status-error: #fb7185;
+  --color-status-success: #86efac;
+  --color-status-warning: #fcd34d;
+  --color-status-error: #fca5a5;
   --color-status-info: #93c5fd;
 }
 
