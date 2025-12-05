@@ -18,6 +18,7 @@ import (
 	"github.com/krisarmstrong/netscope/internal/gateway"
 	"github.com/krisarmstrong/netscope/internal/iperf"
 	"github.com/krisarmstrong/netscope/internal/network"
+	"github.com/krisarmstrong/netscope/internal/validation"
 	"github.com/krisarmstrong/netscope/internal/version"
 )
 
@@ -1730,6 +1731,12 @@ func (s *Server) handleCustomTests(w http.ResponseWriter, r *http.Request) {
 	// Run HTTP endpoint tests with certificate expiry checking
 	for _, endpoint := range s.config.Tests.HTTPEndpoints {
 		if !endpoint.Enabled {
+			continue
+		}
+
+		// Validate URL to prevent SSRF attacks
+		if err := validation.ValidateURL(endpoint.URL); err != nil {
+			log.Printf("Skipping invalid HTTP endpoint URL %q: %v", endpoint.URL, err)
 			continue
 		}
 

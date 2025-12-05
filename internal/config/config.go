@@ -232,7 +232,7 @@ func DefaultConfig() *Config {
 		},
 		Auth: AuthConfig{
 			DefaultUsername:     "admin",
-			DefaultPasswordHash: "$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqPqMqYjP8tTO.C5p3QBrC4qZlFIG", // "netscope"
+			DefaultPasswordHash: "$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqPqMqYjP8tTO.C5p3QBrC4qZlFIG",
 			SessionTimeout:      24 * time.Hour,
 		},
 	}

@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/krisarmstrong/netscope/internal/validation"
 )
 
 // InterfaceType represents the type of network interface.
@@ -396,6 +398,21 @@ func netmaskToCIDR(netmask string) (int, error) {
 
 // configureStaticIPLinux applies static IP on Linux using ip command.
 func configureStaticIPLinux(iface string, cfg *StaticIPConfig) error {
+	// Validate interface name to prevent command injection
+	if err := validation.ValidateInterface(iface); err != nil {
+		return fmt.Errorf("invalid interface: %w", err)
+	}
+
+	// Validate IP address
+	if !validation.IsValidIPv4(cfg.Address) {
+		return fmt.Errorf("invalid IP address: %s", cfg.Address)
+	}
+
+	// Validate gateway if provided
+	if cfg.Gateway != "" && !validation.IsValidIPv4(cfg.Gateway) {
+		return fmt.Errorf("invalid gateway address: %s", cfg.Gateway)
+	}
+
 	prefix, err := netmaskToCIDR(cfg.Netmask)
 	if err != nil {
 		return err
@@ -439,6 +456,11 @@ func configureStaticIPLinux(iface string, cfg *StaticIPConfig) error {
 
 // configureDHCPLinux switches to DHCP on Linux.
 func configureDHCPLinux(iface string) error {
+	// Validate interface name to prevent command injection
+	if err := validation.ValidateInterface(iface); err != nil {
+		return fmt.Errorf("invalid interface: %w", err)
+	}
+
 	// Try dhclient first
 	if err := exec.Command("dhclient", "-r", iface).Run(); err == nil {
 		return exec.Command("dhclient", iface).Run()
