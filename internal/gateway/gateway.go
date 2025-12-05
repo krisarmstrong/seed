@@ -46,6 +46,7 @@ type PingStats struct {
 	Reachable   bool          `json:"reachable"`
 	Results     []PingResult  `json:"results,omitempty"`
 	LastUpdated time.Time     `json:"lastUpdated"`
+	IPv6        *PingStats    `json:"ipv6,omitempty"` // IPv6 gateway stats
 }
 
 // Thresholds defines timing thresholds for gateway ping.
@@ -82,7 +83,7 @@ type Tester struct {
 func NewTester(thresholds Thresholds) *Tester {
 	return &Tester{
 		thresholds:  thresholds,
-		pingCount:   5,
+		pingCount:   3, // 3 pings matches the Min/Avg/Max display
 		pingTimeout: 2 * time.Second,
 		stats:       &PingStats{Status: StatusUnknown},
 		stopCh:      make(chan struct{}),
@@ -199,6 +200,70 @@ func detectGatewayLinux() (string, error) {
 // detectGatewayFromProc reads gateway from /proc/net/route on Linux.
 func detectGatewayFromProc() (string, error) {
 	// This is a fallback - in production we'd parse /proc/net/route
+	return "", nil
+}
+
+// DetectGatewayIPv6 attempts to detect the default IPv6 gateway.
+func DetectGatewayIPv6() (string, error) {
+	switch runtime.GOOS {
+	case "darwin":
+		return detectGatewayIPv6Darwin()
+	case "linux":
+		return detectGatewayIPv6Linux()
+	default:
+		return "", nil
+	}
+}
+
+// detectGatewayIPv6Darwin detects the default IPv6 gateway on macOS.
+func detectGatewayIPv6Darwin() (string, error) {
+	// Use netstat -rn to get the default IPv6 route
+	cmd := exec.Command("netstat", "-rn", "-f", "inet6")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	// Parse output looking for default route
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		fields := strings.Fields(line)
+		if len(fields) >= 2 && fields[0] == "default" {
+			gateway := fields[1]
+			// Remove interface scope suffix (e.g., %en0)
+			if idx := strings.Index(gateway, "%"); idx > 0 {
+				gateway = gateway[:idx]
+			}
+			// Validate it's an IPv6 address
+			if ip := net.ParseIP(gateway); ip != nil && ip.To4() == nil {
+				return gateway, nil
+			}
+		}
+	}
+
+	return "", nil
+}
+
+// detectGatewayIPv6Linux detects the default IPv6 gateway on Linux.
+func detectGatewayIPv6Linux() (string, error) {
+	// Try ip -6 route
+	cmd := exec.Command("ip", "-6", "route", "show", "default")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", nil
+	}
+
+	// Parse "default via XXXX:XXXX::X"
+	fields := strings.Fields(string(output))
+	for i, field := range fields {
+		if field == "via" && i+1 < len(fields) {
+			gateway := fields[i+1]
+			if ip := net.ParseIP(gateway); ip != nil && ip.To4() == nil {
+				return gateway, nil
+			}
+		}
+	}
+
 	return "", nil
 }
 

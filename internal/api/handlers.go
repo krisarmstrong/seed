@@ -14,6 +14,7 @@ import (
 
 	"github.com/krisarmstrong/netscope/internal/config"
 	"github.com/krisarmstrong/netscope/internal/dhcp"
+	"github.com/krisarmstrong/netscope/internal/gateway"
 	"github.com/krisarmstrong/netscope/internal/iperf"
 	"github.com/krisarmstrong/netscope/internal/network"
 )
@@ -901,16 +902,17 @@ func (s *Server) handleDNS(w http.ResponseWriter, r *http.Request) {
 
 // GatewayResponse represents the gateway ping test results for the API.
 type GatewayResponse struct {
-	Gateway     string  `json:"gateway"`
-	Reachable   bool    `json:"reachable"`
-	Sent        int     `json:"sent"`
-	Received    int     `json:"received"`
-	LossPercent float64 `json:"lossPercent"`
-	MinTime     float64 `json:"minTime"`
-	MaxTime     float64 `json:"maxTime"`
-	AvgTime     float64 `json:"avgTime"`
-	LastTime    float64 `json:"lastTime"`
-	Status      string  `json:"status"`
+	Gateway     string           `json:"gateway"`
+	Reachable   bool             `json:"reachable"`
+	Sent        int              `json:"sent"`
+	Received    int              `json:"received"`
+	LossPercent float64          `json:"lossPercent"`
+	MinTime     float64          `json:"minTime"`
+	MaxTime     float64          `json:"maxTime"`
+	AvgTime     float64          `json:"avgTime"`
+	LastTime    float64          `json:"lastTime"`
+	Status      string           `json:"status"`
+	IPv6        *GatewayResponse `json:"ipv6,omitempty"`
 }
 
 // handleGateway performs gateway ping testing and returns results.
@@ -925,7 +927,7 @@ func (s *Server) handleGateway(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Perform gateway ping test
+	// Perform IPv4 gateway ping test
 	stats := s.gatewayTester.Test()
 
 	resp := GatewayResponse{
@@ -939,6 +941,28 @@ func (s *Server) handleGateway(w http.ResponseWriter, r *http.Request) {
 		AvgTime:     stats.AvgTime,
 		LastTime:    stats.LastTime,
 		Status:      string(stats.Status),
+	}
+
+	// Detect and ping IPv6 gateway if available
+	ipv6Gateway, err := gateway.DetectGatewayIPv6()
+	if err == nil && ipv6Gateway != "" {
+		// Create a temporary tester for IPv6
+		ipv6Tester := gateway.NewTester(gateway.DefaultThresholds())
+		ipv6Tester.SetGateway(ipv6Gateway)
+		ipv6Stats := ipv6Tester.Test()
+
+		resp.IPv6 = &GatewayResponse{
+			Gateway:     ipv6Stats.Gateway,
+			Reachable:   ipv6Stats.Reachable,
+			Sent:        ipv6Stats.Sent,
+			Received:    ipv6Stats.Received,
+			LossPercent: ipv6Stats.LossPercent,
+			MinTime:     ipv6Stats.MinTime,
+			MaxTime:     ipv6Stats.MaxTime,
+			AvgTime:     ipv6Stats.AvgTime,
+			LastTime:    ipv6Stats.LastTime,
+			Status:      string(ipv6Stats.Status),
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
