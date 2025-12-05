@@ -11,6 +11,7 @@ export interface GatewayData {
   avgTime: number;
   lastTime: number;
   status: string;
+  ipv6?: GatewayData;
 }
 
 interface GatewayCardProps {
@@ -132,6 +133,64 @@ export function GatewayCard({ data, loading, thresholds }: GatewayCardProps) {
           value={`${Math.round(data.lossPercent)}%`}
           status={data.lossPercent >= 50 ? 'error' : 'warning'}
         />
+      )}
+
+      {/* IPv6 Gateway Section */}
+      {data.ipv6 && data.ipv6.gateway && (
+        <>
+          <CardDivider />
+          <p className="text-xs text-text-muted mb-1 font-medium">IPv6 Gateway</p>
+          <CardValue value={data.ipv6.gateway} size="md" />
+          <p className="text-xs text-text-muted mb-2">
+            {data.ipv6.reachable ? 'Reachable' : 'Unreachable'}
+          </p>
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <div className="text-center">
+              <p className="text-xs text-text-muted">Min</p>
+              <p className={`text-sm font-medium ${
+                data.ipv6.minTime > 0 ? getLatencyStatus(data.ipv6.minTime, t) === 'success'
+                  ? 'text-status-success'
+                  : getLatencyStatus(data.ipv6.minTime, t) === 'warning'
+                  ? 'text-status-warning'
+                  : 'text-status-error'
+                : 'text-text-muted'
+              }`}>
+                {data.ipv6.minTime > 0 ? formatTime(data.ipv6.minTime) : '-'}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-text-muted">Avg</p>
+              <p className={`text-sm font-medium ${
+                data.ipv6.avgTime > 0 ? getLatencyStatus(data.ipv6.avgTime, t) === 'success'
+                  ? 'text-status-success'
+                  : getLatencyStatus(data.ipv6.avgTime, t) === 'warning'
+                  ? 'text-status-warning'
+                  : 'text-status-error'
+                : 'text-text-muted'
+              }`}>
+                {data.ipv6.avgTime > 0 ? formatTime(data.ipv6.avgTime) : '-'}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-text-muted">Max</p>
+              <p className={`text-sm font-medium ${
+                data.ipv6.maxTime > 0 ? getLatencyStatus(data.ipv6.maxTime, t) === 'success'
+                  ? 'text-status-success'
+                  : getLatencyStatus(data.ipv6.maxTime, t) === 'warning'
+                  ? 'text-status-warning'
+                  : 'text-status-error'
+                : 'text-text-muted'
+              }`}>
+                {data.ipv6.maxTime > 0 ? formatTime(data.ipv6.maxTime) : '-'}
+              </p>
+            </div>
+          </div>
+          <CardRow
+            label="Packets"
+            value={`${data.ipv6.received}/${data.ipv6.sent}`}
+            status={data.ipv6.lossPercent === 0 ? 'success' : data.ipv6.lossPercent < 50 ? 'warning' : 'error'}
+          />
+        </>
       )}
     </Card>
   );

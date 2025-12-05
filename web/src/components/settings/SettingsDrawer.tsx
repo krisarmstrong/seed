@@ -1090,57 +1090,62 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
             </div>
           </CollapsibleSection>
 
-          {/* Speedtest Section */}
-          <CollapsibleSection title="Speedtest">
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-text-muted">Server ID (optional)</label>
-                <input
-                  type="text"
-                  value={testsSettings.speedtest.serverId}
-                  onChange={(e) =>
-                    setTestsSettings((prev) => ({
-                      ...prev,
-                      speedtest: { ...prev.speedtest, serverId: e.target.value },
-                    }))
-                  }
-                  placeholder="Auto (closest server)"
-                  className="w-full mt-1 px-2 py-1 bg-surface-base border border-surface-border rounded text-sm text-text-primary"
-                />
-                <p className="text-xs text-text-muted mt-1">
-                  Leave empty for auto-selection
-                </p>
+          {/* Performance Section - matches PerformanceCard */}
+          <CollapsibleSection title="Performance">
+            <div className="space-y-4">
+              {/* Internet Speed (Speedtest) Subsection */}
+              <div className="border-b border-surface-border pb-4">
+                <h4 className="text-sm font-medium text-text-primary mb-3">Internet Speed (Speedtest)</h4>
+                <div className="space-y-3 pl-2">
+                  <div>
+                    <label className="text-xs text-text-muted">Server ID (optional)</label>
+                    <input
+                      type="text"
+                      value={testsSettings.speedtest.serverId}
+                      onChange={(e) =>
+                        setTestsSettings((prev) => ({
+                          ...prev,
+                          speedtest: { ...prev.speedtest, serverId: e.target.value },
+                        }))
+                      }
+                      placeholder="Auto (closest server)"
+                      className="w-full mt-1 px-2 py-1 bg-surface-base border border-surface-border rounded text-sm text-text-primary"
+                    />
+                    <p className="text-xs text-text-muted mt-1">
+                      Leave empty for auto-selection
+                    </p>
+                  </div>
+
+                  <label className="flex items-center justify-between p-2 bg-surface-base rounded border border-surface-border">
+                    <span className="text-sm text-text-primary">Auto-run on link up</span>
+                    <input
+                      type="checkbox"
+                      checked={testsSettings.speedtest.autoRunOnLink}
+                      onChange={(e) =>
+                        setTestsSettings((prev) => ({
+                          ...prev,
+                          speedtest: { ...prev.speedtest, autoRunOnLink: e.target.checked },
+                        }))
+                      }
+                      className="w-4 h-4"
+                    />
+                  </label>
+
+                  <button
+                    onClick={saveTestsSettings}
+                    disabled={savingTests}
+                    className="w-full py-2 px-4 bg-brand-primary text-text-inverse rounded font-medium hover:bg-brand-accent disabled:opacity-50 transition-colors"
+                  >
+                    {savingTests ? 'Saving...' : 'Save Speedtest Settings'}
+                  </button>
+                </div>
               </div>
 
-              <label className="flex items-center justify-between p-2 bg-surface-base rounded border border-surface-border">
-                <span className="text-sm text-text-primary">Auto-run on link up</span>
-                <input
-                  type="checkbox"
-                  checked={testsSettings.speedtest.autoRunOnLink}
-                  onChange={(e) =>
-                    setTestsSettings((prev) => ({
-                      ...prev,
-                      speedtest: { ...prev.speedtest, autoRunOnLink: e.target.checked },
-                    }))
-                  }
-                  className="w-4 h-4"
-                />
-              </label>
-
-              <button
-                onClick={saveTestsSettings}
-                disabled={savingTests}
-                className="w-full py-2 px-4 bg-brand-primary text-text-inverse rounded font-medium hover:bg-brand-accent disabled:opacity-50 transition-colors"
-              >
-                {savingTests ? 'Saving...' : 'Save Speedtest Settings'}
-              </button>
-            </div>
-          </CollapsibleSection>
-
-          {/* LAN Speed (iperf3) Section */}
-          <CollapsibleSection title="LAN Speed (iperf3)">
-            <div className="space-y-3">
-              <p className="text-xs text-text-muted">
+              {/* LAN Speed (iperf3) Subsection */}
+              <div>
+                <h4 className="text-sm font-medium text-text-primary mb-3">LAN Speed (iperf3)</h4>
+                <div className="space-y-3 pl-2">
+                  <p className="text-xs text-text-muted">
                 Configure iperf3 client settings for LAN speed tests.
               </p>
 
@@ -1278,15 +1283,17 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                 {savingIperf ? 'Saving...' : 'Save LAN Speed Settings'}
               </button>
 
-              {iperfMessage && (
-                <p
-                  className={`text-xs text-center ${
-                    iperfMessage.includes('Failed') ? 'text-status-error' : 'text-status-success'
-                  }`}
-                >
-                  {iperfMessage}
-                </p>
-              )}
+                  {iperfMessage && (
+                    <p
+                      className={`text-xs text-center ${
+                        iperfMessage.includes('Failed') ? 'text-status-error' : 'text-status-success'
+                      }`}
+                    >
+                      {iperfMessage}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </CollapsibleSection>
 

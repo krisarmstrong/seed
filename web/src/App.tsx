@@ -277,6 +277,18 @@ function App() {
             avgTime: data.avgTime || 0,
             lastTime: data.lastTime || 0,
             status: data.status || 'unknown',
+            ipv6: data.ipv6 ? {
+              gateway: data.ipv6.gateway || '',
+              reachable: data.ipv6.reachable || false,
+              sent: data.ipv6.sent || 0,
+              received: data.ipv6.received || 0,
+              lossPercent: data.ipv6.lossPercent || 0,
+              minTime: data.ipv6.minTime || 0,
+              maxTime: data.ipv6.maxTime || 0,
+              avgTime: data.ipv6.avgTime || 0,
+              lastTime: data.ipv6.lastTime || 0,
+              status: data.ipv6.status || 'unknown',
+            } : undefined,
           },
         }));
       }
@@ -570,7 +582,7 @@ function App() {
         {/* Development notice */}
         <div className="mt-6 sm:mt-8 rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 text-center">
           <h2 className="text-base sm:text-lg font-semibold text-text-muted">
-            NetScope v0.8.5 - Enhanced FAB Options
+            NetScope v0.8.6 - IPv6 Gateway Support
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-text-muted">
             Tap the play button to run all tests.
