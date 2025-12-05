@@ -364,10 +364,12 @@ function App() {
       ]);
 
       if (devicesRes.ok && statusRes.ok) {
-        const devices = await devicesRes.json();
+        const devicesData = await devicesRes.json();
         const status = await statusRes.json();
+        // devicesData contains { devices: [...], status: {...} }
+        // Extract the devices array from the response
         setNetworkDiscovery({
-          devices: devices || [],
+          devices: devicesData.devices || [],
           status: status || {
             scanning: false,
             deviceCount: 0,
@@ -686,7 +688,7 @@ function App() {
         {/* Development notice */}
         <div className="mt-6 sm:mt-8 rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 text-center">
           <h2 className="text-base sm:text-lg font-semibold text-text-muted">
-            NetScope v0.9.2 - Network Discovery
+            NetScope v0.9.5 - Network Discovery
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-text-muted">
             Tap the play button to run all tests.

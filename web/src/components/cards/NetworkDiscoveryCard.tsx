@@ -270,7 +270,9 @@ export function NetworkDiscoveryCard({ data, loading, onScan }: NetworkDiscovery
     );
   }
 
-  const { devices, status } = data;
+  const { devices: rawDevices, status } = data;
+  // Ensure devices is an array (defensive check for malformed API responses)
+  const devices = Array.isArray(rawDevices) ? rawDevices : [];
   const deviceCount = devices.length;
 
   const getOverallStatus = (): Status => {
