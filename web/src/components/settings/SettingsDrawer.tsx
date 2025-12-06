@@ -84,6 +84,7 @@ interface FABOptions {
   runSpeedtest: boolean;         // Performance: Internet Speed (default OFF)
   runIperf: boolean;             // Performance: LAN Speed (default OFF)
   runNetworkDiscovery: boolean;  // Network Discovery card (default ON)
+  autoScanOnLink: boolean;       // Auto-scan network on link up (default ON when discovery enabled)
 }
 
 interface DisplayOptions {
@@ -198,6 +199,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
     runSpeedtest: false,        // Performance: Internet Speed (default OFF)
     runIperf: false,            // Performance: LAN Speed (default OFF)
     runNetworkDiscovery: true,  // Network Discovery card (default ON)
+    autoScanOnLink: true,       // Auto-scan network on link up (default ON)
   });
 
   // Display Options (stored in localStorage)
@@ -784,6 +786,14 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
       if (fabTimerRef.current) clearTimeout(fabTimerRef.current);
     };
   }, [fabOptions]);
+
+  // Sync autoScanOnLink with networkDiscoverySettings.autoScan for backend compatibility
+  useEffect(() => {
+    setNetworkDiscoverySettings((prev) => ({
+      ...prev,
+      autoScan: fabOptions.autoScanOnLink && fabOptions.runNetworkDiscovery,
+    }));
+  }, [fabOptions.autoScanOnLink, fabOptions.runNetworkDiscovery]);
 
   // Auto-save Display options with debounce
   useEffect(() => {
@@ -1627,22 +1637,6 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                 />
               </label>
 
-              {/* Auto-Scan */}
-              <label className="flex items-center justify-between p-2 bg-surface-base rounded border border-surface-border">
-                <div>
-                  <span className="text-sm text-text-primary">Auto-Scan on Startup</span>
-                  <p className="text-xs text-text-muted">Scan when interface comes up</p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={networkDiscoverySettings.autoScan}
-                  onChange={(e) =>
-                    setNetworkDiscoverySettings((prev) => ({ ...prev, autoScan: e.target.checked }))
-                  }
-                  className="w-4 h-4"
-                />
-              </label>
-
               {/* Scan Workers */}
               <div>
                 <label className="text-xs text-text-muted">Concurrent Scan Workers</label>
@@ -2124,6 +2118,22 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                     setFabOptions((prev) => ({ ...prev, runNetworkDiscovery: e.target.checked }))
                   }
                   className="w-4 h-4"
+                />
+              </label>
+
+              <label className="flex items-center justify-between p-2 bg-surface-base rounded border border-surface-border ml-3">
+                <div>
+                  <span className="text-sm text-text-primary">Auto-Scan on Link</span>
+                  <p className="text-xs text-text-muted">Scan when interface comes up</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={fabOptions.autoScanOnLink}
+                  onChange={(e) =>
+                    setFabOptions((prev) => ({ ...prev, autoScanOnLink: e.target.checked }))
+                  }
+                  className="w-4 h-4"
+                  disabled={!fabOptions.runNetworkDiscovery}
                 />
               </label>
 
