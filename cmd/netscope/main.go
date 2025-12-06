@@ -13,6 +13,7 @@ import (
 
 	"github.com/krisarmstrong/netscope/internal/api"
 	"github.com/krisarmstrong/netscope/internal/config"
+	"github.com/krisarmstrong/netscope/internal/discovery"
 	"github.com/krisarmstrong/netscope/internal/network"
 )
 
@@ -29,6 +30,10 @@ func main() {
 		fmt.Printf("NetScope %s\n", version)
 		os.Exit(0)
 	}
+
+	// Check for required privileges (raw socket access for ICMP ping)
+	// This is a Linux-only tool that requires root or CAP_NET_RAW
+	discovery.MustHaveICMPPrivileges()
 
 	// Set up logging
 	log.SetFlags(log.LstdFlags | log.Lshortfile)

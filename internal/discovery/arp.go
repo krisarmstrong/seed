@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"os/exec"
 	"runtime"
@@ -34,7 +35,10 @@ type ARPScanner struct {
 	entries           map[string]*ARPEntry // Key by IP
 	subnet            *net.IPNet
 	localIP           net.IP
-	additionalSubnets []*net.IPNet // Additional subnets to scan
+	additionalSubnets []*net.IPNet           // Additional subnets to scan
+	pingResponders    []string               // IPs that responded to ping (for remote subnets)
+	pingResults       map[string]PingResult  // Cached ping results with TTL info
+	pinger            *ICMPPinger            // Raw socket ICMP pinger
 	scanning          bool
 	lastScan          time.Time
 }
@@ -171,6 +175,7 @@ func (s *ARPScanner) Scan(ctx context.Context) error {
 		return fmt.Errorf("scan already in progress")
 	}
 	s.scanning = true
+	s.pingResponders = nil // Clear previous ping responders
 	additionalSubnets := s.additionalSubnets // Copy while holding lock
 	s.mu.Unlock()
 
@@ -214,13 +219,37 @@ func (s *ARPScanner) Scan(ctx context.Context) error {
 		return fmt.Errorf("failed to read ARP table: %w", err)
 	}
 
+	// Merge ping responders that aren't in ARP table (remote subnets)
+	s.mu.RLock()
+	responders := make([]string, len(s.pingResponders))
+	copy(responders, s.pingResponders)
+	s.mu.RUnlock()
+
+	// Create a map of existing IPs from ARP
+	existingIPs := make(map[string]bool)
+	for _, entry := range entries {
+		existingIPs[entry.IP] = true
+	}
+
+	// Add ping responders not in ARP table
+	for _, ip := range responders {
+		if !existingIPs[ip] {
+			entries = append(entries, &ARPEntry{
+				IP:       ip,
+				MAC:      "", // No MAC for remote hosts (ARP doesn't work across routers)
+				State:    "PING_ONLY",
+				LastSeen: time.Now(),
+			})
+		}
+	}
+
 	// Enrich entries with OUI lookup and hostname resolution
 	s.enrichEntries(ctx, entries)
 
 	return nil
 }
 
-// pingSweep sends ICMP echo requests to all hosts in the subnet.
+// pingSweep sends ICMP echo requests to all hosts in the subnet using raw sockets.
 func (s *ARPScanner) pingSweep(ctx context.Context, subnet *net.IPNet) error {
 	ones, bits := subnet.Mask.Size()
 	numHosts := 1<<(bits-ones) - 2 // Exclude network and broadcast
@@ -236,63 +265,50 @@ func (s *ARPScanner) pingSweep(ctx context.Context, subnet *net.IPNet) error {
 		return fmt.Errorf("invalid subnet")
 	}
 
-	// Use worker pool for concurrent pings
-	const workers = 50
-	jobs := make(chan net.IP, numHosts)
-	var wg sync.WaitGroup
-
-	// Start workers
-	for w := 0; w < workers; w++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for ip := range jobs {
-				select {
-				case <-ctx.Done():
-					return
-				default:
-					s.pingHost(ctx, ip)
-				}
-			}
-		}()
-	}
-
-	// Queue jobs
+	// Build list of IPs to ping
+	var ips []net.IP
 	for i := 1; i <= numHosts; i++ {
 		ip := incrementIP(baseIP, i)
 		if ip != nil && !ip.Equal(s.localIP) {
-			select {
-			case jobs <- ip:
-			case <-ctx.Done():
-				close(jobs)
-				wg.Wait()
-				return ctx.Err()
-			}
+			ips = append(ips, ip)
 		}
 	}
 
-	close(jobs)
-	wg.Wait()
+	// Initialize pinger if needed
+	if s.pinger == nil {
+		pinger, err := NewICMPPinger(time.Second)
+		if err != nil {
+			log.Printf("Warning: Failed to create ICMP pinger: %v", err)
+			return err
+		}
+		s.pinger = pinger
+	}
+
+	// Perform ping sweep using raw ICMP sockets (50 workers)
+	results := s.pinger.PingSweep(ctx, ips, 50)
+
+	// Store results and track responders
+	s.mu.Lock()
+	if s.pingResults == nil {
+		s.pingResults = make(map[string]PingResult)
+	}
+	for _, result := range results {
+		if result.Reachable {
+			s.pingResponders = append(s.pingResponders, result.IP)
+		}
+		s.pingResults[result.IP] = result
+	}
+	s.mu.Unlock()
 
 	return nil
 }
 
-// pingHost sends a single ping to a host.
-func (s *ARPScanner) pingHost(ctx context.Context, ip net.IP) {
-	var cmd *exec.Cmd
-	ipStr := ip.String()
-
-	switch runtime.GOOS {
-	case "darwin":
-		cmd = exec.CommandContext(ctx, "ping", "-c", "1", "-W", "100", ipStr)
-	case "linux":
-		cmd = exec.CommandContext(ctx, "ping", "-c", "1", "-W", "1", ipStr)
-	default:
-		cmd = exec.CommandContext(ctx, "ping", "-c", "1", "-W", "1", ipStr)
+// Close releases resources held by the ARPScanner.
+func (s *ARPScanner) Close() error {
+	if s.pinger != nil {
+		return s.pinger.Close()
 	}
-
-	// We don't care about the result, just populate the ARP cache
-	_ = cmd.Run()
+	return nil
 }
 
 // readARPTable reads the system ARP table.
@@ -500,6 +516,9 @@ func (s *ARPScanner) isInSubnet(ipStr string) bool {
 
 // enrichEntries adds OUI lookups, hostname resolution, and TTL-based OS guessing.
 func (s *ARPScanner) enrichEntries(ctx context.Context, entries []*ARPEntry) {
+	// Note: pingResults already populated by pingSweep, no lock needed for reading
+	pingResults := s.pingResults
+
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -527,54 +546,17 @@ func (s *ARPScanner) enrichEntries(ctx context.Context, entries []*ARPEntry) {
 			}
 		}(entry)
 
-		// TTL-based OS guess via ping
-		ttl := s.getTTL(ctx, entry.IP)
-		if ttl > 0 {
-			entry.TTL = ttl
-			entry.OSGuess = guessOSFromTTL(ttl)
+		// Use TTL from cached ping results (already collected during ping sweep)
+		if pr, ok := pingResults[entry.IP]; ok && pr.Reachable && pr.TTL > 0 {
+			entry.TTL = pr.TTL
+			entry.OSGuess = guessOSFromTTL(pr.TTL)
+			entry.ResponseTime = pr.RTT.Milliseconds()
 		}
 
 		newEntries[entry.IP] = entry
 	}
 
 	s.entries = newEntries
-}
-
-// getTTL gets the TTL from a ping response.
-func (s *ARPScanner) getTTL(ctx context.Context, ip string) int {
-	var cmd *exec.Cmd
-
-	pingCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
-	defer cancel()
-
-	switch runtime.GOOS {
-	case "darwin":
-		cmd = exec.CommandContext(pingCtx, "ping", "-c", "1", "-W", "1000", ip)
-	case "linux":
-		cmd = exec.CommandContext(pingCtx, "ping", "-c", "1", "-W", "1", ip)
-	default:
-		return 0
-	}
-
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-
-	// Parse TTL from output
-	// macOS: 64 bytes from 192.168.1.1: icmp_seq=0 ttl=64 time=1.234 ms
-	// Linux: 64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=1.23 ms
-	lines := strings.Split(string(output), "\n")
-	for _, line := range lines {
-		if strings.Contains(line, "ttl=") {
-			var ttl int
-			if _, err := fmt.Sscanf(line[strings.Index(line, "ttl="):], "ttl=%d", &ttl); err == nil {
-				return ttl
-			}
-		}
-	}
-
-	return 0
 }
 
 // guessOSFromTTL makes a rough OS guess based on default TTL values.
