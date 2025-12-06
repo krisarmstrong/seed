@@ -865,15 +865,25 @@ type DNSLookupResult struct {
 	Resolved []string `json:"resolved,omitempty"`
 }
 
+// DNSServerTestResult represents per-server DNS test results for the API.
+type DNSServerTestResult struct {
+	Server      string           `json:"server"`
+	Forward     *DNSLookupResult `json:"forward,omitempty"`
+	ForwardIpv6 *DNSLookupResult `json:"forwardIpv6,omitempty"`
+	Status      string           `json:"status"`
+	AvgTimeMs   int64            `json:"avgTimeMs"`
+}
+
 // DNSResponse represents the DNS test results for the API.
 type DNSResponse struct {
-	Server       string           `json:"server"`
-	Servers      []string         `json:"servers"` // All configured DNS servers
-	TestHostname string           `json:"testHostname"`
-	Forward      *DNSLookupResult `json:"forward,omitempty"`
-	ForwardIpv6  *DNSLookupResult `json:"forwardIpv6,omitempty"`
-	Reverse      *DNSLookupResult `json:"reverse,omitempty"`
-	ReverseIpv6  *DNSLookupResult `json:"reverseIpv6,omitempty"`
+	Server           string                 `json:"server"`
+	Servers          []string               `json:"servers"` // All configured DNS servers
+	TestHostname     string                 `json:"testHostname"`
+	Forward          *DNSLookupResult       `json:"forward,omitempty"`
+	ForwardIpv6      *DNSLookupResult       `json:"forwardIpv6,omitempty"`
+	Reverse          *DNSLookupResult       `json:"reverse,omitempty"`
+	ReverseIpv6      *DNSLookupResult       `json:"reverseIpv6,omitempty"`
+	PerServerResults []*DNSServerTestResult `json:"perServerResults,omitempty"`
 }
 
 // handleDNS performs DNS testing and returns results.
@@ -938,6 +948,38 @@ func (s *Server) handleDNS(w http.ResponseWriter, r *http.Request) {
 			Status:   string(result.ReverseIPv6.Status),
 			Error:    result.ReverseIPv6.Error,
 			Resolved: result.ReverseIPv6.Resolved,
+		}
+	}
+
+	// Map per-server results
+	if len(result.PerServerResults) > 0 {
+		for _, serverResult := range result.PerServerResults {
+			apiResult := &DNSServerTestResult{
+				Server:    serverResult.Server,
+				Status:    string(serverResult.Status),
+				AvgTimeMs: serverResult.AvgTimeMs,
+			}
+			if serverResult.Forward != nil {
+				apiResult.Forward = &DNSLookupResult{
+					Result:   serverResult.Forward.Result,
+					Time:     serverResult.Forward.TimeMs,
+					TimeMs:   serverResult.Forward.TimeMs,
+					Status:   string(serverResult.Forward.Status),
+					Error:    serverResult.Forward.Error,
+					Resolved: serverResult.Forward.Resolved,
+				}
+			}
+			if serverResult.ForwardIPv6 != nil {
+				apiResult.ForwardIpv6 = &DNSLookupResult{
+					Result:   serverResult.ForwardIPv6.Result,
+					Time:     serverResult.ForwardIPv6.TimeMs,
+					TimeMs:   serverResult.ForwardIPv6.TimeMs,
+					Status:   string(serverResult.ForwardIPv6.Status),
+					Error:    serverResult.ForwardIPv6.Error,
+					Resolved: serverResult.ForwardIPv6.Resolved,
+				}
+			}
+			resp.PerServerResults = append(resp.PerServerResults, apiResult)
 		}
 	}
 
