@@ -21,6 +21,7 @@ type Config struct {
 	Speedtest        SpeedtestConfig        `yaml:"speedtest"`
 	Thresholds       ThresholdsConfig       `yaml:"thresholds"`
 	Auth             AuthConfig             `yaml:"auth"`
+	Security         SecurityConfig         `yaml:"security"`
 }
 
 // ServerConfig contains HTTP server settings.
@@ -196,6 +197,15 @@ type AuthConfig struct {
 	JWTSecret           string        `yaml:"jwt_secret,omitempty"`
 }
 
+// SecurityConfig contains security settings for CORS and WebSocket origins.
+type SecurityConfig struct {
+	// AllowedOrigins specifies explicit origins allowed for CORS and WebSocket.
+	// If empty, defaults to RFC 1918 private network ranges (192.168.x.x, 10.x.x.x, 172.16-31.x.x).
+	// Use "*" to allow all origins (not recommended for production).
+	// Examples: ["http://192.168.1.100:8080", "https://netscope.local"]
+	AllowedOrigins []string `yaml:"allowed_origins"`
+}
+
 // DefaultConfig returns the default configuration.
 func DefaultConfig() *Config {
 	return &Config{
@@ -264,6 +274,9 @@ func DefaultConfig() *Config {
 			DefaultUsername:     "admin",
 			DefaultPasswordHash: "$2y$10$1w5ktZnNS0UxbOvHKH2.hu01jsPh2RjkszVsP.7jR5cOZYa4oAI52", // "netscope"
 			SessionTimeout:      24 * time.Hour,
+		},
+		Security: SecurityConfig{
+			AllowedOrigins: []string{}, // Empty = use RFC 1918 defaults
 		},
 	}
 }

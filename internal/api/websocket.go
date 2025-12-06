@@ -24,6 +24,16 @@ const (
 	maxMessageSize = 512
 )
 
+// configuredOrigins holds explicitly configured origins from config.
+// Empty slice means use RFC 1918 defaults. "*" means allow all.
+var configuredOrigins []string
+
+// SetAllowedOrigins configures the allowed WebSocket/CORS origins.
+// Called during server initialization with config values.
+func SetAllowedOrigins(origins []string) {
+	configuredOrigins = origins
+}
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -39,8 +49,33 @@ var upgrader = websocket.Upgrader{
 }
 
 // isAllowedWSOrigin checks if the WebSocket origin is allowed.
-// Allows localhost variants and private network IPs (RFC 1918) for local network use.
+// Priority: 1) Configured origins, 2) RFC 1918 defaults if no config.
 func isAllowedWSOrigin(origin string) bool {
+	// If explicit origins are configured, use them exclusively
+	if len(configuredOrigins) > 0 {
+		for _, allowed := range configuredOrigins {
+			// "*" allows all origins
+			if allowed == "*" {
+				return true
+			}
+			// Exact match
+			if origin == allowed {
+				return true
+			}
+			// Prefix match for patterns like "http://192.168."
+			if len(origin) >= len(allowed) && origin[:len(allowed)] == allowed {
+				return true
+			}
+		}
+		return false
+	}
+
+	// Default: Allow localhost and RFC 1918 private networks
+	return isRFC1918Origin(origin)
+}
+
+// isRFC1918Origin checks if origin is localhost or RFC 1918 private network.
+func isRFC1918Origin(origin string) bool {
 	allowedPatterns := []string{
 		"http://localhost",
 		"https://localhost",
