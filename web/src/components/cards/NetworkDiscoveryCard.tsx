@@ -71,10 +71,13 @@ interface NetworkDiscoveryCardProps {
 function formatLastSeen(dateStr: string): string {
   if (!dateStr) return 'Never';
   const date = new Date(dateStr);
+  // Check for invalid date or Go's zero time (year 1 or epoch)
+  if (isNaN(date.getTime()) || date.getFullYear() < 2000) return 'Never';
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffSec = Math.floor(diffMs / 1000);
 
+  if (diffSec < 0) return 'Never'; // Future date = invalid
   if (diffSec < 60) return 'Just now';
   if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
   if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;

@@ -94,6 +94,23 @@ func NewServer(cfg *config.Config, configPath string, netMgr *network.Manager) *
 		s.dnsTester.SetConfiguredServers(configuredServers)
 	}
 
+	// Initialize device discovery with configured additional subnets
+	if len(cfg.NetworkDiscovery.AdditionalSubnets) > 0 {
+		enabledCIDRs := make([]string, 0)
+		for _, subnet := range cfg.NetworkDiscovery.AdditionalSubnets {
+			if subnet.Enabled {
+				enabledCIDRs = append(enabledCIDRs, subnet.CIDR)
+			}
+		}
+		if len(enabledCIDRs) > 0 {
+			if err := s.deviceDiscovery.SetAdditionalSubnets(enabledCIDRs); err != nil {
+				log.Printf("Warning: Failed to set additional subnets: %v", err)
+			} else {
+				log.Printf("Configured %d additional subnets for scanning", len(enabledCIDRs))
+			}
+		}
+	}
+
 	s.wsHub = NewHub()
 	s.setupRoutes()
 

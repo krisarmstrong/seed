@@ -402,12 +402,19 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
       });
       if (response.ok) {
         const data = await response.json();
-        setSubnets(data.subnets || []);
+        setSubnets(Array.isArray(data) ? data : []);
       }
     } catch (err) {
       console.error('Failed to fetch subnets:', err);
     }
   }, []);
+
+  // Fetch subnets when drawer opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchSubnets();
+    }
+  }, [isOpen, fetchSubnets]);
 
   // Add a new subnet
   const addSubnet = async () => {
