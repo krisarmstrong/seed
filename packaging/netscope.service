@@ -1,0 +1,16 @@
+[Unit]
+Description=NetScope Network Diagnostic Tool
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/netscope --config /etc/netscope/netscope.yaml
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -139,32 +139,52 @@ jobs:
           go build -ldflags="-s -w -X main.version=${{ github.ref_name }}" \
             -o dist/netscope-linux-${{ matrix.arch }} ./cmd/netscope
 
-      - name: Create release package
+      - name: Create release packages
         run: |
+          # Create .tar.gz package
           mkdir -p release/netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}
-
-          # Copy NetScope binary
           cp dist/netscope-linux-${{ matrix.arch }} release/netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}/netscope
-
-          # Copy iperf3 binary
           cp bin/iperf3-linux-${{ matrix.arch }} release/netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}/iperf3
           chmod +x release/netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}/*
-
-          # Copy config
           cp -r configs release/netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}/
-
-          # Copy web assets
           cp -r web/dist release/netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}/web/
-
-          # Create archive
           cd release
           tar -czvf netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}.tar.gz netscope-${{ github.ref_name }}-linux-${{ matrix.arch }}
+          cd ..
 
-      - name: Upload release artifact
+          # Create .deb package
+          DEB_DIR="packaging/deb"
+          mkdir -p $DEB_DIR/DEBIAN
+          mkdir -p $DEB_DIR/usr/local/bin
+          mkdir -p $DEB_DIR/etc/netscope
+          mkdir -p $DEB_DIR/etc/systemd/system
+          mkdir -p $DEB_DIR/usr/share/netscope
+          
+          cp dist/netscope-linux-${{ matrix.arch }} $DEB_DIR/usr/local/bin/netscope
+          cp bin/iperf3-linux-${{ matrix.arch }} $DEB_DIR/usr/local/bin/iperf3
+          chmod +x $DEB_DIR/usr/local/bin/*
+          cp -r configs/* $DEB_DIR/etc/netscope/
+          cp -r web/dist $DEB_DIR/usr/share/netscope/web
+          cp packaging/netscope.service $DEB_DIR/etc/systemd/system/
+          
+          # Create control file
+          sed "s/__VERSION__/${{ github.ref_name }}/" packaging/control > $DEB_DIR/DEBIAN/control
+          sed -i "s/__ARCHITECTURE__/${{ matrix.arch }}/" $DEB_DIR/DEBIAN/control
+          
+          # Copy postinst script
+          cp packaging/postinst $DEB_DIR/DEBIAN/
+          chmod +x $DEB_DIR/DEBIAN/postinst
+
+          # Build .deb package
+          dpkg-deb --build $DEB_DIR release/netscope_${{ github.ref_name }}_${{ matrix.arch }}.deb
+
+      - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-linux-${{ matrix.arch }}
-          path: release/*.tar.gz
+          path: |
+            release/*.tar.gz
+            release/*.deb
 
   publish:
     name: Publish Release
@@ -185,8 +205,9 @@ jobs:
         run: |
           mkdir -p dist
           find artifacts -name "*.tar.gz" -exec cp {} dist/ \;
+          find artifacts -name "*.deb" -exec cp {} dist/ \;
           cd dist
-          sha256sum *.tar.gz > checksums.txt
+          sha256sum *.tar.gz *.deb > checksums.txt
           cat checksums.txt
 
       - name: Generate changelog
@@ -236,7 +257,24 @@ jobs:
 
             ## Installation
 
-            ### Linux AMD64
+            ### Debian/Ubuntu Package (Recommended)
+
+            **AMD64:**
+            ```bash
+            curl -LO https://github.com/krisarmstrong/netscope/releases/download/${{ github.ref_name }}/netscope_${{ github.ref_name }}_amd64.deb
+            sudo dpkg -i netscope_${{ github.ref_name }}_amd64.deb
+            ```
+
+            **ARM64:**
+            ```bash
+            curl -LO https://github.com/krisarmstrong/netscope/releases/download/${{ github.ref_name }}/netscope_${{ github.ref_name }}_arm64.deb
+            sudo dpkg -i netscope_${{ github.ref_name }}_arm64.deb
+            ```
+            The service will be automatically started and enabled on boot. You can check its status with `sudo systemctl status netscope`.
+
+            ### Manual Installation (tar.gz)
+
+            **Linux AMD64:**
             ```bash
             curl -LO https://github.com/krisarmstrong/netscope/releases/download/${{ github.ref_name }}/netscope-${{ github.ref_name }}-linux-amd64.tar.gz
             tar -xzf netscope-${{ github.ref_name }}-linux-amd64.tar.gz
@@ -244,7 +282,7 @@ jobs:
             sudo mv netscope iperf3 /usr/local/bin/
             ```
 
-            ### Linux ARM64 (Raspberry Pi, ARM servers)
+            **Linux ARM64 (Raspberry Pi, ARM servers):**
             ```bash
             curl -LO https://github.com/krisarmstrong/netscope/releases/download/${{ github.ref_name }}/netscope-${{ github.ref_name }}-linux-arm64.tar.gz
             tar -xzf netscope-${{ github.ref_name }}-linux-arm64.tar.gz
@@ -261,6 +299,7 @@ jobs:
             - `web/` - Frontend assets
           files: |
             dist/*.tar.gz
+            dist/*.deb
             dist/checksums.txt
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}

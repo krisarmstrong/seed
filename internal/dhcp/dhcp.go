@@ -63,11 +63,11 @@ type Transaction struct {
 
 // Monitor watches for DHCP transactions and records timing.
 type Monitor struct {
-	mu           sync.RWMutex
-	running      bool
+	mu            sync.RWMutex
+	running       bool
 	interfaceName string
-	lastTiming   *Timing
-	transactions map[uint32]*Transaction
+	lastTiming    *Timing
+	transactions  map[uint32]*Transaction
 }
 
 // NewMonitor creates a new DHCP monitor.
