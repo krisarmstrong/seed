@@ -73,7 +73,7 @@ jobs:
           file dist/iperf3-linux-${{ matrix.arch }}
 
       - name: Upload iperf3 artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: iperf3-linux-${{ matrix.arch }}
           path: dist/iperf3-linux-${{ matrix.arch }}
@@ -194,7 +194,7 @@ jobs:
 
 
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: release-linux-${{ matrix.arch }}
           path: |
