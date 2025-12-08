@@ -112,7 +112,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libpcap-dev
+          sudo apt-get install -y libpcap-dev rpm
           if [ "${{ matrix.arch }}" = "arm64" ]; then
             sudo apt-get install -y gcc-aarch64-linux-gnu
           fi
@@ -178,6 +178,21 @@ jobs:
           # Build .deb package
           dpkg-deb --build $DEB_DIR release/netscope_${{ github.ref_name }}_${{ matrix.arch }}.deb
 
+          # Create .rpm package
+          RPM_ARCH=${{ matrix.arch }}
+          if [ "${{ matrix.arch }}" = "amd64" ]; then
+            RPM_ARCH="x86_64"
+          elif [ "${{ matrix.arch }}" = "arm64" ]; then
+            RPM_ARCH="aarch64"
+          fi
+          
+          SPEC_FILE="packaging/netscope.spec"
+          sed "s/__VERSION__/${{ github.ref_name }}/" $SPEC_FILE > netscope.spec
+          sed -i "s/__ARCHITECTURE__/${{ matrix.arch }}/" netscope.spec
+
+          rpmbuild --define "_topdir $(pwd)/rpmbuild" --define "_rpmdir $(pwd)/release" -bb netscope.spec
+
+
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -185,6 +200,7 @@ jobs:
           path: |
             release/*.tar.gz
             release/*.deb
+            release/*.rpm
 
   publish:
     name: Publish Release
@@ -206,8 +222,9 @@ jobs:
           mkdir -p dist
           find artifacts -name "*.tar.gz" -exec cp {} dist/ \;
           find artifacts -name "*.deb" -exec cp {} dist/ \;
+          find artifacts -name "*.rpm" -exec cp {} dist/ \;
           cd dist
-          sha256sum *.tar.gz *.deb > checksums.txt
+          sha256sum *.tar.gz *.deb *.rpm > checksums.txt
           cat checksums.txt
 
       - name: Generate changelog
@@ -272,6 +289,21 @@ jobs:
             ```
             The service will be automatically started and enabled on boot. You can check its status with `sudo systemctl status netscope`.
 
+            ### Fedora/RHEL Package
+
+            **x86_64:**
+            ```bash
+            curl -LO https://github.com/krisarmstrong/netscope/releases/download/${{ github.ref_name }}/netscope-${{ github.ref_name }}.x86_64.rpm
+            sudo rpm -i netscope-${{ github.ref_name }}.x86_64.rpm
+            ```
+
+            **aarch64:**
+            ```bash
+            curl -LO https://github.com/krisarmstrong/netscope/releases/download/${{ github.ref_name }}/netscope-${{ github.ref_name }}.aarch64.rpm
+            sudo rpm -i netscope-${{ github.ref_name }}.aarch64.rpm
+            ```
+            The service will be automatically started and enabled on boot. You can check its status with `sudo systemctl status netscope`.
+
             ### Manual Installation (tar.gz)
 
             **Linux AMD64:**
@@ -300,6 +332,7 @@ jobs:
           files: |
             dist/*.tar.gz
             dist/*.deb
+            dist/*.rpm
             dist/checksums.txt
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
