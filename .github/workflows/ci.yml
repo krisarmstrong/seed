@@ -118,8 +118,8 @@ jobs:
           args: '-no-fail -fmt sarif -out gosec-results.sarif ./...'
 
       - name: Upload gosec results
+        if: ${{ always() && (github.repository_visibility == 'public' || env.ENABLE_CODEQL == 'true') }}
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
         with:
           sarif_file: gosec-results.sarif
 
