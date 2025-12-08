@@ -313,9 +313,9 @@ func (s *Server) handleInterface(w http.ResponseWriter, r *http.Request) {
 // LinkResponse represents the link status for an interface.
 type LinkResponse struct {
 	Interface  string   `json:"interface"`
-	LinkUp     bool     `json:"linkUp"`     // Deprecated: use Carrier && HasIP for accurate status
-	Carrier    bool     `json:"carrier"`    // Physical link/carrier detected (Layer 2)
-	HasIP      bool     `json:"hasIP"`      // Has routable IP address (Layer 3)
+	LinkUp     bool     `json:"linkUp"`  // Deprecated: use Carrier && HasIP for accurate status
+	Carrier    bool     `json:"carrier"` // Physical link/carrier detected (Layer 2)
+	HasIP      bool     `json:"hasIP"`   // Has routable IP address (Layer 3)
 	Speed      string   `json:"speed"`
 	Duplex     string   `json:"duplex"`
 	Advertised []string `json:"advertisedSpeeds"`
@@ -683,18 +683,18 @@ func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 		}
 		if result.Forward != nil {
 			dnsData["forward"] = map[string]interface{}{
-				"result":   result.Forward.Resolved,
-				"time":     result.Forward.Time.Milliseconds(),
-				"status":   result.Forward.Status,
-				"error":    result.Forward.Error,
+				"result": result.Forward.Resolved,
+				"time":   result.Forward.Time.Milliseconds(),
+				"status": result.Forward.Status,
+				"error":  result.Forward.Error,
 			}
 		}
 		if result.Reverse != nil {
 			dnsData["reverse"] = map[string]interface{}{
-				"result":   result.Reverse.Resolved,
-				"time":     result.Reverse.Time.Milliseconds(),
-				"status":   result.Reverse.Status,
-				"error":    result.Reverse.Error,
+				"result": result.Reverse.Resolved,
+				"time":   result.Reverse.Time.Milliseconds(),
+				"status": result.Reverse.Status,
+				"error":  result.Reverse.Error,
 			}
 		}
 		export.Cards["dns"] = dnsData
@@ -772,18 +772,18 @@ func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 	if s.iperfManager != nil {
 		if result := s.iperfManager.GetLastResult(); result != nil {
 			export.Cards["iperf"] = map[string]interface{}{
-				"bandwidth":    result.Bandwidth,
-				"transfer":     result.Transfer,
-				"retransmits":  result.Retransmits,
-				"jitter":       result.Jitter,
-				"lostPackets":  result.LostPackets,
-				"lostPercent":  result.LostPercent,
-				"protocol":     result.Protocol,
-				"direction":    result.Direction,
-				"duration":     result.Duration,
-				"server":       result.Server,
-				"port":         result.Port,
-				"timestamp":    result.Timestamp,
+				"bandwidth":   result.Bandwidth,
+				"transfer":    result.Transfer,
+				"retransmits": result.Retransmits,
+				"jitter":      result.Jitter,
+				"lostPackets": result.LostPackets,
+				"lostPercent": result.LostPercent,
+				"protocol":    result.Protocol,
+				"direction":   result.Direction,
+				"duration":    result.Duration,
+				"server":      result.Server,
+				"port":        result.Port,
+				"timestamp":   result.Timestamp,
 			}
 		}
 	}
@@ -1083,7 +1083,9 @@ func (s *Server) handleVLAN(w http.ResponseWriter, r *http.Request) {
 	var nativeVlan, voiceVlan *int
 	if s.discoveryManager != nil {
 		neighbors := s.discoveryManager.GetNeighbors()
-		for _, n := range neighbors {
+		// Use first neighbor for VLAN information
+		if len(neighbors) > 0 {
+			n := neighbors[0]
 			// LLDP can carry VLAN information in TLVs
 			if n.NativeVLAN > 0 {
 				v := n.NativeVLAN
@@ -1093,7 +1095,6 @@ func (s *Server) handleVLAN(w http.ResponseWriter, r *http.Request) {
 				v := n.VoiceVLAN
 				voiceVlan = &v
 			}
-			break // Use first neighbor
 		}
 	}
 
@@ -1116,7 +1117,7 @@ func (s *Server) handleVLAN(w http.ResponseWriter, r *http.Request) {
 type WiFiResponse struct {
 	SSID      string `json:"ssid"`
 	BSSID     string `json:"bssid"`
-	Signal    int    `json:"signal"`    // dBm
+	Signal    int    `json:"signal"` // dBm
 	Channel   int    `json:"channel"`
 	Frequency int    `json:"frequency"` // MHz
 	Security  string `json:"security"`
@@ -1124,9 +1125,9 @@ type WiFiResponse struct {
 
 // WiFiSettingsResponse represents the WiFi configuration settings.
 type WiFiSettingsResponse struct {
-	Interface       string   `json:"interface"`
-	AvailableWiFi   []string `json:"availableWifi"`
-	IsWireless      bool     `json:"isWireless"`
+	Interface     string   `json:"interface"`
+	AvailableWiFi []string `json:"availableWifi"`
+	IsWireless    bool     `json:"isWireless"`
 }
 
 // handleWiFiSettings handles GET/PUT for WiFi settings.
@@ -1616,20 +1617,20 @@ func (s *Server) updateTestsSettings(w http.ResponseWriter, r *http.Request) {
 
 // CustomTestResult represents the result of a single custom test.
 type CustomTestResult struct {
-	Name        string  `json:"name"`
-	Host        string  `json:"host"`
-	Port        int     `json:"port,omitempty"`
-	URL         string  `json:"url,omitempty"`
-	Success     bool    `json:"success"`
-	Latency     float64 `json:"latency"` // ms
-	Error       string  `json:"error,omitempty"`
-	Status      int     `json:"status,omitempty"`     // HTTP status code
-	TestStatus  string  `json:"testStatus,omitempty"` // success, warning, error
+	Name       string  `json:"name"`
+	Host       string  `json:"host"`
+	Port       int     `json:"port,omitempty"`
+	URL        string  `json:"url,omitempty"`
+	Success    bool    `json:"success"`
+	Latency    float64 `json:"latency"` // ms
+	Error      string  `json:"error,omitempty"`
+	Status     int     `json:"status,omitempty"`     // HTTP status code
+	TestStatus string  `json:"testStatus,omitempty"` // success, warning, error
 	// Extended ping fields
-	PacketLoss  float64 `json:"packetLoss,omitempty"`  // Percentage
-	Jitter      float64 `json:"jitter,omitempty"`      // ms
-	MinLatency  float64 `json:"minLatency,omitempty"`  // ms
-	MaxLatency  float64 `json:"maxLatency,omitempty"`  // ms
+	PacketLoss float64 `json:"packetLoss,omitempty"` // Percentage
+	Jitter     float64 `json:"jitter,omitempty"`     // ms
+	MinLatency float64 `json:"minLatency,omitempty"` // ms
+	MaxLatency float64 `json:"maxLatency,omitempty"` // ms
 	// Certificate fields
 	CertDaysLeft   int    `json:"certDaysLeft,omitempty"`   // Days until cert expires
 	CertStatus     string `json:"certStatus,omitempty"`     // success, warning, error
@@ -2161,23 +2162,23 @@ func getTLSVersionString(version uint16) string {
 
 // SpeedtestResponse represents the speedtest results for the API.
 type SpeedtestResponse struct {
-	Download     float64 `json:"download"`     // Mbps
-	Upload       float64 `json:"upload"`       // Mbps
-	Latency      float64 `json:"latency"`      // ms
-	Server       string  `json:"server"`       // Server name
-	Location     string  `json:"location"`     // Server location
-	Host         string  `json:"host"`         // Server host
-	Distance     float64 `json:"distance"`     // km
+	Download     float64 `json:"download"` // Mbps
+	Upload       float64 `json:"upload"`   // Mbps
+	Latency      float64 `json:"latency"`  // ms
+	Server       string  `json:"server"`   // Server name
+	Location     string  `json:"location"` // Server location
+	Host         string  `json:"host"`     // Server host
+	Distance     float64 `json:"distance"` // km
 	Timestamp    string  `json:"timestamp"`
 	TestDuration float64 `json:"testDuration"` // seconds
 }
 
 // SpeedtestStatusResponse represents the current speedtest status.
 type SpeedtestStatusResponse struct {
-	Running  bool                   `json:"running"`
-	Phase    string                 `json:"phase"`
-	Progress float64                `json:"progress"`
-	Last     *SpeedtestResponse     `json:"last,omitempty"`
+	Running  bool               `json:"running"`
+	Phase    string             `json:"phase"`
+	Progress float64            `json:"progress"`
+	Last     *SpeedtestResponse `json:"last,omitempty"`
 }
 
 // handleSpeedtest starts a speedtest in the background and returns immediately.

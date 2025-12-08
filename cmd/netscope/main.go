@@ -22,11 +22,12 @@ var version = "dev"
 // main starts the NetScope network discovery and monitoring application.
 // It initializes configuration from a YAML file, sets up logging, validates
 // network interface availability, and starts the API server with graceful shutdown handling.
-// 
+//
 // Command-line flags:
-//   -version: Display the application version and exit
-//   -config: Path to the YAML configuration file (default: "configs/netscope.yaml")
-//   -dev: Run in development mode using HTTP instead of HTTPS
+//
+//	-version: Display the application version and exit
+//	-config: Path to the YAML configuration file (default: "configs/netscope.yaml")
+//	-dev: Run in development mode using HTTP instead of HTTPS
 //
 // The application requires elevated privileges (root or CAP_NET_RAW) for ICMP ping operations
 // on Linux systems. It validates that a default network interface is configured and attempts
@@ -88,31 +89,23 @@ func main() {
 	if activeInterface == "" {
 		log.Println("Error: No active network interface found after multiple attempts.")
 		log.Println("Please check your network configuration and ensure at least one interface is up.")
-	// Log available interfaces grouped by type and status
-	type ifaceGroup struct {
-		Type   string
-		Status string
-	}
-	grouped := make(map[ifaceGroup][]string)
-	for _, iface := range netMgr.GetInterfaces() {
-		status := "down"
-		if iface.Up {
-			status = "up"
+		// Log available interfaces grouped by type and status
+		type ifaceGroup struct {
+			Type   string
+			Status string
 		}
-		key := ifaceGroup{Type: iface.Type, Status: status}
-		grouped[key] = append(grouped[key], iface.Name)
-	}
-	for group, names := range grouped {
-		log.Printf("Interfaces (%s, %s): %v", group.Type, group.Status, names)
-	}
-
-	// Log available interfaces
-	for _, iface := range netMgr.GetInterfaces() {
-		status := "down"
-		if iface.Up {
-			status = "up"
+		grouped := make(map[ifaceGroup][]string)
+		for _, iface := range netMgr.GetInterfaces() {
+			status := "down"
+			if iface.Up {
+				status = "up"
+			}
+			key := ifaceGroup{Type: string(iface.Type), Status: status}
+			grouped[key] = append(grouped[key], iface.Name)
 		}
-		log.Printf("  Interface: %s (%s) - %s", iface.Name, iface.Type, status)
+		for group, names := range grouped {
+			log.Printf("Interfaces (%s, %s): %v", group.Type, group.Status, names)
+		}
 	}
 
 	// Create and start the server
@@ -129,28 +122,18 @@ func main() {
 
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-
-	if err := server.Start(); err != nil {
-		log.Printf("Server error: %v", err)
-		close(done)
-	}
-
-	<-done
-	log.Println("NetScope stopped")
-	// Start the server
-	log.Printf("Starting server on port %d (HTTPS: %v)", cfg.Server.Port, cfg.Server.HTTPS)
-	if err := server.Start(); err != nil {
-		log.Printf("Server error: %v", err)
-		// Trigger graceful shutdown if server fails to start
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
 		if shutdownErr := server.Shutdown(ctx); shutdownErr != nil {
 			log.Printf("Error during shutdown: %v", shutdownErr)
 		}
 		close(done)
+	}()
+
+	// Start the server
+	log.Printf("Starting server on port %d (HTTPS: %v)", cfg.Server.Port, cfg.Server.HTTPS)
+	if err := server.Start(); err != nil {
+		log.Printf("Server error: %v", err)
 	}
 
 	<-done
 	log.Println("NetScope stopped")
-}
 }
