@@ -2,12 +2,8 @@
 package dns
 
 import (
-	"bufio"
 	"context"
 	"net"
-	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -453,117 +449,7 @@ func (t *Tester) Test(ctx context.Context) *TestResult {
 }
 
 // GetSystemDNS attempts to get the system's configured DNS servers.
+// Implementation is platform-specific (dns_linux.go, dns_darwin.go).
 func GetSystemDNS() []string {
-	switch runtime.GOOS {
-	case "darwin":
-		return getSystemDNSDarwin()
-	case "linux":
-		return getSystemDNSLinux()
-	default:
-		return []string{}
-	}
-}
-
-// getSystemDNSDarwin reads DNS servers from macOS using scutil.
-func getSystemDNSDarwin() []string {
-	servers := []string{}
-
-	cmd := exec.Command("scutil", "--dns")
-	output, err := cmd.Output()
-	if err != nil {
-		return servers
-	}
-
-	// Parse scutil output for nameserver entries
-	lines := strings.Split(string(output), "\n")
-	seen := make(map[string]bool)
-
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "nameserver[") {
-			// Format: "nameserver[0] : 192.168.1.1"
-			parts := strings.Split(line, ":")
-			if len(parts) >= 2 {
-				server := strings.TrimSpace(parts[1])
-				if server != "" && !seen[server] {
-					seen[server] = true
-					servers = append(servers, server)
-				}
-			}
-		}
-	}
-
-	return servers
-}
-
-// getSystemDNSLinux reads DNS servers from /etc/resolv.conf or resolvectl.
-func getSystemDNSLinux() []string {
-	servers := []string{}
-
-	file, err := os.Open("/etc/resolv.conf")
-	if err != nil {
-		return servers
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		// Skip comments
-		if strings.HasPrefix(line, "#") {
-			continue
-		}
-		// Parse nameserver lines
-		if strings.HasPrefix(line, "nameserver") {
-			parts := strings.Fields(line)
-			if len(parts) >= 2 {
-				servers = append(servers, parts[1])
-			}
-		}
-	}
-
-	// If only systemd-resolved stub is found, try to get real servers
-	if len(servers) == 1 && servers[0] == "127.0.0.53" {
-		if realServers := getSystemDNSResolvectl(); len(realServers) > 0 {
-			return realServers
-		}
-	}
-
-	return servers
-}
-
-// getSystemDNSResolvectl gets DNS servers from systemd-resolved via resolvectl.
-func getSystemDNSResolvectl() []string {
-	servers := []string{}
-	seen := make(map[string]bool)
-
-	// Try resolvectl first, then fall back to systemd-resolve
-	cmd := exec.Command("resolvectl", "status")
-	output, err := cmd.Output()
-	if err != nil {
-		cmd = exec.Command("systemd-resolve", "--status")
-		output, err = cmd.Output()
-		if err != nil {
-			return servers
-		}
-	}
-
-	lines := strings.Split(string(output), "\n")
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		// Look for "DNS Servers:" lines
-		if strings.HasPrefix(line, "DNS Servers:") {
-			// Format: "DNS Servers: 192.168.64.1 fe80::1c57:dcff:fea5:2564"
-			parts := strings.TrimPrefix(line, "DNS Servers:")
-			for _, server := range strings.Fields(parts) {
-				server = strings.TrimSpace(server)
-				if server != "" && !seen[server] {
-					seen[server] = true
-					servers = append(servers, server)
-				}
-			}
-		}
-	}
-
-	return servers
+	return getSystemDNSPlatform()
 }
