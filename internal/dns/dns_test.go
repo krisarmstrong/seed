@@ -480,17 +480,9 @@ func TestConcurrentDNSOperations(t *testing.T) {
 	}
 }
 
-func TestGetSystemDNSDarwin(t *testing.T) {
+func TestGetSystemDNSPlatform(t *testing.T) {
 	// Just verify it doesn't panic
-	servers := getSystemDNSDarwin()
-	if servers == nil {
-		t.Error("expected non-nil slice, even if empty")
-	}
-}
-
-func TestGetSystemDNSLinux(t *testing.T) {
-	// Just verify it doesn't panic
-	servers := getSystemDNSLinux()
+	servers := getSystemDNSPlatform()
 	if servers == nil {
 		t.Error("expected non-nil slice, even if empty")
 	}
