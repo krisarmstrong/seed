@@ -112,10 +112,13 @@ jobs:
 
       - name: Install build dependencies
         run: |
+          sudo dpkg --add-architecture arm64
           sudo apt-get update
-          sudo apt-get install -y libpcap-dev rpm
+          sudo apt-get install -y rpm
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            sudo apt-get install -y gcc-aarch64-linux-gnu
+            sudo apt-get install -y gcc-aarch64-linux-gnu libpcap-dev:arm64 libpcap0.8-dev:arm64 pkg-config
+          else
+            sudo apt-get install -y libpcap-dev pkg-config
           fi
 
       - name: Download iperf3 binary
@@ -137,6 +140,11 @@ jobs:
           CGO_ENABLED: 1
           CC: ${{ matrix.cc }}
         run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            export PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
+          else
+            export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
+          fi
           go build -ldflags="-s -w -X main.version=${{ github.ref_name }}" \
             -o dist/netscope-linux-${{ matrix.arch }} ./cmd/netscope
 
