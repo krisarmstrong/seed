@@ -194,6 +194,21 @@ func findIperf3Binary() (string, error) {
 		}
 	}
 
+	// Check common system paths explicitly (systemd services may have minimal PATH)
+	systemPaths := []string{
+		"/usr/local/bin/iperf3",
+		"/usr/bin/iperf3",
+		"/bin/iperf3",
+		"/usr/local/sbin/iperf3",
+		"/usr/sbin/iperf3",
+	}
+	for _, path := range systemPaths {
+		if _, err := os.Stat(path); err == nil {
+			iperfBinaryPath = path
+			return path, nil
+		}
+	}
+
 	// Fall back to system PATH
 	path, err := exec.LookPath("iperf3")
 	if err != nil {
