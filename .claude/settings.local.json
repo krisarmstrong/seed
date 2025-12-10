@@ -41,7 +41,8 @@
       "Bash(make deploy:*)",
       "Bash(timeout 10 ssh:*)",
       "Bash(git checkout:*)",
-      "Bash(git ls-tree:*)"
+      "Bash(git ls-tree:*)",
+      "Bash(route -n get:*)"
     ],
     "deny": [],
     "ask": []
