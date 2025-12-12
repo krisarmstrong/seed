@@ -3880,3 +3880,75 @@ func (s *Server) handleLogs(w http.ResponseWriter, r *http.Request) {
 		"lines": lines,
 	})
 }
+
+// handleDiscoveryProfile handles GET/PUT for the discovery profile.
+func (s *Server) handleDiscoveryProfile(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.getDiscoveryProfile(w, r)
+	case http.MethodPut:
+		s.setDiscoveryProfile(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) getDiscoveryProfile(w http.ResponseWriter, _ *http.Request) {
+	profile := s.discoveryService.GetProfile()
+	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+		"profile": profile,
+	})
+}
+
+func (s *Server) setDiscoveryProfile(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Profile string `json:"profile"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Convert string to DiscoveryProfile
+	profile := config.DiscoveryProfile(req.Profile)
+
+	// Validate profile
+	switch profile {
+	case config.ProfileStealth, config.ProfileStandard, config.ProfileFullScan, config.ProfileCustom:
+		// Valid profile
+	default:
+		http.Error(w, "Invalid profile: must be stealth, standard, full_scan, or custom", http.StatusBadRequest)
+		return
+	}
+
+	// Update the config
+	s.config.NetworkDiscovery.Profile = profile
+
+	// Apply the profile change to the running service
+	if err := s.discoveryService.SetProfile(profile); err != nil {
+		log.Printf("Failed to set discovery profile: %v", err)
+		http.Error(w, "Failed to apply profile", http.StatusInternalServerError)
+		return
+	}
+
+	// Save config to file
+	if err := s.config.Save(s.configPath); err != nil {
+		log.Printf("Warning: Failed to save config: %v", err)
+	}
+
+	sendJSONResponse(w, http.StatusOK, map[string]string{
+		"status":  "success",
+		"message": "Profile updated to " + string(profile),
+	})
+}
+
+// handleDiscoveryServiceStatus returns the current status of the discovery service.
+func (s *Server) handleDiscoveryServiceStatus(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	status := s.discoveryService.GetStatus()
+	sendJSONResponse(w, http.StatusOK, status)
+}

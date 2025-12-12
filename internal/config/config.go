@@ -38,6 +38,7 @@ type Config struct {
 	Thresholds       ThresholdsConfig       `yaml:"thresholds"`
 	Auth             AuthConfig             `yaml:"auth"`
 	Security         SecurityConfig         `yaml:"security"`
+	SNMP             SNMPConfig             `yaml:"snmp"`
 	FABOptions       FABOptionsConfig       `yaml:"fab_options"`
 	DisplayOptions   DisplayOptionsConfig   `yaml:"display_options"`
 }
@@ -120,16 +121,83 @@ type DiscoveryConfig struct {
 	Timeout  time.Duration `yaml:"timeout"`
 }
 
+// DiscoveryProfile defines preset discovery modes for ease of use.
+type DiscoveryProfile string
+
+const (
+	// ProfileStealth performs no active scanning - only passive listening (LLDP, CDP, DHCP).
+	// Safest for sensitive networks, generates zero noise.
+	ProfileStealth DiscoveryProfile = "stealth"
+
+	// ProfileStandard performs safe active discovery using ARP/ICMP on local subnet only.
+	// Recommended for most networks, low noise.
+	ProfileStandard DiscoveryProfile = "standard"
+
+	// ProfileFullScan performs aggressive discovery including port scans and additional subnets.
+	// High noise, may trigger IDS/IPS.
+	ProfileFullScan DiscoveryProfile = "full_scan"
+
+	// ProfileCustom allows fine-grained control over all discovery methods.
+	ProfileCustom DiscoveryProfile = "custom"
+)
+
 // NetworkDiscoveryConfig contains network device discovery settings.
 type NetworkDiscoveryConfig struct {
-	Enabled           bool           `yaml:"enabled"`            // Enable network discovery
-	ARPScanWorkers    int            `yaml:"arp_scan_workers"`   // Number of concurrent ping workers (default 50)
-	PingTimeout       time.Duration  `yaml:"ping_timeout"`       // Timeout for each ping (default 500ms)
-	ScanTimeout       time.Duration  `yaml:"scan_timeout"`       // Total scan timeout (default 30s)
-	AutoScan          bool           `yaml:"auto_scan"`          // Auto-scan on startup/interface change
-	ScanInterval      time.Duration  `yaml:"scan_interval"`      // Interval for auto-scan (0 = disabled)
-	OUIFilePath       string         `yaml:"oui_file_path"`      // Path to IEEE OUI file (oui.txt)
-	AdditionalSubnets []SubnetConfig `yaml:"additional_subnets"` // Additional subnets to scan
+	// Profile selects a preset discovery configuration.
+	// Options: "stealth", "standard", "full_scan", "custom"
+	Profile DiscoveryProfile `yaml:"profile"`
+
+	// CustomOptions are used only when Profile is "custom".
+	CustomOptions DiscoveryCustomOptions `yaml:"custom_options,omitempty"`
+
+	// Timing controls the "chattiness" of active scans.
+	Timing DiscoveryTiming `yaml:"timing"`
+
+	// AdditionalSubnets to scan in full_scan or custom mode.
+	AdditionalSubnets []SubnetConfig `yaml:"additional_subnets"`
+
+	// Legacy fields (kept for backward compatibility, will be deprecated)
+	Enabled        bool          `yaml:"enabled"`          // Enable network discovery
+	ARPScanWorkers int           `yaml:"arp_scan_workers"` // Number of concurrent workers
+	PingTimeout    time.Duration `yaml:"ping_timeout"`     // Timeout for each ping
+	ScanTimeout    time.Duration `yaml:"scan_timeout"`     // Total scan timeout
+	AutoScan       bool          `yaml:"auto_scan"`        // Auto-scan on startup
+	ScanInterval   time.Duration `yaml:"scan_interval"`    // Interval for auto-scan
+	OUIFilePath    string        `yaml:"oui_file_path"`    // Path to IEEE OUI file
+
+	// Fingerprinting enables OS/service detection.
+	Fingerprinting FingerprintingConfig `yaml:"fingerprinting,omitempty"`
+}
+
+// DiscoveryCustomOptions provides fine-grained control when Profile is "custom".
+type DiscoveryCustomOptions struct {
+	PassiveListen bool            `yaml:"passive_listen"` // LLDP, CDP, EDP, DHCP listening
+	ARPScan       bool            `yaml:"arp_scan"`       // ARP-based host discovery
+	ICMPScan      bool            `yaml:"icmp_scan"`      // ICMP ping sweep
+	PortScan      PortScanConfig  `yaml:"port_scan"`      // TCP/UDP port scanning
+	Traceroute    bool            `yaml:"traceroute"`     // Path discovery
+	SNMPQuery     bool            `yaml:"snmp_query"`     // SNMP device interrogation
+}
+
+// PortScanConfig controls port scanning behavior.
+type PortScanConfig struct {
+	Enabled  bool   `yaml:"enabled"`
+	TCPPorts string `yaml:"tcp_ports"` // Comma-separated ports or ranges (e.g., "22,80,443,8000-8100")
+	UDPPorts string `yaml:"udp_ports"` // Comma-separated ports or ranges
+}
+
+// DiscoveryTiming controls scan frequency and probe intervals.
+type DiscoveryTiming struct {
+	ProbeInterval  time.Duration `yaml:"probe_interval"`  // Time between sending probes (default 75ms)
+	RescanInterval time.Duration `yaml:"rescan_interval"` // Time between full rescans (default 10m)
+	Workers        int           `yaml:"workers"`         // Concurrent scan workers (default 50)
+}
+
+// FingerprintingConfig controls OS and service detection.
+type FingerprintingConfig struct {
+	Enabled       bool `yaml:"enabled"`        // Enable fingerprinting
+	OSDetection   bool `yaml:"os_detection"`   // TCP stack analysis for OS detection
+	ServiceProbes bool `yaml:"service_probes"` // Banner grabbing and service version detection
 }
 
 // SubnetConfig represents a configured subnet for network discovery.
@@ -319,6 +387,36 @@ type SecurityConfig struct {
 	AllowedOrigins []string `yaml:"allowed_origins"`
 }
 
+// SNMPConfig contains SNMP settings for device interrogation.
+type SNMPConfig struct {
+	// Communities is a list of SNMP v1/v2c community strings to try (read-only).
+	Communities []string `yaml:"communities"`
+
+	// V3Credentials for SNMP v3 authentication.
+	V3Credentials []SNMPv3Credential `yaml:"v3_credentials,omitempty"`
+
+	// Timeout for SNMP queries.
+	Timeout time.Duration `yaml:"timeout"`
+
+	// Retries for failed SNMP queries.
+	Retries int `yaml:"retries"`
+
+	// Port for SNMP queries (default 161).
+	Port int `yaml:"port"`
+}
+
+// SNMPv3Credential contains SNMP v3 authentication credentials.
+type SNMPv3Credential struct {
+	Name           string `yaml:"name"`            // Friendly name for this credential set
+	Username       string `yaml:"username"`        // Security name (user)
+	AuthProtocol   string `yaml:"auth_protocol"`   // "MD5", "SHA", "SHA256", "SHA512", or "" for noAuth
+	AuthPassword   string `yaml:"auth_password"`   // Authentication password
+	PrivProtocol   string `yaml:"priv_protocol"`   // "DES", "AES", "AES192", "AES256", or "" for noPriv
+	PrivPassword   string `yaml:"priv_password"`   // Privacy password
+	ContextName    string `yaml:"context_name"`    // Optional SNMP context
+	SecurityLevel  string `yaml:"security_level"`  // "noAuthNoPriv", "authNoPriv", "authPriv"
+}
+
 // DefaultConfig returns the default configuration.
 func DefaultConfig() *Config {
 	return &Config{
@@ -343,6 +441,27 @@ func DefaultConfig() *Config {
 			Timeout:  30 * time.Second,
 		},
 		NetworkDiscovery: NetworkDiscoveryConfig{
+			// New profile-based configuration (recommended)
+			Profile: ProfileStandard, // Safe default: ARP/ICMP on local subnet only
+			CustomOptions: DiscoveryCustomOptions{
+				PassiveListen: true,  // Always listen for LLDP/CDP
+				ARPScan:       true,  // ARP scan local subnet
+				ICMPScan:      true,  // ICMP ping sweep
+				PortScan:      PortScanConfig{Enabled: false},
+				Traceroute:    false,
+				SNMPQuery:     false, // Requires SNMP config
+			},
+			Timing: DiscoveryTiming{
+				ProbeInterval:  75 * time.Millisecond, // Time between probes
+				RescanInterval: 10 * time.Minute,      // Full rescan interval
+				Workers:        50,                    // Concurrent workers
+			},
+			Fingerprinting: FingerprintingConfig{
+				Enabled:       false, // Disabled by default
+				OSDetection:   false,
+				ServiceProbes: false,
+			},
+			// Legacy fields (for backward compatibility)
 			Enabled:           true,
 			ARPScanWorkers:    50,
 			PingTimeout:       500 * time.Millisecond,
@@ -351,6 +470,12 @@ func DefaultConfig() *Config {
 			ScanInterval:      0,                // Disabled by default
 			OUIFilePath:       "oui.txt",        // IEEE OUI file (download from https://standards-oui.ieee.org/oui/oui.txt)
 			AdditionalSubnets: []SubnetConfig{}, // No additional subnets by default
+		},
+		SNMP: SNMPConfig{
+			Communities: []string{"public"}, // Default read-only community
+			Timeout:     5 * time.Second,
+			Retries:     2,
+			Port:        161,
 		},
 		DNS: DNSConfig{
 			TestHostname: "google.com",
