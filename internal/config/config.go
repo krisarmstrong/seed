@@ -457,8 +457,11 @@ func Load(path string) (*Config, error) {
 }
 
 // Save writes configuration to a YAML file.
+// This method acquires a read lock to prevent data races during marshaling.
 func (c *Config) Save(path string) error {
+	c.mu.RLock()
 	data, err := yaml.Marshal(c)
+	c.mu.RUnlock()
 	if err != nil {
 		return err
 	}

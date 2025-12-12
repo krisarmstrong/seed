@@ -162,9 +162,17 @@ func (m *LinkMonitor) pollLoop() {
 				copy(callbacks, m.callbacks)
 				m.mu.Unlock()
 
-				// Notify callbacks
+				// Notify callbacks with panic recovery
 				for _, cb := range callbacks {
-					go cb(event)
+					go func(callback LinkStateCallback) {
+						defer func() {
+							if r := recover(); r != nil {
+								// Silently recover from panic in callback
+								// to prevent crashing the link monitor
+							}
+						}()
+						callback(event)
+					}(cb)
 				}
 			} else {
 				m.mu.Unlock()
