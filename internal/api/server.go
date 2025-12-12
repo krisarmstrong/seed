@@ -50,8 +50,9 @@ type Server struct {
 	mux              *http.ServeMux
 	netManager       *network.Manager
 	linkMonitor      *network.LinkMonitor
-	discoveryManager *discovery.Manager
-	deviceDiscovery  *discovery.DeviceDiscovery
+	discoveryManager *discovery.Manager         // Legacy: LLDP/CDP/EDP protocol capture
+	deviceDiscovery  *discovery.DeviceDiscovery // Legacy: device aggregation
+	discoveryService *discovery.Service         // New unified discovery orchestrator
 	dnsTester        *dns.Tester
 	dhcpMonitor      *dhcp.Monitor
 	gatewayTester    *gateway.Tester
@@ -87,6 +88,7 @@ func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.M
 		linkMonitor:      network.NewLinkMonitor(cfg.Interface.Default),
 		discoveryManager: discovery.NewManager(cfg.Interface.Default),
 		deviceDiscovery:  discovery.NewDeviceDiscovery(cfg.Interface.Default),
+		discoveryService: discovery.NewService(cfg, cfg.Interface.Default),
 		dnsTester:        dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
 		dhcpMonitor:      dhcp.NewMonitor(cfg.Interface.Default),
 		gatewayTester:    gateway.NewTester(gateway.DefaultThresholds()),
@@ -225,6 +227,8 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/devices/status", s.handleDevicesStatus)
 	s.mux.HandleFunc("/api/devices/settings", s.handleDevicesSettings)
 	s.mux.HandleFunc("/api/devices/subnets", s.handleDevicesSubnets)
+	s.mux.HandleFunc("/api/discovery/profile", s.handleDiscoveryProfile)
+	s.mux.HandleFunc("/api/discovery/service/status", s.handleDiscoveryServiceStatus)
 	s.mux.HandleFunc("/api/publicip", s.handlePublicIP)
 	s.mux.HandleFunc("/api/logs", s.handleLogs)
 
@@ -370,7 +374,16 @@ func (s *Server) Start() error {
 			s.config.Interface.Default, s.linkMonitor.GetState())
 	}
 
-	// Start discovery capture (requires root/CAP_NET_RAW)
+	// Start unified discovery service (applies profile-based configuration)
+	if err := s.discoveryService.Start(); err != nil {
+		log.Printf("Warning: Discovery service failed to start (may require root): %v", err)
+	} else {
+		status := s.discoveryService.GetStatus()
+		log.Printf("Discovery service started with profile '%s' (methods: %v)",
+			status.Profile, status.ActiveMethods)
+	}
+
+	// Legacy: Start protocol capture for backward compatibility
 	if err := s.discoveryManager.Start(); err != nil {
 		log.Printf("Warning: Discovery capture failed to start (may require root): %v", err)
 	} else {
@@ -560,6 +573,7 @@ func (s *Server) ensureSelfSignedCert() (certFile, keyFile string, err error) {
 func (s *Server) Shutdown(ctx context.Context) error {
 	s.wsHub.Shutdown()
 	s.linkMonitor.Stop()
+	s.discoveryService.Stop()
 	s.discoveryManager.Stop()
 	s.vlanTrafficMonitor.Stop()
 	s.loginRateLimiter.Stop()
