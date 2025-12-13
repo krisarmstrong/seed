@@ -110,3 +110,26 @@ export const GATEWAY_HELP: Record<string, string> = {
   Latency: "Round-trip time to gateway. Should be <1ms for local networks.",
   "Packet Loss": "Percentage of ping packets that didn't receive a response.",
 };
+
+export const THRESHOLD_HELP: Record<string, string> = {
+  "DNS Lookup":
+    "Time to resolve hostnames. Good: <50ms for local DNS, <100ms for public DNS. Warning indicates potential resolver issues.",
+  "Gateway Ping":
+    "Round-trip time to your default gateway (router). Good: <20ms for local LAN. High latency suggests network congestion or equipment issues.",
+  "Wi-Fi Signal":
+    "Signal strength in dBm (negative values). Good: >-50 (excellent), Warning: >-70 (good), below -70 is weak. Higher (less negative) is better.",
+  "Health Check: Ping":
+    "ICMP ping latency to configured targets. Adjust based on target distance - local servers should be <50ms, internet hosts may be higher.",
+  "Health Check: TCP":
+    "TCP connection time to configured ports. Includes SYN-ACK round trip. Good: <100ms for local services.",
+  "HTTP Total":
+    "Total time for complete HTTP request including DNS, TCP, TLS, and response. Good: <500ms for simple pages.",
+  "HTTP DNS":
+    "DNS resolution phase of HTTP request. Should be fast if using local resolver or cached results.",
+  "HTTP TCP":
+    "TCP handshake time within HTTP request. High values indicate network latency or congestion.",
+  "HTTP TLS":
+    "TLS/SSL handshake time. Includes certificate exchange and key negotiation. Affected by cipher strength.",
+  "HTTP TTFB":
+    "Time to First Byte - server processing time. High values indicate slow backend or database queries.",
+};

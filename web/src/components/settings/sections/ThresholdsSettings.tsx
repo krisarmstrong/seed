@@ -1,6 +1,9 @@
 import { CollapsibleSection } from "../../ui/CollapsibleSection";
 import { AutoSaveIndicator } from "./AutoSaveIndicator";
+import { Tooltip } from "../../ui/Tooltip";
+import { THRESHOLD_HELP } from "../../help/HelpContent";
 import { SettingsThresholds, SaveStatus } from "../../../types/settings";
+import { Info, SlidersHorizontal } from "../../ui/Icons";
 
 interface ThresholdsSettingsProps {
   thresholds: SettingsThresholds;
@@ -48,6 +51,7 @@ export function ThresholdsSettings({
     <CollapsibleSection
       title={
         <>
+          <SlidersHorizontal className="w-4 h-4" />
           Thresholds
           <AutoSaveIndicator status={thresholdsStatus} />
         </>
@@ -56,9 +60,14 @@ export function ThresholdsSettings({
       <div className="space-y-3">
         {/* DNS Thresholds */}
         <div className="p-3 bg-surface-base rounded border border-surface-border">
-          <span className="text-sm font-medium text-text-primary block mb-2">
-            DNS Lookup (ms)
-          </span>
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-sm font-medium text-text-primary">
+              DNS Lookup (ms)
+            </span>
+            <Tooltip content={THRESHOLD_HELP["DNS Lookup"]} position="top">
+              <Info className="w-3.5 h-3.5 text-text-muted hover:text-text-secondary cursor-help" />
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -87,9 +96,14 @@ export function ThresholdsSettings({
 
         {/* Gateway Thresholds */}
         <div className="p-3 bg-surface-base rounded border border-surface-border">
-          <span className="text-sm font-medium text-text-primary block mb-2">
-            Gateway Ping (ms)
-          </span>
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-sm font-medium text-text-primary">
+              Gateway Ping (ms)
+            </span>
+            <Tooltip content={THRESHOLD_HELP["Gateway Ping"]} position="top">
+              <Info className="w-3.5 h-3.5 text-text-muted hover:text-text-secondary cursor-help" />
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -118,9 +132,14 @@ export function ThresholdsSettings({
 
         {/* Wi-Fi Signal Thresholds */}
         <div className="p-3 bg-surface-base rounded border border-surface-border">
-          <span className="text-sm font-medium text-text-primary block mb-2">
-            Wi-Fi Signal (dBm)
-          </span>
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-sm font-medium text-text-primary">
+              Wi-Fi Signal (dBm)
+            </span>
+            <Tooltip content={THRESHOLD_HELP["Wi-Fi Signal"]} position="top">
+              <Info className="w-3.5 h-3.5 text-text-muted hover:text-text-secondary cursor-help" />
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-muted">Good (&gt;)</label>
@@ -149,9 +168,17 @@ export function ThresholdsSettings({
 
         {/* Health Check Ping Thresholds */}
         <div className="p-3 bg-surface-base rounded border border-surface-border">
-          <span className="text-sm font-medium text-text-primary block mb-2">
-            Health Check: Ping (ms)
-          </span>
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-sm font-medium text-text-primary">
+              Health Check: Ping (ms)
+            </span>
+            <Tooltip
+              content={THRESHOLD_HELP["Health Check: Ping"]}
+              position="top"
+            >
+              <Info className="w-3.5 h-3.5 text-text-muted hover:text-text-secondary cursor-help" />
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -184,9 +211,17 @@ export function ThresholdsSettings({
 
         {/* Health Check TCP Thresholds */}
         <div className="p-3 bg-surface-base rounded border border-surface-border">
-          <span className="text-sm font-medium text-text-primary block mb-2">
-            Health Check: TCP (ms)
-          </span>
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-sm font-medium text-text-primary">
+              Health Check: TCP (ms)
+            </span>
+            <Tooltip
+              content={THRESHOLD_HELP["Health Check: TCP"]}
+              position="top"
+            >
+              <Info className="w-3.5 h-3.5 text-text-muted hover:text-text-secondary cursor-help" />
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -225,9 +260,14 @@ export function ThresholdsSettings({
 
           {/* Total */}
           <div className="mb-3">
-            <span className="text-xs font-medium text-text-primary block mb-1">
-              Total Response Time
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-xs font-medium text-text-primary">
+                Total Response Time
+              </span>
+              <Tooltip content={THRESHOLD_HELP["HTTP Total"]} position="top">
+                <Info className="w-3 h-3 text-text-muted hover:text-text-secondary cursor-help" />
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -270,9 +310,14 @@ export function ThresholdsSettings({
 
           {/* DNS */}
           <div className="mb-3">
-            <span className="text-xs font-medium text-text-primary block mb-1">
-              DNS Lookup
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-xs font-medium text-text-primary">
+                DNS Lookup
+              </span>
+              <Tooltip content={THRESHOLD_HELP["HTTP DNS"]} position="top">
+                <Info className="w-3 h-3 text-text-muted hover:text-text-secondary cursor-help" />
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -311,9 +356,14 @@ export function ThresholdsSettings({
 
           {/* TCP */}
           <div className="mb-3">
-            <span className="text-xs font-medium text-text-primary block mb-1">
-              TCP Connect
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-xs font-medium text-text-primary">
+                TCP Connect
+              </span>
+              <Tooltip content={THRESHOLD_HELP["HTTP TCP"]} position="top">
+                <Info className="w-3 h-3 text-text-muted hover:text-text-secondary cursor-help" />
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -352,9 +402,14 @@ export function ThresholdsSettings({
 
           {/* TLS */}
           <div className="mb-3">
-            <span className="text-xs font-medium text-text-primary block mb-1">
-              TLS Handshake
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-xs font-medium text-text-primary">
+                TLS Handshake
+              </span>
+              <Tooltip content={THRESHOLD_HELP["HTTP TLS"]} position="top">
+                <Info className="w-3 h-3 text-text-muted hover:text-text-secondary cursor-help" />
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-xs text-text-muted">Good (&lt;)</label>
@@ -393,9 +448,14 @@ export function ThresholdsSettings({
 
           {/* TTFB */}
           <div>
-            <span className="text-xs font-medium text-text-primary block mb-1">
-              TTFB (Server Wait)
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-xs font-medium text-text-primary">
+                TTFB (Server Wait)
+              </span>
+              <Tooltip content={THRESHOLD_HELP["HTTP TTFB"]} position="top">
+                <Info className="w-3 h-3 text-text-muted hover:text-text-secondary cursor-help" />
+              </Tooltip>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-xs text-text-muted">Good (&lt;)</label>

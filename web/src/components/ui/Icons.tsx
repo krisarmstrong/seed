@@ -90,6 +90,8 @@ export {
   List,
   Grid3X3,
   Columns3,
+  // Settings icons
+  SlidersHorizontal,
 } from "lucide-react";
 
 // Icon size presets for consistency
