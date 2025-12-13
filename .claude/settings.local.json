@@ -51,7 +51,11 @@
       "Bash(go env:*)",
       "Bash(/Users/krisarmstrong/go/bin/golangci-lint run:*)",
       "Bash(gh label list:*)",
-      "Bash(gofmt:*)"
+      "Bash(gofmt:*)",
+      "Bash(timeout 30 ssh:*)",
+      "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope log -3 --oneline)",
+      "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope status --short)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []
