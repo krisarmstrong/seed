@@ -2,7 +2,22 @@ import { useState, memo, useCallback } from "react";
 import { Card, CardValue, CardRow, CardDivider, Status } from "../ui/Card";
 import { CollapsibleSection } from "../ui/CollapsibleSection";
 import { getAuthHeaders } from "../../hooks/useAuth";
-import { ScanSearch } from "../ui/Icons";
+import {
+  ScanSearch,
+  Terminal,
+  Globe,
+  Lock,
+  FileText,
+  Mail,
+  Database,
+  Printer,
+  Router,
+  Server,
+  Shield,
+  HardDrive,
+  Container,
+} from "../ui/Icons";
+import type { LucideIcon } from "lucide-react";
 
 export interface LLDPInfo {
   chassisId: string;
@@ -148,24 +163,24 @@ function MethodBadge({ method }: { method: DiscoveryMethod }) {
   );
 }
 
-// Icon mapping for device profile icons
-const ICON_SYMBOLS: Record<string, string> = {
-  ssh: "S",
-  telnet: "T",
-  web: "W",
-  "web-secure": "Ws",
-  ftp: "F",
-  mail: "M",
-  dns: "D",
-  snmp: "N",
-  database: "DB",
-  cache: "C",
-  printer: "P",
-  router: "R",
-  switch: "Sw",
-  firewall: "Fw",
-  storage: "St",
-  server: "Sv",
+// Icon mapping for device profile icons - maps service names to Lucide icons
+const SERVICE_ICONS: Record<string, LucideIcon> = {
+  ssh: Terminal,
+  telnet: Terminal,
+  web: Globe,
+  "web-secure": Lock,
+  ftp: FileText,
+  mail: Mail,
+  dns: Globe,
+  snmp: Server,
+  database: Database,
+  cache: Container,
+  printer: Printer,
+  router: Router,
+  switch: Server,
+  firewall: Shield,
+  storage: HardDrive,
+  server: Server,
 };
 
 function ProfileIcons({
@@ -179,15 +194,24 @@ function ProfileIcons({
 
   return (
     <div className="flex items-center gap-0.5 flex-wrap">
-      {icons.slice(0, 5).map((icon) => (
-        <span
-          key={icon}
-          className="px-1 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400"
-          title={`${icon}${deviceType ? ` (${deviceType})` : ""}`}
-        >
-          {ICON_SYMBOLS[icon] || icon[0]?.toUpperCase()}
-        </span>
-      ))}
+      {icons.slice(0, 5).map((icon) => {
+        const IconComponent = SERVICE_ICONS[icon];
+        return (
+          <span
+            key={icon}
+            className="p-1 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center"
+            title={`${icon}${deviceType ? ` (${deviceType})` : ""}`}
+          >
+            {IconComponent ? (
+              <IconComponent className="w-3 h-3" />
+            ) : (
+              <span className="text-[10px] font-medium">
+                {icon[0]?.toUpperCase()}
+              </span>
+            )}
+          </span>
+        );
+      })}
       {icons.length > 5 && (
         <span className="text-[10px] text-text-muted">+{icons.length - 5}</span>
       )}
