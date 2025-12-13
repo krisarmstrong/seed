@@ -8,10 +8,8 @@ import {
   AppearanceSettings,
   DiscoverySettings,
   DNSSettings,
-  FABOptionsSettings,
   HealthChecksSettings,
   PerformanceSettings,
-  TestOptionsSettings,
   ThresholdsSettings,
   WiFiSettings,
 } from "./sections";
@@ -224,25 +222,14 @@ export const SettingsDrawer = memo(function SettingsDrawer({
 
   // Get settings from context - single source of truth
   const {
-    fabOptions,
     displayOptions,
     iperfSettings,
     status: settingsStatus,
-    updateFabOptions,
     updateDisplayOptions,
     updateIperfSettings,
   } = useSettings();
 
   // Create setter wrappers that use context update methods
-  const setFabOptions = useCallback(
-    (updater: React.SetStateAction<typeof fabOptions>) => {
-      const newValue =
-        typeof updater === "function" ? updater(fabOptions) : updater;
-      updateFabOptions(newValue);
-    },
-    [fabOptions, updateFabOptions],
-  );
-
   const setDisplayOptions = useCallback(
     (updater: React.SetStateAction<typeof displayOptions>) => {
       const newValue =
@@ -379,8 +366,7 @@ export const SettingsDrawer = memo(function SettingsDrawer({
   const [thresholdsStatus, setThresholdsStatus] = useState<SaveStatus>("idle");
   const [testsStatus, setTestsStatus] = useState<SaveStatus>("idle");
   const [wifiStatus, setWifiStatus] = useState<SaveStatus>("idle");
-  // Status for fab, display, iperf comes from context (settingsStatus)
-  const fabStatus = settingsStatus.fab;
+  // Status for display, iperf comes from context (settingsStatus)
   const displayStatus = settingsStatus.display;
   const iperfStatus = settingsStatus.iperf;
 
@@ -914,15 +900,7 @@ export const SettingsDrawer = memo(function SettingsDrawer({
     };
   }, [wifiSettings.interface, saveWifiSettings]);
 
-  // FAB options, display options, and iperf settings auto-save is handled by SettingsContext
-
-  // Sync autoScanOnLink with networkDiscoverySettings.autoScan for backend compatibility
-  useEffect(() => {
-    setNetworkDiscoverySettings((prev) => ({
-      ...prev,
-      autoScan: fabOptions.autoScanOnLink,
-    }));
-  }, [fabOptions.autoScanOnLink]);
+  // Display options and iperf settings auto-save is handled by SettingsContext
 
   // Auto-save Network Discovery settings with debounce
   useEffect(() => {
@@ -1263,22 +1241,6 @@ export const SettingsDrawer = memo(function SettingsDrawer({
             thresholds={thresholds}
             setThresholds={setThresholds}
             thresholdsStatus={thresholdsStatus}
-          />
-
-          <TestOptionsSettings
-            testsSettings={testsSettings}
-            setTestsSettings={setTestsSettings}
-            fabOptions={fabOptions}
-            setFabOptions={setFabOptions}
-            testsStatus={testsStatus}
-            fabStatus={fabStatus}
-          />
-
-          {/* FAB Options Section */}
-          <FABOptionsSettings
-            fabOptions={fabOptions}
-            setFabOptions={setFabOptions}
-            fabStatus={fabStatus}
           />
 
           {/* Appearance Section */}
