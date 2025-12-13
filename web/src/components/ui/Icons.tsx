@@ -28,6 +28,7 @@ export {
   HardDrive,
   Laptop,
   Tablet,
+  Tv,
   // Navigation/action icons
   ChevronDown,
   ChevronRight,
@@ -63,6 +64,13 @@ export {
   SignalMedium,
   SignalZero,
   Zap,
+  // Service/protocol icons
+  Terminal,
+  FileText,
+  Mail,
+  Database,
+  Container,
+  ShieldOff,
   // System/misc
   Cpu,
   MemoryStick,
