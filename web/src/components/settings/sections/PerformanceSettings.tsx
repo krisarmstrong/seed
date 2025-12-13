@@ -36,19 +36,103 @@ export function PerformanceSettings({
       title={
         <div className="flex items-center gap-2">
           <Gauge className="w-4 h-4" />
-          <span>Performance Configuration</span>
+          <span>Performance</span>
           <AutoSaveIndicator status={iperfStatus} />
         </div>
       }
     >
       <div className="space-y-4">
-        <p className="text-xs text-text-muted">
-          Configure settings for performance tests. Enable/disable tests in Test
-          Options.
-        </p>
+        {/* Enable/Disable Toggles */}
+        <div className="space-y-2">
+          <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+            <div>
+              <span className="text-sm text-text-primary font-medium">
+                Enable Speedtest
+              </span>
+              <p className="text-xs text-text-muted">
+                Test internet speed via Speedtest.net
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              checked={testsSettings.runSpeedtest}
+              onChange={(e) =>
+                setTestsSettings((prev) => ({
+                  ...prev,
+                  runSpeedtest: e.target.checked,
+                }))
+              }
+              className="w-4 h-4"
+            />
+          </label>
+          <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+            <div>
+              <span className="text-sm text-text-primary font-medium">
+                Enable iPerf
+              </span>
+              <p className="text-xs text-text-muted">
+                Test LAN speed via iperf3
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              checked={testsSettings.runIperf}
+              onChange={(e) =>
+                setTestsSettings((prev) => ({
+                  ...prev,
+                  runIperf: e.target.checked,
+                }))
+              }
+              className="w-4 h-4"
+            />
+          </label>
+        </div>
+
+        {/* Auto-Run on Link Up */}
+        <div className="border-t border-surface-border pt-3">
+          <span className="text-xs text-text-muted font-medium">
+            Auto-Run on Link Up
+          </span>
+          <div className="mt-2 space-y-2">
+            <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+              <span className="text-sm text-text-primary">Speedtest</span>
+              <input
+                type="checkbox"
+                checked={testsSettings.speedtest.autoRunOnLink}
+                onChange={(e) =>
+                  setTestsSettings((prev) => ({
+                    ...prev,
+                    speedtest: {
+                      ...prev.speedtest,
+                      autoRunOnLink: e.target.checked,
+                    },
+                  }))
+                }
+                className="w-4 h-4"
+              />
+            </label>
+            <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+              <span className="text-sm text-text-primary">iPerf</span>
+              <input
+                type="checkbox"
+                checked={testsSettings.iperf.autoRunOnLink}
+                onChange={(e) =>
+                  setTestsSettings((prev) => ({
+                    ...prev,
+                    iperf: {
+                      ...prev.iperf,
+                      autoRunOnLink: e.target.checked,
+                    },
+                  }))
+                }
+                className="w-4 h-4"
+              />
+            </label>
+          </div>
+        </div>
 
         {/* Internet Speed (Speedtest) Subsection */}
-        <div className="border-b border-surface-border pb-4">
+        <div className="border-t border-surface-border pt-3">
           <h4 className="text-sm font-semibold text-text-primary mb-2 uppercase tracking-wide">
             Internet Speed (Speedtest)
           </h4>
