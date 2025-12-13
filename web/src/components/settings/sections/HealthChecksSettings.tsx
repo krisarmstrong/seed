@@ -176,6 +176,29 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
       }
     >
       <div className="space-y-4">
+        {/* Enable Toggle */}
+        <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+          <div>
+            <span className="text-sm text-text-primary font-medium">
+              Enable Health Checks
+            </span>
+            <p className="text-xs text-text-muted">
+              Test ping, TCP, UDP, and HTTP targets
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={testsSettings.runPerformance !== false}
+            onChange={(e) =>
+              setTestsSettings((prev) => ({
+                ...prev,
+                runPerformance: e.target.checked,
+              }))
+            }
+            className="w-4 h-4"
+          />
+        </label>
+
         {/* Ping Targets */}
         <div>
           <div className="flex items-center justify-between mb-2">
