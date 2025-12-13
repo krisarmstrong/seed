@@ -122,6 +122,50 @@ export function DiscoverySettings({
       }
     >
       <div className="space-y-4">
+        {/* Enable Toggle */}
+        <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+          <div>
+            <span className="text-sm text-text-primary font-medium">
+              Enable Discovery
+            </span>
+            <p className="text-xs text-text-muted">Scan network for devices</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={networkDiscoverySettings.enabled}
+            onChange={(e) =>
+              setNetworkDiscoverySettings((prev) => ({
+                ...prev,
+                enabled: e.target.checked,
+              }))
+            }
+            className="w-4 h-4"
+          />
+        </label>
+
+        {/* Auto-Scan on Link Up */}
+        <label className="flex items-center justify-between p-2.5 bg-surface-base rounded border border-surface-border">
+          <div>
+            <span className="text-sm text-text-primary font-medium">
+              Auto-Scan on Link Up
+            </span>
+            <p className="text-xs text-text-muted">
+              Start discovery when network connects
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={networkDiscoverySettings.autoScan}
+            onChange={(e) =>
+              setNetworkDiscoverySettings((prev) => ({
+                ...prev,
+                autoScan: e.target.checked,
+              }))
+            }
+            className="w-4 h-4"
+          />
+        </label>
+
         {/* Service Status Banner */}
         {serviceStatus && (
           <div
@@ -495,12 +539,12 @@ export function DiscoverySettings({
           </p>
         </div>
 
-        {/* Additional Subnets (only for full_scan or custom profile) */}
+        {/* Target Networks (only for full_scan or custom profile) */}
         {showSubnets && (
           <div className="border-t border-surface-border pt-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-text-muted font-medium">
-                Additional Subnets <AutoSaveIndicator status={subnetsStatus} />
+                Target Networks <AutoSaveIndicator status={subnetsStatus} />
               </span>
             </div>
             <p className="text-xs text-text-muted mb-2">
