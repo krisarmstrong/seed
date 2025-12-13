@@ -55,7 +55,19 @@
       "Bash(timeout 30 ssh:*)",
       "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope log -3 --oneline)",
       "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope status --short)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(timeout 60 ssh krisarmstrong@192.168.64.7 \"pkill -9 netscope 2>/dev/null; sleep 2; cd /home/krisarmstrong/netscope && rm -rf configs netscope.log && go build -o netscope ./cmd/netscope && sudo setcap cap_net_raw=+ep ./netscope && nohup ./netscope > netscope.log 2>&1 & sleep 5 && ps aux | grep ''[n]etscope'' && echo ''=== PASSWORD ==='' && grep ''Password:'' netscope.log\")",
+      "Bash(timeout 120 ssh krisarmstrong@192.168.64.7 \"cd /home/krisarmstrong/netscope && go mod tidy && go build -o netscope ./cmd/netscope && pkill -9 netscope 2>/dev/null; sleep 2 && rm -rf configs && sudo setcap cap_net_raw=+ep ./netscope && nohup ./netscope > netscope.log 2>&1 & sleep 5 && ps aux | grep ''[n]etscope'' && echo ''=== PASSWORD ==='' && grep ''Password:'' netscope.log\")",
+      "Bash(gh search repos:*)",
+      "Bash(for name in lumina clearpath netinsight)",
+      "Bash(do echo \"=== $name.com ===\" host \"$name.com\")",
+      "Bash(host:*)",
+      "Bash(for name in linkpulse netpulse wirepulse netprobe wireprobe linkprobe)",
+      "Bash(do echo \"=== $name ===\")",
+      "Bash(done)",
+      "Bash(go mod tidy:*)",
+      "Bash(git mv:*)",
+      "Bash(./luminetiq:*)"
     ],
     "deny": [],
     "ask": []
