@@ -38,6 +38,7 @@ type Config struct {
 	Thresholds       ThresholdsConfig       `yaml:"thresholds"`
 	Auth             AuthConfig             `yaml:"auth"`
 	Security         SecurityConfig         `yaml:"security"`
+	DHCP             DHCPConfig             `yaml:"dhcp"`
 	SNMP             SNMPConfig             `yaml:"snmp"`
 	FABOptions       FABOptionsConfig       `yaml:"fab_options"`
 	DisplayOptions   DisplayOptionsConfig   `yaml:"display_options"`
@@ -69,6 +70,7 @@ func (c *Config) RUnlock() {
 type ServerConfig struct {
 	Port             int    `yaml:"port"`
 	HTTPS            bool   `yaml:"https"`
+	HTTPRedirectPort int    `yaml:"http_redirect_port,omitempty"` // Port for HTTP→HTTPS redirect (0 = disabled, typically 80)
 	CertFile         string `yaml:"cert_file"`
 	KeyFile          string `yaml:"key_file"`
 	LogAccessToken   string `yaml:"log_access_token,omitempty"`   // Optional token required to read /api/logs
@@ -385,6 +387,19 @@ type SecurityConfig struct {
 	// Use "*" to allow all origins (not recommended for production).
 	// Examples: ["http://192.168.1.100:8080", "https://netscope.local"]
 	AllowedOrigins []string `yaml:"allowed_origins"`
+}
+
+// DHCPConfig contains DHCP monitoring and security settings.
+type DHCPConfig struct {
+	// RogueDetection configures rogue DHCP server detection.
+	RogueDetection RogueDetectionConfig `yaml:"rogue_detection"`
+}
+
+// RogueDetectionConfig contains settings for rogue DHCP server detection.
+type RogueDetectionConfig struct {
+	Enabled         bool     `yaml:"enabled"`
+	KnownServers    []string `yaml:"known_servers"`
+	AlertOnDetection bool     `yaml:"alert_on_detection"`
 }
 
 // SNMPConfig contains SNMP settings for device interrogation.
