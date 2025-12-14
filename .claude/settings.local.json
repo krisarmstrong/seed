@@ -97,7 +97,9 @@
       "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope add:*)",
       "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope commit -m \"$(cat <<''EOF''\nfeat(ui): add semantic typography system with responsive sizing\n\n- Add heading classes (heading-1 to heading-4, section-title)\n- Add body text classes (body-large, body, body-small, caption, label, code)\n- All headings now have responsive mobile/desktop sizes\n- Add TypeScript typography helpers in theme.ts\n- Document typography scale and spacing patterns in THEMING.md\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope commit:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(npx storybook@latest init:*)",
+      "Bash(npm run build-storybook:*)"
     ],
     "deny": [],
     "ask": []
