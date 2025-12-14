@@ -1585,6 +1585,189 @@ func (s *Server) handleDNS(w http.ResponseWriter, r *http.Request) {
 	sendJSONResponse(w, http.StatusOK, resp)
 }
 
+// RogueDHCPResponse represents rogue DHCP detection status.
+type RogueDHCPResponse struct {
+	Enabled  bool   `json:"enabled"`
+	Running  bool   `json:"running"`
+	Error    string `json:"error,omitempty"`
+	Message  string `json:"message,omitempty"`
+}
+
+// RogueServersResponse contains the list of detected DHCP servers.
+type RogueServersResponse struct {
+	Servers        []*dhcp.RogueServer `json:"servers"`
+	RogueCount     int                 `json:"rogueCount"`
+	AuthorizedCount int                `json:"authorizedCount"`
+}
+
+// RogueDHCPConfigResponse contains the rogue DHCP detector configuration.
+type RogueDHCPConfigResponse struct {
+	Enabled         bool     `json:"enabled"`
+	KnownServers    []string `json:"knownServers"`
+	AlertOnDetection bool     `json:"alertOnDetection"`
+	Interface       string   `json:"interface"`
+}
+
+// handleRogueDHCP starts/stops rogue DHCP detection (POST) or gets status (GET).
+func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// Get current status
+		resp := RogueDHCPResponse{
+			Enabled: s.config.DHCP.RogueDetection.Enabled,
+			Running: s.rogueDetector.IsRunning(),
+		}
+		sendJSONResponse(w, http.StatusOK, resp)
+
+	case http.MethodPost:
+		// Start/stop detection
+		var req struct {
+			Action string `json:"action"` // "start" or "stop"
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		resp := RogueDHCPResponse{
+			Enabled: s.config.DHCP.RogueDetection.Enabled,
+		}
+
+		switch strings.ToLower(req.Action) {
+		case "start":
+			if !s.config.DHCP.RogueDetection.Enabled {
+				resp.Error = "Rogue DHCP detection is disabled in configuration"
+				sendJSONResponse(w, http.StatusBadRequest, resp)
+				return
+			}
+			if s.rogueDetector.IsRunning() {
+				resp.Running = true
+				resp.Message = "Rogue DHCP detector already running"
+				sendJSONResponse(w, http.StatusOK, resp)
+				return
+			}
+			if err := s.rogueDetector.Start(); err != nil {
+				resp.Error = err.Error()
+				sendJSONResponse(w, http.StatusInternalServerError, resp)
+				return
+			}
+			resp.Running = true
+			resp.Message = "Rogue DHCP detector started"
+			sendJSONResponse(w, http.StatusOK, resp)
+
+		case "stop":
+			if !s.rogueDetector.IsRunning() {
+				resp.Running = false
+				resp.Message = "Rogue DHCP detector not running"
+				sendJSONResponse(w, http.StatusOK, resp)
+				return
+			}
+			if err := s.rogueDetector.Stop(); err != nil {
+				resp.Error = err.Error()
+				sendJSONResponse(w, http.StatusInternalServerError, resp)
+				return
+			}
+			resp.Running = false
+			resp.Message = "Rogue DHCP detector stopped"
+			sendJSONResponse(w, http.StatusOK, resp)
+
+		default:
+			http.Error(w, "Invalid action. Use 'start' or 'stop'", http.StatusBadRequest)
+		}
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleRogueDHCPServers returns detected DHCP servers (GET) or clears the list (DELETE).
+func (s *Server) handleRogueDHCPServers(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// Get all detected servers
+		servers := s.rogueDetector.GetDetectedServers()
+		rogues := s.rogueDetector.GetRogueServers()
+
+		resp := RogueServersResponse{
+			Servers:        servers,
+			RogueCount:     len(rogues),
+			AuthorizedCount: len(servers) - len(rogues),
+		}
+		sendJSONResponse(w, http.StatusOK, resp)
+
+	case http.MethodDelete:
+		// Clear detected servers list
+		s.rogueDetector.ClearDetectedServers()
+		sendJSONResponse(w, http.StatusOK, map[string]string{
+			"message": "Detected servers list cleared",
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleRogueDHCPConfig gets (GET) or updates (PUT) the rogue DHCP detector configuration.
+func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// Get current configuration
+		config := s.rogueDetector.GetConfig()
+		resp := RogueDHCPConfigResponse{
+			Enabled:         s.config.DHCP.RogueDetection.Enabled,
+			KnownServers:    config.KnownServers,
+			AlertOnDetection: config.AlertOnDetection,
+			Interface:       config.Interface,
+		}
+		sendJSONResponse(w, http.StatusOK, resp)
+
+	case http.MethodPut:
+		// Update configuration
+		var req struct {
+			Enabled         *bool    `json:"enabled,omitempty"`
+			KnownServers    []string `json:"knownServers,omitempty"`
+			AlertOnDetection *bool     `json:"alertOnDetection,omitempty"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		// Update config
+		s.config.Lock()
+		if req.Enabled != nil {
+			s.config.DHCP.RogueDetection.Enabled = *req.Enabled
+		}
+		if req.KnownServers != nil {
+			s.config.DHCP.RogueDetection.KnownServers = req.KnownServers
+			// Update detector's known servers
+			s.rogueDetector.UpdateKnownServers(req.KnownServers)
+		}
+		if req.AlertOnDetection != nil {
+			s.config.DHCP.RogueDetection.AlertOnDetection = *req.AlertOnDetection
+		}
+		s.config.Unlock()
+
+		// Save config
+		if err := s.config.Save(s.configPath); err != nil {
+			log.Printf("Failed to save config: %v", err)
+		}
+
+		// Return updated config
+		config := s.rogueDetector.GetConfig()
+		resp := RogueDHCPConfigResponse{
+			Enabled:         s.config.DHCP.RogueDetection.Enabled,
+			KnownServers:    config.KnownServers,
+			AlertOnDetection: config.AlertOnDetection,
+			Interface:       config.Interface,
+		}
+		sendJSONResponse(w, http.StatusOK, resp)
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 // GatewayResponse represents the gateway ping test results for the API.
 type GatewayResponse struct {
 	Gateway     string           `json:"gateway"`
@@ -3830,25 +4013,30 @@ func (s *Server) handlePublicIP(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleLogs returns the tail of the application log file for troubleshooting.
+// Requires JWT authentication (enforced by middleware).
+// Optionally requires an additional log access token for extra protection.
 func (s *Server) handleLogs(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Optional token gate
-	if s.logAccessToken != "" || s.requireLogToken {
+	// JWT authentication is enforced by the global auth middleware
+	// X-Username header is set by the middleware after validating the JWT
+
+	// OPTIONAL: Additional log access token for extra protection
+	if s.logAccessToken != "" {
 		headerName := s.logAccessHeader
 		if headerName == "" {
 			headerName = "X-Log-Token"
 		}
 		token := r.Header.Get(headerName)
 		if token == "" {
-			// allow query param fallback
-			token = r.URL.Query().Get("token")
+			// Allow query param fallback (deprecated, for backwards compatibility)
+			token = r.URL.Query().Get("log_token")
 		}
-		if token == "" || (s.logAccessToken != "" && token != s.logAccessToken) {
-			http.Error(w, "Log access requires token", http.StatusForbidden)
+		if token != s.logAccessToken {
+			http.Error(w, "Additional log access token required", http.StatusForbidden)
 			return
 		}
 	}
@@ -4018,8 +4206,9 @@ func (s *Server) handleSystemHealth(w http.ResponseWriter, r *http.Request) {
 
 // SetupStatusResponse represents the setup status response.
 type SetupStatusResponse struct {
-	NeedsSetup bool   `json:"needsSetup"`
-	Username   string `json:"username,omitempty"`
+	NeedsSetup        bool   `json:"needsSetup"`
+	Username          string `json:"username,omitempty"`
+	SuggestedPassword string `json:"suggestedPassword,omitempty"`
 }
 
 // handleSetupStatus handles GET /api/setup/status - returns whether initial setup is needed.
@@ -4034,10 +4223,20 @@ func (s *Server) handleSetupStatus(w http.ResponseWriter, r *http.Request) {
 	username := s.config.Auth.DefaultUsername
 	s.config.RUnlock()
 
-	sendJSONResponse(w, http.StatusOK, SetupStatusResponse{
+	response := SetupStatusResponse{
 		NeedsSetup: needsSetup,
 		Username:   username,
-	})
+	}
+
+	// Generate a suggested password if setup is needed
+	if needsSetup {
+		suggestedPassword, err := auth.GenerateSecurePassword(16)
+		if err == nil {
+			response.SuggestedPassword = suggestedPassword
+		}
+	}
+
+	sendJSONResponse(w, http.StatusOK, response)
 }
 
 // SetupCompleteRequest represents the initial setup request.
@@ -4102,6 +4301,9 @@ func (s *Server) handleSetupComplete(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Update the auth manager's in-memory password hash so login works immediately
+	s.authManager.UpdatePasswordHash(hashedPassword)
 
 	sendJSONResponse(w, http.StatusOK, map[string]string{
 		"status": "Setup completed successfully",
