@@ -1,6 +1,49 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Tailwind v4 CSS-first configuration */
+@theme {
+  /* Custom font sizes */
+  --font-size-2xs: 0.6875rem;
+  --font-size-2xs--line-height: 1rem;
+
+  /* Custom max-width */
+  --width-8xl: 88rem;
+
+  /* Custom max-height */
+  --max-height-modal: 85vh;
+
+  /* Font families */
+  --font-family-display: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Brand colors */
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-accent: var(--color-brand-accent);
+
+  /* Surface colors */
+  --color-surface-base: var(--color-surface-base);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-surface-border: var(--color-surface-border);
+  --color-surface-hover: var(--color-surface-hover);
+
+  /* Text colors */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-accent: var(--color-text-accent);
+  --color-text-inverse: var(--color-text-inverse);
+
+  /* Status colors */
+  --color-status-success: var(--color-status-success);
+  --color-status-warning: var(--color-status-warning);
+  --color-status-error: var(--color-status-error);
+  --color-status-info: var(--color-status-info);
+}
+
+/* Source detection for Tailwind */
+@source "../index.html";
+@source "./**/*.{js,ts,jsx,tsx}";
 
 /* NetScope Theme - WiFi Vigilante Color Scheme */
 
