@@ -83,7 +83,9 @@
       "Bash(kill:*)",
       "Bash(for issue in 512 513 514 515 516 517 518 519 520 522 523 524 525 526 527 531 533 537 538 541 543)",
       "Bash(do)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh repo edit:*)"
     ],
     "deny": [],
     "ask": []
