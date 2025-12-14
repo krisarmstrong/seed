@@ -222,6 +222,77 @@ jobs:
           echo "No sensitive files detected"
 
   # ===========================================================================
+  # Documentation Checks
+  # ===========================================================================
+  docs:
+    name: Documentation Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check markdown links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: "yes"
+          config-file: ".github/markdown-link-check.json"
+
+      - name: Lint markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            **/*.md
+            !**/node_modules/**
+            !**/dist/**
+
+      - name: Validate wiki navigation
+        run: |
+          echo "Checking wiki navigation links..."
+          WIKI_DIR="docs/wiki"
+
+          # Extract all wiki links from Home.md
+          HOME_LINKS=$(grep -oP '\]\(\K[^)]+' "$WIKI_DIR/Home.md" | grep -v '^http' | grep -v '^#' || true)
+
+          # Check each link exists as a .md file
+          for link in $HOME_LINKS; do
+            # Convert link to filename (e.g., "Intel-WiFi" -> "Intel-WiFi.md")
+            if [[ ! "$link" =~ \.md$ ]]; then
+              link="$link.md"
+            fi
+
+            if [[ ! -f "$WIKI_DIR/$link" ]]; then
+              echo "ERROR: Broken wiki link: $link (referenced in Home.md but file not found)"
+              exit 1
+            fi
+          done
+
+          echo "All wiki navigation links are valid"
+
+      - name: Check template references
+        run: |
+          echo "Verifying test report templates..."
+
+          # Templates should exist
+          TEMPLATES=(
+            "docs/templates/WIFI_TEST_REPORT.md"
+            "docs/templates/ETHERNET_TEST_REPORT.md"
+          )
+
+          for template in "${TEMPLATES[@]}"; do
+            if [[ ! -f "$template" ]]; then
+              echo "ERROR: Missing template: $template"
+              exit 1
+            fi
+          done
+
+          # Templates should be referenced in CONTRIBUTING.md
+          if ! grep -q "WIFI_TEST_REPORT\|ETHERNET_TEST_REPORT" CONTRIBUTING.md; then
+            echo "WARNING: Templates not referenced in CONTRIBUTING.md"
+          fi
+
+          echo "All test report templates are valid"
+
+  # ===========================================================================
   # Build Verification
   # ===========================================================================
   build:
