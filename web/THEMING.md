@@ -550,3 +550,179 @@ const methodColors = {
 ```
 
 These are intentionally colored to help users quickly distinguish protocol types.
+
+## Icon Sizing
+
+Use consistent icon sizes across the application. Import from the design system:
+
+```tsx
+import { icon } from '../styles/theme';
+
+// Standard sizes
+<Settings className={icon.size.xs} />   // 12px - with caption text
+<Settings className={icon.size.sm} />   // 16px - most common (body text)
+<Settings className={icon.size.md} />   // 20px - buttons, list items
+<Settings className={icon.size.lg} />   // 24px - card headers
+<Settings className={icon.size.xl} />   // 32px - empty states
+<Settings className={icon.size["2xl"]} /> // 48px - hero sections
+
+// Icon with text patterns
+<div className={icon.inline}>           // Icon + inline text
+  <Info className={icon.size.sm} /> Info
+</div>
+
+<div className={icon.leading}>          // Icon leading text block
+  <AlertCircle className={icon.size.md} />
+  <span>Warning message</span>
+</div>
+```
+
+### Icon Size Reference
+
+| Token           | Size | Tailwind    | Usage                         |
+| --------------- | ---- | ----------- | ----------------------------- |
+| `icon.size.xs`  | 12px | `w-3 h-3`   | Caption text, tiny indicators |
+| `icon.size.sm`  | 16px | `w-4 h-4`   | Body text, most common        |
+| `icon.size.md`  | 20px | `w-5 h-5`   | Buttons, list item icons      |
+| `icon.size.lg`  | 24px | `w-6 h-6`   | Card headers, prominent icons |
+| `icon.size.xl`  | 32px | `w-8 h-8`   | Empty states, feature icons   |
+| `icon.size.2xl` | 48px | `w-12 h-12` | Hero sections, large features |
+
+**Important**: Always use `icon.size.*` instead of raw `w-4 h-4`, `w-5 h-5`, etc.
+
+## Border & Radius
+
+### Border Radius
+
+Use consistent border radius tokens:
+
+```tsx
+import { radius } from '../styles/theme';
+
+<div className={radius.sm}>      // 2px - subtle rounding
+<div className={radius.default}> // 4px - inputs, small elements
+<div className={radius.md}>      // 6px - buttons
+<div className={radius.lg}>      // 8px - cards, panels
+<div className={radius.xl}>      // 12px - modals
+<div className={radius.full}>    // Pills, badges, avatars
+```
+
+### Border Tokens
+
+```tsx
+import { border } from '../styles/theme';
+
+// Border widths
+<div className={border.width.default}> // 1px border
+<div className={border.width.thick}>   // 2px border
+
+// Border colors (use with border width)
+<div className={cn(border.width.default, border.color.default)}> // Standard border
+<div className={cn(border.width.default, border.color.error)}>   // Error state
+
+// Common combinations
+<div className={border.card}>     // border border-surface-border
+<div className={border.divider}>  // border-t border-surface-border
+```
+
+### Border Reference
+
+| Token            | Tailwind Classes                 | Usage            |
+| ---------------- | -------------------------------- | ---------------- |
+| `radius.sm`      | `rounded-sm`                     | Subtle rounding  |
+| `radius.default` | `rounded`                        | Inputs, badges   |
+| `radius.md`      | `rounded-md`                     | Buttons          |
+| `radius.lg`      | `rounded-lg`                     | Cards, panels    |
+| `radius.xl`      | `rounded-xl`                     | Modals, drawers  |
+| `radius.full`    | `rounded-full`                   | Pills, avatars   |
+| `border.card`    | `border border-surface-border`   | Card borders     |
+| `border.divider` | `border-t border-surface-border` | Section dividers |
+
+## Layout Patterns
+
+Use semantic layout tokens instead of repeating flex/grid patterns:
+
+```tsx
+import { layout } from '../styles/theme';
+
+// Flex utilities
+<div className={layout.flex.center}>   // flex items-center justify-center
+<div className={layout.flex.between}>  // flex items-center justify-between
+<div className={layout.flex.col}>      // flex flex-col
+<div className={layout.flex.colCenter}> // flex flex-col items-center justify-center
+
+// Grid layouts
+<div className={layout.grid.cards}>     // Responsive 1-2-3-4 col grid
+<div className={layout.grid.cardsWide}> // 1-3 col grid
+<div className={layout.grid.form2col}>  // 2 column form grid
+<div className={layout.grid.form4col}>  // 2-4 column responsive form grid
+<div className={layout.grid.data2col}>  // Data display (labels + values)
+<div className={layout.grid.data3col}>  // 3 column data grid
+
+// Inline patterns (horizontal items)
+<div className={layout.inline.tight}>      // gap-1
+<div className={layout.inline.default}>    // gap-2
+<div className={layout.inline.comfortable}> // gap-3
+<div className={layout.inline.spacious}>   // gap-4
+<div className={layout.inline.wrap}>       // flex-wrap gap-2
+
+// Stack patterns (vertical items)
+<div className={layout.stack.tight}>      // flex-col gap-1
+<div className={layout.stack.default}>    // flex-col gap-2
+<div className={layout.stack.comfortable}> // flex-col gap-3
+<div className={layout.stack.spacious}>   // flex-col gap-4
+```
+
+### Layout Reference
+
+| Token                   | Tailwind Classes                                                      | Usage                 |
+| ----------------------- | --------------------------------------------------------------------- | --------------------- |
+| `layout.flex.center`    | `flex items-center justify-center`                                    | Centering content     |
+| `layout.flex.between`   | `flex items-center justify-between`                                   | Header with actions   |
+| `layout.grid.cards`     | `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4` | Dashboard cards       |
+| `layout.grid.form2col`  | `grid grid-cols-2 gap-2`                                              | Threshold inputs      |
+| `layout.inline.default` | `flex items-center gap-2`                                             | Button groups, badges |
+| `layout.stack.default`  | `flex flex-col gap-2`                                                 | Form fields           |
+
+## Complete Token Quick Reference
+
+### When to Use What
+
+| Pattern          | Instead of                   | Use Token                     |
+| ---------------- | ---------------------------- | ----------------------------- |
+| Text color       | `text-white`, `text-gray-*`  | `text-text-*`                 |
+| Background       | `bg-white`, `bg-gray-*`      | `bg-surface-*`                |
+| Status colors    | `text-red-*`, `text-green-*` | `text-status-*`               |
+| Icon dimensions  | `w-4 h-4`, `w-5 h-5`         | `icon.size.*`                 |
+| Border radius    | `rounded-lg`, `rounded-md`   | `radius.*`                    |
+| Vertical spacing | `space-y-2`, `space-y-4`     | `stack-*` or `layout.stack.*` |
+| Horizontal gaps  | `gap-2`, `gap-3`             | `layout.inline.*`             |
+| Responsive grid  | `grid grid-cols-1 sm:...`    | `layout.grid.*`               |
+| Buttons          | Raw `px-*` `py-*` classes    | `buttonClass()` or `button.*` |
+| Inputs           | Raw `px-*` `py-*` classes    | `inputClass()` or `input.*`   |
+| Card wrapper     | `rounded-lg border bg-*`     | `cardClass()` or `card.*`     |
+| Modal overlay    | `fixed inset-0 bg-black/50`  | `modal.overlay`               |
+
+### ESLint Enforcement
+
+The following patterns are flagged by ESLint:
+
+- `text-white` → Use `text-text-inverse`
+- `text-black` → Use `text-text-primary`
+- `bg-white` (not opacity) → Use `bg-surface-raised`
+- `bg-black` (not opacity) → Use design tokens
+- `text-gray-*` → Use `text-text-*` tokens
+- `bg-gray-*` → Use `bg-surface-*` tokens
+
+### Migration Checklist
+
+When refactoring existing components:
+
+1. ✅ Replace hardcoded colors with design tokens
+2. ✅ Replace `w-* h-*` icon sizes with `icon.size.*`
+3. ✅ Replace `rounded-*` with `radius.*` tokens
+4. ✅ Replace `flex items-center gap-*` with `layout.inline.*`
+5. ✅ Replace `flex flex-col gap-*` with `layout.stack.*`
+6. ✅ Replace `space-y-*` with `stack-*` or `section-gap-*`
+7. ✅ Replace raw `px-* py-*` on buttons/inputs with helper functions
+8. ✅ Replace responsive grid patterns with `layout.grid.*`
