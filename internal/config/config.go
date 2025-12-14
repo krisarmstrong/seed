@@ -387,6 +387,9 @@ type SecurityConfig struct {
 	// Use "*" to allow all origins (not recommended for production).
 	// Examples: ["http://192.168.1.100:8080", "https://netscope.local"]
 	AllowedOrigins []string `yaml:"allowed_origins"`
+
+	// VulnerabilityScanning configures CVE vulnerability scanning for discovered devices.
+	VulnerabilityScanning VulnerabilityScanConfig `yaml:"vulnerability_scanning"`
 }
 
 // DHCPConfig contains DHCP monitoring and security settings.
@@ -400,6 +403,15 @@ type RogueDetectionConfig struct {
 	Enabled         bool     `yaml:"enabled"`
 	KnownServers    []string `yaml:"known_servers"`
 	AlertOnDetection bool     `yaml:"alert_on_detection"`
+}
+
+// VulnerabilityScanConfig contains settings for CVE vulnerability scanning.
+type VulnerabilityScanConfig struct {
+	Enabled           bool   `yaml:"enabled"`
+	CVEDatabase       string `yaml:"cve_database"`        // "nvd" or "local"
+	NVDAPIKey         string `yaml:"nvd_api_key"`         // Optional NVD API key
+	UpdateInterval    int    `yaml:"update_interval"`     // Seconds between updates
+	SeverityThreshold string `yaml:"severity_threshold"`   // "low", "medium", "high", "critical"
 }
 
 // SNMPConfig contains SNMP settings for device interrogation.
