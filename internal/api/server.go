@@ -55,6 +55,7 @@ type Server struct {
 	discoveryService *discovery.Service         // New unified discovery orchestrator
 	dnsTester        *dns.Tester
 	dhcpMonitor      *dhcp.Monitor
+	rogueDetector    *dhcp.RogueDetector
 	gatewayTester    *gateway.Tester
 	vlanManager        *vlan.Manager
 	vlanTrafficMonitor *vlan.TrafficMonitor
@@ -91,6 +92,11 @@ func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.M
 		discoveryService: discovery.NewService(cfg, cfg.Interface.Default),
 		dnsTester:        dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
 		dhcpMonitor:      dhcp.NewMonitor(cfg.Interface.Default),
+		rogueDetector:    dhcp.NewRogueDetector(&dhcp.RogueDetectorConfig{
+			Interface:       cfg.Interface.Default,
+			KnownServers:    cfg.DHCP.RogueDetection.KnownServers,
+			AlertOnDetection: cfg.DHCP.RogueDetection.AlertOnDetection,
+		}),
 		gatewayTester:    gateway.NewTester(gateway.DefaultThresholds()),
 		vlanManager:        vlan.NewManager(cfg.Interface.Default),
 		vlanTrafficMonitor: vlan.NewTrafficMonitor(cfg.Interface.Default),
@@ -205,6 +211,9 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/discovery/traceroute", s.handleTraceroute)
 	s.mux.HandleFunc("/api/discovery/portscan", s.handlePortScan)
 	s.mux.HandleFunc("/api/dns", s.handleDNS)
+	s.mux.HandleFunc("/api/dhcp/rogue", s.handleRogueDHCP)
+	s.mux.HandleFunc("/api/dhcp/rogue/servers", s.handleRogueDHCPServers)
+	s.mux.HandleFunc("/api/dhcp/rogue/config", s.handleRogueDHCPConfig)
 	s.mux.HandleFunc("/api/gateway", s.handleGateway)
 	s.mux.HandleFunc("/api/vlan", s.handleVLAN)
 	s.mux.HandleFunc("/api/vlan/traffic", s.handleVLANTraffic)
@@ -250,6 +259,34 @@ func (s *Server) setupRoutes() {
 		log.Printf("Serving frontend from embedded filesystem (embedded=%v)", web.IsEmbedded())
 		s.mux.Handle("/", spaHandler(http.FS(frontendFS)))
 	}
+}
+
+// securityHeadersMiddleware adds security headers to all responses.
+func securityHeadersMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// HSTS (HTTP Strict Transport Security) - only set over HTTPS
+		if r.TLS != nil {
+			// max-age=31536000 (1 year), includeSubDomains
+			w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		}
+
+		// Prevent clickjacking
+		w.Header().Set("X-Frame-Options", "DENY")
+
+		// Prevent MIME sniffing
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+
+		// XSS protection (legacy header, but doesn't hurt)
+		w.Header().Set("X-XSS-Protection", "1; mode=block")
+
+		// Referrer policy
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+
+		// Content Security Policy - allow inline styles/scripts for the SPA
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss:")
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 // corsMiddleware adds CORS headers with origin validation.
@@ -355,8 +392,8 @@ func spaHandler(fsys http.FileSystem) http.Handler {
 func (s *Server) Start() error {
 	addr := fmt.Sprintf(":%d", s.config.Server.Port)
 
-	// Apply CORS middleware then auth middleware
-	handler := corsMiddleware(s.authManager.Middleware(s.mux))
+	// Apply middleware stack: security headers → CORS → auth
+	handler := securityHeadersMiddleware(corsMiddleware(s.authManager.Middleware(s.mux)))
 
 	s.httpServer = &http.Server{
 		Addr:         addr,
@@ -404,6 +441,10 @@ func (s *Server) Start() error {
 	}
 
 	if s.config.Server.HTTPS {
+		// Start HTTP→HTTPS redirect server if configured
+		if s.config.Server.HTTPRedirectPort > 0 {
+			go s.startHTTPRedirect(s.config.Server.HTTPRedirectPort)
+		}
 		return s.startHTTPS()
 	}
 	return s.startHTTP()
@@ -413,6 +454,43 @@ func (s *Server) Start() error {
 func (s *Server) startHTTP() error {
 	log.Printf("Starting HTTP server on %s", s.httpServer.Addr)
 	return s.httpServer.ListenAndServe()
+}
+
+// startHTTPRedirect starts an HTTP server that redirects all requests to HTTPS.
+func (s *Server) startHTTPRedirect(port int) {
+	redirectHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Build HTTPS URL preserving the host and path
+		host := r.Host
+		// Remove port from host if present (to avoid localhost:80 → https://localhost:80:8443)
+		if colonPos := strings.LastIndex(host, ":"); colonPos != -1 {
+			host = host[:colonPos]
+		}
+
+		// If HTTPS is on standard port 443, don't include it in URL
+		httpsPort := s.config.Server.Port
+		var httpsURL string
+		if httpsPort == 443 {
+			httpsURL = fmt.Sprintf("https://%s%s", host, r.RequestURI)
+		} else {
+			httpsURL = fmt.Sprintf("https://%s:%d%s", host, httpsPort, r.RequestURI)
+		}
+
+		http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
+	})
+
+	addr := fmt.Sprintf(":%d", port)
+	log.Printf("Starting HTTP→HTTPS redirect server on %s", addr)
+
+	redirectServer := &http.Server{
+		Addr:         addr,
+		Handler:      redirectHandler,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+	}
+
+	if err := redirectServer.ListenAndServe(); err != nil {
+		log.Printf("HTTP redirect server error: %v", err)
+	}
 }
 
 // startHTTPS starts the server in HTTPS mode.
