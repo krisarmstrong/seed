@@ -155,7 +155,7 @@ jobs:
           govulncheck ./...
 
       - name: Run gosec
-        uses: securego/gosec@v2.22.1
+        uses: securego/gosec@v2.22.11
         with:
           args: "-no-fail -fmt sarif -out gosec-results.sarif ./..."
 

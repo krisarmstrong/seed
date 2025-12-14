@@ -30,7 +30,7 @@
         build-iperf3 build-iperf3-linux build-iperf3-linux-amd64 build-iperf3-linux-arm64 build-iperf3-all \
         build-linux-amd64 build-linux-arm64 build-linux-docker \
         clean clean-all test test-backend test-frontend test-coverage \
-        lint lint-backend lint-frontend \
+        lint lint-backend lint-frontend fmt fmt-frontend fmt-all \
         run dev dev-frontend \
         deploy smoke-test smoke-test-local \
         deps deps-update logs logs-100 help
@@ -301,7 +301,7 @@ test-coverage: ## Generate coverage report
 	@echo "Coverage report: coverage.html"
 
 # =============================================================================
-# Linting
+# Linting & Formatting
 # =============================================================================
 
 # Run all linters
@@ -314,6 +314,19 @@ lint-backend: ## Run Go linter
 # ESLint with TypeScript rules
 lint-frontend: ## Run frontend linter
 	cd web && npm run lint
+
+# Format Go code
+fmt: ## Format Go code with gofmt
+	gofmt -w -s .
+	@echo "Go code formatted"
+
+# Format frontend code
+fmt-frontend: ## Format frontend code with Prettier
+	cd web && npx prettier --write .
+	@echo "Frontend code formatted"
+
+# Format all code
+fmt-all: fmt fmt-frontend ## Format all code (Go + frontend)
 
 # =============================================================================
 # Cleanup
