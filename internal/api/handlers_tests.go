@@ -157,15 +157,7 @@ func (s *Server) handleDNS(w http.ResponseWriter, r *http.Request) {
 	sendJSONResponse(w, http.StatusOK, resp)
 }
 
-
-
-
-
-
-
-
 // SetMTURequest represents the request to set interface MTU.
-
 
 // TestsSettingsResponse represents the custom tests configuration.
 type TestsSettingsResponse struct {

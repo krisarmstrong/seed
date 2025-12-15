@@ -54,11 +54,11 @@ const (
 // monitoring data and broadcasts card updates to all connected WebSocket clients.
 //
 // The loop runs indefinitely until the WebSocket hub signals shutdown. It:
-//   1. Wakes every broadcastInterval (5 seconds)
-//   2. Checks if any clients are connected (skips work if none)
-//   3. Collects data from all card collectors
-//   4. Broadcasts updates via the WebSocket hub
-//   5. Returns to sleep until next interval
+//  1. Wakes every broadcastInterval (5 seconds)
+//  2. Checks if any clients are connected (skips work if none)
+//  3. Collects data from all card collectors
+//  4. Broadcasts updates via the WebSocket hub
+//  5. Returns to sleep until next interval
 //
 // This function is called once during server initialization. Multiple calls will
 // create duplicate broadcast loops (avoid this - no deduplication).

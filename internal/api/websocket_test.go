@@ -8,7 +8,7 @@ import (
 // TestHubClientCount tests the ClientCount method
 func TestHubClientCount(t *testing.T) {
 	hub := NewHub()
-	
+
 	if count := hub.ClientCount(); count != 0 {
 		t.Errorf("Expected 0 clients, got %d", count)
 	}
@@ -17,12 +17,12 @@ func TestHubClientCount(t *testing.T) {
 // TestHubBroadcast tests the Broadcast method
 func TestHubBroadcast(t *testing.T) {
 	hub := NewHub()
-	
+
 	msg := Message{
-		Type: "test",
+		Type:    "test",
 		Payload: map[string]string{"key": "value"},
 	}
-	
+
 	// Should not panic with no clients
 	hub.Broadcast(msg)
 }
@@ -30,7 +30,7 @@ func TestHubBroadcast(t *testing.T) {
 // TestHubBroadcastCardUpdate tests the BroadcastCardUpdate method
 func TestHubBroadcastCardUpdate(t *testing.T) {
 	hub := NewHub()
-	
+
 	// Should not panic with no clients
 	hub.BroadcastCardUpdate("testCard", map[string]string{"status": "ok"})
 }
@@ -38,16 +38,16 @@ func TestHubBroadcastCardUpdate(t *testing.T) {
 // TestHubShutdown tests graceful shutdown
 func TestHubShutdown(t *testing.T) {
 	hub := NewHub()
-	
+
 	// Start the hub
 	go hub.Run()
-	
+
 	// Give it time to start
 	time.Sleep(10 * time.Millisecond)
-	
+
 	// Shutdown should not panic
 	hub.Shutdown()
-	
+
 	// Give it time to shutdown
 	time.Sleep(10 * time.Millisecond)
 }

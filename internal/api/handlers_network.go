@@ -171,7 +171,6 @@ type SetMTURequest struct {
 	MTU       int    `json:"mtu"`
 }
 
-
 // ============================================================================
 // Handler Functions
 // ============================================================================
@@ -859,7 +858,6 @@ func (s *Server) handleCable(w http.ResponseWriter, r *http.Request) {
 
 	sendJSONResponse(w, http.StatusOK, resp)
 }
-
 
 // ============================================================================
 // Helper Functions

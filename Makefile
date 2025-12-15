@@ -30,12 +30,13 @@
         build-iperf3 build-iperf3-linux build-iperf3-linux-amd64 build-iperf3-linux-arm64 build-iperf3-all \
         build-linux-amd64 build-linux-arm64 build-linux-docker \
         docker docker-build docker-test docker-push \
-        clean clean-all test test-backend test-frontend test-coverage test-integration \
+        clean clean-all test test-backend test-frontend test-coverage test-integration test-e2e \
         lint lint-backend lint-frontend fmt fmt-frontend fmt-all \
+        security security-backend security-frontend security-secrets \
         run dev dev-frontend \
         deploy smoke-test smoke-test-local \
         deps deps-update logs logs-100 help \
-        verify release-check iso-info
+        verify release-check iso-info pre-commit
 
 # =============================================================================
 # Configuration Variables
@@ -344,6 +345,10 @@ test-e2e: ## Run frontend E2E tests (requires backend running)
 test-e2e-ui: ## Run E2E tests with Playwright UI
 	cd web && npm run test:e2e:ui
 
+# Install Playwright browsers (required before first E2E run)
+test-e2e-install: ## Install Playwright browsers
+	cd web && npx playwright install --with-deps chromium
+
 # Generate HTML coverage report
 test-coverage: ## Generate coverage report
 	go test -race -coverprofile=coverage.out ./...
@@ -404,6 +409,53 @@ fmt-frontend: ## Format frontend code with Prettier
 
 # Format all code
 fmt-all: fmt fmt-frontend ## Format all code (Go + frontend)
+
+# =============================================================================
+# Security Scanning
+# =============================================================================
+
+# Run all security scans
+security: security-backend security-frontend security-secrets ## Run all security scans
+
+# Go security scanning (gosec + govulncheck)
+security-backend: ## Run Go security scans (gosec, govulncheck)
+	@echo "Running Go security scans..."
+	@if command -v gosec > /dev/null 2>&1; then \
+		gosec -quiet ./...; \
+	else \
+		echo "SKIP: gosec not installed (go install github.com/securego/gosec/v2/cmd/gosec@latest)"; \
+	fi
+	@if command -v govulncheck > /dev/null 2>&1; then \
+		govulncheck ./...; \
+	else \
+		echo "SKIP: govulncheck not installed (go install golang.org/x/vuln/cmd/govulncheck@latest)"; \
+	fi
+	@echo "Go security scans complete"
+
+# Frontend security scanning (npm audit)
+security-frontend: ## Run frontend security scan (npm audit)
+	@echo "Running npm audit..."
+	cd web && npm audit --audit-level=high
+	@echo "npm audit complete"
+
+# Secret scanning (gitleaks)
+security-secrets: ## Scan for secrets in codebase (gitleaks)
+	@echo "Running gitleaks..."
+	@if command -v gitleaks > /dev/null 2>&1; then \
+		gitleaks detect --source . --config .gitleaks.toml --verbose; \
+	else \
+		echo "SKIP: gitleaks not installed (brew install gitleaks or go install github.com/gitleaks/gitleaks/v8@latest)"; \
+	fi
+	@echo "Secret scan complete"
+
+# Trivy filesystem scan (if available)
+security-trivy: ## Run Trivy vulnerability scan
+	@echo "Running Trivy filesystem scan..."
+	@if command -v trivy > /dev/null 2>&1; then \
+		trivy fs --severity HIGH,CRITICAL .; \
+	else \
+		echo "SKIP: trivy not installed (brew install trivy)"; \
+	fi
 
 # =============================================================================
 # Cleanup
@@ -469,10 +521,10 @@ help: ## Show this help
 # Verification & Release Checks
 # =============================================================================
 
-# Full verification: builds, tests, lints, and validates everything
+# Full verification: builds, tests, lints, security scans, and validates everything
 # This is what 'make all' runs - use before releases
 # Docker tests are skipped if Docker is not available (e.g., on macOS without Docker)
-verify: lint test build ## Full verification (lint, test, build, docker if available)
+verify: lint test security build ## Full verification (lint, test, security, build, docker if available)
 	@if command -v docker > /dev/null 2>&1 && docker info > /dev/null 2>&1; then \
 		$(MAKE) docker-test; \
 	else \
@@ -490,6 +542,27 @@ verify: lint test build ## Full verification (lint, test, build, docker if avail
 	@echo "=============================================="
 	@echo ""
 	@echo "Ready for deployment. Run 'make deploy' to deploy."
+
+# Pre-commit hook setup and manual run
+pre-commit: ## Run pre-commit hooks manually
+	@if command -v pre-commit > /dev/null 2>&1; then \
+		pre-commit run --all-files; \
+	else \
+		echo "pre-commit not installed. Install with: pip install pre-commit"; \
+		echo "Then run: pre-commit install"; \
+		exit 1; \
+	fi
+
+# Install pre-commit hooks
+pre-commit-install: ## Install pre-commit hooks
+	@if command -v pre-commit > /dev/null 2>&1; then \
+		pre-commit install; \
+		pre-commit install --hook-type pre-push; \
+		echo "Pre-commit hooks installed successfully"; \
+	else \
+		echo "pre-commit not installed. Install with: pip install pre-commit"; \
+		exit 1; \
+	fi
 
 # =============================================================================
 # ISO Creation (Manual Process)

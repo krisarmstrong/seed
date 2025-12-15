@@ -108,17 +108,17 @@ func SetAllowedOrigins(origins []string) {
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024, // Buffer for incoming messages (client->server, currently unused)
 	WriteBufferSize: 1024, // Buffer for outgoing broadcasts (server->client, main data flow)
-	
+
 	// CheckOrigin validates the WebSocket upgrade request's Origin header.
 	// This prevents malicious web pages from connecting to our WebSocket endpoint.
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
-		
+
 		// Allow requests with no Origin header (same-origin requests, native apps, tools)
 		if origin == "" {
 			return true
 		}
-		
+
 		// Validate origin against configured allowed list
 		return isAllowedWSOrigin(origin)
 	},
@@ -127,8 +127,8 @@ var upgrader = websocket.Upgrader{
 // isAllowedWSOrigin checks if the WebSocket origin is allowed to connect.
 //
 // Origin validation follows this priority order:
-//   1. If configuredOrigins is set, use it exclusively (no fallback to defaults)
-//   2. If configuredOrigins is empty, allow RFC 1918 private networks only
+//  1. If configuredOrigins is set, use it exclusively (no fallback to defaults)
+//  2. If configuredOrigins is empty, allow RFC 1918 private networks only
 //
 // Configured origins matching:
 //   - Wildcard "*": Allow all origins (insecure, development only)

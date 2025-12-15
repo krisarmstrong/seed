@@ -1,0 +1,136 @@
+# =============================================================================
+# Pre-commit Hooks Configuration - LuminetIQ
+# =============================================================================
+#
+# Run before every commit to catch issues early.
+# Install: pip install pre-commit && pre-commit install
+#
+# Manual run: pre-commit run --all-files
+# Skip hooks: git commit --no-verify (NOT RECOMMENDED)
+#
+# =============================================================================
+
+repos:
+  # ===========================================================================
+  # General Checks
+  # ===========================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^web/dist/
+      - id: end-of-file-fixer
+        exclude: ^web/dist/
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-json
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-case-conflict
+
+  # ===========================================================================
+  # Secret Scanning
+  # ===========================================================================
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.0
+    hooks:
+      - id: gitleaks
+
+  # ===========================================================================
+  # Go Checks
+  # ===========================================================================
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+      - id: go-vet
+      - id: go-mod-tidy
+
+  - repo: local
+    hooks:
+      - id: golangci-lint
+        name: golangci-lint
+        entry: golangci-lint run
+        language: system
+        types: [go]
+        pass_filenames: false
+
+      - id: go-test
+        name: go-test
+        entry: bash -c 'go test -race -short ./...'
+        language: system
+        types: [go]
+        pass_filenames: false
+
+      - id: gosec-check
+        name: gosec security scan
+        entry: bash -c 'command -v gosec > /dev/null && gosec -quiet ./... || echo "gosec not installed, skipping"'
+        language: system
+        types: [go]
+        pass_filenames: false
+
+  # ===========================================================================
+  # Frontend Checks
+  # ===========================================================================
+  - repo: local
+    hooks:
+      - id: frontend-lint
+        name: ESLint
+        entry: bash -c 'cd web && npm run lint'
+        language: system
+        files: ^web/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+
+      - id: frontend-typecheck
+        name: TypeScript check
+        entry: bash -c 'cd web && npx tsc --noEmit'
+        language: system
+        files: ^web/.*\.(ts|tsx)$
+        pass_filenames: false
+
+      - id: frontend-test
+        name: Frontend unit tests
+        entry: bash -c 'cd web && npm run test'
+        language: system
+        files: ^web/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+
+      - id: prettier-check
+        name: Prettier format check
+        entry: bash -c 'cd web && npx prettier --check .'
+        language: system
+        files: ^web/
+        pass_filenames: false
+
+  # ===========================================================================
+  # Markdown Checks
+  # ===========================================================================
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
+        args: [--fix]
+        exclude: ^node_modules/|^web/node_modules/
+
+  # ===========================================================================
+  # Build Verification
+  # ===========================================================================
+  - repo: local
+    hooks:
+      - id: build-check
+        name: Build verification
+        entry: bash -c 'make build'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+# Default stages for all hooks
+default_stages: [pre-commit]
+
+# Fail fast - stop on first failure
+fail_fast: false
+
+# Minimum pre-commit version
+minimum_pre_commit_version: "3.0.0"

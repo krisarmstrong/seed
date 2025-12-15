@@ -11,21 +11,21 @@ import (
 
 // Sensitive field patterns that should always be redacted
 var sensitivePatterns = []*regexp.Regexp{
-	regexp.MustCompile(`(?i)(password|passwd|pwd)[\s]*[=:]\s*[^\s&]+`),
-	regexp.MustCompile(`(?i)(token|auth|api[_-]?key|secret)[\s]*[=:]\s*[^\s&]+`),
-	regexp.MustCompile(`(?i)(bearer\s+)[^\s]+`),
-	regexp.MustCompile(`(?i)(basic\s+)[^\s]+`),
+	regexp.MustCompile(`(?i)(password|passwd|pwd)\s*[=:]\s*[^\s&]+`),
+	regexp.MustCompile(`(?i)(token|auth|api[_-]?key|secret)\s*[=:]\s*[^\s&]+`),
+	regexp.MustCompile(`(?i)(bearer\s+)\S+`),
+	regexp.MustCompile(`(?i)(basic\s+)\S+`),
 }
 
 // Sensitive header names (case-insensitive)
 var sensitiveHeaders = map[string]bool{
-	"authorization":    true,
-	"x-api-key":        true,
-	"x-auth-token":     true,
-	"cookie":           true,
-	"set-cookie":       true,
-	"x-csrf-token":     true,
-	"x-xsrf-token":     true,
+	"authorization":       true,
+	"x-api-key":           true,
+	"x-auth-token":        true,
+	"cookie":              true,
+	"set-cookie":          true,
+	"x-csrf-token":        true,
+	"x-xsrf-token":        true,
 	"proxy-authorization": true,
 }
 
@@ -79,13 +79,14 @@ func Logf(format string, args ...interface{}) {
 	// Convert args to strings and redact
 	redactedArgs := make([]interface{}, len(args))
 	for i, arg := range args {
-		if s, ok := arg.(string); ok {
-			redactedArgs[i] = RedactString(s)
-		} else if h, ok := arg.(http.Header); ok {
-			redactedArgs[i] = RedactHeaders(h)
-		} else if m, ok := arg.(map[string]interface{}); ok {
-			redactedArgs[i] = RedactMap(m)
-		} else {
+		switch v := arg.(type) {
+		case string:
+			redactedArgs[i] = RedactString(v)
+		case http.Header:
+			redactedArgs[i] = RedactHeaders(v)
+		case map[string]interface{}:
+			redactedArgs[i] = RedactMap(v)
+		default:
 			redactedArgs[i] = arg
 		}
 	}

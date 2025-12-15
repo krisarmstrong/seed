@@ -42,41 +42,41 @@ import (
 
 // Server represents the HTTP/HTTPS server.
 type Server struct {
-	config           *config.Config
-	configPath       string
-	logPath          string
+	config              *config.Config
+	configPath          string
+	logPath             string
 	httpServer          *http.Server
 	authManager         *auth.Manager
 	loginRateLimiter    *RateLimiter
 	endpointRateLimiter *EndpointRateLimiter // Rate limiter for expensive endpoints (fixes #530)
 	wsHub               *Hub
-	mux              *http.ServeMux
-	netManager       *network.Manager
-	linkMonitor      *network.LinkMonitor
-	discoveryManager *discovery.Manager         // Legacy: LLDP/CDP/EDP protocol capture
-	deviceDiscovery  *discovery.DeviceDiscovery // Legacy: device aggregation
-	discoveryService *discovery.Service         // New unified discovery orchestrator
-	dnsTester        *dns.Tester
-	dhcpMonitor      *dhcp.Monitor
-	rogueDetector    *dhcp.RogueDetector
-	gatewayTester    *gateway.Tester
-	vlanManager        *vlan.Manager
-	vlanTrafficMonitor *vlan.TrafficMonitor
-	wifiManager        *wifi.Manager
-	wifiScanner        *wifi.Scanner
-	cableTester      *cable.Tester
-	speedtestTester  *speedtest.Tester
-	iperfManager     *iperf.Manager
-	surveyManager    *survey.Manager
-	vulnScanner      *discovery.VulnerabilityScanner
-	publicipChecker   *publicip.Checker
-	logAccessToken    string
-	logAccessHeader   string
-	requireLogToken   bool
-	icmpAvailable     bool      // Whether raw ICMP sockets are available
-	startTime         time.Time // Application start time for uptime tracking (fixes #540)
-	redirectServer    *http.Server // HTTP→HTTPS redirect server (fixes #515)
-	redirectServerErr chan error    // Error channel for redirect server
+	mux                 *http.ServeMux
+	netManager          *network.Manager
+	linkMonitor         *network.LinkMonitor
+	discoveryManager    *discovery.Manager         // Legacy: LLDP/CDP/EDP protocol capture
+	deviceDiscovery     *discovery.DeviceDiscovery // Legacy: device aggregation
+	discoveryService    *discovery.Service         // New unified discovery orchestrator
+	dnsTester           *dns.Tester
+	dhcpMonitor         *dhcp.Monitor
+	rogueDetector       *dhcp.RogueDetector
+	gatewayTester       *gateway.Tester
+	vlanManager         *vlan.Manager
+	vlanTrafficMonitor  *vlan.TrafficMonitor
+	wifiManager         *wifi.Manager
+	wifiScanner         *wifi.Scanner
+	cableTester         *cable.Tester
+	speedtestTester     *speedtest.Tester
+	iperfManager        *iperf.Manager
+	surveyManager       *survey.Manager
+	vulnScanner         *discovery.VulnerabilityScanner
+	publicipChecker     *publicip.Checker
+	logAccessToken      string
+	logAccessHeader     string
+	requireLogToken     bool
+	icmpAvailable       bool         // Whether raw ICMP sockets are available
+	startTime           time.Time    // Application start time for uptime tracking (fixes #540)
+	redirectServer      *http.Server // HTTP→HTTPS redirect server (fixes #515)
+	redirectServerErr   chan error   // Error channel for redirect server
 }
 
 // NewServer creates a new server instance.
@@ -98,28 +98,28 @@ func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.M
 		loginRateLimiter:    NewRateLimiter(DefaultRateLimitConfig()),
 		endpointRateLimiter: NewEndpointRateLimiter(DefaultEndpointRateLimitConfig()), // Rate limit expensive endpoints (fixes #530)
 		linkMonitor:         network.NewLinkMonitor(cfg.Interface.Default),
-		discoveryManager: discovery.NewManager(cfg.Interface.Default),
-		deviceDiscovery:  discovery.NewDeviceDiscoveryWithOUI(cfg.Interface.Default, cfg.NetworkDiscovery.OUIFilePath, cfg.NetworkDiscovery.OUIMaxAge),
-		discoveryService: discovery.NewService(cfg, cfg.Interface.Default),
-		dnsTester:        dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
-		dhcpMonitor:      dhcp.NewMonitor(cfg.Interface.Default),
-		rogueDetector:    dhcp.NewRogueDetector(&dhcp.RogueDetectorConfig{
-			Interface:       cfg.Interface.Default,
-			KnownServers:    cfg.DHCP.RogueDetection.KnownServers,
+		discoveryManager:    discovery.NewManager(cfg.Interface.Default),
+		deviceDiscovery:     discovery.NewDeviceDiscoveryWithOUI(cfg.Interface.Default, cfg.NetworkDiscovery.OUIFilePath, cfg.NetworkDiscovery.OUIMaxAge),
+		discoveryService:    discovery.NewService(cfg, cfg.Interface.Default),
+		dnsTester:           dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
+		dhcpMonitor:         dhcp.NewMonitor(cfg.Interface.Default),
+		rogueDetector: dhcp.NewRogueDetector(&dhcp.RogueDetectorConfig{
+			Interface:        cfg.Interface.Default,
+			KnownServers:     cfg.DHCP.RogueDetection.KnownServers,
 			AlertOnDetection: cfg.DHCP.RogueDetection.AlertOnDetection,
 		}),
-		gatewayTester:    gateway.NewTester(gateway.DefaultThresholds()),
+		gatewayTester:      gateway.NewTester(gateway.DefaultThresholds()),
 		vlanManager:        vlan.NewManager(cfg.Interface.Default),
 		vlanTrafficMonitor: vlan.NewTrafficMonitor(cfg.Interface.Default),
 		wifiManager:        wifi.NewManager(cfg.Interface.Default),
 		wifiScanner:        wifi.NewScanner(cfg.Interface.Default),
-		cableTester:      cable.NewTester(cfg.Interface.Default),
-		speedtestTester:  speedtest.NewTesterWithConfig(cfg.Speedtest.ServerID),
-		iperfManager:     iperf.NewManager(),
-		publicipChecker:  publicip.NewChecker(),
-		logAccessToken:   cfg.Server.LogAccessToken,
-		logAccessHeader:  cfg.Server.LogAccessHeader,
-		requireLogToken:  cfg.Server.RequireLogAccess,
+		cableTester:        cable.NewTester(cfg.Interface.Default),
+		speedtestTester:    speedtest.NewTesterWithConfig(cfg.Speedtest.ServerID),
+		iperfManager:       iperf.NewManager(),
+		publicipChecker:    publicip.NewChecker(),
+		logAccessToken:     cfg.Server.LogAccessToken,
+		logAccessHeader:    cfg.Server.LogAccessHeader,
+		requireLogToken:    cfg.Server.RequireLogAccess,
 	}
 
 	// Set up link state change callback
@@ -289,7 +289,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/discovery/fingerprint", s.handleAdvancedFingerprint)
 	s.mux.HandleFunc("/api/publicip", s.handlePublicIP)
 	s.mux.HandleFunc("/api/logs", s.handleLogs)
-	s.mux.HandleFunc("/api/health", s.handleHealth)             // Simple liveness check (fixes #540)
+	s.mux.HandleFunc("/api/health", s.handleHealth) // Simple liveness check (fixes #540)
 	s.mux.HandleFunc("/api/system/health", s.handleSystemHealth)
 
 	// WiFi Survey routes
@@ -666,7 +666,13 @@ func (s *Server) startHTTPSWithACME() error {
 	go func() {
 		h := manager.HTTPHandler(nil)
 		log.Printf("Starting HTTP-01 challenge handler on :80")
-		if err := http.ListenAndServe(":80", h); err != nil {
+		// HTTP-01 handler only serves ACME challenges, timeouts not critical
+		challengeServer := &http.Server{
+			Addr:              ":80",
+			Handler:           h,
+			ReadHeaderTimeout: 10 * time.Second,
+		}
+		if err := challengeServer.ListenAndServe(); err != nil {
 			log.Printf("HTTP-01 handler error: %v", err)
 		}
 	}()

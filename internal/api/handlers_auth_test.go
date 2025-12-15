@@ -60,7 +60,7 @@ func TestHandleRefreshToken(t *testing.T) {
 			}
 
 			// Create request
-			req := httptest.NewRequest(http.MethodPost, "/api/auth/refresh", nil)
+			req := httptest.NewRequest(http.MethodPost, "/api/auth/refresh", http.NoBody)
 
 			// Add refresh token cookie if needed
 			if tt.setupCookie {
@@ -124,7 +124,7 @@ func TestHandleRefreshTokenMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/auth/refresh", nil)
+			req := httptest.NewRequest(method, "/api/auth/refresh", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.handleRefreshToken(w, req)
@@ -147,7 +147,7 @@ func TestHandleLogout(t *testing.T) {
 		t.Fatalf("Failed to generate token: %v", err)
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", nil)
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", http.NoBody)
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	w := httptest.NewRecorder()
@@ -188,7 +188,7 @@ func TestHandleLogoutMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/auth/logout", nil)
+			req := httptest.NewRequest(method, "/api/auth/logout", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.handleLogout(w, req)
@@ -309,7 +309,7 @@ func TestHandleSetupStatus(t *testing.T) {
 
 			server := NewTestServerWithConfig(cfg)
 
-			req := httptest.NewRequest(http.MethodGet, "/api/setup/status", nil)
+			req := httptest.NewRequest(http.MethodGet, "/api/setup/status", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.handleSetupStatus(w, req)

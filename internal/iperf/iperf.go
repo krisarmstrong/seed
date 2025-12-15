@@ -243,7 +243,7 @@ func findIperf3Binary() (string, error) {
 	}
 
 	// Track all searched paths for better error message
-	var searchedPaths []string
+	searchedPaths := make([]string, 0, 10) //nolint:mnd // Pre-allocate for typical path count
 
 	// Get executable path to find bundled binary
 	execPath, err := os.Executable()
@@ -261,7 +261,7 @@ func findIperf3Binary() (string, error) {
 			searchedPaths = append(searchedPaths, path)
 			if _, err := os.Stat(path); err == nil {
 				// Verify binary is executable
-				if info, err := os.Stat(path); err == nil && info.Mode()&0111 != 0 {
+				if info, err := os.Stat(path); err == nil && info.Mode()&0o111 != 0 {
 					iperfBinaryPath = path
 					return path, nil
 				}
@@ -280,7 +280,7 @@ func findIperf3Binary() (string, error) {
 		for _, path := range devPaths {
 			searchedPaths = append(searchedPaths, path)
 			if _, err := os.Stat(path); err == nil {
-				if info, err := os.Stat(path); err == nil && info.Mode()&0111 != 0 {
+				if info, err := os.Stat(path); err == nil && info.Mode()&0o111 != 0 {
 					iperfBinaryPath = path
 					return path, nil
 				}
@@ -299,7 +299,7 @@ func findIperf3Binary() (string, error) {
 	for _, path := range systemPaths {
 		searchedPaths = append(searchedPaths, path)
 		if _, err := os.Stat(path); err == nil {
-			if info, err := os.Stat(path); err == nil && info.Mode()&0111 != 0 {
+			if info, err := os.Stat(path); err == nil && info.Mode()&0o111 != 0 {
 				iperfBinaryPath = path
 				return path, nil
 			}
@@ -393,10 +393,10 @@ func compareVersions(v1, v2 string) int {
 		var n1, n2 int
 
 		if i < len(parts1) {
-			fmt.Sscanf(parts1[i], "%d", &n1)
+			_, _ = fmt.Sscanf(parts1[i], "%d", &n1) //nolint:errcheck // Parse failure defaults to 0
 		}
 		if i < len(parts2) {
-			fmt.Sscanf(parts2[i], "%d", &n2)
+			_, _ = fmt.Sscanf(parts2[i], "%d", &n2) //nolint:errcheck // Parse failure defaults to 0
 		}
 
 		if n1 < n2 {
@@ -488,7 +488,7 @@ func (m *Manager) StartServer(port int) error {
 	if err := waitForPortReady(port, portCheckTimeout); err != nil {
 		// Kill the process if port check fails
 		if cmd.Process != nil {
-			cmd.Process.Kill()
+			_ = cmd.Process.Kill() //nolint:errcheck // Best-effort cleanup
 		}
 		cancel()
 		return fmt.Errorf("iperf3 server failed to start listening: %w", err)

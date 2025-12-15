@@ -104,12 +104,12 @@ type Neighbor struct {
 //	// Later, get all discovered neighbors
 //	neighbors := mgr.GetNeighbors()
 type Manager struct {
-	interfaceName string        // Network interface to capture on
-	lldp          *LLDPCapture  // LLDP protocol capture instance
-	cdp           *CDPCapture   // CDP protocol capture instance
-	edp           *EDPCapture   // EDP protocol capture instance
-	mu            sync.RWMutex  // Protects started flag
-	started       bool          // True if captures are running
+	interfaceName string       // Network interface to capture on
+	lldp          *LLDPCapture // LLDP protocol capture instance
+	cdp           *CDPCapture  // CDP protocol capture instance
+	edp           *EDPCapture  // EDP protocol capture instance
+	mu            sync.RWMutex // Protects started flag
+	started       bool         // True if captures are running
 }
 
 // NewManager creates a new discovery protocol manager for the specified network interface.

@@ -377,9 +377,9 @@ func randomInt(n int) (int, error) {
 	// For larger n, use multiple bytes
 	var b [4]byte
 	// Use uint64 for calculation to avoid overflow
-	max := uint64(1) << 32
-	// #nosec G115 -- Result is always < 2^32 (max - remainder), safe for uint32
-	maxValid := uint32(max - (max % uint64(n)))
+	maxUint := uint64(1) << 32
+	// #nosec G115 -- Result is always < 2^32 (maxUint - remainder), safe for uint32
+	maxValid := uint32(maxUint - (maxUint % uint64(n)))
 
 	for {
 		if _, err := rand.Read(b[:]); err != nil {

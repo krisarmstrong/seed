@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/gosnmp/gosnmp"
+
 	"github.com/krisarmstrong/luminetiq/internal/config"
 )
 
@@ -21,9 +22,9 @@ const (
 
 // Vendor-specific version OIDs
 const (
-	OIDCiscoVersion  = "1.3.6.1.4.1.9.9.25.1.1.1.2"       // Cisco IOS version
-	OIDHPVersion     = "1.3.6.1.4.1.11.2.14.11.5.1.1.2.0" // HP/Aruba version
-	OIDJuniperVersion = "1.3.6.1.4.1.2636.3.1.2.0"        // Juniper JUNOS version
+	OIDCiscoVersion   = "1.3.6.1.4.1.9.9.25.1.1.1.2"       // Cisco IOS version
+	OIDHPVersion      = "1.3.6.1.4.1.11.2.14.11.5.1.1.2.0" // HP/Aruba version
+	OIDJuniperVersion = "1.3.6.1.4.1.2636.3.1.2.0"         // Juniper JUNOS version
 )
 
 // SNMPSystemInfo contains standard SNMP system information.
@@ -51,8 +52,8 @@ func Query(ctx context.Context, ip, oid string, cfg *config.SNMPConfig) (string,
 	}
 
 	// Try SNMPv3 credentials
-	for _, cred := range cfg.V3Credentials {
-		result, err := queryWithV3(ctx, ip, oid, &cred, cfg)
+	for i := range cfg.V3Credentials {
+		result, err := queryWithV3(ctx, ip, oid, &cfg.V3Credentials[i], cfg)
 		if err == nil {
 			return result, nil
 		}
@@ -76,8 +77,8 @@ func QueryMultiple(ctx context.Context, ip string, oids []string, cfg *config.SN
 	}
 
 	// Try SNMPv3 credentials
-	for _, cred := range cfg.V3Credentials {
-		results, err := queryMultipleWithV3(ctx, ip, oids, &cred, cfg)
+	for i := range cfg.V3Credentials {
+		results, err := queryMultipleWithV3(ctx, ip, oids, &cfg.V3Credentials[i], cfg)
 		if err == nil {
 			return results, nil
 		}
@@ -189,11 +190,11 @@ func queryMultipleWithCommunity(ctx context.Context, ip string, oids []string, c
 // queryWithV3 performs SNMP v3 query with credentials.
 func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credential, cfg *config.SNMPConfig) (string, error) {
 	params := &gosnmp.GoSNMP{
-		Target:  ip,
-		Port:    uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
-		Version: gosnmp.Version3,
-		Timeout: cfg.Timeout,
-		Retries: cfg.Retries,
+		Target:        ip,
+		Port:          uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
+		Version:       gosnmp.Version3,
+		Timeout:       cfg.Timeout,
+		Retries:       cfg.Retries,
 		SecurityModel: gosnmp.UserSecurityModel,
 		MsgFlags:      gosnmp.AuthPriv,
 		SecurityParameters: &gosnmp.UsmSecurityParameters{
@@ -233,11 +234,11 @@ func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credent
 // queryMultipleWithV3 performs multiple SNMP queries with v3 credentials.
 func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *config.SNMPv3Credential, cfg *config.SNMPConfig) (map[string]string, error) {
 	params := &gosnmp.GoSNMP{
-		Target:  ip,
-		Port:    uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
-		Version: gosnmp.Version3,
-		Timeout: cfg.Timeout,
-		Retries: cfg.Retries,
+		Target:        ip,
+		Port:          uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
+		Version:       gosnmp.Version3,
+		Timeout:       cfg.Timeout,
+		Retries:       cfg.Retries,
 		SecurityModel: gosnmp.UserSecurityModel,
 		MsgFlags:      gosnmp.AuthPriv,
 		SecurityParameters: &gosnmp.UsmSecurityParameters{
@@ -279,14 +280,25 @@ func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *co
 func formatSNMPValue(variable gosnmp.SnmpPDU) string {
 	switch variable.Type {
 	case gosnmp.OctetString:
-		bytes := variable.Value.([]byte)
+		bytes, ok := variable.Value.([]byte)
+		if !ok {
+			return fmt.Sprintf("%v", variable.Value)
+		}
 		return string(bytes)
 	case gosnmp.Integer, gosnmp.Counter32, gosnmp.Gauge32, gosnmp.TimeTicks, gosnmp.Counter64:
 		return fmt.Sprintf("%d", gosnmp.ToBigInt(variable.Value))
 	case gosnmp.ObjectIdentifier:
-		return variable.Value.(string)
+		str, ok := variable.Value.(string)
+		if !ok {
+			return fmt.Sprintf("%v", variable.Value)
+		}
+		return str
 	case gosnmp.IPAddress:
-		return variable.Value.(string)
+		str, ok := variable.Value.(string)
+		if !ok {
+			return fmt.Sprintf("%v", variable.Value)
+		}
+		return str
 	default:
 		return fmt.Sprintf("%v", variable.Value)
 	}

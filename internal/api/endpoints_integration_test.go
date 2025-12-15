@@ -359,7 +359,7 @@ func TestDevicesEndpoints(t *testing.T) {
 	})
 
 	t.Run("ScanDevices", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodPost, ts.URL+"/api/devices/scan", nil)
+		req, _ := http.NewRequest(http.MethodPost, ts.URL+"/api/devices/scan", http.NoBody)
 		client := &http.Client{Timeout: 15 * time.Second}
 		resp, err := client.Do(req)
 		if err != nil {

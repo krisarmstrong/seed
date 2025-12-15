@@ -8,16 +8,13 @@ package discovery
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
 // NDPScanner is a stub for macOS (production target is Linux).
 type NDPScanner struct {
-	mu            sync.RWMutex
 	interfaceName string
 	neighbors     map[string]*NDPNeighbor
-	running       bool
 }
 
 // NDPNeighbor represents an IPv6 neighbor.

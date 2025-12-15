@@ -1,0 +1,107 @@
+# =============================================================================
+# Gitleaks Configuration - LuminetIQ
+# =============================================================================
+#
+# Secret detection configuration for preventing credential leaks.
+# Used in CI pipeline and pre-commit hooks.
+#
+# Usage:
+#   gitleaks detect --source . --config .gitleaks.toml
+#   gitleaks protect --staged --config .gitleaks.toml
+#
+# =============================================================================
+
+title = "LuminetIQ Gitleaks Configuration"
+
+[extend]
+# Use the default gitleaks rules as a base
+useDefault = true
+
+# =============================================================================
+# Allowlist - Patterns that are safe to commit
+# =============================================================================
+
+[allowlist]
+description = "Global allowlist"
+
+# Test files may contain example credentials
+paths = [
+    '''.*_test\.go$''',
+    '''.*\.test\.ts$''',
+    '''.*\.spec\.ts$''',
+    '''.*test.*fixture.*''',
+    '''.*mock.*''',
+    '''web/e2e/.*''',
+    '''\.github/workflows/.*\.yml$''',
+]
+
+# Example/placeholder values commonly used in documentation
+regexes = [
+    '''example\.com''',
+    '''localhost''',
+    '''127\.0\.0\.1''',
+    '''192\.168\.\d+\.\d+''',
+    '''10\.\d+\.\d+\.\d+''',
+    '''YOUR_.*_HERE''',
+    '''<your-.*>''',
+    '''PLACEHOLDER''',
+    '''changeme''',
+    '''admin123''',  # Common test password in examples
+]
+
+# Known safe commit hashes (documentation references)
+commits = []
+
+# =============================================================================
+# Custom Rules - Project-specific patterns
+# =============================================================================
+
+[[rules]]
+id = "jwt-secret"
+description = "JWT Secret Key"
+regex = '''(?i)(jwt[_-]?secret|jwt[_-]?key)\s*[:=]\s*['"]?([a-zA-Z0-9+/=]{32,})['"]?'''
+secretGroup = 2
+
+[[rules]]
+id = "api-key-header"
+description = "API Key in Header"
+regex = '''(?i)(x-api-key|api[_-]?key)\s*[:=]\s*['"]?([a-zA-Z0-9]{32,})['"]?'''
+secretGroup = 2
+
+[[rules]]
+id = "hardcoded-password"
+description = "Hardcoded Password in Code"
+regex = '''(?i)password\s*[:=]\s*['"]([^'"]{8,})['"]'''
+secretGroup = 1
+[rules.allowlist]
+paths = [
+    '''.*_test\.go$''',
+    '''.*\.spec\.ts$''',
+    '''docs/.*''',
+]
+
+[[rules]]
+id = "private-key-pem"
+description = "Private Key (PEM format)"
+regex = '''-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'''
+
+[[rules]]
+id = "ssh-private-key"
+description = "SSH Private Key"
+regex = '''-----BEGIN OPENSSH PRIVATE KEY-----'''
+
+# =============================================================================
+# Stopwords - Common false positives to ignore
+# =============================================================================
+
+[rules.allowlist]
+stopwords = [
+    "example",
+    "sample",
+    "test",
+    "dummy",
+    "fake",
+    "mock",
+    "placeholder",
+    "template",
+]

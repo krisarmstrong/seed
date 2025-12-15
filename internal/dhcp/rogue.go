@@ -16,18 +16,18 @@ import (
 
 // RogueServer represents a detected rogue DHCP server.
 type RogueServer struct {
-	IP          string    `json:"ip"`
-	MAC         string    `json:"mac"`
-	FirstSeen   time.Time `json:"firstSeen"`
-	LastSeen    time.Time `json:"lastSeen"`
-	OfferCount  int       `json:"offerCount"`
-	IsAuthorized bool     `json:"isAuthorized"` // false for rogue servers
+	IP           string    `json:"ip"`
+	MAC          string    `json:"mac"`
+	FirstSeen    time.Time `json:"firstSeen"`
+	LastSeen     time.Time `json:"lastSeen"`
+	OfferCount   int       `json:"offerCount"`
+	IsAuthorized bool      `json:"isAuthorized"` // false for rogue servers
 }
 
 // RogueDetectorConfig holds configuration for rogue DHCP detection.
 type RogueDetectorConfig struct {
-	Interface       string   // Network interface to monitor
-	KnownServers    []string // List of authorized DHCP server IPs
+	Interface        string   // Network interface to monitor
+	KnownServers     []string // List of authorized DHCP server IPs
 	AlertOnDetection bool     // Whether to log alerts for rogue servers
 }
 
@@ -46,8 +46,8 @@ type RogueDetector struct {
 func NewRogueDetector(config *RogueDetectorConfig) *RogueDetector {
 	if config == nil {
 		config = &RogueDetectorConfig{
-			Interface:       "eth0",
-			KnownServers:    []string{},
+			Interface:        "eth0",
+			KnownServers:     []string{},
 			AlertOnDetection: true,
 		}
 	}
@@ -187,7 +187,10 @@ func (rd *RogueDetector) processPacket(packet gopacket.Packet) {
 	if serverIP == "" {
 		// Fallback to source IP if server identifier not found
 		if ipLayer := packet.Layer(layers.LayerTypeIPv4); ipLayer != nil {
-			ip := ipLayer.(*layers.IPv4)
+			ip, ok := ipLayer.(*layers.IPv4)
+			if !ok {
+				return
+			}
 			serverIP = ip.SrcIP.String()
 		} else {
 			return
@@ -197,8 +200,10 @@ func (rd *RogueDetector) processPacket(packet gopacket.Packet) {
 	// Extract source MAC address
 	serverMAC := ""
 	if ethLayer := packet.Layer(layers.LayerTypeEthernet); ethLayer != nil {
-		eth := ethLayer.(*layers.Ethernet)
-		serverMAC = eth.SrcMAC.String()
+		eth, ok := ethLayer.(*layers.Ethernet)
+		if ok {
+			serverMAC = eth.SrcMAC.String()
+		}
 	}
 
 	// Check if this is a known/authorized server
@@ -212,11 +217,11 @@ func (rd *RogueDetector) processPacket(packet gopacket.Packet) {
 	if !exists {
 		// New server detected
 		server = &RogueServer{
-			IP:          serverIP,
-			MAC:         serverMAC,
-			FirstSeen:   now,
-			LastSeen:    now,
-			OfferCount:  1,
+			IP:           serverIP,
+			MAC:          serverMAC,
+			FirstSeen:    now,
+			LastSeen:     now,
+			OfferCount:   1,
 			IsAuthorized: isKnown,
 		}
 		rd.detectedServers[serverIP] = server
