@@ -99,7 +99,14 @@
       "Bash(git -C /Users/krisarmstrong/Developer/projects/netscope commit:*)",
       "Bash(bash:*)",
       "Bash(npx storybook@latest init:*)",
-      "Bash(npm run build-storybook:*)"
+      "Bash(npm run build-storybook:*)",
+      "Bash(npx playwright:*)",
+      "Bash(node --version:*)",
+      "Bash(go version:*)",
+      "Bash(gh label create:*)",
+      "Bash(sort:*)",
+      "Bash(for issue in 544 545 546 547 548 549 550 551 552 553 558 559)",
+      "Bash(go clean:*)"
     ],
     "deny": [],
     "ask": []
