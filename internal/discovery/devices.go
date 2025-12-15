@@ -121,6 +121,7 @@ func NewDeviceDiscoveryWithOUI(interfaceName, ouiPath string, ouiMaxAge time.Dur
 	oui := NewOUIDatabase()
 
 	// Try to load/update OUI database
+	//nolint:gocritic // ifElseChain: conditions check different combinations, switch not applicable
 	if ouiPath != "" && ouiMaxAge > 0 {
 		// Auto-update enabled: download if needed, then load
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
@@ -147,7 +148,7 @@ func NewDeviceDiscoveryWithOUI(interfaceName, ouiPath string, ouiMaxAge time.Dur
 	} else {
 		// No path provided: try standard locations silently
 		// Embedded OUI database has 200+ common vendors as fallback
-		_ = oui.TryLoadIEEEFile() // Ignore error - embedded data is sufficient
+		_ = oui.TryLoadIEEEFile() //nolint:errcheck // Embedded data is sufficient fallback
 	}
 
 	return &DeviceDiscovery{
@@ -172,7 +173,7 @@ func (d *DeviceDiscovery) Start() error {
 
 // Stop stops all discovery.
 func (d *DeviceDiscovery) Stop() {
-	d.ndpScanner.Stop()
+	_ = d.ndpScanner.Stop() //nolint:errcheck // Best-effort cleanup
 	d.protoManager.Stop()
 }
 

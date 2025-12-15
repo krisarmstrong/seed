@@ -115,7 +115,7 @@ func TestEndpointAuthentication(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Test without auth token
-			req := httptest.NewRequest(tt.method, tt.path, nil)
+			req := httptest.NewRequest(tt.method, tt.path, http.NoBody)
 			w := httptest.NewRecorder()
 			server.handler.ServeHTTP(w, req)
 
@@ -159,7 +159,7 @@ func TestEndpointAuthWithValidToken(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, tt.path, nil)
+			req := httptest.NewRequest(tt.method, tt.path, http.NoBody)
 			req.Header.Set("Authorization", "Bearer "+token)
 			w := httptest.NewRecorder()
 			server.handler.ServeHTTP(w, req)
@@ -189,7 +189,7 @@ func TestEndpointAuthWithInvalidToken(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest("GET", "/api/status", nil)
+			req := httptest.NewRequest("GET", "/api/status", http.NoBody)
 			if tt.tokenValue != "" {
 				req.Header.Set("Authorization", tt.tokenValue)
 			}
@@ -222,7 +222,7 @@ func TestWebSocketAuth(t *testing.T) {
 
 	// Test without token
 	t.Run("WebSocket without token", func(t *testing.T) {
-		req := httptest.NewRequest("GET", "/ws", nil)
+		req := httptest.NewRequest("GET", "/ws", http.NoBody)
 		// Upgrade headers for WebSocket
 		req.Header.Set("Upgrade", "websocket")
 		req.Header.Set("Connection", "Upgrade")
@@ -245,7 +245,7 @@ func TestWebSocketAuth(t *testing.T) {
 			t.Fatalf("Failed to generate token: %v", err)
 		}
 
-		req := httptest.NewRequest("GET", "/ws?token="+token, nil)
+		req := httptest.NewRequest("GET", "/ws?token="+token, http.NoBody)
 		req.Header.Set("Upgrade", "websocket")
 		req.Header.Set("Connection", "Upgrade")
 		req.Header.Set("Sec-WebSocket-Version", "13")
@@ -268,7 +268,7 @@ func TestWebSocketAuth(t *testing.T) {
 			t.Fatalf("Failed to generate token: %v", err)
 		}
 
-		req := httptest.NewRequest("GET", "/ws", nil)
+		req := httptest.NewRequest("GET", "/ws", http.NoBody)
 		req.Header.Set("Upgrade", "websocket")
 		req.Header.Set("Connection", "Upgrade")
 		req.Header.Set("Sec-WebSocket-Version", "13")
@@ -300,7 +300,7 @@ func TestStaticFilesNoAuth(t *testing.T) {
 
 	for _, path := range staticPaths {
 		t.Run(path, func(t *testing.T) {
-			req := httptest.NewRequest("GET", path, nil)
+			req := httptest.NewRequest("GET", path, http.NoBody)
 			w := httptest.NewRecorder()
 			server.handler.ServeHTTP(w, req)
 

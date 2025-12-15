@@ -161,8 +161,8 @@ func (nvd *NVDProvider) GetLastUpdate() time.Time {
 }
 
 // makeRequest makes an HTTP request to the NVD API with proper headers.
-func (nvd *NVDProvider) makeRequest(ctx context.Context, url string) (*nvdCVEResponse, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+func (nvd *NVDProvider) makeRequest(ctx context.Context, requestURL string) (*nvdCVEResponse, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", requestURL, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -181,7 +181,10 @@ func (nvd *NVDProvider) makeRequest(ctx context.Context, url string) (*nvdCVERes
 
 	// Check status code
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("NVD API returned status %d (failed to read body: %v)", resp.StatusCode, err)
+		}
 		return nil, fmt.Errorf("NVD API returned status %d: %s", resp.StatusCode, string(body))
 	}
 
@@ -198,8 +201,8 @@ func (nvd *NVDProvider) makeRequest(ctx context.Context, url string) (*nvdCVERes
 func (nvd *NVDProvider) parseResponse(resp *nvdCVEResponse) ([]Vulnerability, error) {
 	vulns := make([]Vulnerability, 0, len(resp.Vulnerabilities))
 
-	for _, item := range resp.Vulnerabilities {
-		cve := item.CVE
+	for i := range resp.Vulnerabilities {
+		cve := &resp.Vulnerabilities[i].CVE
 
 		// Extract description (prefer English)
 		description := ""
@@ -235,9 +238,9 @@ func (nvd *NVDProvider) parseResponse(resp *nvdCVEResponse) ([]Vulnerability, er
 			references = append(references, ref.URL)
 		}
 
-		// Parse timestamps
-		published, _ := time.Parse(time.RFC3339, cve.Published)
-		modified, _ := time.Parse(time.RFC3339, cve.LastModified)
+		// Parse timestamps (ignore parse errors, use zero time if invalid)
+		published, _ := time.Parse(time.RFC3339, cve.Published)   //nolint:errcheck // Zero time acceptable for missing/invalid dates
+		modified, _ := time.Parse(time.RFC3339, cve.LastModified) //nolint:errcheck // Zero time acceptable for missing/invalid dates
 
 		// Extract affected CPE (use first one if available)
 		affectedCPE := ""

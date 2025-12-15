@@ -20,25 +20,25 @@ import (
 
 // RogueDHCPResponse represents rogue DHCP detection status.
 type RogueDHCPResponse struct {
-	Enabled  bool   `json:"enabled"`
-	Running  bool   `json:"running"`
-	Error    string `json:"error,omitempty"`
-	Message  string `json:"message,omitempty"`
+	Enabled bool   `json:"enabled"`
+	Running bool   `json:"running"`
+	Error   string `json:"error,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 // RogueServersResponse contains the list of detected DHCP servers.
 type RogueServersResponse struct {
-	Servers        []*dhcp.RogueServer `json:"servers"`
-	RogueCount     int                 `json:"rogueCount"`
-	AuthorizedCount int                `json:"authorizedCount"`
+	Servers         []*dhcp.RogueServer `json:"servers"`
+	RogueCount      int                 `json:"rogueCount"`
+	AuthorizedCount int                 `json:"authorizedCount"`
 }
 
 // RogueDHCPConfigResponse contains the rogue DHCP detector configuration.
 type RogueDHCPConfigResponse struct {
-	Enabled         bool     `json:"enabled"`
-	KnownServers    []string `json:"knownServers"`
+	Enabled          bool     `json:"enabled"`
+	KnownServers     []string `json:"knownServers"`
 	AlertOnDetection bool     `json:"alertOnDetection"`
-	Interface       string   `json:"interface"`
+	Interface        string   `json:"interface"`
 }
 
 // handleRogueDHCP starts/stops rogue DHCP detection (POST) or gets status (GET).
@@ -122,8 +122,8 @@ func (s *Server) handleRogueDHCPServers(w http.ResponseWriter, r *http.Request) 
 		rogues := s.rogueDetector.GetRogueServers()
 
 		resp := RogueServersResponse{
-			Servers:        servers,
-			RogueCount:     len(rogues),
+			Servers:         servers,
+			RogueCount:      len(rogues),
 			AuthorizedCount: len(servers) - len(rogues),
 		}
 		sendJSONResponse(w, http.StatusOK, resp)
@@ -145,21 +145,21 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		// Get current configuration
-		config := s.rogueDetector.GetConfig()
+		rogueConfig := s.rogueDetector.GetConfig()
 		resp := RogueDHCPConfigResponse{
-			Enabled:         s.config.DHCP.RogueDetection.Enabled,
-			KnownServers:    config.KnownServers,
-			AlertOnDetection: config.AlertOnDetection,
-			Interface:       config.Interface,
+			Enabled:          s.config.DHCP.RogueDetection.Enabled,
+			KnownServers:     rogueConfig.KnownServers,
+			AlertOnDetection: rogueConfig.AlertOnDetection,
+			Interface:        rogueConfig.Interface,
 		}
 		sendJSONResponse(w, http.StatusOK, resp)
 
 	case http.MethodPut:
 		// Update configuration
 		var req struct {
-			Enabled         *bool    `json:"enabled,omitempty"`
-			KnownServers    []string `json:"knownServers,omitempty"`
-			AlertOnDetection *bool     `json:"alertOnDetection,omitempty"`
+			Enabled          *bool    `json:"enabled,omitempty"`
+			KnownServers     []string `json:"knownServers,omitempty"`
+			AlertOnDetection *bool    `json:"alertOnDetection,omitempty"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -187,12 +187,12 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Return updated config
-		config := s.rogueDetector.GetConfig()
+		rogueConfig := s.rogueDetector.GetConfig()
 		resp := RogueDHCPConfigResponse{
-			Enabled:         s.config.DHCP.RogueDetection.Enabled,
-			KnownServers:    config.KnownServers,
-			AlertOnDetection: config.AlertOnDetection,
-			Interface:       config.Interface,
+			Enabled:          s.config.DHCP.RogueDetection.Enabled,
+			KnownServers:     rogueConfig.KnownServers,
+			AlertOnDetection: rogueConfig.AlertOnDetection,
+			Interface:        rogueConfig.Interface,
 		}
 		sendJSONResponse(w, http.StatusOK, resp)
 
@@ -271,18 +271,13 @@ func (s *Server) handleGateway(w http.ResponseWriter, r *http.Request) {
 
 // VLANResponse represents the VLAN information for the API.
 
-
-
-
-
-
 // SNMPSettingsResponse represents the SNMP configuration settings.
 type SNMPSettingsResponse struct {
-	Communities   []string                 `json:"communities"`
+	Communities   []string                   `json:"communities"`
 	V3Credentials []SNMPv3CredentialResponse `json:"v3Credentials"`
-	Timeout       int                      `json:"timeout"` // milliseconds
-	Retries       int                      `json:"retries"`
-	Port          int                      `json:"port"`
+	Timeout       int                        `json:"timeout"` // milliseconds
+	Retries       int                        `json:"retries"`
+	Port          int                        `json:"port"`
 }
 
 // SNMPv3CredentialResponse represents an SNMPv3 credential for API responses.
@@ -296,9 +291,6 @@ type SNMPv3CredentialResponse struct {
 	ContextName   string `json:"contextName"`
 	SecurityLevel string `json:"securityLevel"`
 }
-
-
-
 
 // handleSNMPSettings handles GET/PUT for SNMP settings.
 func (s *Server) handleSNMPSettings(w http.ResponseWriter, r *http.Request) {
@@ -319,7 +311,8 @@ func (s *Server) getSNMPSettings(w http.ResponseWriter, _ *http.Request) {
 	// Convert v3 credentials to response format (fixes #518)
 	// NEVER return actual passwords in GET responses - use placeholder instead
 	v3Creds := make([]SNMPv3CredentialResponse, len(s.config.SNMP.V3Credentials))
-	for i, cred := range s.config.SNMP.V3Credentials {
+	for i := range s.config.SNMP.V3Credentials {
+		cred := &s.config.SNMP.V3Credentials[i]
 		// Use "*****" placeholder for passwords (never expose actual values)
 		authPass := ""
 		if cred.AuthPassword != "" {
@@ -366,7 +359,8 @@ func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
 
 	// Convert request v3 credentials to config format (fixes #518)
 	v3Creds := make([]config.SNMPv3Credential, len(req.V3Credentials))
-	for i, cred := range req.V3Credentials {
+	for i := range req.V3Credentials {
+		cred := &req.V3Credentials[i]
 		newCred := config.SNMPv3Credential{
 			Name:          cred.Name,
 			Username:      cred.Username,

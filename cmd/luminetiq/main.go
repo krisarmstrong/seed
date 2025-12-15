@@ -27,8 +27,8 @@ var version = "dev"
 
 // Credential file constants for first-boot retrieval (fixes #489)
 const (
-	credentialsFileName = ".luminetiq-credentials"
-	credentialsFileMode = 0o600 // Owner read/write only
+	credentialsFileName = ".luminetiq-credentials" //nolint:gosec // G101: Not a credential, just a filename
+	credentialsFileMode = 0o600                    // Owner read/write only
 )
 
 // main starts the LuminetIQ network discovery and monitoring application.
@@ -97,7 +97,7 @@ func main() {
 	// Create log file with restrictive permissions (0600) before lumberjack uses it
 	// This ensures log files containing sensitive information are only readable by owner
 	if _, err := os.Stat(logPath); os.IsNotExist(err) {
-		f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY, 0o600)
+		f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY, 0o600) //nolint:gosec // G304: logPath is constructed from constants, not user input
 		if err != nil {
 			log.Fatalf("Failed to create log file with secure permissions: %v", err)
 		}
@@ -351,7 +351,10 @@ func handleCredentialsCommand() {
 	configPath := credFlags.String("config", "configs/luminetiq.yaml", "Path to configuration file")
 	outputJSON := credFlags.Bool("json", false, "Output credentials as JSON")
 	fileOutput := credFlags.String("file", "", "Write credentials to file (default: working directory)")
-	_ = credFlags.Parse(os.Args[2:])
+	if err := credFlags.Parse(os.Args[2:]); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
 
 	// Load or create config
 	cfg, result, err := config.EnsureConfig(*configPath, auth.IsDefaultPasswordHash)
@@ -406,7 +409,11 @@ func handleCredentialsCommand() {
 
 	// Output credentials
 	if *outputJSON {
-		jsonData, _ := json.MarshalIndent(credOutput, "", "  ")
+		jsonData, err := json.MarshalIndent(credOutput, "", "  ")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: Failed to marshal credentials: %v\n", err)
+			os.Exit(1)
+		}
 		fmt.Println(string(jsonData))
 	} else {
 		fmt.Println("╔══════════════════════════════════════════════════════════════════╗")

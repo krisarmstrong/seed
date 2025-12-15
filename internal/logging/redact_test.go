@@ -84,19 +84,19 @@ func TestRedactHeaders(t *testing.T) {
 		{
 			name: "api key header redacted",
 			headers: http.Header{
-				"X-Api-Key":   []string{"secret"},
+				"X-Api-Key":      []string{"secret"},
 				"Content-Length": []string{"1234"},
 			},
 			expected: map[string]string{
-				"X-Api-Key":   "[REDACTED]",
+				"X-Api-Key":      "[REDACTED]",
 				"Content-Length": "1234",
 			},
 		},
 		{
 			name: "safe headers unchanged",
 			headers: http.Header{
-				"Accept":        []string{"*/*"},
-				"Content-Type":  []string{"text/plain"},
+				"Accept":       []string{"*/*"},
+				"Content-Type": []string{"text/plain"},
 			},
 			expected: map[string]string{
 				"Accept":       "*/*",
@@ -182,10 +182,10 @@ func TestRedactMap(t *testing.T) {
 
 func TestSafeError(t *testing.T) {
 	tests := []struct {
-		name     string
-		err      error
-		context  string
-		contains string
+		name        string
+		err         error
+		context     string
+		contains    string
 		notContains string
 	}{
 		{
@@ -236,7 +236,7 @@ func (e *testError) Error() string {
 }
 
 func contains(s, substr string) bool {
-	return len(substr) > 0 && len(s) >= len(substr) &&
+	return substr != "" && len(s) >= len(substr) &&
 		(s == substr || findSubstring(s, substr))
 }
 
@@ -251,10 +251,10 @@ func findSubstring(s, substr string) bool {
 
 func TestGetClientIP(t *testing.T) {
 	tests := []struct {
-		name     string
-		headers  http.Header
+		name       string
+		headers    http.Header
 		remoteAddr string
-		expected string
+		expected   string
 	}{
 		{
 			name:       "X-Forwarded-For single IP",
@@ -287,8 +287,8 @@ func TestGetClientIP(t *testing.T) {
 			expected:   "192.168.1.50",
 		},
 		{
-			name:       "X-Forwarded-For takes precedence over X-Real-IP",
-			headers:    http.Header{
+			name: "X-Forwarded-For takes precedence over X-Real-IP",
+			headers: http.Header{
 				"X-Forwarded-For": []string{"192.168.1.100"},
 				"X-Real-IP":       []string{"172.16.0.5"},
 			},
@@ -299,7 +299,7 @@ func TestGetClientIP(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req, _ := http.NewRequest("GET", "/test", nil)
+			req, _ := http.NewRequest("GET", "/test", http.NoBody)
 			// Copy headers to request (don't replace the Header map)
 			for k, v := range tt.headers {
 				for _, val := range v {
@@ -343,7 +343,7 @@ func TestLogf(t *testing.T) {
 
 func TestLogRequest(t *testing.T) {
 	// Just verify it doesn't panic
-	req, _ := http.NewRequest("POST", "/api/login", nil)
+	req, _ := http.NewRequest("POST", "/api/login", http.NoBody)
 	req.Header.Set("Authorization", "Bearer secret-token")
 	req.Header.Set("Content-Type", "application/json")
 	req.RemoteAddr = "192.168.1.100:54321"
@@ -382,7 +382,7 @@ func TestRedactMapWithNonStringValues(t *testing.T) {
 func TestSensitivePatterns(t *testing.T) {
 	// Test various sensitive patterns
 	tests := []struct {
-		input    string
+		input        string
 		shouldRedact bool
 	}{
 		{"password=hunter2", true},

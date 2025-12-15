@@ -93,7 +93,8 @@ func getLocalIP() (net.IP, error) {
 }
 
 // nextSrcPort returns the next source port to use.
-// nolint:unused // Reserved for future raw socket implementation
+//
+//nolint:unused // Reserved for future raw socket implementation
 func (p *TCPProber) nextSrcPort() uint16 {
 	// Use ports 40000-60000
 	port := atomic.AddUint32(&p.srcPort, 1)
@@ -362,7 +363,8 @@ var CommonPorts = []int{
 var WebPorts = []int{80, 443, 8080, 8443, 8000, 8888}
 
 // buildTCPHeader creates a TCP header (for future raw socket implementation).
-// nolint:unused // Reserved for future raw socket implementation
+//
+//nolint:unused // Reserved for future raw socket implementation
 func buildTCPHeader(srcPort, dstPort uint16, seq uint32, flags uint8) []byte {
 	header := make([]byte, 20)
 

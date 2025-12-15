@@ -185,7 +185,7 @@ func detectGatewayIPv6Platform() (string, error) {
 	// Second pass: accept link-local addresses
 	msgs, err = route.ParseRIB(syscall.NET_RT_DUMP, rib)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	for _, msg := range msgs {
 		rm, ok := msg.(*route.RouteMessage)

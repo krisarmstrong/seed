@@ -19,7 +19,7 @@ import (
 // ============================================================================
 
 type DiscoveryResponse struct {
-	Running   bool                    `json:"running"` // True if discovery managers are actively capturing
+	Running   bool                    `json:"running"`   // True if discovery managers are actively capturing
 	Neighbors []DiscoveryNeighborInfo `json:"neighbors"` // All discovered neighbors (deduplicated by ChassisID + PortID)
 }
 
@@ -622,13 +622,13 @@ func (s *Server) getSurvey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	survey, err := s.surveyManager.GetSurvey(id)
+	surveyData, err := s.surveyManager.GetSurvey(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, survey)
+	sendJSONResponse(w, http.StatusOK, surveyData)
 }
 
 func (s *Server) deleteSurvey(w http.ResponseWriter, r *http.Request) {

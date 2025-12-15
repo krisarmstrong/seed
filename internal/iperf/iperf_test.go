@@ -719,7 +719,7 @@ func TestIperf3BinaryRequired(t *testing.T) {
 		t.Fatalf("Failed to stat iperf3 binary: %v", err)
 	}
 
-	if info.Mode()&0111 == 0 {
+	if info.Mode()&0o111 == 0 {
 		t.Fatalf("iperf3 binary is not executable: %s", path)
 	}
 }

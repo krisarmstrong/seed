@@ -104,7 +104,7 @@ func TestDecryptInvalidCiphertext(t *testing.T) {
 		ciphertext string
 	}{
 		{"invalid base64", encryptedPrefix + "not-valid-base64!!!"},
-		{"too short", encryptedPrefix + "YWJj"}, // "abc" in base64, too short for nonce
+		{"too short", encryptedPrefix + "YWJj"},                            // "abc" in base64, too short for nonce
 		{"tampered", encryptedPrefix + "dGFtcGVyZWRkYXRhdGFtcGVyZWRkYXRh"}, // valid base64 but invalid ciphertext
 	}
 

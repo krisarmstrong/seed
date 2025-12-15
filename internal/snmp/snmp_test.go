@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gosnmp/gosnmp"
+
 	"github.com/krisarmstrong/luminetiq/internal/config"
 )
 
@@ -323,14 +324,14 @@ func TestGetPrivProtocol(t *testing.T) {
 func TestOIDConstants(t *testing.T) {
 	// Verify OID constants are correctly defined
 	oids := map[string]string{
-		"OIDSysDescr":      OIDSysDescr,
-		"OIDSysObjectID":   OIDSysObjectID,
-		"OIDSysUpTime":     OIDSysUpTime,
-		"OIDSysContact":    OIDSysContact,
-		"OIDSysName":       OIDSysName,
-		"OIDSysLocation":   OIDSysLocation,
-		"OIDCiscoVersion":  OIDCiscoVersion,
-		"OIDHPVersion":     OIDHPVersion,
+		"OIDSysDescr":       OIDSysDescr,
+		"OIDSysObjectID":    OIDSysObjectID,
+		"OIDSysUpTime":      OIDSysUpTime,
+		"OIDSysContact":     OIDSysContact,
+		"OIDSysName":        OIDSysName,
+		"OIDSysLocation":    OIDSysLocation,
+		"OIDCiscoVersion":   OIDCiscoVersion,
+		"OIDHPVersion":      OIDHPVersion,
 		"OIDJuniperVersion": OIDJuniperVersion,
 	}
 
@@ -339,7 +340,7 @@ func TestOIDConstants(t *testing.T) {
 			t.Errorf("%s is empty", name)
 		}
 		// OIDs should start with a digit
-		if len(oid) == 0 || (oid[0] < '0' || oid[0] > '9') {
+		if oid == "" || (oid[0] < '0' || oid[0] > '9') {
 			t.Errorf("%s = %v, should start with a digit", name, oid)
 		}
 	}
@@ -373,10 +374,10 @@ func TestContextCancellation(t *testing.T) {
 		Retries:     1,
 	}
 
-	// Query should fail due to cancelled context
+	// Query should fail due to canceled context
 	_, err := Query(ctx, "192.168.1.1", OIDSysDescr, cfg)
 	if err == nil {
-		t.Error("Query() with cancelled context should return error")
+		t.Error("Query() with canceled context should return error")
 	}
 }
 
@@ -501,13 +502,13 @@ func TestMultipleCommunities(t *testing.T) {
 
 func TestV3CredentialFields(t *testing.T) {
 	cred := config.SNMPv3Credential{
-		Name:         "test-cred",
-		Username:     "snmpuser",
-		AuthProtocol: "SHA256",
-		AuthPassword: "authpass123",
-		PrivProtocol: "AES256",
-		PrivPassword: "privpass456",
-		ContextName:  "context1",
+		Name:          "test-cred",
+		Username:      "snmpuser",
+		AuthProtocol:  "SHA256",
+		AuthPassword:  "authpass123",
+		PrivProtocol:  "AES256",
+		PrivPassword:  "privpass456",
+		ContextName:   "context1",
 		SecurityLevel: "authPriv",
 	}
 

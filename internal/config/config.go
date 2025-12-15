@@ -83,9 +83,9 @@ type ServerConfig struct {
 
 // ACMEConfig contains ACME/Let's Encrypt certificate settings.
 type ACMEConfig struct {
-	Enabled  bool   `yaml:"enabled"`            // Enable automatic certificate management
-	Domain   string `yaml:"domain"`             // Domain name for the certificate (e.g., "netscope.example.com")
-	Email    string `yaml:"email"`              // Contact email for Let's Encrypt notifications
+	Enabled  bool   `yaml:"enabled"`             // Enable automatic certificate management
+	Domain   string `yaml:"domain"`              // Domain name for the certificate (e.g., "netscope.example.com")
+	Email    string `yaml:"email"`               // Contact email for Let's Encrypt notifications
 	CacheDir string `yaml:"cache_dir,omitempty"` // Directory to cache certificates (default: "certs/acme")
 	Staging  bool   `yaml:"staging,omitempty"`   // Use Let's Encrypt staging server (for testing)
 }
@@ -94,9 +94,9 @@ type ACMEConfig struct {
 type InterfaceConfig struct {
 	Default          string        `yaml:"default"`
 	Fallbacks        []string      `yaml:"fallbacks"`
-	WiFi             string        `yaml:"wifi,omitempty"`         // Separate WiFi interface (optional)
-	StartupRetries   int           `yaml:"startup_retries"`        // Number of retries when finding interface at startup (fixes #528)
-	StartupRetryWait time.Duration `yaml:"startup_retry_wait"`     // Delay between startup retries (fixes #528)
+	WiFi             string        `yaml:"wifi,omitempty"`     // Separate WiFi interface (optional)
+	StartupRetries   int           `yaml:"startup_retries"`    // Number of retries when finding interface at startup (fixes #528)
+	StartupRetryWait time.Duration `yaml:"startup_retry_wait"` // Delay between startup retries (fixes #528)
 }
 
 // VLANConfig contains VLAN settings.
@@ -179,12 +179,12 @@ type NetworkDiscoveryConfig struct {
 
 // DiscoveryCustomOptions provides fine-grained control when Profile is "custom".
 type DiscoveryCustomOptions struct {
-	PassiveListen bool            `yaml:"passive_listen"` // LLDP, CDP, EDP, DHCP listening
-	ARPScan       bool            `yaml:"arp_scan"`       // ARP-based host discovery
-	ICMPScan      bool            `yaml:"icmp_scan"`      // ICMP ping sweep
-	PortScan      PortScanConfig  `yaml:"port_scan"`      // TCP/UDP port scanning
-	Traceroute    bool            `yaml:"traceroute"`     // Path discovery
-	SNMPQuery     bool            `yaml:"snmp_query"`     // SNMP device interrogation
+	PassiveListen bool           `yaml:"passive_listen"` // LLDP, CDP, EDP, DHCP listening
+	ARPScan       bool           `yaml:"arp_scan"`       // ARP-based host discovery
+	ICMPScan      bool           `yaml:"icmp_scan"`      // ICMP ping sweep
+	PortScan      PortScanConfig `yaml:"port_scan"`      // TCP/UDP port scanning
+	Traceroute    bool           `yaml:"traceroute"`     // Path discovery
+	SNMPQuery     bool           `yaml:"snmp_query"`     // SNMP device interrogation
 }
 
 // PortScanConfig controls port scanning behavior.
@@ -406,8 +406,8 @@ type DHCPConfig struct {
 
 // RogueDetectionConfig contains settings for rogue DHCP server detection.
 type RogueDetectionConfig struct {
-	Enabled         bool     `yaml:"enabled"`
-	KnownServers    []string `yaml:"known_servers"`
+	Enabled          bool     `yaml:"enabled"`
+	KnownServers     []string `yaml:"known_servers"`
 	AlertOnDetection bool     `yaml:"alert_on_detection"`
 }
 
@@ -442,14 +442,14 @@ type SNMPConfig struct {
 
 // SNMPv3Credential contains SNMP v3 authentication credentials.
 type SNMPv3Credential struct {
-	Name           string `yaml:"name"`            // Friendly name for this credential set
-	Username       string `yaml:"username"`        // Security name (user)
-	AuthProtocol   string `yaml:"auth_protocol"`   // "MD5", "SHA", "SHA256", "SHA512", or "" for noAuth
-	AuthPassword   string `yaml:"auth_password"`   // Authentication password
-	PrivProtocol   string `yaml:"priv_protocol"`   // "DES", "AES", "AES192", "AES256", or "" for noPriv
-	PrivPassword   string `yaml:"priv_password"`   // Privacy password
-	ContextName    string `yaml:"context_name"`    // Optional SNMP context
-	SecurityLevel  string `yaml:"security_level"`  // "noAuthNoPriv", "authNoPriv", "authPriv"
+	Name          string `yaml:"name"`           // Friendly name for this credential set
+	Username      string `yaml:"username"`       // Security name (user)
+	AuthProtocol  string `yaml:"auth_protocol"`  // "MD5", "SHA", "SHA256", "SHA512", or "" for noAuth
+	AuthPassword  string `yaml:"auth_password"`  // Authentication password
+	PrivProtocol  string `yaml:"priv_protocol"`  // "DES", "AES", "AES192", "AES256", or "" for noPriv
+	PrivPassword  string `yaml:"priv_password"`  // Privacy password
+	ContextName   string `yaml:"context_name"`   // Optional SNMP context
+	SecurityLevel string `yaml:"security_level"` // "noAuthNoPriv", "authNoPriv", "authPriv"
 }
 
 // DefaultConfig returns the default configuration.
@@ -481,9 +481,9 @@ func DefaultConfig() *Config {
 			// New profile-based configuration (recommended)
 			Profile: ProfileStandard, // Safe default: ARP/ICMP on local subnet only
 			CustomOptions: DiscoveryCustomOptions{
-				PassiveListen: true,  // Always listen for LLDP/CDP
-				ARPScan:       true,  // ARP scan local subnet
-				ICMPScan:      true,  // ICMP ping sweep
+				PassiveListen: true, // Always listen for LLDP/CDP
+				ARPScan:       true, // ARP scan local subnet
+				ICMPScan:      true, // ICMP ping sweep
 				PortScan:      PortScanConfig{Enabled: false},
 				Traceroute:    false,
 				SNMPQuery:     false, // Requires SNMP config
@@ -504,11 +504,11 @@ func DefaultConfig() *Config {
 			ARPScanWorkers:    50,
 			PingTimeout:       500 * time.Millisecond,
 			ScanTimeout:       30 * time.Second,
-			AutoScan:          true,             // Auto-scan on startup by default
-			ScanInterval:      0,                // Disabled by default
-			OUIFilePath:       "oui.txt",            // IEEE OUI file (download from https://standards-oui.ieee.org/oui/oui.txt)
+			AutoScan:          true,                // Auto-scan on startup by default
+			ScanInterval:      0,                   // Disabled by default
+			OUIFilePath:       "oui.txt",           // IEEE OUI file (download from https://standards-oui.ieee.org/oui/oui.txt)
 			OUIMaxAge:         30 * 24 * time.Hour, // Auto-update OUI database monthly
-			AdditionalSubnets: []SubnetConfig{},   // No additional subnets by default
+			AdditionalSubnets: []SubnetConfig{},    // No additional subnets by default
 		},
 		SNMP: SNMPConfig{
 			Communities: []string{"public"}, // Default read-only community
@@ -573,7 +573,7 @@ func DefaultConfig() *Config {
 				Enabled:           false,
 				CVEDatabase:       "nvd",
 				NVDAPIKey:         "",
-				UpdateInterval:    86400,  // 24 hours
+				UpdateInterval:    86400, // 24 hours
 				SeverityThreshold: "medium",
 				MaxConcurrent:     5,
 				AutoScan:          false,
@@ -634,94 +634,94 @@ func Load(path string) (*Config, error) {
 // Validate checks if the configuration values are valid (fixes #542).
 // This prevents the server from starting with invalid configuration.
 func (c *Config) Validate() error {
-	var errors []string
+	var validationErrors []string
 
 	// Server configuration
 	if c.Server.Port < 1 || c.Server.Port > 65535 {
-		errors = append(errors, fmt.Sprintf("server.port must be between 1-65535, got %d", c.Server.Port))
+		validationErrors = append(validationErrors, fmt.Sprintf("server.port must be between 1-65535, got %d", c.Server.Port))
 	}
 	if c.Server.HTTPRedirectPort < 0 || c.Server.HTTPRedirectPort > 65535 {
-		errors = append(errors, fmt.Sprintf("server.http_redirect_port must be between 0-65535, got %d", c.Server.HTTPRedirectPort))
+		validationErrors = append(validationErrors, fmt.Sprintf("server.http_redirect_port must be between 0-65535, got %d", c.Server.HTTPRedirectPort))
 	}
 	if c.Server.HTTPRedirectPort > 0 && c.Server.Port == c.Server.HTTPRedirectPort {
-		errors = append(errors, "server.port and server.http_redirect_port cannot be the same")
+		validationErrors = append(validationErrors, "server.port and server.http_redirect_port cannot be the same")
 	}
 
 	// Interface configuration
 	if c.Interface.Default == "" {
-		errors = append(errors, "interface.default is required")
+		validationErrors = append(validationErrors, "interface.default is required")
 	}
 	if c.Interface.StartupRetries < 0 {
-		errors = append(errors, fmt.Sprintf("interface.startup_retries must be >= 0, got %d", c.Interface.StartupRetries))
+		validationErrors = append(validationErrors, fmt.Sprintf("interface.startup_retries must be >= 0, got %d", c.Interface.StartupRetries))
 	}
 	if c.Interface.StartupRetryWait < 0 {
-		errors = append(errors, fmt.Sprintf("interface.startup_retry_wait must be >= 0, got %s", c.Interface.StartupRetryWait))
+		validationErrors = append(validationErrors, fmt.Sprintf("interface.startup_retry_wait must be >= 0, got %s", c.Interface.StartupRetryWait))
 	}
 
 	// VLAN configuration
 	if c.VLAN.Enabled && (c.VLAN.ID < 1 || c.VLAN.ID > 4094) {
-		errors = append(errors, fmt.Sprintf("vlan.id must be between 1-4094, got %d", c.VLAN.ID))
+		validationErrors = append(validationErrors, fmt.Sprintf("vlan.id must be between 1-4094, got %d", c.VLAN.ID))
 	}
 
 	// IP configuration
 	if c.IP.Mode != "dhcp" && c.IP.Mode != "static" {
-		errors = append(errors, fmt.Sprintf("ip.mode must be 'dhcp' or 'static', got '%s'", c.IP.Mode))
+		validationErrors = append(validationErrors, fmt.Sprintf("ip.mode must be 'dhcp' or 'static', got '%s'", c.IP.Mode))
 	}
 	if c.IP.Mode == "static" {
 		if c.IP.Static.Address == "" {
-			errors = append(errors, "ip.static.address is required when ip.mode is 'static'")
+			validationErrors = append(validationErrors, "ip.static.address is required when ip.mode is 'static'")
 		}
 		if c.IP.Static.Netmask == "" {
-			errors = append(errors, "ip.static.netmask is required when ip.mode is 'static'")
+			validationErrors = append(validationErrors, "ip.static.netmask is required when ip.mode is 'static'")
 		}
 		if c.IP.Static.Gateway == "" {
-			errors = append(errors, "ip.static.gateway is required when ip.mode is 'static'")
+			validationErrors = append(validationErrors, "ip.static.gateway is required when ip.mode is 'static'")
 		}
 	}
 
 	// Timeout validations
 	if c.Discovery.Timeout <= 0 {
-		errors = append(errors, "discovery.timeout must be positive")
+		validationErrors = append(validationErrors, "discovery.timeout must be positive")
 	}
 	if c.NetworkDiscovery.PingTimeout <= 0 {
-		errors = append(errors, "network_discovery.ping_timeout must be positive")
+		validationErrors = append(validationErrors, "network_discovery.ping_timeout must be positive")
 	}
 	if c.NetworkDiscovery.ScanTimeout <= 0 {
-		errors = append(errors, "network_discovery.scan_timeout must be positive")
+		validationErrors = append(validationErrors, "network_discovery.scan_timeout must be positive")
 	}
 	if c.DNS.Timeout <= 0 {
-		errors = append(errors, "dns.timeout must be positive")
+		validationErrors = append(validationErrors, "dns.timeout must be positive")
 	}
 
 	// Worker/concurrency limits
 	if c.NetworkDiscovery.ARPScanWorkers < 1 || c.NetworkDiscovery.ARPScanWorkers > 500 {
-		errors = append(errors, fmt.Sprintf("network_discovery.arp_scan_workers must be between 1-500, got %d", c.NetworkDiscovery.ARPScanWorkers))
+		validationErrors = append(validationErrors, fmt.Sprintf("network_discovery.arp_scan_workers must be between 1-500, got %d", c.NetworkDiscovery.ARPScanWorkers))
 	}
 
 	// Auth configuration
 	if c.Auth.SessionTimeout <= 0 {
-		errors = append(errors, "auth.session_timeout must be positive")
+		validationErrors = append(validationErrors, "auth.session_timeout must be positive")
 	}
 	if c.Auth.DefaultUsername == "" {
-		errors = append(errors, "auth.default_username is required")
+		validationErrors = append(validationErrors, "auth.default_username is required")
 	}
 	if c.Auth.DefaultPasswordHash == "" {
-		errors = append(errors, "auth.default_password_hash is required")
+		validationErrors = append(validationErrors, "auth.default_password_hash is required")
 	}
 
 	// SNMP configuration
 	if c.SNMP.Port < 1 || c.SNMP.Port > 65535 {
-		errors = append(errors, fmt.Sprintf("snmp.port must be between 1-65535, got %d", c.SNMP.Port))
+		validationErrors = append(validationErrors, fmt.Sprintf("snmp.port must be between 1-65535, got %d", c.SNMP.Port))
 	}
 	if c.SNMP.Retries < 0 || c.SNMP.Retries > 10 {
-		errors = append(errors, fmt.Sprintf("snmp.retries must be between 0-10, got %d", c.SNMP.Retries))
+		validationErrors = append(validationErrors, fmt.Sprintf("snmp.retries must be between 0-10, got %d", c.SNMP.Retries))
 	}
 	if c.SNMP.Timeout <= 0 {
-		errors = append(errors, "snmp.timeout must be positive")
+		validationErrors = append(validationErrors, "snmp.timeout must be positive")
 	}
 
-	if len(errors) > 0 {
-		return fmt.Errorf("configuration validation failed:\n  - %s", strings.Join(errors, "\n  - "))
+	if len(validationErrors) > 0 {
+		return fmt.Errorf("configuration validation failed:\n  - %s", strings.Join(validationErrors, "\n  - "))
 	}
 
 	return nil

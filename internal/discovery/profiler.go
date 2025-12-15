@@ -307,9 +307,9 @@ func (p *DeviceProfiler) checkPort(ctx context.Context, ip string, port int) Ope
 
 	// Try to grab banner for certain ports
 	if port == 22 || port == 21 || port == 23 || port == 25 || port == 110 || port == 143 {
-		_ = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
+		_ = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond)) //nolint:errcheck // Best-effort deadline
 		banner := make([]byte, 256)
-		n, _ := conn.Read(banner)
+		n, _ := conn.Read(banner) //nolint:errcheck // Best-effort banner read
 		if n > 0 {
 			result.Banner = strings.TrimSpace(string(banner[:n]))
 		}
@@ -326,7 +326,7 @@ func (p *DeviceProfiler) probeHTTP(ctx context.Context, ip string, port int, isH
 	}
 
 	url := fmt.Sprintf("%s://%s:%d/", scheme, ip, port)
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, http.NoBody)
 	if err != nil {
 		return nil
 	}
@@ -442,6 +442,7 @@ func (p *DeviceProfiler) inferDeviceType(profile *DeviceProfile) {
 		titleLower := strings.ToLower(profile.HTTPInfo.Title)
 		serverLower := strings.ToLower(profile.HTTPInfo.Server)
 
+		//nolint:gocritic // ifElseChain: string matching, switch on strings.Contains not possible
 		if strings.Contains(titleLower, "router") || strings.Contains(serverLower, "router") {
 			deviceType = "router"
 			icons["router"] = true

@@ -323,7 +323,7 @@ func (db *OUIDatabase) DownloadOUIDatabase(ctx context.Context, destPath string)
 	}
 
 	// Create request with context
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, IEEEOUIURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, IEEEOUIURL, http.NoBody)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -344,7 +344,7 @@ func (db *OUIDatabase) DownloadOUIDatabase(ctx context.Context, destPath string)
 
 	// Ensure destination directory exists
 	destDir := filepath.Dir(destPath)
-	if err := os.MkdirAll(destDir, 0750); err != nil {
+	if err := os.MkdirAll(destDir, 0o750); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 

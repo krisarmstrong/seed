@@ -74,11 +74,12 @@ func parseAirportLine(line string) *ScannedNetwork {
 
 	ssid := strings.TrimSpace(matches[1])
 	bssid := matches[2]
-	signal, _ := strconv.Atoi(matches[3])
-	channel, _ := strconv.Atoi(matches[4])
+	signal, _ := strconv.Atoi(matches[3])  //nolint:errcheck // Parse failure defaults to 0
+	channel, _ := strconv.Atoi(matches[4]) //nolint:errcheck // Parse failure defaults to 0
 	security := matches[5]
 
 	// Extract just the main security type
+	//nolint:gocritic // ifElseChain: order matters for security type detection (WPA3 before WPA2 before WPA)
 	if strings.Contains(security, "WPA3") {
 		security = "WPA3"
 	} else if strings.Contains(security, "WPA2") {

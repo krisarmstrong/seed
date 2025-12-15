@@ -1,0 +1,151 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { Card, CardValue, CardRow, CardDivider } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
+import { Globe } from 'lucide-react';
+import { Skeleton } from '../ui/Skeleton';
+
+/**
+ * DNSCard displays DNS resolver status and resolution times.
+ * Tests DNS connectivity to configured nameservers.
+ *
+ * This story demonstrates the card's visual states without context dependencies.
+ */
+const meta: Meta = {
+  title: 'Cards/DNSCard',
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div className="w-80">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+export default meta;
+
+export const Healthy: StoryObj = {
+  render: () => (
+    <Card
+      title="DNS"
+      subtitle="Name Resolution"
+      icon={<Globe className="w-4 h-4" />}
+      status="success"
+    >
+      <CardValue value="8.8.8.8" size="lg" />
+      <div className="mt-3 space-y-1">
+        <CardRow label="Status" value={<StatusBadge status="success" label="Resolving" />} />
+        <CardRow label="Resolution Time" value="12ms" valueStatus="success" />
+        <CardDivider />
+        <CardRow label="Primary DNS" value="8.8.8.8" />
+        <CardRow label="Secondary DNS" value="8.8.4.4" />
+        <CardRow label="Test Domain" value="google.com" />
+      </div>
+    </Card>
+  ),
+};
+
+export const SlowResolution: StoryObj = {
+  render: () => (
+    <Card
+      title="DNS"
+      subtitle="Name Resolution"
+      icon={<Globe className="w-4 h-4" />}
+      status="warning"
+    >
+      <CardValue value="192.168.1.1" size="lg" />
+      <div className="mt-3 space-y-1">
+        <CardRow label="Status" value={<StatusBadge status="warning" label="Slow" />} />
+        <CardRow label="Resolution Time" value="850ms" valueStatus="warning" />
+        <CardDivider />
+        <CardRow label="Primary DNS" value="192.168.1.1" />
+        <CardRow label="Test Domain" value="google.com" />
+        <p className="caption text-status-warning mt-2">
+          DNS resolution is slower than expected. Consider using a faster DNS server.
+        </p>
+      </div>
+    </Card>
+  ),
+};
+
+export const Failed: StoryObj = {
+  render: () => (
+    <Card
+      title="DNS"
+      subtitle="Name Resolution"
+      icon={<Globe className="w-4 h-4" />}
+      status="error"
+    >
+      <CardValue value="Failed" size="lg" status="error" />
+      <div className="mt-3 space-y-1">
+        <CardRow label="Status" value={<StatusBadge status="error" label="Unreachable" />} />
+        <CardRow label="Primary DNS" value="8.8.8.8" />
+        <CardDivider />
+        <p className="caption text-status-danger">
+          DNS server is not responding. Check network connectivity or try a different DNS server.
+        </p>
+      </div>
+    </Card>
+  ),
+};
+
+export const MultipleDNS: StoryObj = {
+  render: () => (
+    <Card
+      title="DNS"
+      subtitle="Multiple Resolvers"
+      icon={<Globe className="w-4 h-4" />}
+      status="success"
+    >
+      <CardValue value="All Healthy" size="lg" status="success" />
+      <div className="mt-3 space-y-1">
+        <CardRow label="8.8.8.8" value="12ms" valueStatus="success" />
+        <CardRow label="8.8.4.4" value="15ms" valueStatus="success" />
+        <CardRow label="1.1.1.1" value="8ms" valueStatus="success" />
+        <CardRow label="1.0.0.1" value="10ms" valueStatus="success" />
+      </div>
+    </Card>
+  ),
+};
+
+export const Loading: StoryObj = {
+  render: () => (
+    <Card
+      title="DNS"
+      subtitle="Name Resolution"
+      icon={<Globe className="w-4 h-4" />}
+      status="loading"
+    >
+      <Skeleton className="h-8 w-32 mb-3" />
+      <div className="space-y-2 mt-4">
+        <div className="flex justify-between">
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-20" />
+        </div>
+        <div className="flex justify-between">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-3 w-12" />
+        </div>
+      </div>
+    </Card>
+  ),
+};
+
+export const NoDNS: StoryObj = {
+  render: () => (
+    <Card
+      title="DNS"
+      subtitle="Name Resolution"
+      icon={<Globe className="w-4 h-4" />}
+      status="unknown"
+    >
+      <CardValue value="Not Configured" size="md" />
+      <p className="caption text-text-muted mt-2">
+        No DNS servers configured. Network may not resolve domain names.
+      </p>
+    </Card>
+  ),
+};

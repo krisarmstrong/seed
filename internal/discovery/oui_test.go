@@ -30,15 +30,15 @@ func TestOUILookup(t *testing.T) {
 		mac      string
 		expected string
 	}{
-		{"00:00:0C:12:34:56", "Cisco"},           // Cisco MAC
-		{"00:03:93:AB:CD:EF", "Apple"},           // Apple MAC
-		{"B8:27:EB:00:00:00", "Raspberry Pi"},    // Raspberry Pi
-		{"00:50:56:12:34:56", "VMware"},          // VMware
-		{"08:00:27:AB:CD:EF", "VirtualBox"},      // VirtualBox
-		{"00:00:00:00:00:00", ""},                // Unknown - should return empty
-		{"ff:ff:ff:ff:ff:ff", ""},                // Broadcast - no vendor
-		{"00-00-0C-12-34-56", "Cisco"},           // Hyphen format
-		{"00000C123456", ""},                     // Compact format (not supported for lookup)
+		{"00:00:0C:12:34:56", "Cisco"},        // Cisco MAC
+		{"00:03:93:AB:CD:EF", "Apple"},        // Apple MAC
+		{"B8:27:EB:00:00:00", "Raspberry Pi"}, // Raspberry Pi
+		{"00:50:56:12:34:56", "VMware"},       // VMware
+		{"08:00:27:AB:CD:EF", "VirtualBox"},   // VirtualBox
+		{"00:00:00:00:00:00", ""},             // Unknown - should return empty
+		{"ff:ff:ff:ff:ff:ff", ""},             // Broadcast - no vendor
+		{"00-00-0C-12-34-56", "Cisco"},        // Hyphen format
+		{"00000C123456", ""},                  // Compact format (not supported for lookup)
 	}
 
 	for _, tt := range tests {
@@ -73,7 +73,7 @@ func TestOUILoadFromFile(t *testing.T) {
 	ouiFile := filepath.Join(tmpDir, "oui.txt")
 
 	content := "# Test OUI file\nAA:BB:CC\tTest Vendor\nDD:EE:FF\tAnother Vendor\n"
-	if err := os.WriteFile(ouiFile, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(ouiFile, []byte(content), 0o644); err != nil {
 		t.Fatalf("Failed to write temp OUI file: %v", err)
 	}
 
@@ -120,7 +120,7 @@ DDEEFF     (base 16)		Another Corp
 				Town, ST 67890
 				US
 `
-	if err := os.WriteFile(ouiFile, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(ouiFile, []byte(content), 0o644); err != nil {
 		t.Fatalf("Failed to write temp IEEE OUI file: %v", err)
 	}
 
@@ -154,7 +154,7 @@ func TestOUINeedsUpdate(t *testing.T) {
 	}
 
 	// Create the file
-	if err := os.WriteFile(ouiFile, []byte("# empty\n"), 0644); err != nil {
+	if err := os.WriteFile(ouiFile, []byte("# empty\n"), 0o644); err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
 

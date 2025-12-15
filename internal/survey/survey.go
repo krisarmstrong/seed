@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
 	"github.com/krisarmstrong/luminetiq/internal/iperf"
 	"github.com/krisarmstrong/luminetiq/internal/wifi"
 )
@@ -35,9 +36,9 @@ const (
 
 // FloorPlan contains floor plan image and metadata.
 type FloorPlan struct {
-	ImageData string `json:"imageData"` // Base64-encoded image
-	Width     int    `json:"width"`     // Image width in pixels
-	Height    int    `json:"height"`    // Image height in pixels
+	ImageData string  `json:"imageData"` // Base64-encoded image
+	Width     int     `json:"width"`     // Image width in pixels
+	Height    int     `json:"height"`    // Image height in pixels
 	ScaleM    float64 `json:"scaleM"`    // Meters per pixel
 }
 
@@ -62,15 +63,15 @@ type ThroughputSample struct {
 	RSSI         int     `json:"rssi"`
 	DownloadMbps float64 `json:"downloadMbps"`
 	UploadMbps   float64 `json:"uploadMbps"`
-	Latency      float64 `json:"latency"`      // milliseconds
-	Jitter       float64 `json:"jitter"`       // milliseconds
-	PacketLoss   float64 `json:"packetLoss"`   // percentage
+	Latency      float64 `json:"latency"`    // milliseconds
+	Jitter       float64 `json:"jitter"`     // milliseconds
+	PacketLoss   float64 `json:"packetLoss"` // percentage
 }
 
 // SamplePoint represents a measurement at a specific location.
 type SamplePoint struct {
-	X          int         `json:"x"`          // Pixel X coordinate on floor plan
-	Y          int         `json:"y"`          // Pixel Y coordinate on floor plan
+	X          int         `json:"x"` // Pixel X coordinate on floor plan
+	Y          int         `json:"y"` // Pixel Y coordinate on floor plan
 	Timestamp  time.Time   `json:"timestamp"`
 	SampleData interface{} `json:"sampleData"` // PassiveSample | ActiveSample | ThroughputSample
 }
@@ -95,12 +96,12 @@ type Survey struct {
 
 // Manager manages WiFi site surveys.
 type Manager struct {
-	mu            sync.RWMutex
-	surveys       map[string]*Survey // key is survey ID
-	storagePath   string
-	wifiScanner   *wifi.Scanner
-	wifiManager   *wifi.Manager
-	iperfManager  *iperf.Manager
+	mu           sync.RWMutex
+	surveys      map[string]*Survey // key is survey ID
+	storagePath  string
+	wifiScanner  *wifi.Scanner
+	wifiManager  *wifi.Manager
+	iperfManager *iperf.Manager
 }
 
 // NewManager creates a new survey manager.
@@ -284,8 +285,8 @@ func (m *Manager) AddSample(id string, x, y int, sampleData interface{}) error {
 
 // saveSurvey persists a survey to disk.
 func (m *Manager) saveSurvey(survey *Survey) error {
-	// Ensure storage directory exists
-	if err := os.MkdirAll(m.storagePath, 0755); err != nil {
+	// Ensure storage directory exists with restrictive permissions
+	if err := os.MkdirAll(m.storagePath, 0o750); err != nil {
 		return fmt.Errorf("failed to create storage directory: %w", err)
 	}
 
@@ -295,7 +296,7 @@ func (m *Manager) saveSurvey(survey *Survey) error {
 		return fmt.Errorf("failed to marshal survey: %w", err)
 	}
 
-	if err := os.WriteFile(filename, data, 0644); err != nil {
+	if err := os.WriteFile(filename, data, 0o600); err != nil {
 		return fmt.Errorf("failed to write survey file: %w", err)
 	}
 
@@ -307,8 +308,8 @@ func (m *Manager) LoadSurveys() error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// Create storage directory if it doesn't exist
-	if err := os.MkdirAll(m.storagePath, 0755); err != nil {
+	// Create storage directory if it doesn't exist with restrictive permissions
+	if err := os.MkdirAll(m.storagePath, 0o750); err != nil {
 		return fmt.Errorf("failed to create storage directory: %w", err)
 	}
 
@@ -319,7 +320,8 @@ func (m *Manager) LoadSurveys() error {
 	}
 
 	for _, file := range files {
-		data, err := os.ReadFile(file)
+		// file comes from filepath.Glob with our controlled pattern, not user input
+		data, err := os.ReadFile(file) //nolint:gosec // G304: file path from Glob with controlled pattern
 		if err != nil {
 			continue // Skip files that can't be read
 		}

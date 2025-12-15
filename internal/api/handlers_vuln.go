@@ -126,8 +126,8 @@ func (s *Server) handleVulnerabilityResults(w http.ResponseWriter, r *http.Reque
 	if severityFilter := r.URL.Query().Get("severity"); severityFilter != "" {
 		filtered := make([]*discovery.DeviceVulnerabilities, 0)
 		for _, result := range results {
-			for _, vuln := range result.Vulnerabilities {
-				if strings.EqualFold(vuln.Severity, severityFilter) {
+			for i := range result.Vulnerabilities {
+				if strings.EqualFold(result.Vulnerabilities[i].Severity, severityFilter) {
 					filtered = append(filtered, result)
 					break
 				}

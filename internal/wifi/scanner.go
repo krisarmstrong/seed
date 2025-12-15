@@ -10,7 +10,7 @@ import (
 type ScannedNetwork struct {
 	SSID      string    `json:"ssid"`
 	BSSID     string    `json:"bssid"`
-	Signal    int       `json:"signal"`    // dBm
+	Signal    int       `json:"signal"` // dBm
 	Channel   int       `json:"channel"`
 	Frequency int       `json:"frequency"` // MHz
 	Security  string    `json:"security"`

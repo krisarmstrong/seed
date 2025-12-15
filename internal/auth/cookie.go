@@ -122,7 +122,7 @@ func GetRefreshTokenFromCookie(r *http.Request) (string, error) {
 // 1. Cookie (most secure)
 // 2. Authorization header (Bearer token - fallback for API clients)
 // 3. Query parameter (least secure - WebSocket only, deprecated)
-func GetTokenFromRequest(r *http.Request) (string, string) {
+func GetTokenFromRequest(r *http.Request) (token, source string) {
 	// Try cookie first (most secure)
 	if token, err := GetAccessTokenFromCookie(r); err == nil && token != "" {
 		return token, "cookie"

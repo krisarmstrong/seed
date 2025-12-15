@@ -53,10 +53,9 @@ type LinkMonitor struct {
 	running       bool
 	pollInterval  time.Duration
 	// History tracking
-	history      []LinkEvent
-	maxHistory   int
-	flapCount24h int
-	startTime    time.Time
+	history    []LinkEvent
+	maxHistory int
+	startTime  time.Time
 }
 
 // NewLinkMonitor creates a new link state monitor.
@@ -168,10 +167,9 @@ func (m *LinkMonitor) pollLoop() {
 				for _, cb := range callbacks {
 					go func(callback LinkStateCallback) {
 						defer func() {
-							if r := recover(); r != nil {
-								// Silently recover from panic in callback
-								// to prevent crashing the link monitor
-							}
+							// Silently recover from panic in callback
+							// to prevent crashing the link monitor
+							recover() //nolint:errcheck // Intentionally ignoring panic value
 						}()
 						callback(event)
 					}(cb)
