@@ -96,3 +96,52 @@ func NewTestServer() *Server {
 func (s *Server) GetAuthenticatedHandler() http.Handler {
 	return corsMiddleware(s.authManager.Middleware(s.mux))
 }
+
+// NewTestServerWithConfig creates a test server with a specific config.
+// This allows tests to customize the server configuration.
+func NewTestServerWithConfig(cfg *config.Config) *Server {
+	// Create test network manager (minimal)
+	netMgr, err := network.NewManager(cfg.Interface.Default)
+	if err != nil {
+		// Use a nil manager for testing - handlers should handle this gracefully
+		netMgr = nil
+	}
+
+	// Create server with all required managers
+	s := &Server{
+		config:               cfg,
+		configPath:           "/tmp/test-config.yaml",
+		logPath:              "/tmp/test.log",
+		mux:                  http.NewServeMux(),
+		netManager:           netMgr,
+		icmpAvailable:        true,
+		authManager:          auth.NewManager(cfg.Auth.JWTSecret, cfg.Auth.SessionTimeout, cfg.Auth.DefaultUsername, cfg.Auth.DefaultPasswordHash),
+		loginRateLimiter:     NewRateLimiter(DefaultRateLimitConfig()),
+		endpointRateLimiter:  NewEndpointRateLimiter(DefaultEndpointRateLimitConfig()),
+		linkMonitor:          network.NewLinkMonitor(cfg.Interface.Default),
+		discoveryManager:     discovery.NewManager(cfg.Interface.Default),
+		deviceDiscovery:      discovery.NewDeviceDiscovery(cfg.Interface.Default),
+		discoveryService:     discovery.NewService(cfg, cfg.Interface.Default),
+		dnsTester:            dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
+		dhcpMonitor:          dhcp.NewMonitor(cfg.Interface.Default),
+		gatewayTester:        gateway.NewTester(gateway.DefaultThresholds()),
+		vlanManager:          vlan.NewManager(cfg.Interface.Default),
+		vlanTrafficMonitor:   vlan.NewTrafficMonitor(cfg.Interface.Default),
+		wifiManager:          wifi.NewManager(cfg.Interface.Default),
+		cableTester:          cable.NewTester(cfg.Interface.Default),
+		speedtestTester:      speedtest.NewTesterWithConfig(cfg.Speedtest.ServerID),
+		iperfManager:         iperf.NewManager(),
+		publicipChecker:      publicip.NewChecker(),
+		logAccessToken:       "",
+		logAccessHeader:      "X-Log-Token",
+		requireLogToken:      false,
+	}
+
+	// Initialize WebSocket hub
+	s.wsHub = NewHub()
+
+	// Setup routes
+	s.setupRoutes()
+
+	return s
+}
