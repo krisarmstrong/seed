@@ -1,6 +1,8 @@
 # Binaries
 /netscope
 /netscope-*
+/luminetiq
+/luminetiq-*
 *.exe
 *.exe~
 *.dll
@@ -27,6 +29,7 @@ vendor/
 # IDE
 .idea/
 .vscode/
+.claude/settings.local.json
 *.swp
 *.swo
 *~
