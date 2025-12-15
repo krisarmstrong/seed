@@ -448,3 +448,598 @@ func TestGenerateJWTSecret(t *testing.T) {
 		t.Errorf("JWT secret seems too short: %d characters", len(secret1))
 	}
 }
+
+func TestUpdatePasswordHash(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	// Generate a token before password change
+	token, err := m.Authenticate(testUsername, testPassword)
+	if err != nil {
+		t.Fatalf("failed to authenticate: %v", err)
+	}
+
+	// Verify token is valid
+	_, err = m.ValidateToken(token)
+	if err != nil {
+		t.Fatalf("token should be valid before password change: %v", err)
+	}
+
+	// Update password hash
+	newHash, _ := HashPassword("newpassword")
+	m.UpdatePasswordHash(newHash)
+
+	// Old token should now be invalid (token version incremented)
+	_, err = m.ValidateToken(token)
+	if err != ErrInvalidToken {
+		t.Errorf("expected ErrInvalidToken after password change, got %v", err)
+	}
+}
+
+func TestGenerateAccessToken(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	token, err := m.GenerateAccessToken(testUsername)
+	if err != nil {
+		t.Fatalf("failed to generate access token: %v", err)
+	}
+
+	if token == "" {
+		t.Error("expected non-empty access token")
+	}
+
+	claims, err := m.ValidateToken(token)
+	if err != nil {
+		t.Fatalf("failed to validate access token: %v", err)
+	}
+
+	if claims.TokenType != "access" {
+		t.Errorf("expected token type 'access', got %q", claims.TokenType)
+	}
+}
+
+func TestGenerateRefreshToken(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	token, err := m.GenerateRefreshToken(testUsername)
+	if err != nil {
+		t.Fatalf("failed to generate refresh token: %v", err)
+	}
+
+	if token == "" {
+		t.Error("expected non-empty refresh token")
+	}
+
+	claims, err := m.ValidateToken(token)
+	if err != nil {
+		t.Fatalf("failed to validate refresh token: %v", err)
+	}
+
+	if claims.TokenType != "refresh" {
+		t.Errorf("expected token type 'refresh', got %q", claims.TokenType)
+	}
+}
+
+func TestValidateRefreshToken(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	// Generate a refresh token
+	refreshToken, err := m.GenerateRefreshToken(testUsername)
+	if err != nil {
+		t.Fatalf("failed to generate refresh token: %v", err)
+	}
+
+	// Validate as refresh token - should succeed
+	claims, err := m.ValidateRefreshToken(refreshToken)
+	if err != nil {
+		t.Fatalf("failed to validate refresh token: %v", err)
+	}
+	if claims.Username != testUsername {
+		t.Errorf("expected username %s, got %s", testUsername, claims.Username)
+	}
+
+	// Try to validate an access token as refresh token - should fail
+	accessToken, err := m.GenerateAccessToken(testUsername)
+	if err != nil {
+		t.Fatalf("failed to generate access token: %v", err)
+	}
+
+	_, err = m.ValidateRefreshToken(accessToken)
+	if err != ErrInvalidToken {
+		t.Errorf("expected ErrInvalidToken for access token, got %v", err)
+	}
+}
+
+func TestRefreshAccessToken(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	// Generate a refresh token
+	refreshToken, err := m.GenerateRefreshToken(testUsername)
+	if err != nil {
+		t.Fatalf("failed to generate refresh token: %v", err)
+	}
+
+	// Use refresh token to get new access token
+	newAccessToken, err := m.RefreshAccessToken(refreshToken)
+	if err != nil {
+		t.Fatalf("failed to refresh access token: %v", err)
+	}
+
+	// Validate the new access token
+	claims, err := m.ValidateToken(newAccessToken)
+	if err != nil {
+		t.Fatalf("failed to validate new access token: %v", err)
+	}
+
+	if claims.TokenType != "access" {
+		t.Errorf("expected token type 'access', got %q", claims.TokenType)
+	}
+	if claims.Username != testUsername {
+		t.Errorf("expected username %s, got %s", testUsername, claims.Username)
+	}
+
+	// Try with invalid refresh token
+	_, err = m.RefreshAccessToken("invalid.token.here")
+	if err == nil {
+		t.Error("expected error for invalid refresh token")
+	}
+
+	// Try with access token (not refresh token)
+	accessToken, _ := m.GenerateAccessToken(testUsername)
+	_, err = m.RefreshAccessToken(accessToken)
+	if err != ErrInvalidToken {
+		t.Errorf("expected ErrInvalidToken for access token, got %v", err)
+	}
+}
+
+func TestExtractTokenFromSubprotocol(t *testing.T) {
+	tests := []struct {
+		name     string
+		protocol string
+		expected string
+	}{
+		{
+			name:     "access_token format",
+			protocol: "access_token, mytoken123",
+			expected: "mytoken123",
+		},
+		{
+			name:     "bearer format",
+			protocol: "bearer, mytoken456",
+			expected: "mytoken456",
+		},
+		{
+			name:     "single token fallback",
+			protocol: "mytoken789",
+			expected: "mytoken789",
+		},
+		{
+			name:     "empty string",
+			protocol: "",
+			expected: "",
+		},
+		{
+			name:     "access_token at end without token",
+			protocol: "something, access_token",
+			expected: "",
+		},
+		{
+			name:     "multiple protocols with access_token",
+			protocol: "other, access_token, mytoken",
+			expected: "mytoken",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := extractTokenFromSubprotocol(tt.protocol)
+			if result != tt.expected {
+				t.Errorf("extractTokenFromSubprotocol(%q) = %q, want %q", tt.protocol, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestMiddlewareWithCookie(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	// Get a valid token
+	token, err := m.Authenticate(testUsername, testPassword)
+	if err != nil {
+		t.Fatalf("failed to authenticate: %v", err)
+	}
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check that username was set in header
+		if r.Header.Get("X-Username") != testUsername {
+			t.Errorf("expected X-Username to be %q, got %q", testUsername, r.Header.Get("X-Username"))
+		}
+		w.WriteHeader(http.StatusOK)
+	})
+
+	middleware := m.Middleware(handler)
+
+	req := httptest.NewRequest("GET", "/api/test", http.NoBody)
+	req.AddCookie(&http.Cookie{Name: CookieNameAccess, Value: token})
+
+	rec := httptest.NewRecorder()
+	middleware.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("expected status %d, got %d", http.StatusOK, rec.Code)
+	}
+}
+
+func TestMiddlewareSkipSetupEndpoints(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	middleware := m.Middleware(handler)
+
+	// Test that setup endpoints skip auth
+	paths := []string{
+		"/api/setup/status",
+		"/api/setup/complete",
+		"/api/auth/refresh",
+	}
+
+	for _, path := range paths {
+		t.Run(path, func(t *testing.T) {
+			req := httptest.NewRequest("GET", path, http.NoBody)
+			rec := httptest.NewRecorder()
+			middleware.ServeHTTP(rec, req)
+
+			if rec.Code != http.StatusOK {
+				t.Errorf("expected status %d for %s, got %d", http.StatusOK, path, rec.Code)
+			}
+		})
+	}
+}
+
+func TestMiddlewareExpiredToken(t *testing.T) {
+	m := NewManager("test-secret", time.Millisecond, testUsername, testPasswordHash)
+
+	token, err := m.Authenticate(testUsername, testPassword)
+	if err != nil {
+		t.Fatalf("failed to authenticate: %v", err)
+	}
+
+	// Wait for token to expire
+	time.Sleep(10 * time.Millisecond)
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	middleware := m.Middleware(handler)
+
+	req := httptest.NewRequest("GET", "/api/test", http.NoBody)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rec := httptest.NewRecorder()
+	middleware.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Errorf("expected status %d for expired token, got %d", http.StatusUnauthorized, rec.Code)
+	}
+
+	if rec.Body.String() != "Token expired\n" {
+		t.Errorf("expected 'Token expired' message, got %q", rec.Body.String())
+	}
+}
+
+func TestMiddlewareWebSocketAuth(t *testing.T) {
+	m := NewManager("test-secret", time.Hour, testUsername, testPasswordHash)
+
+	token, err := m.Authenticate(testUsername, testPassword)
+	if err != nil {
+		t.Fatalf("failed to authenticate: %v", err)
+	}
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	middleware := m.Middleware(handler)
+
+	// Test WebSocket with Sec-WebSocket-Protocol header
+	req := httptest.NewRequest("GET", "/ws/updates", http.NoBody)
+	req.Header.Set("Sec-WebSocket-Protocol", "access_token, "+token)
+
+	rec := httptest.NewRecorder()
+	middleware.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("expected status %d for WebSocket auth, got %d", http.StatusOK, rec.Code)
+	}
+}
+
+func TestRandomChar(t *testing.T) {
+	chars := "abc"
+
+	// Generate many characters and ensure they're all in the charset
+	seen := make(map[byte]bool)
+	for i := 0; i < 100; i++ {
+		c, err := randomChar(chars)
+		if err != nil {
+			t.Fatalf("randomChar failed: %v", err)
+		}
+		if c != 'a' && c != 'b' && c != 'c' {
+			t.Errorf("randomChar returned %c, which is not in charset %q", c, chars)
+		}
+		seen[c] = true
+	}
+
+	// After 100 iterations, we should have seen all 3 chars
+	if len(seen) != 3 {
+		t.Logf("Only saw %d of 3 characters (may be random chance)", len(seen))
+	}
+}
+
+func TestRandomInt(t *testing.T) {
+	// Test with n=0
+	result, err := randomInt(0)
+	if err != nil {
+		t.Errorf("randomInt(0) error: %v", err)
+	}
+	if result != 0 {
+		t.Errorf("randomInt(0) = %d, want 0", result)
+	}
+
+	// Test with small n
+	for i := 0; i < 100; i++ {
+		result, err := randomInt(10)
+		if err != nil {
+			t.Fatalf("randomInt(10) error: %v", err)
+		}
+		if result < 0 || result >= 10 {
+			t.Errorf("randomInt(10) = %d, out of range [0, 10)", result)
+		}
+	}
+
+	// Test with larger n (>256 to hit the multi-byte path)
+	for i := 0; i < 50; i++ {
+		result, err := randomInt(1000)
+		if err != nil {
+			t.Fatalf("randomInt(1000) error: %v", err)
+		}
+		if result < 0 || result >= 1000 {
+			t.Errorf("randomInt(1000) = %d, out of range [0, 1000)", result)
+		}
+	}
+}
+
+// Cookie tests
+
+func TestDefaultCookieConfig(t *testing.T) {
+	config := DefaultCookieConfig()
+
+	if !config.Secure {
+		t.Error("Secure should be true by default")
+	}
+	if config.SameSite != http.SameSiteStrictMode {
+		t.Errorf("SameSite should be Strict, got %v", config.SameSite)
+	}
+	if config.Domain != "" {
+		t.Errorf("Domain should be empty by default, got %q", config.Domain)
+	}
+	if config.Path != "/" {
+		t.Errorf("Path should be '/', got %q", config.Path)
+	}
+}
+
+func TestSetAccessTokenCookie(t *testing.T) {
+	rec := httptest.NewRecorder()
+	config := DefaultCookieConfig()
+	config.Secure = false // For testing without HTTPS
+
+	SetAccessTokenCookie(rec, "test-token", config)
+
+	cookies := rec.Result().Cookies()
+	if len(cookies) != 1 {
+		t.Fatalf("expected 1 cookie, got %d", len(cookies))
+	}
+
+	cookie := cookies[0]
+	if cookie.Name != CookieNameAccess {
+		t.Errorf("expected cookie name %q, got %q", CookieNameAccess, cookie.Name)
+	}
+	if cookie.Value != "test-token" {
+		t.Errorf("expected cookie value 'test-token', got %q", cookie.Value)
+	}
+	if !cookie.HttpOnly {
+		t.Error("cookie should be HttpOnly")
+	}
+}
+
+func TestSetRefreshTokenCookie(t *testing.T) {
+	rec := httptest.NewRecorder()
+	config := DefaultCookieConfig()
+	config.Secure = false
+
+	SetRefreshTokenCookie(rec, "refresh-token", config)
+
+	cookies := rec.Result().Cookies()
+	if len(cookies) != 1 {
+		t.Fatalf("expected 1 cookie, got %d", len(cookies))
+	}
+
+	cookie := cookies[0]
+	if cookie.Name != CookieNameRefresh {
+		t.Errorf("expected cookie name %q, got %q", CookieNameRefresh, cookie.Name)
+	}
+	if cookie.Value != "refresh-token" {
+		t.Errorf("expected cookie value 'refresh-token', got %q", cookie.Value)
+	}
+	if !cookie.HttpOnly {
+		t.Error("cookie should be HttpOnly")
+	}
+}
+
+func TestClearAuthCookies(t *testing.T) {
+	rec := httptest.NewRecorder()
+	config := DefaultCookieConfig()
+
+	ClearAuthCookies(rec, config)
+
+	cookies := rec.Result().Cookies()
+	if len(cookies) != 2 {
+		t.Fatalf("expected 2 cookies (access and refresh), got %d", len(cookies))
+	}
+
+	for _, cookie := range cookies {
+		if cookie.MaxAge != -1 {
+			t.Errorf("cookie %s should have MaxAge -1, got %d", cookie.Name, cookie.MaxAge)
+		}
+	}
+}
+
+func TestGetAccessTokenFromCookie(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", http.NoBody)
+	req.AddCookie(&http.Cookie{Name: CookieNameAccess, Value: "access-token-value"})
+
+	token, err := GetAccessTokenFromCookie(req)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if token != "access-token-value" {
+		t.Errorf("expected 'access-token-value', got %q", token)
+	}
+
+	// Test missing cookie
+	req2 := httptest.NewRequest("GET", "/", http.NoBody)
+	_, err = GetAccessTokenFromCookie(req2)
+	if err == nil {
+		t.Error("expected error for missing cookie")
+	}
+}
+
+func TestGetRefreshTokenFromCookie(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", http.NoBody)
+	req.AddCookie(&http.Cookie{Name: CookieNameRefresh, Value: "refresh-token-value"})
+
+	token, err := GetRefreshTokenFromCookie(req)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if token != "refresh-token-value" {
+		t.Errorf("expected 'refresh-token-value', got %q", token)
+	}
+
+	// Test missing cookie
+	req2 := httptest.NewRequest("GET", "/", http.NoBody)
+	_, err = GetRefreshTokenFromCookie(req2)
+	if err == nil {
+		t.Error("expected error for missing cookie")
+	}
+}
+
+func TestGetTokenFromRequest(t *testing.T) {
+	tests := []struct {
+		name           string
+		setupRequest   func() *http.Request
+		expectedToken  string
+		expectedSource string
+	}{
+		{
+			name: "from cookie",
+			setupRequest: func() *http.Request {
+				req := httptest.NewRequest("GET", "/", http.NoBody)
+				req.AddCookie(&http.Cookie{Name: CookieNameAccess, Value: "cookie-token"})
+				return req
+			},
+			expectedToken:  "cookie-token",
+			expectedSource: "cookie",
+		},
+		{
+			name: "from Authorization header",
+			setupRequest: func() *http.Request {
+				req := httptest.NewRequest("GET", "/", http.NoBody)
+				req.Header.Set("Authorization", "Bearer header-token")
+				return req
+			},
+			expectedToken:  "header-token",
+			expectedSource: "header",
+		},
+		{
+			name: "from query parameter",
+			setupRequest: func() *http.Request {
+				return httptest.NewRequest("GET", "/?token=query-token", http.NoBody)
+			},
+			expectedToken:  "query-token",
+			expectedSource: "query",
+		},
+		{
+			name: "no token",
+			setupRequest: func() *http.Request {
+				return httptest.NewRequest("GET", "/", http.NoBody)
+			},
+			expectedToken:  "",
+			expectedSource: "none",
+		},
+		{
+			name: "cookie takes precedence over header",
+			setupRequest: func() *http.Request {
+				req := httptest.NewRequest("GET", "/", http.NoBody)
+				req.AddCookie(&http.Cookie{Name: CookieNameAccess, Value: "cookie-token"})
+				req.Header.Set("Authorization", "Bearer header-token")
+				return req
+			},
+			expectedToken:  "cookie-token",
+			expectedSource: "cookie",
+		},
+		{
+			name: "header takes precedence over query",
+			setupRequest: func() *http.Request {
+				req := httptest.NewRequest("GET", "/?token=query-token", http.NoBody)
+				req.Header.Set("Authorization", "Bearer header-token")
+				return req
+			},
+			expectedToken:  "header-token",
+			expectedSource: "header",
+		},
+		{
+			name: "invalid Authorization header format",
+			setupRequest: func() *http.Request {
+				req := httptest.NewRequest("GET", "/?token=query-token", http.NoBody)
+				req.Header.Set("Authorization", "Basic base64encoded")
+				return req
+			},
+			expectedToken:  "query-token",
+			expectedSource: "query",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := tt.setupRequest()
+			token, source := GetTokenFromRequest(req)
+			if token != tt.expectedToken {
+				t.Errorf("expected token %q, got %q", tt.expectedToken, token)
+			}
+			if source != tt.expectedSource {
+				t.Errorf("expected source %q, got %q", tt.expectedSource, source)
+			}
+		})
+	}
+}
+
+func TestTokenDurationConstants(t *testing.T) {
+	if AccessTokenDuration != 15*time.Minute {
+		t.Errorf("AccessTokenDuration should be 15 minutes, got %v", AccessTokenDuration)
+	}
+	if RefreshTokenDuration != 7*24*time.Hour {
+		t.Errorf("RefreshTokenDuration should be 7 days, got %v", RefreshTokenDuration)
+	}
+}
+
+func TestCookieNameConstants(t *testing.T) {
+	if CookieNameAccess != "luminetiq_access" {
+		t.Errorf("CookieNameAccess should be 'luminetiq_access', got %q", CookieNameAccess)
+	}
+	if CookieNameRefresh != "luminetiq_refresh" {
+		t.Errorf("CookieNameRefresh should be 'luminetiq_refresh', got %q", CookieNameRefresh)
+	}
+}
