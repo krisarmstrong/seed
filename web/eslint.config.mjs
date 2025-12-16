@@ -3,10 +3,10 @@ import storybook from "eslint-plugin-storybook";
 
 /**
  * ESLint Configuration
- * 
+ *
  * Purpose: Configures ESLint rules and plugins for code quality in LuminetIQ frontend.
  * Enforces TypeScript, React, and accessibility best practices across the codebase.
- * 
+ *
  * Configuration:
  * - Base: JavaScript recommended config with TypeScript ESLint support
  * - Language: ECMAScript 2024 with JSX/TSX support
@@ -15,29 +15,29 @@ import storybook from "eslint-plugin-storybook";
  *   - react-hooks: Validates Hook usage (exhaustive-deps, rules of hooks)
  *   - react-refresh: Warns if exports might break Fast Refresh
  *   - typescript-eslint: Type-aware linting rules
- * 
+ *
  * Key Rules:
  * - react-hooks/rules-of-hooks: Enforces rules of hooks (no hooks in loops)
  * - react-hooks/exhaustive-deps: Validates dependency arrays
  * - react-refresh/only-export-components: Exports should be components (with exceptions)
  * - TypeScript: Recommends stricter type checking rules
- * 
+ *
  * Ignored Directories:
  * - dist/ - Build output
  * - node_modules/ - Dependencies
  * - coverage/ - Test coverage reports
- * 
+ *
  * Usage:
  * ```bash
  * npm run lint              # Run ESLint check
  * npm run lint:fix          # Auto-fix lint issues
  * npm run lint -- --max-warnings 0  # Treat warnings as errors in CI/CD
  * ```
- * 
+ *
  * Configuration Format:
  * - Uses flat config format (ESLint v9+)
  * - Module type: ES modules (.mjs extension)
- * 
+ *
  * Dependencies: eslint, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-react-refresh
  * IDE Integration: Automatically applies rules in VS Code with ESLint extension
  */
@@ -187,6 +187,13 @@ export default tseslint.config({ ignores: ["dist", "node_modules", "coverage", "
       {
         selector: "Literal[value=/\\bbg-gray-\\d/]",
         message: "Use design system tokens (bg-surface-base, bg-surface-raised, bg-surface-hover) instead of bg-gray-*. See web/THEMING.md",
+      },
+      // i18n: Detect hardcoded English text in common UI patterns
+      // This catches common patterns like <span>Settings</span> or <button>Save</button>
+      // Note: This is a heuristic - some false positives may occur for technical terms
+      {
+        selector: "JSXElement[openingElement.name.name=/^(span|button|label|h1|h2|h3|h4|h5|h6|p|li|th|td|option)$/] > JSXText[value=/[A-Z][a-z]{2,}/]",
+        message: "Possible hardcoded UI text detected. Consider using t() from useTranslation for i18n support. See i18n documentation.",
       },
     ],
   },
