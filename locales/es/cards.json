@@ -102,7 +102,10 @@
     "vlan": "VLAN",
     "title2": "Título",
     "httpServer": "Servidor",
-    "unknownSubnet": "Subred desconocida"
+    "unknownSubnet": "Subred desconocida",
+    "clearSearch": "Limpiar búsqueda",
+    "filteredCount": "{{filtered}} de {{total}}",
+    "clickViewVulnerabilities": "Haga clic para ver detalles de vulnerabilidades"
   },
   "gateway": {
     "title": "Puerta de enlace",
@@ -215,7 +218,8 @@
     "phaseComplete": "Completo",
     "phaseConnecting": "Conectando...",
     "phaseTesting": "Probando...",
-    "both": "Ambos"
+    "both": "Ambos",
+    "progress": "Progreso de Speedtest"
   },
   "health": {
     "title": "Verificaciones de salud",
@@ -320,5 +324,24 @@
     "paused": "Pausado",
     "completed": "Completado",
     "created": "Creado"
+  },
+  "vulnerability": {
+    "title": "Informe de vulnerabilidades",
+    "close": "Cerrar",
+    "loading": "Cargando datos de vulnerabilidades...",
+    "noData": "No hay datos de vulnerabilidades disponibles para este dispositivo",
+    "error": "Error: {{message}}",
+    "vendor": "Fabricante",
+    "product": "Producto",
+    "version": "Versión",
+    "scanTime": "Hora de escaneo",
+    "unknown": "Desconocido",
+    "vulnerabilityFound": "{{count}} Vulnerabilidad encontrada",
+    "vulnerabilitiesFound": "{{count}} Vulnerabilidades encontradas",
+    "rescan": "Re-escanear",
+    "noVulnerabilities": "No se detectaron vulnerabilidades",
+    "cvss": "CVSS: {{score}}",
+    "published": "Publicado: {{date}}",
+    "viewDetails": "Ver detalles"
   }
 }

@@ -163,6 +163,8 @@ export function SimpleBaseCard({
   className,
   onClick,
 }: SimpleBaseCardProps) {
+  const { t } = useTranslation("common");
+
   // Loading state
   if (loading) {
     return (
