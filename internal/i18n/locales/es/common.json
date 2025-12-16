@@ -41,6 +41,8 @@
     "stopped": "Detenido",
     "paused": "Pausado",
     "down": "inactivo",
+    "on": "Activado",
+    "off": "Desactivado",
     "noCarrier": "Sin portadora",
     "noIP": "Sin IP",
     "noSignal": "Sin señal",

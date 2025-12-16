@@ -1,5 +1,6 @@
 {
   "title": "Configuración",
+  "subtitle": "Ajustar umbrales, red y visualización",
   "sections": {
     "appearance": "Apariencia",
     "network": "Red",
@@ -19,10 +20,11 @@
     "themeSystem": "Sistema",
     "language": "Idioma",
     "languageEn": "English",
-    "languageEs": "Español"
+    "languageEs": "Español",
+    "quickToggle": "Cambio rápido"
   },
   "network": {
-    "title": "Red",
+    "title": "Configuración de red",
     "defaultInterface": "Interfaz predeterminada",
     "ipMode": "Modo IP",
     "dhcp": "DHCP",
@@ -31,7 +33,15 @@
     "subnetMask": "Máscara de subred",
     "gateway": "Puerta de enlace",
     "dnsServers": "Servidores DNS",
-    "mtu": "MTU"
+    "mtu": "MTU",
+    "displayOptions": "Opciones de visualización",
+    "showPublicIP": "Mostrar IP pública",
+    "displayInNetworkCard": "Mostrar en tarjeta de red",
+    "vlanTag": "Etiqueta VLAN (802.1Q)",
+    "mtuSetting": "Configuración MTU",
+    "applyIPSettings": "Aplicar configuración IP",
+    "applying": "Aplicando...",
+    "requiresRoot": "Nota: Requiere privilegios de root/admin para aplicar"
   },
   "discovery": {
     "title": "Descubrimiento",
@@ -98,5 +108,21 @@
     "saving": "Guardando...",
     "saved": "Guardado",
     "error": "Error al guardar"
+  },
+  "logs": {
+    "title": "Registros (depuración)",
+    "description": "Archivo rotativo; usar solo para resolución de problemas.",
+    "view": "Ver",
+    "loading": "Cargando..."
+  },
+  "export": {
+    "title": "Exportar",
+    "download": "Descargar exportación JSON",
+    "description": "Exportar todos los datos de diagnóstico como JSON para documentación o análisis."
+  },
+  "about": {
+    "title": "Acerca de",
+    "appName": "The Seed",
+    "description": "Herramienta de diagnóstico de red"
   }
 }
