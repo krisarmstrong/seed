@@ -102,7 +102,10 @@
     "vlan": "VLAN",
     "title2": "Title",
     "httpServer": "Server",
-    "unknownSubnet": "Unknown subnet"
+    "unknownSubnet": "Unknown subnet",
+    "clearSearch": "Clear search",
+    "filteredCount": "{{filtered}} of {{total}}",
+    "clickViewVulnerabilities": "Click to view vulnerability details"
   },
   "gateway": {
     "title": "Gateway",
@@ -215,7 +218,8 @@
     "phaseComplete": "Complete",
     "phaseConnecting": "Connecting...",
     "phaseTesting": "Testing...",
-    "both": "Both"
+    "both": "Both",
+    "progress": "Speedtest progress"
   },
   "health": {
     "title": "Health Checks",
@@ -320,5 +324,24 @@
     "paused": "Paused",
     "completed": "Completed",
     "created": "Created"
+  },
+  "vulnerability": {
+    "title": "Vulnerability Report",
+    "close": "Close",
+    "loading": "Loading vulnerability data...",
+    "noData": "No vulnerability data available for this device",
+    "error": "Error: {{message}}",
+    "vendor": "Vendor",
+    "product": "Product",
+    "version": "Version",
+    "scanTime": "Scan Time",
+    "unknown": "Unknown",
+    "vulnerabilityFound": "{{count}} Vulnerability Found",
+    "vulnerabilitiesFound": "{{count}} Vulnerabilities Found",
+    "rescan": "Rescan",
+    "noVulnerabilities": "No vulnerabilities detected",
+    "cvss": "CVSS: {{score}}",
+    "published": "Published: {{date}}",
+    "viewDetails": "View Details"
   }
 }

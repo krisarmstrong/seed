@@ -24,6 +24,7 @@
  */
 
 import { ReactNode, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cn, icon as iconTokens, layout, radius } from "../../styles/theme";
 import {
   Activity,
@@ -54,6 +55,7 @@ interface HelpSection {
  * Renders a modal dialog with tabbed help content and search functionality
  */
 export function ImprovedHelpModal({ isOpen, onClose }: HelpModalProps) {
+  const { t } = useTranslation("help");
   // Track which help section is currently active
   const [activeSection, setActiveSection] = useState<string>("about");
   // Track search query for filtering help content
@@ -64,61 +66,61 @@ export function ImprovedHelpModal({ isOpen, onClose }: HelpModalProps) {
   const sections: HelpSection[] = [
     {
       id: "about",
-      title: "About The Seed",
+      title: t("sections.about"),
       icon: <Info className={iconTokens.size.sm} />,
       content: <AboutSection />,
     },
     {
       id: "getting-started",
-      title: "Getting Started",
+      title: t("sections.gettingStarted"),
       icon: <LayoutDashboard className={iconTokens.size.sm} />,
       content: <GettingStartedSection />,
     },
     {
       id: "link",
-      title: "Link Status",
+      title: t("sections.link"),
       icon: <Activity className={iconTokens.size.sm} />,
       content: <LinkStatusSection />,
     },
     {
       id: "cable",
-      title: "Cable Test",
+      title: t("sections.cable"),
       icon: <Cable className={iconTokens.size.sm} />,
       content: <CableTestSection />,
     },
     {
       id: "wifi",
-      title: "WiFi Status",
+      title: t("sections.wifi"),
       icon: <Wifi className={iconTokens.size.sm} />,
       content: <WiFiStatusSection />,
     },
     {
       id: "network",
-      title: "Network & DHCP",
+      title: t("sections.network"),
       icon: <Network className={iconTokens.size.sm} />,
       content: <NetworkSection />,
     },
     {
       id: "gateway",
-      title: "Gateway",
+      title: t("sections.gateway"),
       icon: <Server className={iconTokens.size.sm} />,
       content: <GatewaySection />,
     },
     {
       id: "dns",
-      title: "DNS Tests",
+      title: t("sections.dns"),
       icon: <Search className={iconTokens.size.sm} />,
       content: <DNSSection />,
     },
     {
       id: "performance",
-      title: "Performance Tests",
+      title: t("sections.performance"),
       icon: <Zap className={iconTokens.size.sm} />,
       content: <PerformanceSection />,
     },
     {
       id: "discovery",
-      title: "Network Discovery",
+      title: t("sections.discovery"),
       icon: <Search className={iconTokens.size.sm} />,
       content: <DiscoverySection />,
     },
@@ -151,12 +153,12 @@ export function ImprovedHelpModal({ isOpen, onClose }: HelpModalProps) {
         {/* Header */}
         <div className={`${layout.flex.between} p-4 border-b border-surface-border shrink-0`}>
           <h2 id="help-modal-title" className="heading-3">
-            The Seed Help Center
+            {t("modal.title")}
           </h2>
           <button
             onClick={onClose}
             className={`p-2 text-text-muted hover:text-text-primary transition-colors ${radius.default} hover:bg-surface-hover`}
-            aria-label="Close help"
+            aria-label={t("modal.closeHelp")}
           >
             <svg className={iconTokens.size.md} viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -180,7 +182,7 @@ export function ImprovedHelpModal({ isOpen, onClose }: HelpModalProps) {
                 />
                 <input
                   type="text"
-                  placeholder="Search help..."
+                  placeholder={t("modal.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`w-full pl-9 pr-3 py-2 body-small ${radius.default} border border-surface-border bg-surface-raised text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary`}
@@ -190,7 +192,7 @@ export function ImprovedHelpModal({ isOpen, onClose }: HelpModalProps) {
 
             {/* Table of Contents */}
             <nav className="p-2">
-              <p className="caption px-3 py-2 uppercase tracking-wider">Contents</p>
+              <p className="caption px-3 py-2 uppercase tracking-wider">{t("modal.contents")}</p>
               {filteredSections.map((section) => (
                 <button
                   key={section.id}

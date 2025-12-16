@@ -1,4 +1,22 @@
 {
+  "modal": {
+    "title": "Centro de ayuda de The Seed",
+    "searchPlaceholder": "Buscar ayuda...",
+    "contents": "Contenido",
+    "closeHelp": "Cerrar ayuda"
+  },
+  "sections": {
+    "about": "Acerca de The Seed",
+    "gettingStarted": "Primeros pasos",
+    "link": "Estado del enlace",
+    "cable": "Prueba de cable",
+    "wifi": "Estado WiFi",
+    "network": "Red y DHCP",
+    "gateway": "Puerta de enlace",
+    "dns": "Pruebas DNS",
+    "performance": "Pruebas de rendimiento",
+    "discovery": "Descubrimiento de red"
+  },
   "instructions": {
     "runTests": "Toque el botón de reproducir para ejecutar todas las pruebas.",
     "discovery": "Use la tarjeta de Descubrimiento de red para escanear dispositivos en su red.",
