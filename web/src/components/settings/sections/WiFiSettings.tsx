@@ -33,10 +33,7 @@ import { CollapsibleSection } from "../../ui/CollapsibleSection";
 import { AutoSaveIndicator } from "./AutoSaveIndicator";
 import { Wifi } from "../../ui/Icons";
 import { icon as iconTokens, layout, radius } from "../../../styles/theme";
-import {
-  WiFiSettings as WiFiSettingsType,
-  SaveStatus,
-} from "../../../types/settings";
+import { WiFiSettings as WiFiSettingsType, SaveStatus } from "../../../types/settings";
 
 interface WiFiSettingsProps {
   wifiSettings: WiFiSettingsType;
@@ -44,11 +41,10 @@ interface WiFiSettingsProps {
   wifiStatus: SaveStatus;
 }
 
-export function WiFiSettings({
-  wifiSettings,
-  setWifiSettings,
-  wifiStatus,
-}: WiFiSettingsProps) {
+/**
+ *
+ */
+export function WiFiSettings({ wifiSettings, setWifiSettings, wifiStatus }: WiFiSettingsProps) {
   const { t } = useTranslation("settings");
 
   return (
@@ -100,9 +96,7 @@ export function WiFiSettings({
             />
           )}
           <p className="caption text-text-muted mt-1">
-            {wifiSettings.isWireless
-              ? "Currently monitoring a wireless interface"
-              : "No wireless interface detected"}
+            {wifiSettings.isWireless ? t("wifi.wirelessMonitoring") : t("wifi.noWireless")}
           </p>
         </div>
       </div>

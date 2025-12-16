@@ -12,6 +12,15 @@
     "snmp": "SNMP",
     "thresholds": "Thresholds"
   },
+  "common": {
+    "add": "+ Add",
+    "remove": "x",
+    "name": "Name",
+    "host": "Host",
+    "hostIp": "Host/IP",
+    "port": "Port",
+    "enabled": "Enabled"
+  },
   "appearance": {
     "title": "Appearance",
     "theme": "Theme",
@@ -44,7 +53,7 @@
     "requiresRoot": "Note: Requires root/admin privileges to apply"
   },
   "discovery": {
-    "title": "Discovery",
+    "title": "Network Discovery",
     "profile": "Profile",
     "profileStealth": "Stealth",
     "profileStandard": "Standard",
@@ -65,6 +74,14 @@
   },
   "health": {
     "title": "Health Checks",
+    "enableHealthChecks": "Enable Health Checks",
+    "enableDescription": "Test ping, TCP, UDP, and HTTP targets",
+    "pingTargets": "Ping Targets",
+    "pingDefault": "Default: 3 pings per target",
+    "tcpPortTests": "TCP Port Tests",
+    "udpPortTests": "UDP Port Tests",
+    "udpDescription": "Test UDP services (DNS:53, NTP:123, etc.)",
+    "httpEndpoints": "HTTP Endpoints",
     "endpoints": "Endpoints",
     "addEndpoint": "Add Endpoint",
     "name": "Name",
@@ -72,27 +89,63 @@
     "method": "Method",
     "interval": "Interval",
     "timeout": "Timeout",
-    "expectedStatus": "Expected Status"
+    "expectedStatus": "Expected Status",
+    "status": "Status"
   },
   "dns": {
     "title": "DNS",
+    "testHostname": "Test Hostname",
+    "testHostnameDesc": "Hostname used for DNS forward/reverse lookups",
+    "additionalServers": "Additional DNS Servers",
+    "serversDescription": "Add servers to compare DNS response times (e.g., 8.8.8.8, 1.1.1.1)",
+    "serverIp": "DNS Server IP",
     "testDomains": "Test Domains",
     "addDomain": "Add Domain",
     "customServers": "Custom Servers"
   },
   "wifi": {
     "title": "WiFi",
+    "interface": "WiFi Interface",
+    "wirelessMonitoring": "Currently monitoring a wireless interface",
+    "noWireless": "No wireless interface detected",
     "scanInterval": "Scan Interval",
     "showHidden": "Show Hidden Networks",
     "signalThreshold": "Signal Threshold"
   },
   "snmp": {
     "title": "SNMP",
+    "port": "SNMP Port",
+    "portDesc": "UDP port for SNMP queries (default: 161)",
+    "timeout": "Timeout (seconds)",
+    "timeoutDesc": "SNMP query timeout (default: 5 seconds)",
+    "retries": "Retries",
+    "retriesDesc": "Number of retries on timeout (default: 2)",
+    "communityStrings": "Community Strings (v1/v2c)",
+    "communityDesc": "SNMP v1/v2c community strings (e.g., \"public\", \"private\")",
+    "communityString": "Community string",
+    "v3Credentials": "SNMPv3 Credentials",
+    "v3CredentialsDesc": "SNMPv3 user credentials with authentication and privacy",
+    "credentialName": "Credential name",
+    "username": "Username",
+    "snmpv3Username": "SNMPv3 username",
+    "securityLevel": "Security Level",
+    "authProtocol": "Auth Protocol",
+    "authPassword": "Auth Password",
+    "authPasswordPlaceholder": "Authentication password",
+    "privProtocol": "Privacy Protocol",
+    "privPassword": "Privacy Password",
+    "privPasswordPlaceholder": "Privacy password",
+    "contextName": "Context Name (optional)",
+    "snmpContext": "SNMP context",
     "community": "Community",
     "version": "Version",
-    "port": "Port",
-    "timeout": "Timeout",
-    "retries": "Retries"
+    "unnamedCredential": "Unnamed Credential",
+    "noUsername": "(no username)",
+    "noAuth": "No Auth",
+    "noPrivacy": "No Privacy",
+    "noAuthNoPriv": "No Auth / No Privacy",
+    "authNoPriv": "Auth / No Privacy",
+    "authPriv": "Auth / Privacy"
   },
   "thresholds": {
     "title": "Thresholds",
@@ -102,7 +155,11 @@
     "packetLoss": "Packet Loss",
     "cpuUsage": "CPU Usage",
     "memoryUsage": "Memory Usage",
-    "diskUsage": "Disk Usage"
+    "diskUsage": "Disk Usage",
+    "dnsLookup": "DNS Lookup (ms)",
+    "gateway": "Gateway (ms)",
+    "speedDownload": "Download (Mbps)",
+    "speedUpload": "Upload (Mbps)"
   },
   "autoSave": {
     "saving": "Saving...",

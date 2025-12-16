@@ -32,17 +32,11 @@
  */
 
 import { memo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { CollapsibleSection } from "../../ui/CollapsibleSection";
 import { AutoSaveIndicator } from "./AutoSaveIndicator";
 import { HeartPulse } from "../../ui/Icons";
-import {
-  icon as iconTokens,
-  layout,
-  radius,
-  cn,
-  spacing,
-  input,
-} from "../../../styles/theme";
+import { icon as iconTokens, layout, radius, cn, spacing, input } from "../../../styles/theme";
 import {
   TestsSettings,
   SaveStatus,
@@ -64,6 +58,8 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
   setTestsSettings,
   testsStatus,
 }: HealthChecksSettingsProps) {
+  const { t } = useTranslation("settings");
+
   // Ping target helpers
   const addPingTarget = useCallback(() => {
     setTestsSettings((prev) => ({
@@ -82,19 +78,17 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         pingTargets: prev.pingTargets.filter((t) => t.id !== id),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   const updatePingTarget = useCallback(
     (id: string, field: keyof PingTarget, value: string | boolean | number) => {
       setTestsSettings((prev) => ({
         ...prev,
-        pingTargets: prev.pingTargets.map((t) =>
-          t.id === id ? { ...t, [field]: value } : t,
-        ),
+        pingTargets: prev.pingTargets.map((t) => (t.id === id ? { ...t, [field]: value } : t)),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   // TCP port helpers
@@ -115,19 +109,17 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         tcpPorts: prev.tcpPorts.filter((p) => p.id !== id),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   const updateTCPPort = useCallback(
     (id: string, field: keyof TCPPort, value: string | boolean | number) => {
       setTestsSettings((prev) => ({
         ...prev,
-        tcpPorts: prev.tcpPorts.map((p) =>
-          p.id === id ? { ...p, [field]: value } : p,
-        ),
+        tcpPorts: prev.tcpPorts.map((p) => (p.id === id ? { ...p, [field]: value } : p)),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   // UDP port helpers
@@ -148,19 +140,17 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         udpPorts: prev.udpPorts.filter((p) => p.id !== id),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   const updateUDPPort = useCallback(
     (id: string, field: keyof UDPPort, value: string | boolean | number) => {
       setTestsSettings((prev) => ({
         ...prev,
-        udpPorts: prev.udpPorts.map((p) =>
-          p.id === id ? { ...p, [field]: value } : p,
-        ),
+        udpPorts: prev.udpPorts.map((p) => (p.id === id ? { ...p, [field]: value } : p)),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   // HTTP endpoint helpers
@@ -187,23 +177,17 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         httpEndpoints: prev.httpEndpoints.filter((e) => e.id !== id),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   const updateHTTPEndpoint = useCallback(
-    (
-      id: string,
-      field: keyof HTTPEndpoint,
-      value: string | boolean | number,
-    ) => {
+    (id: string, field: keyof HTTPEndpoint, value: string | boolean | number) => {
       setTestsSettings((prev) => ({
         ...prev,
-        httpEndpoints: prev.httpEndpoints.map((e) =>
-          e.id === id ? { ...e, [field]: value } : e,
-        ),
+        httpEndpoints: prev.httpEndpoints.map((e) => (e.id === id ? { ...e, [field]: value } : e)),
       }));
     },
-    [setTestsSettings],
+    [setTestsSettings]
   );
 
   return (
@@ -211,7 +195,7 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
       title={
         <div className={layout.inline.default}>
           <HeartPulse className={iconTokens.size.sm} />
-          <span>Health Checks</span>
+          <span>{t("sections.health")}</span>
           <AutoSaveIndicator status={testsStatus} />
         </div>
       }
@@ -222,16 +206,14 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
           className={cn(
             layout.flex.between,
             "p-2.5 bg-surface-base border border-surface-border",
-            radius.default,
+            radius.default
           )}
         >
           <div>
             <span className="body-small text-text-primary font-medium">
-              Enable Health Checks
+              {t("health.enableHealthChecks")}
             </span>
-            <p className="caption text-text-muted">
-              Test ping, TCP, UDP, and HTTP targets
-            </p>
+            <p className="caption text-text-muted">{t("health.enableDescription")}</p>
           </div>
           <input
             type="checkbox"
@@ -249,74 +231,47 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         {/* Ping Targets */}
         <div>
           <div className={cn(layout.flex.between, "mb-2")}>
-            <span className="caption text-text-muted font-medium">
-              Ping Targets
-            </span>
+            <span className="caption text-text-muted font-medium">{t("health.pingTargets")}</span>
             <button
               onClick={addPingTarget}
               className="caption text-brand-primary hover:text-brand-accent"
             >
-              + Add
+              {t("common.add")}
             </button>
           </div>
-          <p className="caption text-text-muted mb-2">
-            Default: 3 pings per target
-          </p>
+          <p className="caption text-text-muted mb-2">{t("health.pingDefault")}</p>
           {testsSettings.pingTargets.map((target) => (
             <div key={target.id || target.host} className="flex gap-2 mb-2">
               <input
                 type="text"
                 value={target.name}
-                onChange={(e) =>
-                  updatePingTarget(target.id!, "name", e.target.value)
-                }
-                placeholder="Name"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "w-24",
-                )}
+                onChange={(e) => updatePingTarget(target.id!, "name", e.target.value)}
+                placeholder={t("common.name")}
+                className={cn(input.base, input.state.default, input.size.md, "w-24")}
               />
               <input
                 type="text"
                 value={target.host}
-                onChange={(e) =>
-                  updatePingTarget(target.id!, "host", e.target.value)
-                }
-                placeholder="Host/IP"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "flex-1",
-                )}
+                onChange={(e) => updatePingTarget(target.id!, "host", e.target.value)}
+                placeholder={t("common.hostIp")}
+                className={cn(input.base, input.state.default, input.size.md, "flex-1")}
               />
               <input
                 type="number"
                 value={target.count || 3}
                 onChange={(e) =>
-                  updatePingTarget(
-                    target.id!,
-                    "count",
-                    parseInt(e.target.value) || 3,
-                  )
+                  updatePingTarget(target.id!, "count", parseInt(e.target.value) || 3)
                 }
                 min={1}
                 max={10}
                 title="Number of pings"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "w-14 text-center",
-                )}
+                className={cn(input.base, input.state.default, input.size.md, "w-14 text-center")}
               />
               <button
                 onClick={() => removePingTarget(target.id!)}
                 className="text-status-error hover:text-status-error/80 px-1"
               >
-                x
+                {t("common.remove")}
               </button>
             </div>
           ))}
@@ -325,72 +280,42 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         {/* TCP Ports */}
         <div className="border-t border-surface-border pt-3">
           <div className={cn(layout.flex.between, "mb-2")}>
-            <span className="caption text-text-muted font-medium">
-              TCP Port Tests
-            </span>
+            <span className="caption text-text-muted font-medium">{t("health.tcpPortTests")}</span>
             <button
               onClick={addTCPPort}
               className="caption text-brand-primary hover:text-brand-accent"
             >
-              + Add
+              {t("common.add")}
             </button>
           </div>
           {testsSettings.tcpPorts.map((port) => (
-            <div
-              key={port.id || `${port.host}:${port.port}`}
-              className="flex gap-2 mb-2"
-            >
+            <div key={port.id || `${port.host}:${port.port}`} className="flex gap-2 mb-2">
               <input
                 type="text"
                 value={port.name}
-                onChange={(e) =>
-                  updateTCPPort(port.id!, "name", e.target.value)
-                }
-                placeholder="Name"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "w-24",
-                )}
+                onChange={(e) => updateTCPPort(port.id!, "name", e.target.value)}
+                placeholder={t("common.name")}
+                className={cn(input.base, input.state.default, input.size.md, "w-24")}
               />
               <input
                 type="text"
                 value={port.host}
-                onChange={(e) =>
-                  updateTCPPort(port.id!, "host", e.target.value)
-                }
-                placeholder="Host"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "flex-1",
-                )}
+                onChange={(e) => updateTCPPort(port.id!, "host", e.target.value)}
+                placeholder={t("common.host")}
+                className={cn(input.base, input.state.default, input.size.md, "flex-1")}
               />
               <input
                 type="number"
                 value={port.port}
-                onChange={(e) =>
-                  updateTCPPort(
-                    port.id!,
-                    "port",
-                    parseInt(e.target.value) || 80,
-                  )
-                }
-                placeholder="Port"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "w-20",
-                )}
+                onChange={(e) => updateTCPPort(port.id!, "port", parseInt(e.target.value) || 80)}
+                placeholder={t("common.port")}
+                className={cn(input.base, input.state.default, input.size.md, "w-20")}
               />
               <button
                 onClick={() => removeTCPPort(port.id!)}
                 className="text-status-error hover:text-status-error/80 px-1"
               >
-                x
+                {t("common.remove")}
               </button>
             </div>
           ))}
@@ -399,75 +324,43 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         {/* UDP Ports */}
         <div className="border-t border-surface-border pt-3">
           <div className={cn(layout.flex.between, "mb-2")}>
-            <span className="caption text-text-muted font-medium">
-              UDP Port Tests
-            </span>
+            <span className="caption text-text-muted font-medium">{t("health.udpPortTests")}</span>
             <button
               onClick={addUDPPort}
               className="caption text-brand-primary hover:text-brand-accent"
             >
-              + Add
+              {t("common.add")}
             </button>
           </div>
-          <p className="caption text-text-muted mb-2">
-            Test UDP services (DNS:53, NTP:123, etc.)
-          </p>
+          <p className="caption text-text-muted mb-2">{t("health.udpDescription")}</p>
           {testsSettings.udpPorts.map((port) => (
-            <div
-              key={port.id || `${port.host}:${port.port}`}
-              className="flex gap-2 mb-2"
-            >
+            <div key={port.id || `${port.host}:${port.port}`} className="flex gap-2 mb-2">
               <input
                 type="text"
                 value={port.name}
-                onChange={(e) =>
-                  updateUDPPort(port.id!, "name", e.target.value)
-                }
-                placeholder="Name"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "w-24",
-                )}
+                onChange={(e) => updateUDPPort(port.id!, "name", e.target.value)}
+                placeholder={t("common.name")}
+                className={cn(input.base, input.state.default, input.size.md, "w-24")}
               />
               <input
                 type="text"
                 value={port.host}
-                onChange={(e) =>
-                  updateUDPPort(port.id!, "host", e.target.value)
-                }
-                placeholder="Host"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "flex-1",
-                )}
+                onChange={(e) => updateUDPPort(port.id!, "host", e.target.value)}
+                placeholder={t("common.host")}
+                className={cn(input.base, input.state.default, input.size.md, "flex-1")}
               />
               <input
                 type="number"
                 value={port.port}
-                onChange={(e) =>
-                  updateUDPPort(
-                    port.id!,
-                    "port",
-                    parseInt(e.target.value) || 53,
-                  )
-                }
-                placeholder="Port"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "w-20",
-                )}
+                onChange={(e) => updateUDPPort(port.id!, "port", parseInt(e.target.value) || 53)}
+                placeholder={t("common.port")}
+                className={cn(input.base, input.state.default, input.size.md, "w-20")}
               />
               <button
                 onClick={() => removeUDPPort(port.id!)}
                 className="text-status-error hover:text-status-error/80 px-1"
               >
-                x
+                {t("common.remove")}
               </button>
             </div>
           ))}
@@ -476,34 +369,34 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
         {/* HTTP Endpoints */}
         <div className="border-t border-surface-border pt-3">
           <div className={cn(layout.flex.between, "mb-2")}>
-            <span className="caption text-text-muted font-medium">
-              HTTP Endpoints
-            </span>
+            <span className="caption text-text-muted font-medium">{t("health.httpEndpoints")}</span>
             <button
               onClick={addHTTPEndpoint}
               className="caption text-brand-primary hover:text-brand-accent"
             >
-              + Add
+              {t("common.add")}
             </button>
           </div>
           {testsSettings.httpEndpoints.map((endpoint) => (
             <div
               key={endpoint.id || endpoint.url}
-              className={cn(spacing.stack.xs, "mb-3 p-2 bg-surface-base border border-surface-border", radius.default)}
+              className={cn(
+                spacing.stack.xs,
+                "mb-3 p-2 bg-surface-base border border-surface-border",
+                radius.default
+              )}
             >
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={endpoint.name}
-                  onChange={(e) =>
-                    updateHTTPEndpoint(endpoint.id!, "name", e.target.value)
-                  }
-                  placeholder="Name"
+                  onChange={(e) => updateHTTPEndpoint(endpoint.id!, "name", e.target.value)}
+                  placeholder={t("common.name")}
                   className={cn(
                     input.base,
                     input.state.default,
                     input.size.md,
-                    "flex-1 bg-surface-raised",
+                    "flex-1 bg-surface-raised"
                   )}
                 />
                 <input
@@ -513,37 +406,30 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
                     updateHTTPEndpoint(
                       endpoint.id!,
                       "expectedStatus",
-                      parseInt(e.target.value) || 200,
+                      parseInt(e.target.value) || 200
                     )
                   }
-                  placeholder="Status"
+                  placeholder={t("health.status")}
                   className={cn(
                     input.base,
                     input.state.default,
                     input.size.md,
-                    "w-20 bg-surface-raised",
+                    "w-20 bg-surface-raised"
                   )}
                 />
                 <button
                   onClick={() => removeHTTPEndpoint(endpoint.id!)}
                   className="text-status-error hover:text-status-error/80 px-1"
                 >
-                  x
+                  {t("common.remove")}
                 </button>
               </div>
               <input
                 type="text"
                 value={endpoint.url}
-                onChange={(e) =>
-                  updateHTTPEndpoint(endpoint.id!, "url", e.target.value)
-                }
+                onChange={(e) => updateHTTPEndpoint(endpoint.id!, "url", e.target.value)}
                 placeholder="https://example.com/health"
-                className={cn(
-                  input.base,
-                  input.state.default,
-                  input.size.md,
-                  "bg-surface-raised",
-                )}
+                className={cn(input.base, input.state.default, input.size.md, "bg-surface-raised")}
               />
             </div>
           ))}
