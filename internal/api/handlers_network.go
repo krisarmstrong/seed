@@ -7,11 +7,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
-	"github.com/krisarmstrong/luminetiq/internal/dhcp"
-	"github.com/krisarmstrong/luminetiq/internal/network"
-	"github.com/krisarmstrong/luminetiq/internal/validation"
-	"github.com/krisarmstrong/luminetiq/internal/vlan"
+	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/dhcp"
+	"github.com/krisarmstrong/seed/internal/network"
+	"github.com/krisarmstrong/seed/internal/validation"
+	"github.com/krisarmstrong/seed/internal/vlan"
 )
 
 // ============================================================================

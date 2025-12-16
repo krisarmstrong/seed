@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
+	"github.com/krisarmstrong/seed/internal/config"
 )
 
 // Service is the unified discovery orchestrator that applies profile-based

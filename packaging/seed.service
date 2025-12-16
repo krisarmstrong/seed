@@ -1,0 +1,17 @@
+[Unit]
+Description=LuminetIQ Network Diagnostic Tool
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/usr/local/bin/seed --config /etc/seed/seed.yaml
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

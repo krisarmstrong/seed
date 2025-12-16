@@ -13,8 +13,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 REMOTE_HOST="${1:-krisarmstrong@192.168.64.7}"
-APP_DIR="/home/krisarmstrong/luminetiq"
-SERVICE_NAME="luminetiq"
+APP_DIR="/home/krisarmstrong/seed"
+SERVICE_NAME="seed"
 
 echo "================================================"
 echo " LuminetIQ Systemd Deployment"
@@ -33,18 +33,18 @@ echo -e "${GREEN}✓ Files synced${NC}"
 echo
 
 echo -e "${YELLOW}Step 3: Building on server...${NC}"
-ssh "${REMOTE_HOST}" "cd ${APP_DIR} && go build -o luminetiq ./cmd/luminetiq"
+ssh "${REMOTE_HOST}" "cd ${APP_DIR} && go build -o seed ./cmd/seed"
 echo -e "${GREEN}✓ Built on server${NC}"
 echo
 
 echo -e "${YELLOW}Step 4: Killing any manual runs...${NC}"
-ssh "${REMOTE_HOST}" "pkill -9 luminetiq || true"
+ssh "${REMOTE_HOST}" "pkill -9 seed || true"
 sleep 2
 echo -e "${GREEN}✓ Manual processes stopped${NC}"
 echo
 
 echo -e "${YELLOW}Step 5: Installing systemd service...${NC}"
-ssh "${REMOTE_HOST}" "sudo cp ${APP_DIR}/deploy/luminetiq-dev.service /etc/systemd/system/${SERVICE_NAME}.service"
+ssh "${REMOTE_HOST}" "sudo cp ${APP_DIR}/deploy/seed-dev.service /etc/systemd/system/${SERVICE_NAME}.service"
 ssh "${REMOTE_HOST}" "sudo systemctl daemon-reload"
 ssh "${REMOTE_HOST}" "sudo systemctl enable ${SERVICE_NAME}"
 echo -e "${GREEN}✓ Service installed and enabled${NC}"

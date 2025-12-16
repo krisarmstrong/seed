@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
+	"github.com/krisarmstrong/seed/internal/config"
 )
 
 func TestDefaultProfilerConfig(t *testing.T) {

@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
-	"github.com/krisarmstrong/luminetiq/internal/dhcp"
-	"github.com/krisarmstrong/luminetiq/internal/gateway"
+	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/dhcp"
+	"github.com/krisarmstrong/seed/internal/gateway"
 )
 
 // passwordPlaceholder is used to mask sensitive values in API responses.

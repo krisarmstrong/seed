@@ -22,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/discovery"
+	"github.com/krisarmstrong/seed/internal/discovery"
 )
 
 // handleVulnerabilityScan triggers vulnerability scan for all or specific devices

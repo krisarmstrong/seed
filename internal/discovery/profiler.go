@@ -17,8 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
-	"github.com/krisarmstrong/luminetiq/internal/snmp"
+	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/snmp"
 )
 
 // Device type constants for profiler classification.
