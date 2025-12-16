@@ -272,6 +272,7 @@ func (d *DeviceDiscovery) aggregateResults() {
 		}
 	}
 
+	//nolint:dupl // LLDP/CDP merge loops have similar structure but different protocol-specific fields
 	// Merge LLDP neighbors
 	for _, lldp := range d.protoManager.GetLLDPNeighbors() {
 		mac := normalizeMac(lldp.SourceMAC)
@@ -303,6 +304,7 @@ func (d *DeviceDiscovery) aggregateResults() {
 		}
 	}
 
+	//nolint:dupl // LLDP/CDP merge loops have similar structure but different protocol-specific fields
 	// Merge CDP neighbors
 	for _, cdp := range d.protoManager.GetCDPNeighbors() {
 		mac := normalizeMac(cdp.SourceMAC)

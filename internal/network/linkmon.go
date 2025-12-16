@@ -28,9 +28,10 @@ func (s LinkState) String() string {
 		return "up"
 	case LinkStateDown:
 		return "down"
-	default:
+	case LinkStateUnknown:
 		return "unknown"
 	}
+	return "unknown"
 }
 
 // LinkEvent represents a link state change event.
