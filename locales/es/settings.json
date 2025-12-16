@@ -12,6 +12,15 @@
     "snmp": "SNMP",
     "thresholds": "Umbrales"
   },
+  "common": {
+    "add": "+ Agregar",
+    "remove": "x",
+    "name": "Nombre",
+    "host": "Host",
+    "hostIp": "Host/IP",
+    "port": "Puerto",
+    "enabled": "Habilitado"
+  },
   "appearance": {
     "title": "Apariencia",
     "theme": "Tema",
@@ -44,7 +53,7 @@
     "requiresRoot": "Nota: Requiere privilegios de root/admin para aplicar"
   },
   "discovery": {
-    "title": "Descubrimiento",
+    "title": "Descubrimiento de red",
     "profile": "Perfil",
     "profileStealth": "Sigiloso",
     "profileStandard": "Estándar",
@@ -65,6 +74,14 @@
   },
   "health": {
     "title": "Verificaciones de salud",
+    "enableHealthChecks": "Habilitar verificaciones de salud",
+    "enableDescription": "Probar objetivos ping, TCP, UDP y HTTP",
+    "pingTargets": "Objetivos Ping",
+    "pingDefault": "Por defecto: 3 pings por objetivo",
+    "tcpPortTests": "Pruebas de puertos TCP",
+    "udpPortTests": "Pruebas de puertos UDP",
+    "udpDescription": "Probar servicios UDP (DNS:53, NTP:123, etc.)",
+    "httpEndpoints": "Endpoints HTTP",
     "endpoints": "Endpoints",
     "addEndpoint": "Agregar endpoint",
     "name": "Nombre",
@@ -72,27 +89,63 @@
     "method": "Método",
     "interval": "Intervalo",
     "timeout": "Tiempo de espera",
-    "expectedStatus": "Estado esperado"
+    "expectedStatus": "Estado esperado",
+    "status": "Estado"
   },
   "dns": {
     "title": "DNS",
+    "testHostname": "Hostname de prueba",
+    "testHostnameDesc": "Hostname usado para búsquedas DNS directas/inversas",
+    "additionalServers": "Servidores DNS adicionales",
+    "serversDescription": "Agregar servidores para comparar tiempos de respuesta DNS (ej., 8.8.8.8, 1.1.1.1)",
+    "serverIp": "IP del servidor DNS",
     "testDomains": "Dominios de prueba",
     "addDomain": "Agregar dominio",
     "customServers": "Servidores personalizados"
   },
   "wifi": {
     "title": "WiFi",
+    "interface": "Interfaz WiFi",
+    "wirelessMonitoring": "Actualmente monitoreando una interfaz inalámbrica",
+    "noWireless": "No se detectó interfaz inalámbrica",
     "scanInterval": "Intervalo de escaneo",
     "showHidden": "Mostrar redes ocultas",
     "signalThreshold": "Umbral de señal"
   },
   "snmp": {
     "title": "SNMP",
+    "port": "Puerto SNMP",
+    "portDesc": "Puerto UDP para consultas SNMP (por defecto: 161)",
+    "timeout": "Tiempo de espera (segundos)",
+    "timeoutDesc": "Tiempo de espera de consulta SNMP (por defecto: 5 segundos)",
+    "retries": "Reintentos",
+    "retriesDesc": "Número de reintentos en timeout (por defecto: 2)",
+    "communityStrings": "Cadenas de comunidad (v1/v2c)",
+    "communityDesc": "Cadenas de comunidad SNMP v1/v2c (ej., \"public\", \"private\")",
+    "communityString": "Cadena de comunidad",
+    "v3Credentials": "Credenciales SNMPv3",
+    "v3CredentialsDesc": "Credenciales de usuario SNMPv3 con autenticación y privacidad",
+    "credentialName": "Nombre de credencial",
+    "username": "Usuario",
+    "snmpv3Username": "Usuario SNMPv3",
+    "securityLevel": "Nivel de seguridad",
+    "authProtocol": "Protocolo de autenticación",
+    "authPassword": "Contraseña de autenticación",
+    "authPasswordPlaceholder": "Contraseña de autenticación",
+    "privProtocol": "Protocolo de privacidad",
+    "privPassword": "Contraseña de privacidad",
+    "privPasswordPlaceholder": "Contraseña de privacidad",
+    "contextName": "Nombre de contexto (opcional)",
+    "snmpContext": "Contexto SNMP",
     "community": "Comunidad",
     "version": "Versión",
-    "port": "Puerto",
-    "timeout": "Tiempo de espera",
-    "retries": "Reintentos"
+    "unnamedCredential": "Credencial sin nombre",
+    "noUsername": "(sin usuario)",
+    "noAuth": "Sin autenticación",
+    "noPrivacy": "Sin privacidad",
+    "noAuthNoPriv": "Sin auth / Sin privacidad",
+    "authNoPriv": "Auth / Sin privacidad",
+    "authPriv": "Auth / Privacidad"
   },
   "thresholds": {
     "title": "Umbrales",
@@ -102,7 +155,11 @@
     "packetLoss": "Pérdida de paquetes",
     "cpuUsage": "Uso de CPU",
     "memoryUsage": "Uso de memoria",
-    "diskUsage": "Uso de disco"
+    "diskUsage": "Uso de disco",
+    "dnsLookup": "Búsqueda DNS (ms)",
+    "gateway": "Gateway (ms)",
+    "speedDownload": "Descarga (Mbps)",
+    "speedUpload": "Subida (Mbps)"
   },
   "autoSave": {
     "saving": "Guardando...",

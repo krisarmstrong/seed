@@ -1,4 +1,5 @@
 import { memo, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CollapsibleSection } from "../../ui/CollapsibleSection";
 import { AutoSaveIndicator } from "./AutoSaveIndicator";
 import { Server } from "../../ui/Icons";
@@ -8,12 +9,7 @@ import {
   SaveStatus,
 } from "../../../types/settings";
 import { generateId } from "../../../utils/id";
-import {
-  layout,
-  icon as iconTokens,
-  radius,
-  input as inputTokens,
-} from "../../../styles/theme";
+import { layout, icon as iconTokens, radius, input as inputTokens } from "../../../styles/theme";
 
 interface SNMPSettingsProps {
   snmpSettings: SNMPSettingsType;
@@ -21,41 +17,45 @@ interface SNMPSettingsProps {
   snmpStatus: SaveStatus;
 }
 
-const AUTH_PROTOCOLS = [
-  { value: "", label: "No Auth" },
-  { value: "MD5", label: "MD5" },
-  { value: "SHA", label: "SHA" },
-  { value: "SHA224", label: "SHA224" },
-  { value: "SHA256", label: "SHA256" },
-  { value: "SHA384", label: "SHA384" },
-  { value: "SHA512", label: "SHA512" },
-];
-
-const PRIV_PROTOCOLS = [
-  { value: "", label: "No Privacy" },
-  { value: "DES", label: "DES" },
-  { value: "AES", label: "AES" },
-  { value: "AES192", label: "AES192" },
-  { value: "AES256", label: "AES256" },
-  { value: "AES192C", label: "AES192C" },
-  { value: "AES256C", label: "AES256C" },
-];
-
-const SECURITY_LEVELS = [
-  { value: "noAuthNoPriv", label: "No Auth / No Privacy" },
-  { value: "authNoPriv", label: "Auth / No Privacy" },
-  { value: "authPriv", label: "Auth / Privacy" },
-];
+// Protocol values - labels are translated in the component
+const AUTH_PROTOCOL_VALUES = ["", "MD5", "SHA", "SHA224", "SHA256", "SHA384", "SHA512"];
+const PRIV_PROTOCOL_VALUES = ["", "DES", "AES", "AES192", "AES256", "AES192C", "AES256C"];
+const SECURITY_LEVEL_VALUES = ["noAuthNoPriv", "authNoPriv", "authPriv"] as const;
 
 export const SNMPSettings = memo(function SNMPSettings({
   snmpSettings,
   setSnmpSettings,
   snmpStatus,
 }: SNMPSettingsProps) {
+  const { t } = useTranslation("settings");
   const [newCommunity, setNewCommunity] = useState("");
-  const [expandedCredential, setExpandedCredential] = useState<string | null>(
-    null,
-  );
+  const [expandedCredential, setExpandedCredential] = useState<string | null>(null);
+
+  // Get translated label for auth protocol
+  const getAuthProtocolLabel = (value: string) => {
+    if (value === "") return t("snmp.noAuth");
+    return value; // MD5, SHA, etc. don't need translation
+  };
+
+  // Get translated label for privacy protocol
+  const getPrivProtocolLabel = (value: string) => {
+    if (value === "") return t("snmp.noPrivacy");
+    return value; // DES, AES, etc. don't need translation
+  };
+
+  // Get translated label for security level
+  const getSecurityLevelLabel = (value: string) => {
+    switch (value) {
+      case "noAuthNoPriv":
+        return t("snmp.noAuthNoPriv");
+      case "authNoPriv":
+        return t("snmp.authNoPriv");
+      case "authPriv":
+        return t("snmp.authPriv");
+      default:
+        return value;
+    }
+  };
 
   const addCommunity = useCallback(() => {
     if (newCommunity.trim() === "") return;
@@ -77,7 +77,7 @@ export const SNMPSettings = memo(function SNMPSettings({
         communities: prev.communities.filter((c) => c !== community),
       }));
     },
-    [setSnmpSettings],
+    [setSnmpSettings]
   );
 
   const addV3Credential = useCallback(() => {
@@ -109,19 +109,17 @@ export const SNMPSettings = memo(function SNMPSettings({
         setExpandedCredential(null);
       }
     },
-    [setSnmpSettings, expandedCredential],
+    [setSnmpSettings, expandedCredential]
   );
 
   const updateV3Credential = useCallback(
     (id: string, field: keyof SNMPv3Credential, value: string) => {
       setSnmpSettings((prev) => ({
         ...prev,
-        v3Credentials: prev.v3Credentials.map((c) =>
-          c.id === id ? { ...c, [field]: value } : c,
-        ),
+        v3Credentials: prev.v3Credentials.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
       }));
     },
-    [setSnmpSettings],
+    [setSnmpSettings]
   );
 
   return (
@@ -129,7 +127,7 @@ export const SNMPSettings = memo(function SNMPSettings({
       title={
         <div className={layout.inline.default}>
           <Server className={iconTokens.size.sm} />
-          <span>SNMP</span>
+          <span>{t("sections.snmp")}</span>
           <AutoSaveIndicator status={snmpStatus} />
         </div>
       }
@@ -138,7 +136,7 @@ export const SNMPSettings = memo(function SNMPSettings({
         {/* SNMP Port */}
         <div>
           <label className="caption text-text-muted" htmlFor="snmp-port">
-            SNMP Port
+            {t("snmp.port")}
           </label>
           <input
             id="snmp-port"
@@ -154,15 +152,13 @@ export const SNMPSettings = memo(function SNMPSettings({
             max="65535"
             className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.md} mt-1 body-small`}
           />
-          <p className="caption text-text-muted mt-1">
-            UDP port for SNMP queries (default: 161)
-          </p>
+          <p className="caption text-text-muted mt-1">{t("snmp.portDesc")}</p>
         </div>
 
         {/* Timeout */}
         <div>
           <label className="caption text-text-muted" htmlFor="snmp-timeout">
-            Timeout (seconds)
+            {t("snmp.timeout")}
           </label>
           <input
             id="snmp-timeout"
@@ -179,15 +175,13 @@ export const SNMPSettings = memo(function SNMPSettings({
             step="1"
             className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.md} mt-1 body-small`}
           />
-          <p className="caption text-text-muted mt-1">
-            SNMP query timeout (default: 5 seconds)
-          </p>
+          <p className="caption text-text-muted mt-1">{t("snmp.timeoutDesc")}</p>
         </div>
 
         {/* Retries */}
         <div>
           <label className="caption text-text-muted" htmlFor="snmp-retries">
-            Retries
+            {t("snmp.retries")}
           </label>
           <input
             id="snmp-retries"
@@ -203,28 +197,24 @@ export const SNMPSettings = memo(function SNMPSettings({
             max="10"
             className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.md} mt-1 body-small`}
           />
-          <p className="caption text-text-muted mt-1">
-            Number of retries on timeout (default: 2)
-          </p>
+          <p className="caption text-text-muted mt-1">{t("snmp.retriesDesc")}</p>
         </div>
 
         {/* Community Strings (v1/v2c) */}
         <div className="border-t border-surface-border pt-3">
           <div className="flex items-center justify-between mb-2">
             <span className="caption text-text-muted font-medium">
-              Community Strings (v1/v2c)
+              {t("snmp.communityStrings")}
             </span>
             <button
               onClick={() => addCommunity()}
               className="caption text-brand-primary hover:text-brand-accent"
               aria-label="Add community string"
             >
-              + Add
+              {t("common.add")}
             </button>
           </div>
-          <p className="caption text-text-muted mb-2">
-            SNMP v1/v2c community strings (e.g., "public", "private")
-          </p>
+          <p className="caption text-text-muted mb-2">{t("snmp.communityDesc")}</p>
           <div className="flex gap-2 mb-2">
             <label className="sr-only" htmlFor="snmp-community-new">
               New community string
@@ -237,7 +227,7 @@ export const SNMPSettings = memo(function SNMPSettings({
               onKeyDown={(e) => {
                 if (e.key === "Enter") addCommunity();
               }}
-              placeholder="Community string"
+              placeholder={t("snmp.communityString")}
               className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.md} flex-1 caption`}
             />
           </div>
@@ -254,7 +244,7 @@ export const SNMPSettings = memo(function SNMPSettings({
                 onClick={() => removeCommunity(community)}
                 className="text-status-error hover:text-status-error/80 px-1"
               >
-                x
+                {t("common.remove")}
               </button>
             </div>
           ))}
@@ -263,19 +253,15 @@ export const SNMPSettings = memo(function SNMPSettings({
         {/* SNMPv3 Credentials */}
         <div className="border-t border-surface-border pt-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="caption text-text-muted font-medium">
-              SNMPv3 Credentials
-            </span>
+            <span className="caption text-text-muted font-medium">{t("snmp.v3Credentials")}</span>
             <button
               onClick={addV3Credential}
               className="caption text-brand-primary hover:text-brand-accent"
             >
-              + Add
+              {t("common.add")}
             </button>
           </div>
-          <p className="caption text-text-muted mb-2">
-            SNMPv3 user credentials with authentication and privacy
-          </p>
+          <p className="caption text-text-muted mb-2">{t("snmp.v3CredentialsDesc")}</p>
           {snmpSettings.v3Credentials.map((cred) => (
             <div
               key={cred.id}
@@ -284,17 +270,15 @@ export const SNMPSettings = memo(function SNMPSettings({
               <div
                 className="flex items-center justify-between p-2 bg-surface-base cursor-pointer hover:bg-surface-hover"
                 onClick={() =>
-                  setExpandedCredential(
-                    expandedCredential === cred.id ? null : cred.id!,
-                  )
+                  setExpandedCredential(expandedCredential === cred.id ? null : cred.id!)
                 }
               >
                 <span className="body-small text-text-primary">
-                  {cred.name || "Unnamed Credential"}
+                  {cred.name || t("snmp.unnamedCredential")}
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="caption text-text-muted">
-                    {cred.username || "(no username)"}
+                    {cred.username || t("snmp.noUsername")}
                   </span>
                   <button
                     onClick={(e) => {
@@ -303,7 +287,7 @@ export const SNMPSettings = memo(function SNMPSettings({
                     }}
                     className="text-status-error hover:text-status-error/80 px-1"
                   >
-                    x
+                    {t("common.remove")}
                   </button>
                 </div>
               </div>
@@ -311,67 +295,50 @@ export const SNMPSettings = memo(function SNMPSettings({
                 <div className="p-3 bg-surface-hover stack-sm">
                   {/* Name */}
                   <div>
-                    <label
-                      className="caption text-text-muted"
-                      htmlFor={`cred-name-${cred.id}`}
-                    >
-                      Name
+                    <label className="caption text-text-muted" htmlFor={`cred-name-${cred.id}`}>
+                      {t("common.name")}
                     </label>
                     <input
                       id={`cred-name-${cred.id}`}
                       type="text"
                       value={cred.name}
-                      onChange={(e) =>
-                        updateV3Credential(cred.id!, "name", e.target.value)
-                      }
-                      placeholder="Credential name"
+                      onChange={(e) => updateV3Credential(cred.id!, "name", e.target.value)}
+                      placeholder={t("snmp.credentialName")}
                       className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                     />
                   </div>
 
                   {/* Username */}
                   <div>
-                    <label
-                      className="caption text-text-muted"
-                      htmlFor={`cred-username-${cred.id}`}
-                    >
-                      Username
+                    <label className="caption text-text-muted" htmlFor={`cred-username-${cred.id}`}>
+                      {t("snmp.username")}
                     </label>
                     <input
                       id={`cred-username-${cred.id}`}
                       type="text"
                       value={cred.username}
-                      onChange={(e) =>
-                        updateV3Credential(cred.id!, "username", e.target.value)
-                      }
-                      placeholder="SNMPv3 username"
+                      onChange={(e) => updateV3Credential(cred.id!, "username", e.target.value)}
+                      placeholder={t("snmp.snmpv3Username")}
                       className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                     />
                   </div>
 
                   {/* Security Level */}
                   <div>
-                    <label
-                      className="caption text-text-muted"
-                      htmlFor={`sec-level-${cred.id}`}
-                    >
-                      Security Level
+                    <label className="caption text-text-muted" htmlFor={`sec-level-${cred.id}`}>
+                      {t("snmp.securityLevel")}
                     </label>
                     <select
                       id={`sec-level-${cred.id}`}
                       value={cred.securityLevel}
                       onChange={(e) =>
-                        updateV3Credential(
-                          cred.id!,
-                          "securityLevel",
-                          e.target.value,
-                        )
+                        updateV3Credential(cred.id!, "securityLevel", e.target.value)
                       }
                       className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                     >
-                      {SECURITY_LEVELS.map((level) => (
-                        <option key={level.value} value={level.value}>
-                          {level.label}
+                      {SECURITY_LEVEL_VALUES.map((value) => (
+                        <option key={value} value={value}>
+                          {getSecurityLevelLabel(value)}
                         </option>
                       ))}
                     </select>
@@ -379,27 +346,18 @@ export const SNMPSettings = memo(function SNMPSettings({
 
                   {/* Authentication Protocol */}
                   <div>
-                    <label
-                      className="caption text-text-muted"
-                      htmlFor={`auth-proto-${cred.id}`}
-                    >
-                      Auth Protocol
+                    <label className="caption text-text-muted" htmlFor={`auth-proto-${cred.id}`}>
+                      {t("snmp.authProtocol")}
                     </label>
                     <select
                       id={`auth-proto-${cred.id}`}
                       value={cred.authProtocol}
-                      onChange={(e) =>
-                        updateV3Credential(
-                          cred.id!,
-                          "authProtocol",
-                          e.target.value,
-                        )
-                      }
+                      onChange={(e) => updateV3Credential(cred.id!, "authProtocol", e.target.value)}
                       className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                     >
-                      {AUTH_PROTOCOLS.map((proto) => (
-                        <option key={proto.value} value={proto.value}>
-                          {proto.label}
+                      {AUTH_PROTOCOL_VALUES.map((value) => (
+                        <option key={value} value={value}>
+                          {getAuthProtocolLabel(value)}
                         </option>
                       ))}
                     </select>
@@ -408,24 +366,17 @@ export const SNMPSettings = memo(function SNMPSettings({
                   {/* Authentication Password */}
                   {cred.authProtocol !== "" && (
                     <div>
-                      <label
-                        className="caption text-text-muted"
-                        htmlFor={`auth-pass-${cred.id}`}
-                      >
-                        Auth Password
+                      <label className="caption text-text-muted" htmlFor={`auth-pass-${cred.id}`}>
+                        {t("snmp.authPassword")}
                       </label>
                       <input
                         id={`auth-pass-${cred.id}`}
                         type="password"
                         value={cred.authPassword}
                         onChange={(e) =>
-                          updateV3Credential(
-                            cred.id!,
-                            "authPassword",
-                            e.target.value,
-                          )
+                          updateV3Credential(cred.id!, "authPassword", e.target.value)
                         }
-                        placeholder="Authentication password"
+                        placeholder={t("snmp.authPasswordPlaceholder")}
                         className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                       />
                     </div>
@@ -433,27 +384,18 @@ export const SNMPSettings = memo(function SNMPSettings({
 
                   {/* Privacy Protocol */}
                   <div>
-                    <label
-                      className="caption text-text-muted"
-                      htmlFor={`priv-proto-${cred.id}`}
-                    >
-                      Privacy Protocol
+                    <label className="caption text-text-muted" htmlFor={`priv-proto-${cred.id}`}>
+                      {t("snmp.privProtocol")}
                     </label>
                     <select
                       id={`priv-proto-${cred.id}`}
                       value={cred.privProtocol}
-                      onChange={(e) =>
-                        updateV3Credential(
-                          cred.id!,
-                          "privProtocol",
-                          e.target.value,
-                        )
-                      }
+                      onChange={(e) => updateV3Credential(cred.id!, "privProtocol", e.target.value)}
                       className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                     >
-                      {PRIV_PROTOCOLS.map((proto) => (
-                        <option key={proto.value} value={proto.value}>
-                          {proto.label}
+                      {PRIV_PROTOCOL_VALUES.map((value) => (
+                        <option key={value} value={value}>
+                          {getPrivProtocolLabel(value)}
                         </option>
                       ))}
                     </select>
@@ -462,24 +404,17 @@ export const SNMPSettings = memo(function SNMPSettings({
                   {/* Privacy Password */}
                   {cred.privProtocol !== "" && (
                     <div>
-                      <label
-                        className="caption text-text-muted"
-                        htmlFor={`priv-pass-${cred.id}`}
-                      >
-                        Privacy Password
+                      <label className="caption text-text-muted" htmlFor={`priv-pass-${cred.id}`}>
+                        {t("snmp.privPassword")}
                       </label>
                       <input
                         id={`priv-pass-${cred.id}`}
                         type="password"
                         value={cred.privPassword}
                         onChange={(e) =>
-                          updateV3Credential(
-                            cred.id!,
-                            "privPassword",
-                            e.target.value,
-                          )
+                          updateV3Credential(cred.id!, "privPassword", e.target.value)
                         }
-                        placeholder="Privacy password"
+                        placeholder={t("snmp.privPasswordPlaceholder")}
                         className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                       />
                     </div>
@@ -487,24 +422,15 @@ export const SNMPSettings = memo(function SNMPSettings({
 
                   {/* Context Name */}
                   <div>
-                    <label
-                      className="caption text-text-muted"
-                      htmlFor={`context-name-${cred.id}`}
-                    >
-                      Context Name (optional)
+                    <label className="caption text-text-muted" htmlFor={`context-name-${cred.id}`}>
+                      {t("snmp.contextName")}
                     </label>
                     <input
                       id={`context-name-${cred.id}`}
                       type="text"
                       value={cred.contextName}
-                      onChange={(e) =>
-                        updateV3Credential(
-                          cred.id!,
-                          "contextName",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="SNMP context"
+                      onChange={(e) => updateV3Credential(cred.id!, "contextName", e.target.value)}
+                      placeholder={t("snmp.snmpContext")}
                       className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm} mt-1 caption`}
                     />
                   </div>
