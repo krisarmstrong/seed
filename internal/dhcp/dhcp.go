@@ -532,9 +532,17 @@ func parseDHClientLeaseFile(path, interfaceName string) *LeaseInfo {
 	return nil
 }
 
-// parseNMLeaseFile parses NetworkManager internal lease file.
-func parseNMLeaseFile(path string) *LeaseInfo {
-	//nolint:gosec // G304: path is from known NetworkManager lease file locations in system directories
+// leaseFieldMapping defines how to extract DHCP lease fields from a file format.
+type leaseFieldMapping struct {
+	serverKey    string
+	routerKey    string
+	leaseTimeKey string
+	dnsKey       string
+}
+
+// parseLeaseFileWithMapping parses a lease file using the given field mappings.
+func parseLeaseFileWithMapping(path string, mapping leaseFieldMapping) *LeaseInfo {
+	//nolint:gosec // G304: path is from known DHCP lease file locations in system directories
 	file, err := os.Open(path)
 	if err != nil {
 		return nil
@@ -547,22 +555,22 @@ func parseNMLeaseFile(path string) *LeaseInfo {
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
-		if strings.HasPrefix(line, "DHCP4_SERVER_ID=") {
-			info.DHCPServer = strings.TrimPrefix(line, "DHCP4_SERVER_ID=")
+		if strings.HasPrefix(line, mapping.serverKey) {
+			info.DHCPServer = strings.TrimPrefix(line, mapping.serverKey)
 		}
-		if strings.HasPrefix(line, "DHCP4_ROUTERS=") {
-			val := strings.TrimPrefix(line, "DHCP4_ROUTERS=")
+		if strings.HasPrefix(line, mapping.routerKey) {
+			val := strings.TrimPrefix(line, mapping.routerKey)
 			if parts := strings.Split(val, " "); len(parts) > 0 {
 				info.Gateway = parts[0]
 			}
 		}
-		if strings.HasPrefix(line, "DHCP4_LEASE_TIME=") {
-			if lease, err := strconv.Atoi(strings.TrimPrefix(line, "DHCP4_LEASE_TIME=")); err == nil {
+		if strings.HasPrefix(line, mapping.leaseTimeKey) {
+			if lease, err := strconv.Atoi(strings.TrimPrefix(line, mapping.leaseTimeKey)); err == nil {
 				info.LeaseTime = lease
 			}
 		}
-		if strings.HasPrefix(line, "DHCP4_DOMAIN_NAME_SERVERS=") {
-			val := strings.TrimPrefix(line, "DHCP4_DOMAIN_NAME_SERVERS=")
+		if strings.HasPrefix(line, mapping.dnsKey) {
+			val := strings.TrimPrefix(line, mapping.dnsKey)
 			for _, dns := range strings.Split(val, " ") {
 				dns = strings.TrimSpace(dns)
 				if dns != "" {
@@ -578,50 +586,24 @@ func parseNMLeaseFile(path string) *LeaseInfo {
 	return nil
 }
 
+// parseNMLeaseFile parses NetworkManager internal lease file.
+func parseNMLeaseFile(path string) *LeaseInfo {
+	return parseLeaseFileWithMapping(path, leaseFieldMapping{
+		serverKey:    "DHCP4_SERVER_ID=",
+		routerKey:    "DHCP4_ROUTERS=",
+		leaseTimeKey: "DHCP4_LEASE_TIME=",
+		dnsKey:       "DHCP4_DOMAIN_NAME_SERVERS=",
+	})
+}
+
 // parseNetworkdLeaseFile parses systemd-networkd lease file.
 func parseNetworkdLeaseFile(path string) *LeaseInfo {
-	//nolint:gosec // G304: path is from known systemd-networkd lease file locations
-	file, err := os.Open(path)
-	if err != nil {
-		return nil
-	}
-	defer file.Close()
-
-	info := &LeaseInfo{}
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-
-		if strings.HasPrefix(line, "SERVER_ADDRESS=") {
-			info.DHCPServer = strings.TrimPrefix(line, "SERVER_ADDRESS=")
-		}
-		if strings.HasPrefix(line, "ROUTER=") {
-			val := strings.TrimPrefix(line, "ROUTER=")
-			if parts := strings.Split(val, " "); len(parts) > 0 {
-				info.Gateway = parts[0]
-			}
-		}
-		if strings.HasPrefix(line, "LIFETIME=") {
-			if lease, err := strconv.Atoi(strings.TrimPrefix(line, "LIFETIME=")); err == nil {
-				info.LeaseTime = lease
-			}
-		}
-		if strings.HasPrefix(line, "DNS=") {
-			val := strings.TrimPrefix(line, "DNS=")
-			for _, dns := range strings.Split(val, " ") {
-				dns = strings.TrimSpace(dns)
-				if dns != "" {
-					info.DNS = append(info.DNS, dns)
-				}
-			}
-		}
-	}
-
-	if info.DHCPServer != "" || info.Gateway != "" {
-		return info
-	}
-	return nil
+	return parseLeaseFileWithMapping(path, leaseFieldMapping{
+		serverKey:    "SERVER_ADDRESS=",
+		routerKey:    "ROUTER=",
+		leaseTimeKey: "LIFETIME=",
+		dnsKey:       "DNS=",
+	})
 }
 
 // extractValue extracts value from dhclient option line.

@@ -160,6 +160,7 @@ func (p *TCPProber) ProbeTCP(ctx context.Context, ipStr string, port int) TCPPro
 			result.State = PortFiltered
 		} else if opErr, ok := err.(*net.OpError); ok {
 			if syscallErr, ok := opErr.Err.(*syscall.Errno); ok {
+				//nolint:exhaustive // syscall.Errno has too many cases, default handles the rest
 				switch *syscallErr {
 				case syscall.ECONNREFUSED:
 					// RST received - port is closed

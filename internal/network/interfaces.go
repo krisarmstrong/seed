@@ -224,7 +224,10 @@ func (m *Manager) FindFirstAvailable(preferred []string) string {
 			} else {
 				wifiUp = append(wifiUp, name)
 			}
-		default:
+		case InterfaceTypeLoopback, InterfaceTypeVirtual:
+			// Already filtered out above, but handle for exhaustive switch
+			continue
+		case InterfaceTypeOther:
 			// For "other" type interfaces, treat like ethernet if they have IP
 			if hasIP {
 				ethernetWithIP = append(ethernetWithIP, name)
