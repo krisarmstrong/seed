@@ -148,7 +148,7 @@ export const SimpleCardLoading: StoryObj<typeof SimpleBaseCard> = {
 
 export const CardGrid: Story = {
   render: () => (
-    <div className="grid grid-cols-2 gap-4 w-[600px]">
+    <div className="grid grid-cols-2 gap-4 w-150">
       <BaseCard
         title="Gateway"
         icon={<Server className="w-4 h-4" />}
