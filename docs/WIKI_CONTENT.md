@@ -1,5 +1,6 @@
-<!-- markdownlint-disable MD029 -->
+<!-- markdownlint-disable MD029 MD040 -->
 <!-- MD029 disabled: This file contains wiki page templates with intentional list numbering -->
+<!-- MD040 disabled: Closing fences for nested markdown blocks don't need language specifiers -->
 
 # GitHub Wiki Content Guide for The Seed
 
