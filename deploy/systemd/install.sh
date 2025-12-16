@@ -6,10 +6,10 @@
 set -e
 
 # Configuration
-INSTALL_DIR="/usr/local/luminetiq"
-SERVICE_USER="luminetiq"
-SERVICE_GROUP="luminetiq"
-BINARY_NAME="luminetiq"
+INSTALL_DIR="/usr/local/seed"
+SERVICE_USER="seed"
+SERVICE_GROUP="seed"
+BINARY_NAME="seed"
 
 # Colors for output
 RED='\033[0;31m'
@@ -72,9 +72,9 @@ mkdir -p "$INSTALL_DIR/configs"
 mkdir -p "$INSTALL_DIR/logs"
 
 # Stop existing service if running
-if systemctl is-active --quiet luminetiq; then
+if systemctl is-active --quiet seed; then
     log_info "Stopping existing LuminetIQ service..."
-    systemctl stop luminetiq
+    systemctl stop seed
 fi
 
 # Copy binary
@@ -93,24 +93,24 @@ setcap cap_net_raw=+ep "$INSTALL_DIR/$BINARY_NAME"
 # Install systemd service file
 log_info "Installing systemd service..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -f "$SCRIPT_DIR/luminetiq.service" ]]; then
-    cp "$SCRIPT_DIR/luminetiq.service" /etc/systemd/system/luminetiq.service
+if [[ -f "$SCRIPT_DIR/seed.service" ]]; then
+    cp "$SCRIPT_DIR/seed.service" /etc/systemd/system/seed.service
 else
     # Create service file inline if not found
-    cat > /etc/systemd/system/luminetiq.service << 'EOF'
+    cat > /etc/systemd/system/seed.service << 'EOF'
 [Unit]
 Description=LuminetIQ Network Diagnostics
-Documentation=https://github.com/krisarmstrong/luminetiq
+Documentation=https://github.com/krisarmstrong/seed
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=luminetiq
-Group=luminetiq
-WorkingDirectory=/usr/local/luminetiq
-ExecStartPre=/sbin/setcap cap_net_raw=+ep /usr/local/luminetiq/luminetiq
-ExecStart=/usr/local/luminetiq/luminetiq
+User=seed
+Group=seed
+WorkingDirectory=/usr/local/seed
+ExecStartPre=/sbin/setcap cap_net_raw=+ep /usr/local/seed/seed
+ExecStart=/usr/local/seed/seed
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
@@ -120,11 +120,11 @@ StandardError=journal
 NoNewPrivileges=no
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/usr/local/luminetiq/configs /usr/local/luminetiq/logs
+ReadWritePaths=/usr/local/seed/configs /usr/local/seed/logs
 PrivateTmp=true
 
 # Environment
-Environment=HOME=/usr/local/luminetiq
+Environment=HOME=/usr/local/seed
 
 [Install]
 WantedBy=multi-user.target
@@ -137,38 +137,38 @@ systemctl daemon-reload
 
 # Enable service
 log_info "Enabling LuminetIQ service..."
-systemctl enable luminetiq
+systemctl enable seed
 
 # Start service
 log_info "Starting LuminetIQ service..."
-systemctl start luminetiq
+systemctl start seed
 
 # Wait a moment for startup
 sleep 3
 
 # Check status
-if systemctl is-active --quiet luminetiq; then
+if systemctl is-active --quiet seed; then
     log_info "LuminetIQ installed and running successfully!"
     echo ""
     echo "Service Status:"
-    systemctl status luminetiq --no-pager
+    systemctl status seed --no-pager
     echo ""
     echo "Commands:"
-    echo "  View logs:      journalctl -u luminetiq -f"
-    echo "  Restart:        systemctl restart luminetiq"
-    echo "  Stop:           systemctl stop luminetiq"
-    echo "  Status:         systemctl status luminetiq"
+    echo "  View logs:      journalctl -u seed -f"
+    echo "  Restart:        systemctl restart seed"
+    echo "  Stop:           systemctl stop seed"
+    echo "  Status:         systemctl status seed"
     echo ""
 
     # Show initial credentials if available
-    if [[ -f "$INSTALL_DIR/configs/luminetiq.yaml" ]]; then
-        log_info "Configuration file created at: $INSTALL_DIR/configs/luminetiq.yaml"
+    if [[ -f "$INSTALL_DIR/configs/seed.yaml" ]]; then
+        log_info "Configuration file created at: $INSTALL_DIR/configs/seed.yaml"
     fi
 
     # Generate and display initial credentials (fixes #489)
-    CRED_FILE="$INSTALL_DIR/.luminetiq-credentials"
+    CRED_FILE="$INSTALL_DIR/.seed-credentials"
     log_info "Generating initial admin credentials..."
-    if "$INSTALL_DIR/$BINARY_NAME" credentials -config "$INSTALL_DIR/configs/luminetiq.yaml" -file "$CRED_FILE"; then
+    if "$INSTALL_DIR/$BINARY_NAME" credentials -config "$INSTALL_DIR/configs/seed.yaml" -file "$CRED_FILE"; then
         echo ""
         cat "$CRED_FILE"
         echo ""
@@ -180,6 +180,6 @@ if systemctl is-active --quiet luminetiq; then
         log_warn "Could not generate credentials. Visit the web UI to complete setup."
     fi
 else
-    log_error "LuminetIQ failed to start. Check logs with: journalctl -u luminetiq"
+    log_error "LuminetIQ failed to start. Check logs with: journalctl -u seed"
     exit 1
 fi

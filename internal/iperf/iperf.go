@@ -76,7 +76,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/validation"
+	"github.com/krisarmstrong/seed/internal/validation"
 )
 
 const (

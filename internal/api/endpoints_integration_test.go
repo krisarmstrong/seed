@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
-	"github.com/krisarmstrong/luminetiq/internal/network"
+	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/network"
 )
 
 // testEndpointServer holds shared test server state.

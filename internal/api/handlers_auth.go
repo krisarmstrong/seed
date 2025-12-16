@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/auth"
+	"github.com/krisarmstrong/seed/internal/auth"
 )
 
 // LoginRequest represents a login request.

@@ -16,11 +16,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/dns"
-	"github.com/krisarmstrong/luminetiq/internal/iperf"
+	"github.com/krisarmstrong/seed/internal/dns"
+	"github.com/krisarmstrong/seed/internal/iperf"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
-	"github.com/krisarmstrong/luminetiq/internal/validation"
+	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/validation"
 )
 
 // Test status and protocol constants.

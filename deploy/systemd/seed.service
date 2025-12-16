@@ -1,0 +1,30 @@
+[Unit]
+Description=LuminetIQ Network Diagnostics
+Documentation=https://github.com/krisarmstrong/seed
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=seed
+Group=seed
+WorkingDirectory=/usr/local/seed
+ExecStartPre=/sbin/setcap cap_net_raw=+ep /usr/local/seed/seed
+ExecStart=/usr/local/seed/seed
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening
+NoNewPrivileges=no
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/usr/local/seed/configs /usr/local/seed/logs
+PrivateTmp=true
+
+# Environment
+Environment=HOME=/usr/local/seed
+
+[Install]
+WantedBy=multi-user.target
