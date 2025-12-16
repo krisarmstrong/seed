@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/iperf"
-	"github.com/krisarmstrong/luminetiq/internal/wifi"
+	"github.com/krisarmstrong/seed/internal/iperf"
+	"github.com/krisarmstrong/seed/internal/wifi"
 )
 
 func TestNewManager(t *testing.T) {

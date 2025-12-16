@@ -1,4 +1,4 @@
-module github.com/krisarmstrong/luminetiq
+module github.com/krisarmstrong/seed
 
 go 1.25.5
 

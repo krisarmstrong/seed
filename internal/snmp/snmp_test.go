@@ -7,7 +7,7 @@ import (
 
 	"github.com/gosnmp/gosnmp"
 
-	"github.com/krisarmstrong/luminetiq/internal/config"
+	"github.com/krisarmstrong/seed/internal/config"
 )
 
 func TestQuery(t *testing.T) {

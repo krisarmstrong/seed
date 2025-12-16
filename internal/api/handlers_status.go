@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/dhcp"
-	"github.com/krisarmstrong/luminetiq/internal/system"
-	"github.com/krisarmstrong/luminetiq/internal/version"
+	"github.com/krisarmstrong/seed/internal/dhcp"
+	"github.com/krisarmstrong/seed/internal/system"
+	"github.com/krisarmstrong/seed/internal/version"
 )
 
 // StatusResponse represents the system status.

@@ -6,10 +6,10 @@
 set -e
 
 # Configuration
-INSTALL_DIR="/usr/local/luminetiq"
-SERVICE_USER="luminetiq"
-SERVICE_GROUP="luminetiq"
-SERVICE_NAME="luminetiq"
+INSTALL_DIR="/usr/local/seed"
+SERVICE_USER="seed"
+SERVICE_GROUP="seed"
+SERVICE_NAME="seed"
 
 # Colors for output
 RED='\033[0;31m'
@@ -87,9 +87,9 @@ if [[ -f "/etc/systemd/system/${SERVICE_NAME}.service" ]]; then
 fi
 
 # Remove binary
-if [[ -f "$INSTALL_DIR/luminetiq" ]]; then
+if [[ -f "$INSTALL_DIR/seed" ]]; then
     log_info "Removing LuminetIQ binary..."
-    rm -f "$INSTALL_DIR/luminetiq"
+    rm -f "$INSTALL_DIR/seed"
 fi
 
 # Remove data if requested

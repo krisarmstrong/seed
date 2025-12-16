@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/krisarmstrong/luminetiq/internal/auth"
-	"github.com/krisarmstrong/luminetiq/internal/config"
+	"github.com/krisarmstrong/seed/internal/auth"
+	"github.com/krisarmstrong/seed/internal/config"
 )
 
 // refreshTokenTestCase defines a test case for token refresh.

@@ -3,7 +3,7 @@
 # Automated Rogue DHCP Server Test Script
 # Tests LuminetIQ's rogue DHCP detection capability
 #
-# Usage: sudo ./test-dhcp-rogue.sh [luminetiq_url] [auth_token]
+# Usage: sudo ./test-dhcp-rogue.sh [seed_url] [auth_token]
 # Example: sudo ./test-dhcp-rogue.sh https://192.168.64.7:8443 your_jwt_token
 #
 
@@ -32,7 +32,7 @@ fi
 # Check if auth token provided
 if [ -z "$AUTH_TOKEN" ]; then
   echo -e "${RED}ERROR: Auth token required${NC}"
-  echo "Usage: sudo $0 <luminetiq_url> <auth_token>"
+  echo "Usage: sudo $0 <seed_url> <auth_token>"
   exit 1
 fi
 

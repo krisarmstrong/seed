@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/krisarmstrong/luminetiq/internal/iperf"
-	"github.com/krisarmstrong/luminetiq/internal/wifi"
+	"github.com/krisarmstrong/seed/internal/iperf"
+	"github.com/krisarmstrong/seed/internal/wifi"
 )
 
 // Type indicates the type of survey being conducted.

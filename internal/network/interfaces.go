@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/krisarmstrong/luminetiq/internal/network/detection"
+	"github.com/krisarmstrong/seed/internal/network/detection"
 )
 
 // InterfaceType represents the type of network interface.

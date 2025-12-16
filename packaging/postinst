@@ -4,10 +4,10 @@ set -e
 # Reload systemd manager configuration
 systemctl daemon-reload
 
-# Enable luminetiq service to start on boot
-systemctl enable luminetiq.service
+# Enable seed service to start on boot
+systemctl enable seed.service
 
-# Start luminetiq service
-systemctl start luminetiq.service
+# Start seed service
+systemctl start seed.service
 
 exit 0
