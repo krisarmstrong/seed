@@ -278,6 +278,7 @@ func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *co
 
 // formatSNMPValue converts SNMP variable to string.
 func formatSNMPValue(variable gosnmp.SnmpPDU) string {
+	//nolint:exhaustive // gosnmp.Asn1BER has many ASN.1 types, default handles uncommon ones
 	switch variable.Type {
 	case gosnmp.OctetString:
 		bytes, ok := variable.Value.([]byte)

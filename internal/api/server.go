@@ -234,6 +234,9 @@ func (s *Server) onLinkStateChange(event network.LinkEvent) {
 				"timestamp": event.Timestamp.Format(time.RFC3339),
 			},
 		})
+	case network.LinkStateUnknown:
+		// Unknown state - log but don't take action
+		log.Printf("Link state unknown for %s", event.Interface)
 	}
 }
 

@@ -503,18 +503,19 @@ func (s *Server) handleVLANInterface(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// createVLANInterface creates an 802.1Q VLAN subinterface.
-func (s *Server) createVLANInterface(w http.ResponseWriter, r *http.Request) {
+// parseVLANRequest parses and validates a VLAN interface request.
+// Returns the validated interface name, VLAN ID, and any error.
+func (s *Server) parseVLANRequest(w http.ResponseWriter, r *http.Request) (string, int, bool) {
 	var req VLANInterfaceRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
+		return "", 0, false
 	}
 
 	// Validate VLAN ID (fixes #522)
 	if err := validation.ValidateVLANID(req.VlanID); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return "", 0, false
 	}
 
 	// Use current interface if not specified
@@ -526,11 +527,20 @@ func (s *Server) createVLANInterface(w http.ResponseWriter, r *http.Request) {
 	// Validate interface name
 	if err := validation.ValidateInterface(iface); err != nil {
 		http.Error(w, fmt.Sprintf("Invalid interface: %v", err), http.StatusBadRequest)
+		return "", 0, false
+	}
+
+	return iface, req.VlanID, true
+}
+
+// createVLANInterface creates an 802.1Q VLAN subinterface.
+func (s *Server) createVLANInterface(w http.ResponseWriter, r *http.Request) {
+	iface, vlanID, ok := s.parseVLANRequest(w, r)
+	if !ok {
 		return
 	}
 
-	// Create the VLAN interface
-	if err := vlan.CreateVlanInterface(iface, req.VlanID); err != nil {
+	if err := vlan.CreateVlanInterface(iface, vlanID); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create VLAN interface: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -539,38 +549,18 @@ func (s *Server) createVLANInterface(w http.ResponseWriter, r *http.Request) {
 		"status":    "success",
 		"message":   "VLAN interface created",
 		"interface": iface,
-		"vlanId":    req.VlanID,
+		"vlanId":    vlanID,
 	})
 }
 
 // deleteVLANInterface removes an 802.1Q VLAN subinterface.
 func (s *Server) deleteVLANInterface(w http.ResponseWriter, r *http.Request) {
-	var req VLANInterfaceRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+	iface, vlanID, ok := s.parseVLANRequest(w, r)
+	if !ok {
 		return
 	}
 
-	// Validate VLAN ID (fixes #522)
-	if err := validation.ValidateVLANID(req.VlanID); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Use current interface if not specified
-	iface := req.Interface
-	if iface == "" {
-		iface = s.netManager.GetCurrentInterface()
-	}
-
-	// Validate interface name
-	if err := validation.ValidateInterface(iface); err != nil {
-		http.Error(w, fmt.Sprintf("Invalid interface: %v", err), http.StatusBadRequest)
-		return
-	}
-
-	// Delete the VLAN interface
-	if err := vlan.DeleteVlanInterface(iface, req.VlanID); err != nil {
+	if err := vlan.DeleteVlanInterface(iface, vlanID); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to delete VLAN interface: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -579,7 +569,7 @@ func (s *Server) deleteVLANInterface(w http.ResponseWriter, r *http.Request) {
 		"status":    "success",
 		"message":   "VLAN interface deleted",
 		"interface": iface,
-		"vlanId":    req.VlanID,
+		"vlanId":    vlanID,
 	})
 }
 
