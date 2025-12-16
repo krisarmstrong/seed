@@ -1,4 +1,5 @@
 import { useState, memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardValue, CardRow, CardDivider, Status } from "../ui/Card";
 import { CollapsibleSection } from "../ui/CollapsibleSection";
 import { getAuthHeaders } from "../../hooks/useAuth";
@@ -76,14 +77,7 @@ export interface NDPInfo {
   lastAdvertisement?: string;
 }
 
-export type DiscoveryMethod =
-  | "arp"
-  | "ndp"
-  | "lldp"
-  | "cdp"
-  | "edp"
-  | "mdns"
-  | "ping";
+export type DiscoveryMethod = "arp" | "ndp" | "lldp" | "cdp" | "edp" | "mdns" | "ping";
 
 // Auto-profiling types from backend
 export interface OpenPort {
@@ -183,6 +177,7 @@ function DeviceSearchBar({
   onSortChange,
   deviceCount,
   filteredCount,
+  t,
 }: {
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -191,6 +186,7 @@ function DeviceSearchBar({
   onSortChange: (field: SortField) => void;
   deviceCount: number;
   filteredCount: number;
+  t: ReturnType<typeof useTranslation<"cards">>["t"];
 }) {
   return (
     <div className="stack-sm">
@@ -201,7 +197,7 @@ function DeviceSearchBar({
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search devices by IP, hostname, vendor, MAC..."
+          placeholder={t("discovery.searchPlaceholder")}
           className={`w-full pl-9 pr-8 py-1.5 body-small bg-surface-base border border-surface-border ${radius.md} focus:outline-none focus:ring-1 focus:ring-brand-primary text-text-primary placeholder:text-text-muted`}
         />
         {searchQuery && (
@@ -209,7 +205,7 @@ function DeviceSearchBar({
             type="button"
             onClick={() => onSearchChange("")}
             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
-            aria-label="Clear search"
+            aria-label={t("discovery.clearSearch")}
           >
             <X className="w-4 h-4" />
           </button>
@@ -219,39 +215,37 @@ function DeviceSearchBar({
       {/* Sort buttons row */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-1">
-          <span className="caption text-text-muted">Sort:</span>
-          {(["ip", "hostname", "vendor", "lastSeen"] as SortField[]).map(
-            (field) => (
-              <button
-                key={field}
-                type="button"
-                onClick={() => onSortChange(field)}
-                className={`px-2 py-0.5 caption ${radius.md} transition-colors flex items-center gap-1 ${
-                  sortField === field
-                    ? "bg-brand-primary/20 text-brand-primary"
-                    : "bg-surface-hover text-text-muted hover:text-text-primary"
-                }`}
-              >
-                {field === "ip"
-                  ? "IP"
-                  : field === "hostname"
-                    ? "Name"
-                    : field === "vendor"
-                      ? "Vendor"
-                      : "Seen"}
-                {sortField === field &&
-                  (sortDirection === "asc" ? (
-                    <ChevronUp className="w-3 h-3" />
-                  ) : (
-                    <ChevronDown className="w-3 h-3" />
-                  ))}
-              </button>
-            ),
-          )}
+          <span className="caption text-text-muted">{t("discovery.sort")}:</span>
+          {(["ip", "hostname", "vendor", "lastSeen"] as SortField[]).map((field) => (
+            <button
+              key={field}
+              type="button"
+              onClick={() => onSortChange(field)}
+              className={`px-2 py-0.5 caption ${radius.md} transition-colors flex items-center gap-1 ${
+                sortField === field
+                  ? "bg-brand-primary/20 text-brand-primary"
+                  : "bg-surface-hover text-text-muted hover:text-text-primary"
+              }`}
+            >
+              {field === "ip"
+                ? t("discovery.sortIp")
+                : field === "hostname"
+                  ? t("discovery.sortName")
+                  : field === "vendor"
+                    ? t("discovery.sortVendor")
+                    : t("discovery.sortSeen")}
+              {sortField === field &&
+                (sortDirection === "asc" ? (
+                  <ChevronUp className="w-3 h-3" />
+                ) : (
+                  <ChevronDown className="w-3 h-3" />
+                ))}
+            </button>
+          ))}
         </div>
         {searchQuery && (
           <span className="caption text-text-muted">
-            {filteredCount} of {deviceCount}
+            {t("discovery.filteredCount", { filtered: filteredCount, total: deviceCount })}
           </span>
         )}
       </div>
@@ -259,20 +253,23 @@ function DeviceSearchBar({
   );
 }
 
-function formatLastSeen(dateStr: string): string {
-  if (!dateStr) return "Never";
+function formatLastSeen(
+  dateStr: string,
+  t: ReturnType<typeof useTranslation<"cards">>["t"]
+): string {
+  if (!dateStr) return t("discovery.never");
   const date = new Date(dateStr);
   // Check for invalid date or Go's zero time (year 1 or epoch)
-  if (isNaN(date.getTime()) || date.getFullYear() < 2000) return "Never";
+  if (isNaN(date.getTime()) || date.getFullYear() < 2000) return t("discovery.never");
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffSec = Math.floor(diffMs / 1000);
 
-  if (diffSec < 0) return "Never"; // Future date = invalid
-  if (diffSec < 60) return "Just now";
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
-  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
-  return `${Math.floor(diffSec / 86400)}d ago`;
+  if (diffSec < 0) return t("discovery.never"); // Future date = invalid
+  if (diffSec < 60) return t("discovery.justNow");
+  if (diffSec < 3600) return t("discovery.mAgo", { min: Math.floor(diffSec / 60) });
+  if (diffSec < 86400) return t("discovery.hAgo", { hour: Math.floor(diffSec / 3600) });
+  return t("discovery.dAgo", { day: Math.floor(diffSec / 86400) });
 }
 
 // Discovery method colors - from theme tokens (dark mode aware)
@@ -317,13 +314,7 @@ const SERVICE_ICONS: Record<string, LucideIcon> = {
   server: Server,
 };
 
-function ProfileIcons({
-  icons,
-  deviceType,
-}: {
-  icons?: string[];
-  deviceType?: string;
-}) {
+function ProfileIcons({ icons, deviceType }: { icons?: string[]; deviceType?: string }) {
   if (!icons || icons.length === 0) return null;
 
   return (
@@ -339,16 +330,12 @@ function ProfileIcons({
             {IconComponent ? (
               <IconComponent className="w-3 h-3" />
             ) : (
-              <span className="text-[10px] font-medium">
-                {icon[0]?.toUpperCase()}
-              </span>
+              <span className="text-[10px] font-medium">{icon[0]?.toUpperCase()}</span>
             )}
           </span>
         );
       })}
-      {icons.length > 5 && (
-        <span className="text-[10px] text-text-muted">+{icons.length - 5}</span>
-      )}
+      {icons.length > 5 && <span className="text-[10px] text-text-muted">+{icons.length - 5}</span>}
     </div>
   );
 }
@@ -372,23 +359,15 @@ function categorizeDevices(devices: DiscoveredDevice[]) {
     if (
       icons.includes("router") ||
       deviceType.includes("router") ||
-      device.cdpInfo?.capabilities?.some((c) =>
-        c.toLowerCase().includes("router"),
-      ) ||
-      device.lldpInfo?.capabilities?.some((c) =>
-        c.toLowerCase().includes("router"),
-      )
+      device.cdpInfo?.capabilities?.some((c) => c.toLowerCase().includes("router")) ||
+      device.lldpInfo?.capabilities?.some((c) => c.toLowerCase().includes("router"))
     ) {
       categories.routers++;
     } else if (
       icons.includes("switch") ||
       deviceType.includes("switch") ||
-      device.cdpInfo?.capabilities?.some((c) =>
-        c.toLowerCase().includes("switch"),
-      ) ||
-      device.lldpInfo?.capabilities?.some((c) =>
-        c.toLowerCase().includes("bridge"),
-      )
+      device.cdpInfo?.capabilities?.some((c) => c.toLowerCase().includes("switch")) ||
+      device.lldpInfo?.capabilities?.some((c) => c.toLowerCase().includes("bridge"))
     ) {
       categories.network++;
     } else if (icons.includes("printer") || deviceType.includes("printer")) {
@@ -427,47 +406,49 @@ function DiscoverySummary({
   status,
   deviceCount,
   categories,
+  t,
 }: {
   status: DiscoveryStatus;
   deviceCount: number;
   categories: ReturnType<typeof categorizeDevices>;
+  t: ReturnType<typeof useTranslation<"cards">>["t"];
 }) {
   // Build stat items with non-zero counts
   // Using theme tokens for device category colors (dark mode aware)
   const stats = [
     {
       icon: Router,
-      label: "Routers",
+      label: t("discovery.routers"),
       count: categories.routers,
       color: categoryTheme.router,
     },
     {
       icon: Server,
-      label: "Servers",
+      label: t("discovery.servers"),
       count: categories.servers,
       color: categoryTheme.server,
     },
     {
       icon: Monitor,
-      label: "Workstations",
+      label: t("discovery.workstations"),
       count: categories.workstations,
       color: categoryTheme.workstation,
     },
     {
       icon: Printer,
-      label: "Printers",
+      label: t("discovery.printers"),
       count: categories.printers,
       color: categoryTheme.printer,
     },
     {
       icon: Smartphone,
-      label: "Mobile",
+      label: t("discovery.mobile"),
       count: categories.mobile,
       color: categoryTheme.mobile,
     },
     {
       icon: Wifi,
-      label: "Network",
+      label: t("discovery.networkDevices"),
       count: categories.network,
       color: categoryTheme.network,
     },
@@ -481,26 +462,28 @@ function DiscoverySummary({
           {status.scanning ? (
             <>
               <RefreshCw className="w-4 h-4 text-status-info animate-spin" />
-              <span className="text-status-info font-medium">Scanning...</span>
+              <span className="text-status-info font-medium">{t("discovery.scanning")}</span>
             </>
           ) : (
             <>
               <CheckCircle className="w-4 h-4 text-status-success" />
-              <span className="text-status-success font-medium">Complete</span>
+              <span className="text-status-success font-medium">{t("discovery.complete")}</span>
             </>
           )}
         </div>
         <div className="flex items-center gap-1.5 text-text-muted">
           <Clock className="w-3.5 h-3.5" />
-          <span className="caption">{formatLastSeen(status.lastScan)}</span>
+          <span className="caption">{formatLastSeen(status.lastScan, t)}</span>
         </div>
       </div>
 
       {/* Network info row */}
       <div className="flex items-center justify-between caption text-text-muted">
-        <span className="font-mono">{status.subnet || "Unknown subnet"}</span>
+        <span className="font-mono">{status.subnet || t("discovery.unknownSubnet")}</span>
         <span>
-          {deviceCount} device{deviceCount !== 1 ? "s" : ""} found
+          {deviceCount === 1
+            ? t("discovery.deviceFound", { count: deviceCount })
+            : t("discovery.devicesFound", { count: deviceCount })}
         </span>
       </div>
 
@@ -508,11 +491,7 @@ function DiscoverySummary({
       {stats.length > 0 && (
         <div className="flex items-center gap-3 flex-wrap pt-1">
           {stats.map(({ icon: Icon, label, count, color }) => (
-            <div
-              key={label}
-              className="flex items-center gap-1"
-              title={`${count} ${label}`}
-            >
+            <div key={label} className="flex items-center gap-1" title={`${count} ${label}`}>
               <Icon className={`w-3.5 h-3.5 ${color}`} />
               <span className="caption text-text-secondary">{count}</span>
             </div>
@@ -559,6 +538,7 @@ function DeviceRow({
   isScanning,
   scanResult,
   onVulnerabilityClick,
+  t,
 }: {
   device: DiscoveredDevice;
   isExpanded: boolean;
@@ -567,13 +547,11 @@ function DeviceRow({
   isScanning?: boolean;
   scanResult?: DeepScanResult;
   onVulnerabilityClick?: (ip: string) => void;
+  t: ReturnType<typeof useTranslation<"cards">>["t"];
 }) {
-  const hasDetails =
-    device.lldpInfo || device.cdpInfo || device.edpInfo || device.profile;
-  const openPorts =
-    scanResult?.results?.filter((r) => r.state === "open") || [];
-  const profileOpenPorts =
-    device.profile?.openPorts?.filter((p) => p.isOpen) || [];
+  const hasDetails = device.lldpInfo || device.cdpInfo || device.edpInfo || device.profile;
+  const openPorts = scanResult?.results?.filter((r) => r.state === "open") || [];
+  const profileOpenPorts = device.profile?.openPorts?.filter((p) => p.isOpen) || [];
 
   const handleDeepScan = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -583,9 +561,7 @@ function DeviceRow({
   };
 
   return (
-    <div
-      className={`border border-surface-border ${radius.md} overflow-hidden`}
-    >
+    <div className={`border border-surface-border ${radius.md} overflow-hidden`}>
       <button
         type="button"
         onClick={onToggle}
@@ -595,23 +571,15 @@ function DeviceRow({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono body-small text-text-primary">
-                {device.ip || "No IP"}
+                {device.ip || t("network.noIP")}
               </span>
               {device.ipv6 && (
-                <span
-                  className="font-mono caption text-text-accent"
-                  title={device.ipv6}
-                >
-                  {device.ipv6.length > 20
-                    ? device.ipv6.substring(0, 20) + "..."
-                    : device.ipv6}
+                <span className="font-mono caption text-text-accent" title={device.ipv6}>
+                  {device.ipv6.length > 20 ? device.ipv6.substring(0, 20) + "..." : device.ipv6}
                 </span>
               )}
               {device.hostname && (
-                <span
-                  className="caption text-text-muted truncate max-w-30"
-                  title={device.hostname}
-                >
+                <span className="caption text-text-muted truncate max-w-30" title={device.hostname}>
                   ({device.hostname})
                 </span>
               )}
@@ -619,16 +587,15 @@ function DeviceRow({
                 <span
                   className={`caption bg-status-success/20 text-status-success px-1.5 py-0.5 ${radius.md}`}
                 >
-                  {openPorts.length} open
+                  {t("discovery.open", { count: openPorts.length })}
                 </span>
               )}
-              {device.profile?.deviceIcons &&
-                device.profile.deviceIcons.length > 0 && (
-                  <ProfileIcons
-                    icons={device.profile.deviceIcons}
-                    deviceType={device.profile.deviceType}
-                  />
-                )}
+              {device.profile?.deviceIcons && device.profile.deviceIcons.length > 0 && (
+                <ProfileIcons
+                  icons={device.profile.deviceIcons}
+                  deviceType={device.profile.deviceType}
+                />
+              )}
               {device.vulnerabilities && device.vulnerabilities.count > 0 && (
                 <button
                   type="button"
@@ -645,7 +612,7 @@ function DeviceRow({
                           ? `${severityTheme.medium.bg} ${severityTheme.medium.text}`
                           : `${severityTheme.low.bg} ${severityTheme.low.text}`
                   }`}
-                  title="Click to view vulnerability details"
+                  title={t("discovery.clickViewVulnerabilities")}
                 >
                   <AlertTriangle className="w-3 h-3" />
                   {device.vulnerabilities.count} CVE
@@ -657,10 +624,7 @@ function DeviceRow({
                 <MethodBadge key={method} method={method} />
               ))}
               {device.vendor && device.vendor !== "Unknown" && (
-                <span
-                  className="caption text-text-muted truncate max-w-25"
-                  title={device.vendor}
-                >
+                <span className="caption text-text-muted truncate max-w-25" title={device.vendor}>
                   {device.vendor}
                 </span>
               )}
@@ -668,9 +632,7 @@ function DeviceRow({
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {device.osGuess && (
-              <span className="caption text-text-muted hidden sm:inline">
-                {device.osGuess}
-              </span>
+              <span className="caption text-text-muted hidden sm:inline">{device.osGuess}</span>
             )}
             {onDeepScan && device.ip && (
               <button
@@ -678,20 +640,18 @@ function DeviceRow({
                 onClick={handleDeepScan}
                 disabled={isScanning}
                 className={`px-2 py-1 caption bg-status-info/20 text-status-info ${radius.md} hover:bg-status-info/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-                title="Deep Scan - scan common ports"
+                title={t("discovery.deepScan")}
               >
                 {isScanning ? (
                   <span className="flex items-center gap-1">
                     <span className="animate-spin">◐</span>
                   </span>
                 ) : (
-                  "Scan"
+                  t("discovery.scan")
                 )}
               </button>
             )}
-            <span
-              className={`text-lg transition-transform ${isExpanded ? "rotate-180" : ""}`}
-            >
+            <span className={`text-lg transition-transform ${isExpanded ? "rotate-180" : ""}`}>
               {hasDetails || scanResult ? "▼" : "○"}
             </span>
           </div>
@@ -701,41 +661,30 @@ function DeviceRow({
       {isExpanded && (
         <div className="px-2 sm:px-3 pb-2 sm:pb-3 pt-1 border-t border-surface-border bg-surface-base">
           <div className="stack-xs caption">
-            <CardRow label="MAC" value={device.mac} />
-            {device.ipv6 && <CardRow label="IPv6" value={device.ipv6} />}
+            <CardRow label={t("discovery.mac")} value={device.mac} />
+            {device.ipv6 && <CardRow label={t("discovery.ipv6")} value={device.ipv6} />}
             {device.ipv6Addresses && device.ipv6Addresses.length > 1 && (
-              <CardRow
-                label="All IPv6"
-                value={device.ipv6Addresses.join(", ")}
-              />
+              <CardRow label={t("discovery.allIpv6")} value={device.ipv6Addresses.join(", ")} />
             )}
             {device.isRouter && (
-              <CardRow label="Router" value="Yes (IPv6 NDP)" />
+              <CardRow label={t("discovery.router")} value={t("discovery.yesNdp")} />
             )}
-            {device.vendor && <CardRow label="Vendor" value={device.vendor} />}
-            {device.osGuess && (
-              <CardRow label="OS Guess" value={device.osGuess} />
-            )}
-            {device.ttl && <CardRow label="TTL" value={device.ttl} />}
-            <CardRow
-              label="Last Seen"
-              value={formatLastSeen(device.lastSeen)}
-            />
+            {device.vendor && <CardRow label={t("discovery.vendor")} value={device.vendor} />}
+            {device.osGuess && <CardRow label={t("discovery.osGuess")} value={device.osGuess} />}
+            {device.ttl && <CardRow label={t("discovery.ttl")} value={device.ttl} />}
+            <CardRow label={t("discovery.lastSeen")} value={formatLastSeen(device.lastSeen, t)} />
 
             {/* Deep Scan Results */}
             {scanResult && (
               <>
                 <CardDivider />
                 <p className="font-medium text-text-primary mb-1">
-                  Port Scan Results
+                  {t("discovery.portScanResults")}
                 </p>
                 {openPorts.length > 0 ? (
                   <div className="gap-y-0.5">
                     {openPorts.map((result) => (
-                      <div
-                        key={result.port}
-                        className="flex items-center justify-between py-0.5"
-                      >
+                      <div key={result.port} className="flex items-center justify-between py-0.5">
                         <span className="text-status-success">
                           {result.port}/{getServiceName(result.port)}
                         </span>
@@ -746,7 +695,7 @@ function DeviceRow({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-text-muted">No open ports found</p>
+                  <p className="text-text-muted">{t("discovery.noOpenPorts")}</p>
                 )}
               </>
             )}
@@ -756,13 +705,12 @@ function DeviceRow({
               <>
                 <CardDivider />
                 <p className="font-medium text-text-primary mb-1">
-                  Auto-Profile
-                  {device.profile.deviceType &&
-                    device.profile.deviceType !== "unknown" && (
-                      <span className="ml-2 caption font-normal text-text-muted">
-                        ({device.profile.deviceType})
-                      </span>
-                    )}
+                  {t("discovery.autoProfile")}
+                  {device.profile.deviceType && device.profile.deviceType !== "unknown" && (
+                    <span className="ml-2 caption font-normal text-text-muted">
+                      ({device.profile.deviceType})
+                    </span>
+                  )}
                 </p>
                 {device.profile.httpInfo && (
                   <div className="gap-y-0.5 mb-1">
@@ -772,13 +720,13 @@ function DeviceRow({
                     />
                     {device.profile.httpInfo.title && (
                       <CardRow
-                        label="Title"
+                        label={t("discovery.title2")}
                         value={device.profile.httpInfo.title}
                       />
                     )}
                     {device.profile.httpInfo.server && (
                       <CardRow
-                        label="Server"
+                        label={t("discovery.httpServer")}
                         value={device.profile.httpInfo.server}
                       />
                     )}
@@ -787,7 +735,7 @@ function DeviceRow({
                 {profileOpenPorts.length > 0 && (
                   <div className="gap-y-0.5">
                     <p className="text-text-muted text-[10px] uppercase tracking-wide mb-0.5">
-                      Open Ports
+                      {t("discovery.openPorts")}
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {profileOpenPorts.map((port) => (
@@ -809,37 +757,33 @@ function DeviceRow({
             {device.lldpInfo && (
               <>
                 <CardDivider />
-                <p className="font-medium text-text-primary mb-1">LLDP Info</p>
-                <CardRow label="Chassis ID" value={device.lldpInfo.chassisId} />
-                <CardRow label="Port ID" value={device.lldpInfo.portId} />
+                <p className="font-medium text-text-primary mb-1">{t("discovery.lldpInfo")}</p>
+                <CardRow label={t("discovery.chassisId")} value={device.lldpInfo.chassisId} />
+                <CardRow label={t("discovery.portId")} value={device.lldpInfo.portId} />
                 {device.lldpInfo.systemName && (
-                  <CardRow
-                    label="System Name"
-                    value={device.lldpInfo.systemName}
-                  />
+                  <CardRow label={t("discovery.systemName")} value={device.lldpInfo.systemName} />
                 )}
                 {device.lldpInfo.portDescription && (
                   <CardRow
-                    label="Port Desc"
+                    label={t("discovery.portDesc")}
                     value={device.lldpInfo.portDescription}
                   />
                 )}
                 {device.lldpInfo.systemDescription && (
                   <CardRow
-                    label="System Desc"
+                    label={t("discovery.systemDesc")}
                     value={device.lldpInfo.systemDescription}
                   />
                 )}
-                {device.lldpInfo.capabilities &&
-                  device.lldpInfo.capabilities.length > 0 && (
-                    <CardRow
-                      label="Capabilities"
-                      value={device.lldpInfo.capabilities.join(", ")}
-                    />
-                  )}
+                {device.lldpInfo.capabilities && device.lldpInfo.capabilities.length > 0 && (
+                  <CardRow
+                    label={t("discovery.capabilities")}
+                    value={device.lldpInfo.capabilities.join(", ")}
+                  />
+                )}
                 {device.lldpInfo.managementAddress && (
                   <CardRow
-                    label="Mgmt IP"
+                    label={t("discovery.mgmtIp")}
                     value={device.lldpInfo.managementAddress}
                   />
                 )}
@@ -849,36 +793,26 @@ function DeviceRow({
             {device.cdpInfo && (
               <>
                 <CardDivider />
-                <p className="font-medium text-text-primary mb-1">CDP Info</p>
-                <CardRow label="Device ID" value={device.cdpInfo.deviceId} />
-                <CardRow label="Port ID" value={device.cdpInfo.portId} />
+                <p className="font-medium text-text-primary mb-1">{t("discovery.cdpInfo")}</p>
+                <CardRow label={t("discovery.deviceId")} value={device.cdpInfo.deviceId} />
+                <CardRow label={t("discovery.portId")} value={device.cdpInfo.portId} />
                 {device.cdpInfo.platform && (
-                  <CardRow label="Platform" value={device.cdpInfo.platform} />
+                  <CardRow label={t("discovery.platform")} value={device.cdpInfo.platform} />
                 )}
                 {device.cdpInfo.softwareVersion && (
+                  <CardRow label={t("discovery.software")} value={device.cdpInfo.softwareVersion} />
+                )}
+                {device.cdpInfo.capabilities && device.cdpInfo.capabilities.length > 0 && (
                   <CardRow
-                    label="Software"
-                    value={device.cdpInfo.softwareVersion}
+                    label={t("discovery.capabilities")}
+                    value={device.cdpInfo.capabilities.join(", ")}
                   />
                 )}
-                {device.cdpInfo.capabilities &&
-                  device.cdpInfo.capabilities.length > 0 && (
-                    <CardRow
-                      label="Capabilities"
-                      value={device.cdpInfo.capabilities.join(", ")}
-                    />
-                  )}
                 {device.cdpInfo.nativeVlan && (
-                  <CardRow
-                    label="Native VLAN"
-                    value={device.cdpInfo.nativeVlan}
-                  />
+                  <CardRow label={t("discovery.nativeVlan")} value={device.cdpInfo.nativeVlan} />
                 )}
                 {device.cdpInfo.managementAddress && (
-                  <CardRow
-                    label="Mgmt IP"
-                    value={device.cdpInfo.managementAddress}
-                  />
+                  <CardRow label={t("discovery.mgmtIp")} value={device.cdpInfo.managementAddress} />
                 )}
               </>
             )}
@@ -886,26 +820,20 @@ function DeviceRow({
             {device.edpInfo && (
               <>
                 <CardDivider />
-                <p className="font-medium text-text-primary mb-1">EDP Info</p>
-                <CardRow label="Device ID" value={device.edpInfo.deviceId} />
+                <p className="font-medium text-text-primary mb-1">{t("discovery.edpInfo")}</p>
+                <CardRow label={t("discovery.deviceId")} value={device.edpInfo.deviceId} />
                 {device.edpInfo.displayName && (
-                  <CardRow
-                    label="Display Name"
-                    value={device.edpInfo.displayName}
-                  />
+                  <CardRow label={t("discovery.displayName")} value={device.edpInfo.displayName} />
                 )}
-                <CardRow label="Port ID" value={device.edpInfo.portId} />
+                <CardRow label={t("discovery.portId")} value={device.edpInfo.portId} />
                 {device.edpInfo.platform && (
-                  <CardRow label="Platform" value={device.edpInfo.platform} />
+                  <CardRow label={t("discovery.platform")} value={device.edpInfo.platform} />
                 )}
                 {device.edpInfo.softwareVersion && (
-                  <CardRow
-                    label="Software"
-                    value={device.edpInfo.softwareVersion}
-                  />
+                  <CardRow label={t("discovery.software")} value={device.edpInfo.softwareVersion} />
                 )}
                 {device.edpInfo.vlan && (
-                  <CardRow label="VLAN" value={device.edpInfo.vlan} />
+                  <CardRow label={t("discovery.vlan")} value={device.edpInfo.vlan} />
                 )}
               </>
             )}
@@ -918,8 +846,8 @@ function DeviceRow({
 
 // Common ports to scan for Deep Scan
 const COMMON_PORTS = [
-  21, 22, 23, 25, 53, 80, 110, 143, 443, 445, 993, 995, 3306, 3389, 5432, 5900,
-  6379, 8080, 8443, 27017,
+  21, 22, 23, 25, 53, 80, 110, 143, 443, 445, 993, 995, 3306, 3389, 5432, 5900, 6379, 8080, 8443,
+  27017,
 ];
 
 export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
@@ -927,24 +855,17 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
   loading,
   onScan,
 }: NetworkDiscoveryCardProps) {
-  const [expandedDevices, setExpandedDevices] = useState<Set<string>>(
-    new Set(),
-  );
-  const [scanningDevices, setScanningDevices] = useState<Set<string>>(
-    new Set(),
-  );
-  const [scanResults, setScanResults] = useState<Map<string, DeepScanResult>>(
-    new Map(),
-  );
+  const { t } = useTranslation("cards");
+  const [expandedDevices, setExpandedDevices] = useState<Set<string>>(new Set());
+  const [scanningDevices, setScanningDevices] = useState<Set<string>>(new Set());
+  const [scanResults, setScanResults] = useState<Map<string, DeepScanResult>>(new Map());
   // Search and sort state
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
   // Vulnerability modal state
-  const [selectedDeviceForVuln, setSelectedDeviceForVuln] = useState<
-    string | null
-  >(null);
+  const [selectedDeviceForVuln, setSelectedDeviceForVuln] = useState<string | null>(null);
 
   // Toggle sort field/direction
   const handleSortChange = useCallback(
@@ -962,7 +883,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
         setSortDirection("asc");
       }
     },
-    [sortField, sortDirection],
+    [sortField, sortDirection]
   );
 
   const toggleDevice = (mac: string) => {
@@ -1025,10 +946,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
   const rawDevices = data?.devices;
   const status = data?.status;
   // Ensure devices is an array (defensive check for malformed API responses)
-  const devices = useMemo(
-    () => (Array.isArray(rawDevices) ? rawDevices : []),
-    [rawDevices],
-  );
+  const devices = useMemo(() => (Array.isArray(rawDevices) ? rawDevices : []), [rawDevices]);
   const deviceCount = devices.length;
 
   // Helper function for IP to numeric conversion
@@ -1131,31 +1049,23 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
   // Early returns for loading/error states (after all hooks)
   if (loading) {
     return (
-      <Card
-        title="Network Discovery"
-        icon={<ScanSearch className="w-5 h-5" />}
-        status="loading"
-      >
-        <CardValue value="Scanning..." size="lg" />
+      <Card title={t("discovery.title")} icon={<ScanSearch className="w-5 h-5" />} status="loading">
+        <CardValue value={t("discovery.scanning")} size="lg" />
       </Card>
     );
   }
 
   if (!data || !status) {
     return (
-      <Card
-        title="Network Discovery"
-        icon={<ScanSearch className="w-5 h-5" />}
-        status="unknown"
-      >
-        <CardValue value="No data" size="md" />
+      <Card title={t("discovery.title")} icon={<ScanSearch className="w-5 h-5" />} status="unknown">
+        <CardValue value={t("discovery.noData")} size="md" />
         {onScan && (
           <button
             type="button"
             onClick={onScan}
             className={`mt-3 w-full py-2 px-4 bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 transition-colors font-medium body-small`}
           >
-            Start Scan
+            {t("discovery.startScan")}
           </button>
         )}
       </Card>
@@ -1179,7 +1089,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
 
   return (
     <Card
-      title="Network Discovery"
+      title={t("discovery.title")}
       icon={<ScanSearch className="w-5 h-5" />}
       status={cardStatus}
       headerAction={
@@ -1193,21 +1103,17 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
             {status.scanning ? (
               <>
                 <RefreshCw className="w-3 h-3 animate-spin" />
-                Scan
+                {t("discovery.scan")}
               </>
             ) : (
-              "Scan"
+              t("discovery.scan")
             )}
           </button>
         )
       }
     >
       {/* Discovery Summary */}
-      <DiscoverySummary
-        status={status}
-        deviceCount={deviceCount}
-        categories={categories}
-      />
+      <DiscoverySummary status={status} deviceCount={deviceCount} categories={categories} t={t} />
 
       {/* Device Search/Sort Bar - show when there are devices */}
       {deviceCount > 0 && (
@@ -1219,21 +1125,16 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
           onSortChange={handleSortChange}
           deviceCount={deviceCount}
           filteredCount={filteredCount}
+          t={t}
         />
       )}
 
       {/* Network Info - Collapsible */}
-      <CollapsibleSection
-        title="Network Info"
-        variant="compact"
-        defaultOpen={false}
-      >
+      <CollapsibleSection title={t("discovery.networkInfo")} variant="compact" defaultOpen={false}>
         <div className="stack-xs caption">
-          {status.localIP && (
-            <CardRow label="Local IP" value={status.localIP} />
-          )}
+          {status.localIP && <CardRow label={t("discovery.localIp")} value={status.localIP} />}
           {status.interface && (
-            <CardRow label="Interface" value={status.interface} />
+            <CardRow label={t("discovery.interface")} value={status.interface} />
           )}
         </div>
       </CollapsibleSection>
@@ -1241,7 +1142,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
       {/* Local Devices - Collapsible */}
       {localDevices.length > 0 && (
         <CollapsibleSection
-          title="Local Network"
+          title={t("discovery.localNetwork")}
           variant="compact"
           defaultOpen={true}
           count={localDevices.length}
@@ -1259,6 +1160,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
                   isScanning={scanningDevices.has(device.ip)}
                   scanResult={scanResults.get(device.ip)}
                   onVulnerabilityClick={setSelectedDeviceForVuln}
+                  t={t}
                 />
               );
             })}
@@ -1269,7 +1171,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
       {/* Extended Networks - Collapsible */}
       {extendedDevices.length > 0 && (
         <CollapsibleSection
-          title="Extended Networks"
+          title={t("discovery.extendedNetworks")}
           variant="compact"
           defaultOpen={false}
           count={extendedDevices.length}
@@ -1287,6 +1189,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
                   isScanning={scanningDevices.has(device.ip)}
                   scanResult={scanResults.get(device.ip)}
                   onVulnerabilityClick={setSelectedDeviceForVuln}
+                  t={t}
                 />
               );
             })}
@@ -1295,9 +1198,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
       )}
 
       {deviceCount === 0 && !status.scanning && (
-        <p className="body-small text-text-muted text-center py-4">
-          No devices discovered. Click Scan to discover network devices.
-        </p>
+        <p className="body-small text-text-muted text-center py-4">{t("discovery.noDevices")}</p>
       )}
 
       {/* Vulnerability Details Modal */}

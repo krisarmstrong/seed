@@ -1,4 +1,22 @@
 {
+  "modal": {
+    "title": "The Seed Help Center",
+    "searchPlaceholder": "Search help...",
+    "contents": "Contents",
+    "closeHelp": "Close help"
+  },
+  "sections": {
+    "about": "About The Seed",
+    "gettingStarted": "Getting Started",
+    "link": "Link Status",
+    "cable": "Cable Test",
+    "wifi": "WiFi Status",
+    "network": "Network & DHCP",
+    "gateway": "Gateway",
+    "dns": "DNS Tests",
+    "performance": "Performance Tests",
+    "discovery": "Network Discovery"
+  },
   "instructions": {
     "runTests": "Tap the play button to run all tests.",
     "discovery": "Use the Network Discovery card to scan for devices on your network.",

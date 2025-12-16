@@ -486,7 +486,7 @@ export const PerformanceCard = memo(function PerformanceCard({
                   <progress
                     value={sp}
                     max={100}
-                    aria-label="Speedtest progress"
+                    aria-label={t("performance.progress")}
                     className={`mt-2 w-full ${radius.full}`}
                   />
                 );
