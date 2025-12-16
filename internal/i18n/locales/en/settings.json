@@ -1,5 +1,6 @@
 {
   "title": "Settings",
+  "subtitle": "Adjust thresholds, network, and display",
   "sections": {
     "appearance": "Appearance",
     "network": "Network",
@@ -19,10 +20,11 @@
     "themeSystem": "System",
     "language": "Language",
     "languageEn": "English",
-    "languageEs": "Español"
+    "languageEs": "Español",
+    "quickToggle": "Quick Toggle"
   },
   "network": {
-    "title": "Network",
+    "title": "Network Configuration",
     "defaultInterface": "Default Interface",
     "ipMode": "IP Mode",
     "dhcp": "DHCP",
@@ -31,7 +33,15 @@
     "subnetMask": "Subnet Mask",
     "gateway": "Gateway",
     "dnsServers": "DNS Servers",
-    "mtu": "MTU"
+    "mtu": "MTU",
+    "displayOptions": "Display Options",
+    "showPublicIP": "Show Public IP",
+    "displayInNetworkCard": "Display in Network card",
+    "vlanTag": "VLAN Tag (802.1Q)",
+    "mtuSetting": "MTU Setting",
+    "applyIPSettings": "Apply IP Settings",
+    "applying": "Applying...",
+    "requiresRoot": "Note: Requires root/admin privileges to apply"
   },
   "discovery": {
     "title": "Discovery",
@@ -98,5 +108,21 @@
     "saving": "Saving...",
     "saved": "Saved",
     "error": "Error saving"
+  },
+  "logs": {
+    "title": "Logs (debug)",
+    "description": "Rotating file; use only for troubleshooting.",
+    "view": "View",
+    "loading": "Loading..."
+  },
+  "export": {
+    "title": "Export",
+    "download": "Download JSON Export",
+    "description": "Export all diagnostic data as JSON for documentation or analysis."
+  },
+  "about": {
+    "title": "About",
+    "appName": "The Seed",
+    "description": "Network Diagnostic Tool"
   }
 }

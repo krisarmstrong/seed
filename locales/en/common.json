@@ -41,6 +41,8 @@
     "stopped": "Stopped",
     "paused": "Paused",
     "down": "down",
+    "on": "On",
+    "off": "Off",
     "noCarrier": "No Carrier",
     "noIP": "No IP",
     "noSignal": "No Signal",
