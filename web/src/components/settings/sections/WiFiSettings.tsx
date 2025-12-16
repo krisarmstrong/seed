@@ -28,6 +28,7 @@
  * State: Manages active interface selection and WiFi-specific configurations
  */
 
+import { useTranslation } from "react-i18next";
 import { CollapsibleSection } from "../../ui/CollapsibleSection";
 import { AutoSaveIndicator } from "./AutoSaveIndicator";
 import { Wifi } from "../../ui/Icons";
@@ -48,12 +49,14 @@ export function WiFiSettings({
   setWifiSettings,
   wifiStatus,
 }: WiFiSettingsProps) {
+  const { t } = useTranslation("settings");
+
   return (
     <CollapsibleSection
       title={
         <div className={layout.inline.default}>
           <Wifi className={iconTokens.size.sm} />
-          <span>WiFi</span>
+          <span>{t("sections.wifi")}</span>
           <AutoSaveIndicator status={wifiStatus} />
         </div>
       }
@@ -61,7 +64,7 @@ export function WiFiSettings({
       <div className="stack-sm">
         <div>
           <label className="caption text-text-muted" htmlFor="wifi-interface">
-            WiFi Interface
+            {t("wifi.title")}
           </label>
           {wifiSettings.availableWifi.length > 0 ? (
             <select
