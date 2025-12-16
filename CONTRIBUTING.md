@@ -468,12 +468,12 @@ it("handles expired token", () => {
 We use GitHub Issue Forms for consistent, well-structured issues. When creating an issue, select the
 appropriate template:
 
-| Template | Prefix | Use Case |
-|----------|--------|----------|
-| Bug Report | `[BUG]` | Report bugs and unexpected behavior |
-| Feature Request | `[FEATURE]` | Suggest new features or enhancements |
-| Task | `[CHORE]` | Internal development tasks and maintenance |
-| Hardware Report | `[Hardware]` | Report hardware compatibility results |
+| Template        | Prefix       | Use Case                                   |
+| --------------- | ------------ | ------------------------------------------ |
+| Bug Report      | `[BUG]`      | Report bugs and unexpected behavior        |
+| Feature Request | `[FEATURE]`  | Suggest new features or enhancements       |
+| Task            | `[CHORE]`    | Internal development tasks and maintenance |
+| Hardware Report | `[Hardware]` | Report hardware compatibility results      |
 
 ### Label Taxonomy
 
