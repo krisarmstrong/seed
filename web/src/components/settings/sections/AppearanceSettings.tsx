@@ -25,9 +25,11 @@
  * Props: theme (string), setTheme (callback), isDark (boolean for current state)
  */
 
+import { useTranslation } from "react-i18next";
 import { CollapsibleSection } from "../../ui/CollapsibleSection";
 import { Palette } from "../../ui/Icons";
 import { icon as iconTokens, layout, radius } from "../../../styles/theme";
+import i18n, { languages } from "../../../i18n";
 
 interface AppearanceSettingsProps {
   theme: "light" | "dark" | "system";
@@ -40,18 +42,25 @@ export function AppearanceSettings({
   setTheme,
   isDark,
 }: AppearanceSettingsProps) {
+  const { t } = useTranslation("settings");
+  const currentLanguage = i18n.language;
+
+  const handleLanguageChange = (langCode: string) => {
+    i18n.changeLanguage(langCode);
+  };
+
   return (
     <CollapsibleSection
       title={
         <div className={layout.inline.default}>
           <Palette className={iconTokens.size.sm} />
-          <span>Appearance</span>
+          <span>{t("sections.appearance")}</span>
         </div>
       }
     >
       <div className="stack-sm">
         <label className={`${layout.flex.between} p-3 bg-surface-base ${radius.default} border border-surface-border`}>
-          <span className="body-small text-text-primary">Theme</span>
+          <span className="body-small text-text-primary">{t("appearance.theme")}</span>
           <select
             value={theme}
             onChange={(e) =>
@@ -59,9 +68,24 @@ export function AppearanceSettings({
             }
             className={`bg-surface-raised border border-surface-border ${radius.default} px-2 py-1 body-small text-text-primary`}
           >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="system">System</option>
+            <option value="light">{t("appearance.themeLight")}</option>
+            <option value="dark">{t("appearance.themeDark")}</option>
+            <option value="system">{t("appearance.themeSystem")}</option>
+          </select>
+        </label>
+
+        <label className={`${layout.flex.between} p-3 bg-surface-base ${radius.default} border border-surface-border`}>
+          <span className="body-small text-text-primary">{t("appearance.language")}</span>
+          <select
+            value={currentLanguage}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            className={`bg-surface-raised border border-surface-border ${radius.default} px-2 py-1 body-small text-text-primary`}
+          >
+            {languages.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.nativeLabel}
+              </option>
+            ))}
           </select>
         </label>
 
@@ -69,7 +93,7 @@ export function AppearanceSettings({
           onClick={() => setTheme(isDark ? "light" : "dark")}
           className={`w-full ${layout.flex.between} p-3 bg-surface-base ${radius.default} border border-surface-border hover:bg-surface-hover transition-colors`}
         >
-          <span className="body-small text-text-primary">Quick Toggle</span>
+          <span className="body-small text-text-primary">{t("appearance.quickToggle")}</span>
           <span className="text-xl">
             {isDark ? "\u{1F319}" : "\u2600\uFE0F"}
           </span>
