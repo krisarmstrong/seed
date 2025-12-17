@@ -17,12 +17,14 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/discovery"
+	"github.com/krisarmstrong/seed/internal/validation"
 )
 
 // handleVulnerabilityScan triggers vulnerability scan for all or specific devices
@@ -41,6 +43,12 @@ func (s *Server) handleVulnerabilityScan(w http.ResponseWriter, r *http.Request)
 	}
 
 	targetIP := r.URL.Query().Get("ip")
+
+	// Validate IP if provided
+	if targetIP != "" && !validation.IsValidIP(targetIP) {
+		http.Error(w, fmt.Sprintf("Invalid IP address: %s", targetIP), http.StatusBadRequest)
+		return
+	}
 
 	// Run scan in background
 	go func() {
@@ -160,6 +168,12 @@ func (s *Server) handleDeviceVulnerabilities(w http.ResponseWriter, r *http.Requ
 	ip := r.URL.Query().Get("ip")
 	if ip == "" {
 		http.Error(w, "Missing 'ip' parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Validate IP address
+	if !validation.IsValidIP(ip) {
+		http.Error(w, fmt.Sprintf("Invalid IP address: %s", ip), http.StatusBadRequest)
 		return
 	}
 

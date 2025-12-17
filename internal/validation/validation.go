@@ -218,6 +218,31 @@ func ValidateMTU(mtu int) error {
 	return nil
 }
 
+// ValidateDNSAddress checks if the string is a valid DNS server address.
+// Only allows valid IPv4/IPv6 addresses, not hostnames, to prevent injection.
+func ValidateDNSAddress(dns string) error {
+	if dns == "" {
+		return fmt.Errorf("DNS server address is required")
+	}
+
+	ip := net.ParseIP(dns)
+	if ip == nil {
+		return fmt.Errorf("invalid DNS server: must be a valid IP address, got %q", dns)
+	}
+
+	return nil
+}
+
+// ValidateDNSServers validates a slice of DNS server addresses.
+func ValidateDNSServers(servers []string) error {
+	for i, dns := range servers {
+		if err := ValidateDNSAddress(dns); err != nil {
+			return fmt.Errorf("DNS server %d: %w", i+1, err)
+		}
+	}
+	return nil
+}
+
 // ValidateNetmask checks if the string is a valid IPv4 netmask.
 func ValidateNetmask(netmask string) error {
 	ip := net.ParseIP(netmask)

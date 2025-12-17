@@ -74,6 +74,7 @@ temp/
 # Certificates (generated)
 certs/
 !certs/.gitkeep
+web/certs/
 
 # Local files
 *.png
