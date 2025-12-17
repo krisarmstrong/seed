@@ -54,7 +54,7 @@
 
 #### Heatmap Engine Requirements (#646)
 
-```
+````python
 Input: Survey samples with RSSI values + floor plan
 Output: PNG/SVG heatmap overlay
 
@@ -63,7 +63,7 @@ Algorithm:
 2. For each grid cell, interpolate RSSI from nearby samples
 3. Apply color gradient based on signal strength
 4. Composite with floor plan image
-```
+```yaml
 
 **Visualization Types**:
 
@@ -95,7 +95,7 @@ Algorithm:
 
 #### Dead Zone Detection (#652)
 
-```
+```text
 Input: Survey samples + RSSI threshold (default: -75 dBm)
 Output: List of dead zones with locations and severity
 
@@ -104,7 +104,7 @@ Algorithm:
 2. Cluster nearby weak samples into zones
 3. Calculate zone center, radius, severity
 4. Generate recommendations
-```
+```text
 
 **Deliverables**:
 
@@ -115,7 +115,7 @@ Algorithm:
 
 #### Channel Interference Analysis (#592)
 
-```
+```text
 Input: Passive survey samples
 Output: Interference report with channel recommendations
 
@@ -124,7 +124,7 @@ Analysis:
 2. Identify co-channel interference hotspots
 3. Calculate channel utilization per band
 4. Recommend optimal channel assignments
-```
+```go
 
 **Deliverables**:
 
@@ -218,7 +218,7 @@ type Floor struct {
     FloorPlan *FloorPlan `json:"floor_plan"`
     Samples   []*Sample  `json:"samples"`
 }
-```
+```text
 
 **Deliverables**:
 
@@ -236,7 +236,7 @@ wifi:
   survey:
     scan_interface: wlan0 # High-capability adapter
     upload_interface: wlan1 # Stay connected for uploads
-```
+```yaml
 
 **Deliverables**:
 
@@ -269,7 +269,7 @@ wifi:
 
 ## Dependency Graph
 
-```
+```text
                           ┌─────────────────────┐
                           │   Heatmap Engine    │
                           │       #646          │
@@ -302,7 +302,7 @@ wifi:
    │  Multi-Floor    │    │  Multi-Adapter  │
    │     #654        │    │     #573        │
    └─────────────────┘    └─────────────────┘
-```
+```python
 
 ---
 
@@ -387,3 +387,4 @@ Survey feature is complete when:
 | #650  | Survey MCP tools              | P1       | 5     |
 
 **Total**: 9 issues across 5 phases
+````

@@ -49,8 +49,8 @@ The theming system consists of three layers:
 
 ## Typography Scale
 
-The Seed uses a semantic typography system with responsive sizing. Use these CSS utility classes
-instead of raw Tailwind size classes.
+The Seed uses a semantic typography system with responsive sizing. Use these CSS utility classes instead of raw Tailwind
+size classes.
 
 ### Heading Classes
 
@@ -75,7 +75,7 @@ instead of raw Tailwind size classes.
 
 ### Usage Examples
 
-```tsx
+````tsx
 // Headings - use semantic HTML with utility classes
 <h1 className="heading-1">Welcome to The Seed</h1>
 <h2 className="heading-2">Network Overview</h2>
@@ -92,7 +92,7 @@ instead of raw Tailwind size classes.
 
 // Inline code
 <code className="code">192.168.1.1</code>
-```
+```python
 
 ### TypeScript Imports
 
@@ -103,7 +103,7 @@ import { typography } from '../styles/theme';
 <h1 className={typography.heading.h1}>Title</h1>
 <p className={typography.body.default}>Text</p>
 <span className={typography.body.caption}>Metadata</span>
-```
+```text
 
 ## Using Tailwind Classes
 
@@ -120,7 +120,7 @@ import { typography } from '../styles/theme';
 // Bad - hardcoded colors
 <span className="text-white">Don't do this</span>
 <span className="text-gray-500">Or this</span>
-```
+```text
 
 ### Background Colors
 
@@ -133,7 +133,7 @@ import { typography } from '../styles/theme';
 // Bad
 <div className="bg-white">Don't do this</div>
 <div className="bg-gray-100">Or this</div>
-```
+```text
 
 ### Status Colors
 
@@ -147,7 +147,7 @@ import { typography } from '../styles/theme';
 // Bad
 <span className="text-green-500">Don't do this</span>
 <span className="text-red-500">Or this</span>
-```
+```python
 
 ## Design System Utilities
 
@@ -177,7 +177,7 @@ import { cn, buttonClass, cardClass, badgeClass, inputClass, button, input } fro
 // Badge classes
 <span className={badgeClass('success')}>Success</span>
 <span className={badgeClass('error')}>Error</span>
-```
+```yaml
 
 ### Button & Input Sizes
 
@@ -190,15 +190,15 @@ Use consistent sizes for buttons and inputs:
 | `md` | `px-4 py-2`    | `px-2.5 py-2` | Default size (most common)       |
 | `lg` | `px-6 py-3`    | `px-3 py-2.5` | Large CTAs, prominent inputs     |
 
-**Important**: Always use `buttonClass()` or `inputClass()` helpers instead of raw Tailwind padding
-classes to ensure consistency.
+**Important**: Always use `buttonClass()` or `inputClass()` helpers instead of raw Tailwind padding classes to ensure
+consistency.
 
 ## Spacing & Layout
 
 ### Spacing Scale
 
-Use these consistent spacing values (based on 4px grid). **Prefer semantic CSS utility classes**
-over raw Tailwind values:
+Use these consistent spacing values (based on 4px grid). **Prefer semantic CSS utility classes** over raw Tailwind
+values:
 
 | Raw Value | Pixels | Semantic Class   | Usage                       |
 | --------- | ------ | ---------------- | --------------------------- |
@@ -239,7 +239,7 @@ over raw Tailwind values:
 <div className="inline-gap-sm">  // 6px
 <div className="inline-gap">     // 8px (default)
 <div className="inline-gap-lg">  // 12px
-```
+```python
 
 ### Spacing TypeScript Imports
 
@@ -250,7 +250,7 @@ import { spacing } from '../styles/theme';
 <div className={spacing.stack.default}>...</div>
 <div className={spacing.gap.comfortable}>...</div>
 <div className={spacing.pad.lg}>...</div>
-```
+```text
 
 ### Layout Utilities
 
@@ -260,7 +260,7 @@ import { spacing } from '../styles/theme';
 <div className="content-grid">       // Responsive 1-2-3 column grid
 <div className="flex-center">        // flex items-center justify-center
 <div className="flex-between">       // flex items-center justify-between
-```
+```text
 
 ### Dashboard Grid
 
@@ -269,7 +269,7 @@ The main dashboard uses a responsive grid:
 ```tsx
 // 1 column on mobile, 2 on tablet, 3 on desktop, 4 on large screens
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-comfortable">
-```
+```python
 
 ### Sizing Tokens
 
@@ -286,7 +286,7 @@ import { sizing } from '../styles/theme';
 <div className={sizing.width.drawer}>     // w-80 (320px)
 <div className={sizing.width.drawerWide}> // w-96 (384px)
 <div className={sizing.width.dropdown}>   // w-64 (256px)
-```
+```text
 
 ### Anti-Patterns for Spacing
 
@@ -301,7 +301,7 @@ import { sizing } from '../styles/theme';
 <div className="max-h-[70vh]"> // Viewport-relative for panels
 <div className="w-96">         // Standard drawer width (384px)
 <div className="stack-lg">     // Consistent 16px spacing
-```
+```python
 
 ## Alert/Banner Components
 
@@ -329,7 +329,7 @@ import { alert, cn } from '../styles/theme';
 <div className={cn(alert.base, alert.variant.info)}>
   Here's some helpful information.
 </div>
-```
+```python
 
 ## Severity Colors (CVE/Vulnerability)
 
@@ -357,7 +357,7 @@ import { severity } from '../styles/theme';
 <span className={cn(severity.low.bg, severity.low.text, severity.low.border)}>
   LOW
 </span>
-```
+```python
 
 ## Timing/Phase Colors (Network)
 
@@ -380,7 +380,7 @@ import { timing } from '../styles/theme';
 
 // Download - Green
 <div className={timing.download.bg}>Download</div>
-```
+```python
 
 ## Device Category Colors
 
@@ -395,7 +395,7 @@ import { category } from '../styles/theme';
 <PrinterIcon className={category.printer} />    // Orange
 <PhoneIcon className={category.mobile} />       // Cyan
 <WifiIcon className={category.network} />       // Teal
-```
+```python
 
 ## SVG and Canvas Colors
 
@@ -414,7 +414,7 @@ const color = gauge.getColor(percentage);
 <svg>
   <circle fill={color} />
 </svg>;
-```
+```python
 
 ## Dark Mode Implementation
 
@@ -429,11 +429,9 @@ function Component() {
   // theme: 'light' | 'dark' | 'system'
   // actualTheme: 'light' | 'dark' (resolved value)
 
-  return (
-    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>Toggle Theme</button>
-  );
+  return <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>Toggle Theme</button>;
 }
-```
+```python
 
 The `.dark` class is applied to the `<html>` element, and all CSS variables automatically switch.
 
@@ -465,7 +463,7 @@ All color combinations meet WCAG AA contrast requirements:
 // Good
 <span className="text-text-inverse">Text</span>
 <span className="text-text-muted">Text</span>
-```
+```text
 
 ### Don't use arbitrary Tailwind colors without dark mode variants
 
@@ -478,7 +476,7 @@ All color combinations meet WCAG AA contrast requirements:
 
 // Better - use status token if semantic
 <span className="text-status-info">Text</span>
-```
+```typescript
 
 ### Don't hardcode hex in JavaScript for SVG/Canvas
 
@@ -490,7 +488,7 @@ const color = "#ef4444";
 const color = gauge.getColor(percentage);
 // or
 const color = "var(--color-status-error)";
-```
+```python
 
 ## Exceptions: Opacity Variants
 
@@ -505,14 +503,14 @@ These patterns are **allowed** because they work consistently in both light/dark
 // Better - use design system
 import { modal } from "../styles/theme";
 <div className={modal.overlay}>Modal overlay</div>;
-```
+```text
 
 ### Hover Effects on Colored Backgrounds
 
 ```tsx
 // Allowed - subtle brightening on colored buttons/toasts
 <button className="bg-status-success hover:bg-white/20">...</button>
-```
+```text
 
 These work because:
 
@@ -533,14 +531,13 @@ ctx.strokeStyle = "#ffffff"; // white border
 <svg>
   <circle fill="var(--color-brand-primary)" />
 </svg>;
-```
+```typescript
 
 When using Canvas, document the color mapping in comments (e.g., `// brand-primary (#2563eb)`).
 
 ### Discovery Method Colors
 
-Network discovery methods use distinct colors for visual identification. These use Tailwind colors
-with dark: variants:
+Network discovery methods use distinct colors for visual identification. These use Tailwind colors with dark: variants:
 
 ```tsx
 // Allowed - semantic colored badges with dark mode support
@@ -549,7 +546,7 @@ const methodColors = {
   lldp: "bg-green-500/20 text-green-600 dark:text-green-400",
   cdp: "bg-orange-500/20 text-orange-600 dark:text-orange-400",
 };
-```
+```python
 
 These are intentionally colored to help users quickly distinguish protocol types.
 
@@ -577,7 +574,7 @@ import { icon } from '../styles/theme';
   <AlertCircle className={icon.size.md} />
   <span>Warning message</span>
 </div>
-```
+```python
 
 ### Icon Size Reference
 
@@ -607,7 +604,7 @@ import { radius } from '../styles/theme';
 <div className={radius.lg}>      // 8px - cards, panels
 <div className={radius.xl}>      // 12px - modals
 <div className={radius.full}>    // Pills, badges, avatars
-```
+```python
 
 ### Border Tokens
 
@@ -625,7 +622,7 @@ import { border } from '../styles/theme';
 // Common combinations
 <div className={border.card}>     // border border-surface-border
 <div className={border.divider}>  // border-t border-surface-border
-```
+```python
 
 ### Border Reference
 
@@ -673,7 +670,7 @@ import { layout } from '../styles/theme';
 <div className={layout.stack.default}>    // flex-col gap-2
 <div className={layout.stack.comfortable}> // flex-col gap-3
 <div className={layout.stack.spacious}>   // flex-col gap-4
-```
+```python
 
 ### Layout Reference
 
@@ -709,7 +706,7 @@ import { layout } from '../styles/theme';
 
 The following patterns are flagged by ESLint:
 
-**Colors:**
+#### Colors
 
 - `text-white` → Use `text-text-inverse`
 - `text-black` → Use `text-text-primary`
@@ -718,14 +715,14 @@ The following patterns are flagged by ESLint:
 - `text-gray-*` → Use `text-text-*` tokens
 - `bg-gray-*` → Use `bg-surface-*` tokens
 
-**Icon Sizes:**
+#### Icon Sizes
 
 - `w-3 h-3` → Use `iconTokens.size.xs`
 - `w-4 h-4` → Use `iconTokens.size.sm`
 - `w-5 h-5` → Use `iconTokens.size.md`
 - `w-6 h-6` → Use `iconTokens.size.lg`
 
-**Border Radius:**
+#### Border Radius
 
 - `rounded-sm` → Use `radius.sm`
 - `rounded-md` → Use `radius.md`
@@ -747,3 +744,4 @@ When refactoring existing components:
 6. ✅ Replace `space-y-*` with `stack-*` or `section-gap-*`
 7. ✅ Replace raw `px-* py-*` on buttons/inputs with helper functions
 8. ✅ Replace responsive grid patterns with `layout.grid.*`
+````

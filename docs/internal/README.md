@@ -29,7 +29,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 - Channel ROI analysis
 - Content calendar, SEO strategy
 
-**HEALTHCARE_MARKET_STRATEGY.md**
+#### HEALTHCARE_MARKET_STRATEGY.md
 
 - Healthcare vertical strategy
 - HIPAA compliance focus
@@ -41,7 +41,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 - License enforcement
 - Upgrade paths
 
-**PRODUCT_ROADMAP.md**
+#### PRODUCT_ROADMAP.md
 
 - Feature roadmap
 - Release planning
@@ -58,7 +58,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 - Vulnerability scanning: vs Nessus, Qualys, Rapid7
 - Battle cards with objection handling
 
-**WIFI_COMPETITIVE_ANALYSIS.md**
+#### WIFI_COMPETITIVE_ANALYSIS.md
 
 - Deep dive into WiFi market
 - Competitive positioning
@@ -99,7 +99,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 - Claude Opus/Sonnet, Gemini, Copilot, ChatGPT
 - Cost: $200-400/month for 10-20x productivity
 
-**AI_INTEGRATION_PLAN.md**
+#### AI_INTEGRATION_PLAN.md
 
 - AI feature roadmap
 - Integration strategy
@@ -110,12 +110,12 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 - Equipment list with pricing
 - Progressive budget ($2.5K → $15K)
 
-**HARDWARE_PHASE4_PLAN.md, HARDWARE_PHASE5_PLAN.md**
+#### HARDWARE_PHASE4_PLAN.md, HARDWARE_PHASE5_PLAN.md
 
 - Hardware development roadmap
 - Future capabilities
 
-**COMPLIANCE_MAPPINGS.md**
+#### COMPLIANCE_MAPPINGS.md
 
 - Regulatory compliance details
 - HIPAA, PCI-DSS, SOC 2 mappings
@@ -136,17 +136,17 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 
 ### 📋 Project Management
 
-**TODO.md**
+#### TODO.md
 
 - Active task tracking
 - Project milestones
 
-**VERIFICATION.md**
+#### VERIFICATION.md
 
 - Verification checklists
 - Quality gates
 
-**AI_ISSUES_SUMMARY.md**
+#### AI_ISSUES_SUMMARY.md
 
 - AI-related GitHub issues
 - Implementation status
@@ -155,7 +155,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 
 ## Access Control
 
-**Who has access:**
+### Who has access
 
 - ✅ Kris Armstrong (founder) - Full access
 - ✅ Future employees - Full access (when hired)
@@ -164,7 +164,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 - ❌ Partners - Never
 - ❌ Public - Never
 
-**When to move to separate repo:**
+#### When to move to separate repo
 
 - When team grows to 3+ people
 - When contractors need code access but not business docs
@@ -174,13 +174,13 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 
 ## Maintenance
 
-**When to update:**
+### When to update
 
 - Quarterly reviews (business plan, competitive analysis)
 - Major milestones (funding, launch, hiring)
 - Strategy changes (pricing, positioning)
 
-**Who updates:**
+#### Who updates
 
 - Kris Armstrong (business, strategy)
 - Sales team (playbooks, battle cards - when hired)
@@ -190,7 +190,7 @@ Internal knowledge base for business strategy, sales, support, and engineering.
 
 ## Security
 
-**⚠️ IMPORTANT:**
+### ⚠️ IMPORTANT
 
 - These docs contain sensitive business information
 - Pricing strategies, financial projections, competitive intelligence

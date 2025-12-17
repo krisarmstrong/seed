@@ -10,13 +10,13 @@ Use this template to document WiFi adapter testing results. Submit via the
 
 **Vendor ID/Product ID**: [lspci or lsusb output]
 
-```
+````text
 # For PCI devices
 lspci -nn | grep -i network
 
 # For USB devices
 lsusb | grep -i wireless
-```
+```python
 
 ## System Information
 
@@ -31,14 +31,14 @@ Run the hardware compatibility test script and paste the output:
 
 ```bash
 sudo ./scripts/test-hardware-compatibility.sh wlan0
-```
+```xml
 
 <details>
 <summary>Full Test Output (click to expand)</summary>
 
-```
+```json
 [Paste full test script output here]
-```
+```xml
 
 </details>
 
@@ -78,7 +78,7 @@ Mark each feature as: ✅ Working | ⚠️ Partial | ❌ Not Working | ⏭️ No
 ```bash
 # Any special setup required
 # e.g., firmware loading, module parameters, etc.
-```
+```yaml
 
 ## The Seed Feature Compatibility
 
@@ -139,3 +139,4 @@ Document any problems:
 
 **Tested By**: [Your GitHub username] **Test Date**: [YYYY-MM-DD] **Script Version**: [Git commit hash or script
 version]
+````

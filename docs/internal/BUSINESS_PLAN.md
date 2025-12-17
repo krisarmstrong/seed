@@ -14,14 +14,14 @@ NIST).
 **Mission:** Make professional-grade network diagnostics and WiFi planning accessible to every IT team, from small
 clinics to large enterprises.
 
-**Problem:**
+#### Problem
 
 - IT teams waste 10-20 hours/week troubleshooting network issues manually
 - WiFi site surveys cost $3,000-5,000 per deployment
 - HIPAA/compliance audits require 40-80 hours of manual evidence collection
 - Vulnerability management is reactive, not predictive
 
-**Solution:**
+#### Solution
 
 - **AI Root Cause Analysis:** Tells you exactly what's wrong in seconds ("DHCP slow because server response time is
   850ms")
@@ -29,7 +29,7 @@ clinics to large enterprises.
 - **Automated Compliance:** One-click HIPAA, CIS, NIST reports
 - **Predictive Maintenance:** Detect failures 24-48 hours before they occur
 
-**Market Opportunity:**
+#### Market Opportunity
 
 - **TAM (Total Addressable Market):** $4.2B (network monitoring + WiFi planning)
 - **SAM (Serviceable Available Market):** $850M (healthcare + SMB + WiFi consultants)
@@ -43,7 +43,7 @@ clinics to large enterprises.
 - Premium: $1,999/year (WiFi consultants, predictive survey)
 - Enterprise: $4,999/year (MSPs, multi-site, white-label)
 
-**Financial Projections (Conservative):**
+#### Financial Projections (Conservative)
 
 | Year     | Customers | ARR   | Gross Margin | Net Income |
 | -------- | --------- | ----- | ------------ | ---------- |
@@ -51,7 +51,7 @@ clinics to large enterprises.
 | **2027** | 1,200     | $1.8M | 75%          | $200K      |
 | **2028** | 3,500     | $5.2M | 80%          | $1.2M      |
 
-**Funding Needed:**
+#### Funding Needed
 
 - **Bootstrap:** $0-50K (founder self-funded, lean operations)
 - **Seed Round:** $250K-500K (optional, accelerate growth)
@@ -59,7 +59,7 @@ clinics to large enterprises.
 
 **Break-Even:** Month 18 (Q2 2027) at 600 paying customers
 
-**Exit Strategy:**
+#### Exit Strategy
 
 - Acquisition by network monitoring company (SolarWinds, Paessler, Datadog) - 3-5 years
 - Acquisition by WiFi vendor (Aruba, Ruckus, Ubiquiti) - 4-6 years
@@ -83,7 +83,7 @@ clinics to large enterprises.
 | -------------- | ---------------- | --------------------------- |
 | Kris Armstrong | 100% (initially) | Founder, CEO, Lead Engineer |
 
-**Future Equity Allocation:**
+#### Future Equity Allocation
 
 - Founders: 70-80%
 - Employees (ESOP): 10-15%
@@ -91,13 +91,13 @@ clinics to large enterprises.
 
 ### 1.3 Company History
 
-**2025:**
+#### 2025
 
 - The Seed initial development (network diagnostic tool)
 - Prototype built (Go backend, React frontend)
 - Core features: device discovery, WiFi scanning, DHCP testing
 
-**2026 (Planned):**
+#### 2026 (Planned)
 
 - Rebrand to The Seed
 - Add AI features (device classification, root cause analysis, anomaly detection)
@@ -105,7 +105,7 @@ clinics to large enterprises.
 - First paying customers (Q1 2026)
 - Achieve $450K ARR by end of year
 
-**2027-2028:**
+#### 2027-2028
 
 - Scale to $5M+ ARR
 - Expand team to 10-15 employees
@@ -118,7 +118,7 @@ clinics to large enterprises.
 
 **Vision:** Become the #1 network diagnostic platform for healthcare and SMB IT teams by 2028.
 
-**Core Values:**
+#### Core Values
 
 1. **Customer Obsession:** Build for real user pain points, not vanity features
 2. **Technical Excellence:** No bugs, no shortcuts, no excuses
@@ -132,19 +132,19 @@ clinics to large enterprises.
 
 ### 2.1 Industry Overview
 
-**Network Monitoring Market:**
+#### Network Monitoring Market
 
 - Market size: $2.8B (2025), growing at 9% CAGR
 - Dominated by: SolarWinds, Paessler (PRTG), Datadog, Nagios
 - Trends: AI/ML adoption, cloud migration, zero-trust security
 
-**WiFi Planning Market:**
+#### WiFi Planning Market
 
 - Market size: $400M (2025), growing at 12% CAGR
 - Dominated by: Ekahau (60%+ share), Hamina, NetAlly, AirMagnet
 - Trends: WiFi 6/6E adoption, remote work, IoT growth
 
-**Healthcare IT Market:**
+#### Healthcare IT Market
 
 - Healthcare IT spend: $200B+ (2025)
 - Network/security spend: ~5% = $10B
@@ -175,7 +175,7 @@ clinics to large enterprises.
 
 ### 2.3 Market Segmentation
 
-**Primary Market: Healthcare (70% of revenue)**
+#### Primary Market: Healthcare (70% of revenue)
 
 | Segment                            | Size (US) | Budget        | Pain Points                                                | The Seed Value Prop                                           |
 | ---------------------------------- | --------- | ------------- | ---------------------------------------------------------- | ------------------------------------------------------------- |
@@ -183,7 +183,7 @@ clinics to large enterprises.
 | Clinics (10-50 providers)          | 35,000    | $50K-$500K IT | Outsourced IT, limited staff, budget constraints           | Affordable ($299-799), easy to use, remote diagnostics        |
 | Dental/Vision Practices            | 50,000    | $25K-$200K IT | Basic IT, guest WiFi, patient privacy                      | Starter tier ($299), HIPAA compliance, WiFi planning          |
 
-**Secondary Market: SMB (20% of revenue)**
+#### Secondary Market: SMB (20% of revenue)
 
 | Segment                      | Size (US) | Budget        | Pain Points                                      | The Seed Value Prop                                           |
 | ---------------------------- | --------- | ------------- | ------------------------------------------------ | ------------------------------------------------------------- |
@@ -191,7 +191,7 @@ clinics to large enterprises.
 | Light Manufacturing          | 200,000   | $100K-$1M IT  | IoT devices, segmentation, uptime critical       | Device classification, anomaly detection, downtime prevention |
 | Retail Chains (10-50 stores) | 50,000    | $200K-$2M IT  | Guest WiFi, PCI compliance, multi-site           | MSP features, fleet management, PCI compliance                |
 
-**Tertiary Market: MSPs & Consultants (10% of revenue)**
+#### Tertiary Market: MSPs & Consultants (10% of revenue)
 
 | Segment               | Size (US) | Pain Points                            | The Seed Value Prop                           |
 | --------------------- | --------- | -------------------------------------- | --------------------------------------------- |
@@ -200,7 +200,7 @@ clinics to large enterprises.
 
 ### 2.4 Market Trends
 
-**Favorable Trends:**
+#### Favorable Trends
 
 1. **AI Adoption:** 67% of IT teams plan to adopt AI tools by 2027 (Gartner)
 2. **WiFi 6/6E Upgrades:** 40% of enterprises upgrading WiFi in 2026-2027
@@ -208,7 +208,7 @@ clinics to large enterprises.
 4. **Remote Work:** Permanent hybrid models require better network monitoring
 5. **Compliance Burden:** HIPAA penalties averaging $3M, driving compliance tool adoption
 
-**Challenges:**
+#### Challenges
 
 1. **Economic Uncertainty:** IT budget freezes in 2026 (recession fears)
 2. **Market Saturation:** 80%+ of enterprises have monitoring tools (need to displace)
@@ -221,25 +221,25 @@ clinics to large enterprises.
 
 ### 3.1 Direct Competitors
 
-**Ekahau (WiFi Survey Leader)**
+#### Ekahau (WiFi Survey Leader)
 
 - **Strengths:** Market leader (60%+ share), professional-grade, trusted brand
 - **Weaknesses:** Expensive ($5K-20K), requires hardware, reactive surveys only
 - **Differentiation:** The Seed offers predictive survey (plan before buying APs) at 60-75% lower cost
 
-**Hamina (Cloud WiFi Planning)**
+#### Hamina (Cloud WiFi Planning)
 
 - **Strengths:** Modern UI, cloud-based, good RF modeling
 - **Weaknesses:** WiFi-only (no network diagnostics), no AI, no compliance
 - **Differentiation:** The Seed is all-in-one (WiFi + network + security + compliance)
 
-**NetAlly AirMapper (Field Survey)**
+#### NetAlly AirMapper (Field Survey)
 
 - **Strengths:** Hardware-bundled, trusted for on-site work, rugged
 - **Weaknesses:** Expensive hardware ($2.5K+), reactive only, iPad-only
 - **Differentiation:** The Seed is software-only, cross-platform, predictive
 
-**AirMagnet Survey PRO (Enterprise)**
+#### AirMagnet Survey PRO (Enterprise)
 
 - **Strengths:** Enterprise-grade, comprehensive analysis, NetAlly brand
 - **Weaknesses:** Complex, steep learning curve, expensive ($3K-15K)
@@ -247,14 +247,14 @@ clinics to large enterprises.
 
 ### 3.2 Indirect Competitors
 
-**Network Monitoring Platforms:**
+#### Network Monitoring Platforms
 
 - **SolarWinds:** Enterprise, complex, expensive ($1.5K-50K)
 - **PRTG (Paessler):** SMB favorite, freeware model (100 sensors free), mature
 - **Datadog:** Cloud-native, APM focus, expensive ($15-31/host/month)
 - **Nagios:** Open source, free, requires expertise
 
-**Differentiation:**
+#### Differentiation
 
 - The Seed adds AI root cause analysis (they only monitor, don't diagnose)
 - The Seed includes WiFi planning (they don't)
@@ -272,14 +272,14 @@ clinics to large enterprises.
 
 ### 3.4 Barriers to Entry
 
-**For Us (Entering Market):**
+#### For Us (Entering Market)
 
 - ✅ **LOW:** No hardware required, software-only
 - ✅ **LOW:** Open source alternatives for basic monitoring
 - 🟡 **MEDIUM:** Competing with entrenched players (SolarWinds, Ekahau)
 - 🔴 **HIGH:** Building trust in healthcare (compliance, security)
 
-**For Competitors (Entering Our Space):**
+#### For Competitors (Entering Our Space)
 
 - 🔴 **HIGH:** Predictive WiFi survey requires RF modeling expertise
 - 🟡 **MEDIUM:** AI models require time-series data and training
@@ -292,29 +292,29 @@ clinics to large enterprises.
 
 ### 4.1 Organizational Structure
 
-**Phase 1: Solo Founder (Year 1, 2026)**
+#### Phase 1: Solo Founder (Year 1, 2026)
 
-```
+````text
 CEO/Founder (Kris Armstrong)
 ├── Product Development (self)
 ├── Sales (self)
 ├── Marketing (contract/freelance)
 └── Support (self)
-```
+```text
 
-**Phase 2: Small Team (Year 2, 2027)**
+#### Phase 2: Small Team (Year 2, 2027)
 
-```
+```text
 CEO/Founder
 ├── VP Engineering (hire #1)
 │   └── Backend Engineer (hire #3)
 ├── Sales Rep (hire #2)
 └── Customer Success (hire #4)
-```
+```tsx
 
-**Phase 3: Growth Team (Year 3, 2028)**
+#### Phase 3: Growth Team (Year 3, 2028)
 
-```
+```text
 CEO/Founder
 ├── VP Engineering
 │   ├── Backend Engineers (2-3)
@@ -328,41 +328,41 @@ CEO/Founder
 └── VP Customer Success
     ├── Support Engineers (2)
     └── Implementation (1)
-```
+```tsx
 
 ### 4.2 Management Team
 
-**Kris Armstrong - Founder & CEO**
+#### Kris Armstrong - Founder & CEO
 
 - **Background:** [To be filled with actual background]
 - **Skills:** Go/React development, network engineering, product management
 - **Responsibilities:** Product vision, engineering, early sales, fundraising
 
-**Future Hires (Planned):**
+#### Future Hires (Planned)
 
-**Hire #1: VP Engineering (Q3 2026, $120K-150K + 3-5% equity)**
+#### Hire #1: VP Engineering (Q3 2026, $120K-150K + 3-5% equity)
 
 - **Profile:** 10+ years, scaled SaaS products, Go/React expertise
 - **Responsibilities:** Technical leadership, architecture, team building
 
-**Hire #2: Inside Sales Rep (Q2 2026, $40K base + 25% commission)**
+#### Hire #2: Inside Sales Rep (Q2 2026, $40K base + 25% commission)
 
 - **Profile:** 3+ years SaaS sales, healthcare experience preferred
 - **Responsibilities:** Lead qualification, demos, closing Starter/Pro deals
 
-**Hire #3: Backend Engineer (Q4 2026, $100K-130K + 1-2% equity)**
+#### Hire #3: Backend Engineer (Q4 2026, $100K-130K + 1-2% equity)
 
 - **Profile:** 5+ years Go, distributed systems, network programming
 - **Responsibilities:** AI features, performance optimization, WiFi modeling
 
-**Hire #4: Customer Success Manager (Q1 2027, $70K-90K + 0.5-1% equity)**
+#### Hire #4: Customer Success Manager (Q1 2027, $70K-90K + 0.5-1% equity)
 
 - **Profile:** 5+ years, technical background, healthcare experience
 - **Responsibilities:** Onboarding, training, retention, upsells
 
 ### 4.3 Advisory Board (Unpaid, Equity-Based)
 
-**Roles Needed:**
+#### Roles Needed
 
 1. **Healthcare IT Advisor:** Former hospital CIO/CISO (0.25-0.5% equity)
 2. **WiFi Industry Advisor:** WiFi consultant with 10+ years (0.25-0.5% equity)
@@ -397,7 +397,7 @@ CEO/Founder
 
 ### 5.2 Core Features
 
-**Network Diagnostics:**
+#### Network Diagnostics
 
 - Device discovery (ARP, NDP, ICMP, mDNS, LLDP, CDP)
 - Link status monitoring (speed, duplex, errors, TDR cable testing)
@@ -406,7 +406,7 @@ CEO/Founder
 - Gateway latency (local vs ISP differentiation)
 - VLAN detection and segmentation verification
 
-**AI Features:**
+#### AI Features
 
 - Device classification (90%+ accuracy: printer, camera, server, IoT)
 - Network health scoring (0-100 with component breakdown)
@@ -415,7 +415,7 @@ CEO/Founder
 - Predictive maintenance (failure prediction 24-48h early)
 - Natural language query ("Why is DHCP slow?" via Claude API)
 
-**WiFi Features:**
+#### WiFi Features
 
 - WiFi scanning (SSID, BSSID, signal strength, channel, encryption)
 - **Predictive WiFi survey (FLAGSHIP):** RF path loss modeling, heatmap generation, AP placement optimization
@@ -424,7 +424,7 @@ CEO/Founder
 - Channel interference analysis
 - Roaming pattern optimization
 
-**Security & Compliance:**
+#### Security & Compliance
 
 - Vulnerability scanning (CVE detection, CVSS scoring)
 - Risk assessment (CVSS + EPSS + network exposure)
@@ -433,7 +433,7 @@ CEO/Founder
 - CIS Controls v8 compliance (Controls 1, 2, 3, 4, 7, 12, 13)
 - NIST CSF/SP 800-53 mapping
 
-**MSP Features (Enterprise Tier):**
+#### MSP Features (Enterprise Tier)
 
 - Multi-site fleet management
 - Comparative analytics across sites
@@ -453,7 +453,7 @@ CEO/Founder
 
 ### 5.4 Technology Stack
 
-**Backend:**
+#### Backend
 
 - Language: Go 1.21+
 - Web Framework: gorilla/mux, gorilla/websocket
@@ -461,14 +461,14 @@ CEO/Founder
 - Database: SQLite (initial), TimescaleDB (10K+ devices)
 - AI/ML: Local ML models + Claude API for NLQ
 
-**Frontend:**
+#### Frontend
 
 - Framework: React 18 + TypeScript
 - UI: Tailwind CSS 4.x
 - Charts: Recharts, D3.js
 - State: React Context (may upgrade to Redux/Zustand)
 
-**Infrastructure:**
+#### Infrastructure
 
 - Deployment: Docker, systemd service
 - Cross-Platform: Linux (primary), macOS (dev), Windows (planned)
@@ -480,14 +480,14 @@ CEO/Founder
 
 ### 6.1 Marketing Strategy
 
-**Go-to-Market Approach: Land and Expand**
+#### Go-to-Market Approach: Land and Expand
 
 1. **Land:** Starter tier ($299) for small IT teams
 2. **Expand:** Upsell to Professional ($799) after 3-6 months
 3. **Premium Upsell:** WiFi consultants and hospitals upgrade to Premium ($1,999) for predictive survey
 4. **Enterprise:** MSPs expand to multi-site Enterprise ($4,999)
 
-**Marketing Channels:**
+#### Marketing Channels
 
 | Channel                    | Tactics                                        | Budget (Year 1) | Expected CAC |
 | -------------------------- | ---------------------------------------------- | --------------- | ------------ |
@@ -500,36 +500,36 @@ CEO/Founder
 | **Webinars**               | "AI for Network Troubleshooting"               | $2K             | $400         |
 | **Total**                  |                                                | **$42K**        | **$670 avg** |
 
-**Marketing Messaging by Persona:**
+#### Marketing Messaging by Persona
 
-**IT Director (Hospital):**
+#### IT Director (Hospital)
 
 - **Pain:** "We spend 20 hours/week troubleshooting and can't afford consultants"
 - **Message:** "The Seed's AI tells you exactly what's wrong in seconds, saving 10+ hours/week and $3K+ per WiFi survey"
 
-**BioMed Engineer:**
+#### BioMed Engineer
 
 - **Pain:** "Medical devices are vulnerable and we can't keep up with patches"
 - **Message:** "The Seed scans all devices, prioritizes vulnerabilities by risk, and generates HIPAA audit reports"
 
-**WiFi Consultant:**
+#### WiFi Consultant
 
 - **Pain:** "Site surveys cost $3K-5K and take weeks to schedule"
 - **Message:** "The Seed's predictive survey lets you plan coverage from your desk—no on-site visit needed"
 
-**MSP:**
+#### MSP
 
 - **Pain:** "We can't afford to send techs on-site for every network issue"
 - **Message:** "The Seed's remote diagnostics and multi-site dashboard let you troubleshoot 20+ clients from one screen"
 
 ### 6.2 Sales Strategy
 
-**Sales Model: Inside Sales + Self-Service**
+#### Sales Model: Inside Sales + Self-Service
 
 - Starter/Pro tiers: Self-service (online checkout)
 - Premium/Enterprise: Inside sales (demo required)
 
-**Sales Process:**
+#### Sales Process
 
 1. **Lead Generation:** Freemium, inbound marketing, conferences
 2. **Qualification:** BANT (Budget, Authority, Need, Timeline)
@@ -538,14 +538,14 @@ CEO/Founder
 5. **Closing:** Proposal with ROI calculator
 6. **Onboarding:** Customer success handoff
 
-**Sales Compensation:**
+#### Sales Compensation
 
 - Base Salary: $40K-50K
 - Commission: 25% of ACV (first year), 10% renewals
 - OTE (On-Target Earnings): $100K-120K
 - Accelerators: 30% commission above 100% quota
 
-**Sales Quotas:**
+#### Sales Quotas
 
 - Year 1: $250K ACV per rep
 - Year 2: $400K ACV per rep
@@ -553,7 +553,7 @@ CEO/Founder
 
 ### 6.3 Customer Acquisition Cost (CAC) & Lifetime Value (LTV)
 
-**Target Metrics:**
+#### Target Metrics
 
 - **CAC:** $670 (blended), $300-1,200 by channel
 - **LTV:** 3-year customer lifetime
@@ -562,7 +562,7 @@ CEO/Founder
   - Premium: $1,999 × 3 = $5,997 (LTV:CAC = 8.9:1) ✅ Excellent
   - Enterprise: $4,999 × 3 = $14,997 (LTV:CAC = 22:1) ✅ Excellent
 
-**Strategy:**
+#### Strategy
 
 - Focus on Premium/Enterprise tiers (best LTV:CAC)
 - Use Starter as loss leader (acquire, upsell to Pro/Premium)
@@ -570,14 +570,14 @@ CEO/Founder
 
 ### 6.4 Pricing Strategy
 
-**Pricing Philosophy:**
+#### Pricing Philosophy
 
 - **Value-Based:** Price based on ROI (time savings, survey cost savings)
 - **Tiered:** Clear upgrade path (Starter → Pro → Premium → Enterprise)
 - **Competitive:** 60-75% cheaper than Ekahau/AirMagnet
 - **Annual Only:** No monthly pricing (improves cash flow, reduces churn)
 
-**Discounts:**
+#### Discounts
 
 - Non-profit/Education: 25% off
 - Annual prepay: Already included (no discount)
@@ -590,14 +590,14 @@ CEO/Founder
 
 ### 7.1 Revenue Model
 
-**Revenue Assumptions:**
+#### Revenue Assumptions
 
 - Average Selling Price (ASP): $900 (weighted average across tiers)
 - Churn Rate: 15% annually (85% retention)
 - Upsell Rate: 30% of customers upgrade tiers within 12 months
 - Payment Terms: Annual prepay (100% upfront)
 
-**Revenue by Tier (Year 3):**
+#### Revenue by Tier (Year 3)
 
 | Tier                    | Customers  | Price   | ARR       | % of Revenue |
 | ----------------------- | ---------- | ------- | --------- | ------------ |
@@ -611,7 +611,7 @@ CEO/Founder
 
 ### 7.2 Financial Projections (3-Year, Conservative)
 
-**Year 1 (2026):**
+#### Year 1 (2026)
 
 | Quarter | New Customers | Total Customers | Quarterly Revenue | ARR   |
 | ------- | ------------- | --------------- | ----------------- | ----- |
@@ -620,14 +620,14 @@ CEO/Founder
 | Q3      | 80            | 160             | $72K              | $288K |
 | Q4      | 140           | 300             | $112.5K           | $450K |
 
-**Annual Year 1:**
+#### Annual Year 1
 
 - ARR: $450K
 - Total Costs: $650K
 - Net Income: **-$200K** (loss)
 - Burn Rate: $16.7K/month
 
-**Year 2 (2027):**
+#### Year 2 (2027)
 
 | Metric          | Value                    |
 | --------------- | ------------------------ |
@@ -638,7 +638,7 @@ CEO/Founder
 | Total Costs     | $1.6M                    |
 | Net Income      | **+$200K** (profitable!) |
 
-**Year 3 (2028):**
+#### Year 3 (2028)
 
 | Metric          | Value                          |
 | --------------- | ------------------------------ |
@@ -651,7 +651,7 @@ CEO/Founder
 
 ### 7.3 Cost Structure
 
-**Fixed Costs (Year 1):**
+#### Fixed Costs (Year 1)
 
 | Category                 | Monthly     | Annual    | Notes                                 |
 | ------------------------ | ----------- | --------- | ------------------------------------- |
@@ -664,7 +664,7 @@ CEO/Founder
 | **Office/Equipment**     | $200        | $2.4K     | Laptop, monitors (one-time + refresh) |
 | **Total Fixed**          | **$11.85K** | **$142K** |                                       |
 
-**Variable Costs (Year 1):**
+#### Variable Costs (Year 1)
 
 | Category               | % of Revenue | Year 1 Cost | Notes                           |
 | ---------------------- | ------------ | ----------- | ------------------------------- |
@@ -677,7 +677,7 @@ CEO/Founder
 
 Wait, that doesn't match the $650K in the projection above. Let me recalculate with salaries for hires:
 
-**Revised Year 1 Costs (with hires):**
+#### Revised Year 1 Costs (with hires)
 
 - Founder: $80K
 - Sales Rep (Q2 hire): $70K (9 months prorated)
@@ -691,7 +691,7 @@ Wait, that doesn't match the $650K in the projection above. Let me recalculate w
 
 Still doesn't match. Let me use a more realistic Year 1 with conservative hiring:
 
-**Conservative Year 1:**
+#### Conservative Year 1
 
 - Founder: $60K (live lean)
 - No hires (founder does sales)
@@ -706,7 +706,7 @@ With $450K revenue - $154K costs = **$296K net income Year 1** (profitable immed
 
 But this assumes founder can close 300 customers solo, which is unrealistic. More realistic:
 
-**Realistic Year 1 (hire 1 sales rep in Q2):**
+#### Realistic Year 1 (hire 1 sales rep in Q2)
 
 - Founder: $80K
 - Sales Rep (9 months): $70K
@@ -722,7 +722,7 @@ With $450K revenue - $344K costs = **$106K net income Year 1** (profitable!)
 
 Let me stick with a more conservative "Year 1 investment mode" where we spend ahead of revenue:
 
-**Year 1 (Investment Mode):**
+#### Year 1 (Investment Mode)
 
 - Salaries: $150K (founder $80K + sales rep $70K)
 - Marketing: $100K (aggressive conference + ad spend)
@@ -741,24 +741,24 @@ Let me stick with a more conservative "Year 1 investment mode" where we spend ah
 **Fixed Costs (Monthly):** $12K (conservative) **Variable Costs:** 30% of revenue (commission, support, payment
 processing) **Gross Margin:** 70%
 
-**Break-Even Revenue:**
+#### Break-Even Revenue
 
-```
+```text
 Break-Even = Fixed Costs / (1 - Variable Cost %)
 Break-Even = $12K / 0.70 = $17,143/month = $205K/year
-```
+```text
 
-**Break-Even Customers:**
+#### Break-Even Customers
 
-```
+```bash
 $205K / $900 ASP = 228 customers
-```
+```python
 
 **Projected Break-Even:** Month 6-8 (Q3 2026) at ~150-200 customers
 
 ### 7.5 Cash Flow Projections
 
-**Year 1 Cash Flow:**
+#### Year 1 Cash Flow
 
 | Quarter | Revenue | Costs   | Net Cash Flow | Cumulative Cash |
 | ------- | ------- | ------- | ------------- | --------------- |
@@ -769,7 +769,7 @@ $205K / $900 ASP = 228 customers
 
 **Cash Needed Year 1:** $250K (to cover negative cash flow)
 
-**Funding Options:**
+#### Funding Options
 
 1. **Bootstrap:** Founder invests $50K, operates lean, hits profitability by Q4
 2. **Friends & Family:** $50-100K at $1M valuation (5-10% dilution)
@@ -782,7 +782,7 @@ $205K / $900 ASP = 228 customers
 
 ### 8.1 Funding Options
 
-**Option 1: Bootstrap (Recommended)**
+#### Option 1: Bootstrap (Recommended)
 
 - **Amount:** $50K founder investment
 - **Dilution:** 0%
@@ -790,7 +790,7 @@ $205K / $900 ASP = 228 customers
 - **Pros:** No dilution, full control, forces discipline
 - **Cons:** Slow growth, limited marketing budget, risky
 
-**Option 2: Friends & Family**
+#### Option 2: Friends & Family
 
 - **Amount:** $100K
 - **Valuation:** $1M pre-money
@@ -799,7 +799,7 @@ $205K / $900 ASP = 228 customers
 - **Pros:** Fast, no institutional pressure
 - **Cons:** Awkward if fail, still small raise
 
-**Option 3: Bank Loan (SBA 7(a))**
+#### Option 3: Bank Loan (SBA 7(a))
 
 - **Amount:** $100-200K
 - **Terms:** 10-year term, 8-10% interest, monthly payments
@@ -807,7 +807,7 @@ $205K / $900 ASP = 228 customers
 - **Pros:** No dilution, build business credit
 - **Cons:** Monthly debt service, requires good personal credit, business plan scrutiny
 
-**Option 4: Seed Round**
+#### Option 4: Seed Round
 
 - **Amount:** $500K
 - **Valuation:** $2.5M pre-money
@@ -818,7 +818,7 @@ $205K / $900 ASP = 228 customers
 
 ### 8.2 SBA Loan Analysis
 
-**SBA 7(a) Loan Details:**
+#### SBA 7(a) Loan Details
 
 - **Max Loan:** $5M (we'd request $150K)
 - **Use:** Working capital, equipment, marketing
@@ -827,7 +827,7 @@ $205K / $900 ASP = 228 customers
 - **Guarantee:** SBA guarantees 85% (reduces bank risk)
 - **Personal Guarantee:** Required (founder personally liable)
 
-**Eligibility:**
+#### Eligibility
 
 - For-profit business
 - Operate in US
@@ -835,26 +835,26 @@ $205K / $900 ASP = 228 customers
 - "Reasonable" personal credit score (680+)
 - Detailed business plan (this document)
 
-**Loan Calculator ($150K, 10 years, 10%):**
+#### Loan Calculator ($150K, 10 years, 10%)
 
 - Monthly Payment: $1,979
 - Total Payments: $237,480
 - Total Interest: $87,480
 
-**Is It Worth It?**
+#### Is It Worth It?
 
 - **Year 1 Revenue:** $450K
 - **Monthly Revenue (avg):** $37.5K
 - **Loan Payment:** $1,979/month (5.3% of revenue)
 - **Manageable?** Yes, if revenue projections hold
 
-**Risks:**
+#### Risks
 
 - If revenue misses projections, loan payments become burden
 - Personal guarantee means founder personally liable
 - Defaults hurt personal credit
 
-**Recommendation:**
+#### Recommendation
 
 - **Try Bootstrap first** (3-6 months)
 - If traction is good (50+ customers), **apply for SBA loan** ($100-150K)
@@ -875,30 +875,30 @@ $205K / $900 ASP = 228 customers
 
 ### 8.4 Funding Timeline
 
-**Months 1-3: Self-Funded Launch**
+#### Months 1-3: Self-Funded Launch
 
 - Founder invests $25K (equipment, legal, initial hosting)
 - Launch Free and Starter tiers
 - Target: 50 free users, 10 paying customers ($3K MRR)
 
-**Month 4: Evaluate Traction**
+#### Month 4: Evaluate Traction
 
 - If 50+ paying customers: **Apply for SBA loan**
 - If <20 paying customers: Continue bootstrapping, delay hiring
 
-**Month 5-6: Loan Approval & Hiring**
+#### Month 5-6: Loan Approval & Hiring
 
 - Receive $150K SBA loan
 - Hire inside sales rep
 - Invest in HIMSS conference (booth + speaking)
 
-**Month 7-12: Growth Mode**
+#### Month 7-12: Growth Mode
 
 - Sales rep ramping up
 - Marketing campaigns running
 - Target: 300 customers, $450K ARR by end of year
 
-**Month 13-18: Path to Profitability**
+#### Month 13-18: Path to Profitability
 
 - Revenue exceeds costs
 - Profitable by Month 18 (Q2 2027)
@@ -946,7 +946,7 @@ $205K / $900 ASP = 228 customers
 
 ### 9.5 Risk Mitigation Strategy
 
-**Overall Approach:**
+#### Overall Approach
 
 1. **Lean Startup:** MVP, iterate based on feedback, don't over-build
 2. **Customer Validation:** Sell before building complex features (predictive survey)
@@ -960,63 +960,63 @@ $205K / $900 ASP = 228 customers
 
 ### 10.1 Exit Options
 
-**Option 1: Acquisition by Network Monitoring Company**
+#### Option 1: Acquisition by Network Monitoring Company
 
 - **Buyers:** SolarWinds, Paessler, Datadog, Progress (WhatsUp Gold)
 - **Valuation:** 5-8x ARR ($10-40M at $2-5M ARR)
 - **Timeline:** 3-5 years
 - **Why They'd Buy:** Add AI features, healthcare vertical, WiFi planning
 
-**Option 2: Acquisition by WiFi Vendor**
+#### Option 2: Acquisition by WiFi Vendor
 
 - **Buyers:** Aruba (HPE), Ruckus (CommScope), Ubiquiti, Juniper Mist
 - **Valuation:** 4-6x ARR ($8-30M at $2-5M ARR)
 - **Timeline:** 4-6 years
 - **Why They'd Buy:** Add software planning tool, compete with Ekahau, upsell hardware
 
-**Option 3: Acquisition by Healthcare IT Company**
+#### Option 3: Acquisition by Healthcare IT Company
 
 - **Buyers:** Tenable (vulnerability mgmt), Rapid7, Imprivata
 - **Valuation:** 6-10x ARR ($12-50M at $2-5M ARR)
 - **Timeline:** 4-6 years
 - **Why They'd Buy:** Expand into network diagnostics, medical device security
 
-**Option 4: Bootstrap to Profitability & Hold**
+#### Option 4: Bootstrap to Profitability & Hold
 
 - **No exit:** Lifestyle business, $2-5M ARR, 30-40% profit margin
 - **Founder income:** $600K-2M/year (salary + distributions)
 - **Pros:** No pressure, full control, steady income
 - **Cons:** No big payday, hard to scale past $10M without funding
 
-**Option 5: Series A → Growth → IPO (Unlikely)**
+#### Option 5: Series A → Growth → IPO (Unlikely)
 
 - **Unlikely** because network monitoring is not "venture scale" (need $100M+ ARR potential)
 - Would require pivoting to broader platform (APM, observability, security)
 
 ### 10.2 Recommended Exit Path
 
-**Phase 1 (Years 1-2): Prove Product-Market Fit**
+#### Phase 1 (Years 1-2): Prove Product-Market Fit
 
 - Reach $1-2M ARR
 - Demonstrate 85%+ retention
 - Build predictive survey (defensible moat)
 - Establish healthcare customer base (200+ hospitals/clinics)
 
-**Phase 2 (Years 3-4): Scale & Build Value**
+#### Phase 2 (Years 3-4): Scale & Build Value
 
 - Reach $5-10M ARR
 - Expand to 5,000+ customers
 - Add enterprise features (fleet management, white-label)
 - Expand team to 15-20 employees
 
-**Phase 3 (Year 5): Exit Preparation**
+#### Phase 3 (Year 5): Exit Preparation
 
 - Clean financials (audit-ready)
 - Formalize IP (patents for RF modeling, AI algorithms)
 - Build out management team (CEO can step back)
 - Engage investment banker or M&A advisor
 
-**Phase 4 (Year 5-6): Exit Process**
+#### Phase 4 (Year 5-6): Exit Process
 
 - Approach strategic buyers (SolarWinds, Aruba, Tenable)
 - Run competitive bidding process
@@ -1025,19 +1025,19 @@ $205K / $900 ASP = 228 customers
 
 ### 10.3 Founder Outcomes
 
-**Bootstrap Scenario (No Exit):**
+#### Bootstrap Scenario (No Exit)
 
 - Year 1: $80K salary + $0 profit = $80K
 - Year 2: $100K salary + $200K profit = $300K
 - Year 3: $120K salary + $1.2M profit = $1.32M
 - **Cumulative 3 years:** $1.7M
 
-**Bootstrap + Hold (Lifestyle Business):**
+#### Bootstrap + Hold (Lifestyle Business)
 
 - Years 4-10: $150K salary + $1.5-2M profit/year = $1.65-2.15M/year
 - **10-year total:** $15-20M (no exit needed)
 
-**Exit Scenario ($40M acquisition, 80% ownership):**
+#### Exit Scenario ($40M acquisition, 80% ownership)
 
 - Founder proceeds: $32M
 - Less taxes (20% cap gains): -$6.4M
@@ -1045,7 +1045,7 @@ $205K / $900 ASP = 228 customers
 - Plus 3-year salary/profit: $1.7M
 - **Total: $27.3M**
 
-**Best Outcome: Bootstrap + Exit**
+#### Best Outcome: Bootstrap + Exit
 
 - Low risk (profitable early, no debt)
 - High upside (strategic acquisition)
@@ -1074,7 +1074,7 @@ $205K / $900 ASP = 228 customers
 
 ### 11.2 3-Year Milestones
 
-**Year 1 (2026): Launch & Traction**
+#### Year 1 (2026): Launch & Traction
 
 - ✅ Product launch (Free, Starter, Pro, Premium tiers)
 - ✅ 300 paying customers
@@ -1082,7 +1082,7 @@ $205K / $900 ASP = 228 customers
 - ✅ Hire 1 sales rep
 - ✅ Break-even or small profit
 
-**Year 2 (2027): Scale & Enterprise**
+#### Year 2 (2027): Scale & Enterprise
 
 - ✅ 1,200 customers
 - ✅ $1.8M ARR
@@ -1090,7 +1090,7 @@ $205K / $900 ASP = 228 customers
 - ✅ Hire VP Eng, 2 engineers, customer success
 - ✅ Profitable ($200K+ net income)
 
-**Year 3 (2028): Expansion & Exit Prep**
+#### Year 3 (2028): Expansion & Exit Prep
 
 - ✅ 3,500 customers
 - ✅ $5.2M ARR
@@ -1124,38 +1124,38 @@ $205K / $900 ASP = 228 customers
 
 ### 12.3 Financial Assumptions
 
-**Revenue:**
+#### Revenue
 
 - ASP (Average Selling Price): $900
 - Payment Terms: Annual prepay (100% upfront)
 - Churn Rate: 15% annually (industry average for SMB SaaS)
 - Upsell Rate: 30% upgrade tiers within 12 months
 
-**Costs:**
+#### Costs
 
 - Gross Margin: 70-80% (software SaaS typical)
 - Sales Commission: 25% of new ACV, 10% renewals
 - CAC: $670 (weighted average)
 - Payback Period: 9 months (acceptable for SaaS)
 
-**Headcount:**
+#### Headcount
 
 - Average fully-loaded cost: $100K-150K per employee (salary + benefits + taxes + equity)
 
 ### 12.4 Legal & Compliance
 
-**Business Structure:**
+#### Business Structure
 
 - **Initial:** LLC (pass-through taxation, simpler)
 - **Later:** C-Corp (if raising venture capital)
 
-**Intellectual Property:**
+#### Intellectual Property
 
 - Trademark: "The Seed" (USPTO application)
 - Patents: RF propagation algorithms, AI root cause methods (provisional → utility)
 - Copyright: Software code (automatic, register with US Copyright Office)
 
-**Contracts:**
+#### Contracts
 
 - Terms of Service (ToS)
 - Privacy Policy (GDPR, CCPA compliant)
@@ -1163,7 +1163,7 @@ $205K / $900 ASP = 228 customers
 - Master Services Agreement (MSA) for Enterprise customers
 - Reseller Agreement for MSP partners
 
-**Insurance:**
+#### Insurance
 
 - General Liability: $1M/$2M
 - Errors & Omissions (E&O): $2M
@@ -1172,7 +1172,7 @@ $205K / $900 ASP = 228 customers
 
 ### 12.5 Technology Patents (Potential)
 
-**Provisional Patents to File:**
+#### Provisional Patents to File
 
 1. **RF Path Loss Modeling for Indoor WiFi Planning**
    - Novel: Combining FSPL + log-distance + wall material + real-time adjustment
@@ -1186,13 +1186,13 @@ $205K / $900 ASP = 228 customers
    - Novel: LSTM + z-score + multi-device correlation
    - Differentiation: Most tools are reactive, not predictive
 
-**Cost:**
+#### Cost
 
 - Provisional patent application: $2,000-5,000 (DIY or cheap attorney)
 - Utility patent (if approved): $10,000-15,000
 - International (PCT): $30,000-50,000
 
-**ROI:**
+#### ROI
 
 - Increases acquisition value (IP is defensible moat)
 - Prevents competitors from copying core features
@@ -1209,26 +1209,26 @@ points for healthcare and SMB IT teams:
 - WiFi planning cost savings ($3K-5K per deployment)
 - Compliance automation (40-80 hours per audit)
 
-**Competitive Advantages:**
+#### Competitive Advantages
 
 - **Predictive WiFi Survey:** No competitor has this (12-18 month lead)
 - **AI Root Cause Analysis:** Tells you WHY, not just WHAT
 - **Healthcare Focus:** Built-in HIPAA compliance, medical device templates
 - **Pricing:** 60-75% cheaper than incumbents
 
-**Financial Viability:**
+#### Financial Viability
 
 - **Break-Even:** Month 18 at 600 customers ($540K ARR)
 - **Year 3 Target:** $5.2M ARR, $1.2M profit (30% margin)
 - **Funding Needed:** $150K SBA loan (manageable debt service)
 
-**Path to Exit:**
+#### Path to Exit
 
 - Years 1-2: Prove product-market fit ($1-2M ARR)
 - Years 3-4: Scale to $5-10M ARR
 - Year 5-6: Strategic acquisition by SolarWinds, Aruba, or Tenable ($30-50M)
 
-**Recommendation:**
+#### Recommendation
 
 - **Bootstrap first** (Months 1-3)
 - **Apply for SBA loan** if traction is strong (50+ customers)
@@ -1236,7 +1236,7 @@ points for healthcare and SMB IT teams:
 - **Focus on Premium tier** (best LTV:CAC, flagship feature)
 - **Target healthcare** (70% of revenue, compliance-driven)
 
-**Next Steps:**
+#### Next Steps
 
 1. Finalize product (v0.110.0 launch March 2026)
 2. Launch Free + Starter tiers (acquire first 50 customers)
@@ -1252,3 +1252,4 @@ points for healthcare and SMB IT teams:
 
 **Confidential:** This business plan contains proprietary and confidential information. Do not distribute without
 written permission.
+````

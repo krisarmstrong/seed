@@ -129,7 +129,7 @@ Hardware/software test lab specifications:
 
 ### Updated
 
-**Home.md:**
+#### Home.md
 
 - Added navigation to new pages
 - Reorganized structure (Getting Started + Hardware Compatibility)
@@ -201,14 +201,14 @@ Automated wiki population script (executable, ready to run when GitHub Wiki enab
 
 ### Current State (Private Repo)
 
-**User-Facing Documentation:**
+#### User-Facing Documentation
 
 - Location: `docs/wiki/`
 - Purpose: Installation guides, feature docs, FAQ, hardware compatibility
 - Audience: Beta testers, customers, community
 - Status: ✅ Complete and ready to publish
 
-**Team Documentation:**
+#### Team Documentation
 
 - Location: `docs/` (root level)
 - Purpose: Business strategy, sales, support, competitive analysis
@@ -217,18 +217,18 @@ Automated wiki population script (executable, ready to run when GitHub Wiki enab
 
 ### When to Publish Wiki
 
-**Option 1: Enable GitHub Wiki (when you pay for GitHub Pro/Team)**
+#### Option 1: Enable GitHub Wiki (when you pay for GitHub Pro/Team)
 
 - Run `./scripts/setup-wiki.sh` to auto-populate
 - Wiki will be private (accessible to repo collaborators only)
 
-**Option 2: Build Public Docs Site (post-launch)**
+#### Option 2: Build Public Docs Site (post-launch)
 
 - Use GitBook ($0-29/month) or Docusaurus (free)
 - Publish to `docs.mustardseednetworks.com`
 - Source from `docs/wiki/` directory
 
-**Option 3: Keep in repo for now**
+#### Option 3: Keep in repo for now
 
 - Beta testers with repo access can read docs/wiki/\*.md files
 - Works fine until public launch
@@ -239,7 +239,7 @@ Automated wiki population script (executable, ready to run when GitHub Wiki enab
 
 ## 📊 Statistics
 
-**Total Documentation Created:**
+### Total Documentation Created
 
 - 20+ markdown files
 - ~180KB of business strategy content
@@ -249,12 +249,12 @@ Automated wiki population script (executable, ready to run when GitHub Wiki enab
 - 1 automated setup script
 - 5 GitHub issues for competitive features
 
-**Total GitHub Commits:**
+#### Total GitHub Commits
 
 - 2 major commits (business docs + wiki setup)
 - All changes pushed to main branch
 
-**Pricing Verified:**
+#### Pricing Verified
 
 - Free: $0 (50 devices)
 - Starter: $299/year (200 devices)
@@ -262,7 +262,7 @@ Automated wiki population script (executable, ready to run when GitHub Wiki enab
 - Premium: $1,999/year (predictive WiFi - FLAGSHIP)
 - Enterprise: $4,999/year (multi-site fleet)
 
-**Target Markets:**
+#### Target Markets
 
 1. Healthcare IT (primary)
 2. SMB network admins (secondary)
@@ -310,7 +310,7 @@ Automated wiki population script (executable, ready to run when GitHub Wiki enab
 
 ## 📂 Documentation File Structure
 
-```
+````text
 seed/
 ├── docs/
 │   ├── wiki/                           # User-facing (ready to publish)
@@ -338,7 +338,7 @@ seed/
 │
 └── scripts/
     └── setup-wiki.sh                   # NEW: Automated wiki setup
-```
+```python
 
 ---
 
@@ -362,6 +362,7 @@ seed/
 
 ---
 
-**Everything is ready for The Seed's journey from a tiny seed to a mighty network! 🌱**
+#### Everything is ready for The Seed's journey from a tiny seed to a mighty network! 🌱
 
 **Mustard Seed Networks** _From a tiny seed, a mighty network grows._
+````

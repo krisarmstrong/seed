@@ -14,7 +14,7 @@ Each mapping includes:
 - **Evidence/Audit value** (what auditors can verify)
 - **Implementation notes** (how to configure for compliance)
 
-**Frameworks Covered:**
+#### Frameworks Covered
 
 - CIS Controls v8 (Center for Internet Security)
 - NIST Cybersecurity Framework (CSF) v1.1
@@ -28,7 +28,7 @@ Each mapping includes:
 
 ### CIS Control 1: Inventory and Control of Enterprise Assets
 
-**Requirement:**
+#### Requirement
 
 > "Actively manage (inventory, track, and correct) all enterprise assets (end-user devices including portable and
 > mobile; network devices; non-computing/IoT devices; and servers) connected to the infrastructure physically,
@@ -44,28 +44,28 @@ Each mapping includes:
 | **1.3** Utilize an active discovery tool                           | • Continuous network scanning<br>• Multi-protocol discovery<br>• Configurable scan intervals                         | • Discovery service logs<br>• Scan frequency configuration<br>• Coverage reports                          |
 | **1.4** Use dynamic host configuration (DHCP) logging              | • DHCP monitoring and timing<br>• DHCP phase analysis<br>• Lease tracking                                            | • DHCP transaction logs<br>• IP allocation history<br>• DHCP server detection                             |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Configure discovery profile to "standard" or "full_scan" for compliance
 - Enable rogue device detection and alerting
 - Export device inventory weekly for compliance records
 - Enable DHCP monitoring on all active interfaces
 
-**Audit Evidence:**
+#### Audit Evidence
 
-```bash
+````bash
 # Generate CIS Control 1 compliance report
 seed export --format json --filter "devices,discovery,dhcp" > cis-control-1-$(date +%Y%m%d).json
 
 # Export device inventory for auditor
 seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type,classification_confidence"
-```
+```python
 
 ---
 
 ### CIS Control 2: Inventory and Control of Software Assets
 
-**Requirement:**
+#### Requirement
 
 > "Actively manage (inventory, track, and correct) all software (operating systems and applications) on the network so
 > that only authorized software is installed and can execute, and that unauthorized and unmanaged software is found and
@@ -79,7 +79,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 | **2.3** Address unauthorized software             | • Unexpected service detection<br>• Port scan detection<br>• Behavior anomaly detection                      | • Unauthorized service alerts<br>• Anomaly detection logs<br>• Port scan incident reports |
 | **2.6** Allowlist authorized software             | • Expected device profiles<br>• Behavioral baselines<br>• Service whitelisting                               | • Baseline configuration exports<br>• Profile deviation reports                           |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Enable device profiling and fingerprinting
 - Configure expected service baselines per device type
@@ -89,7 +89,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 ### CIS Control 3: Data Protection
 
-**Requirement:**
+#### Requirement
 
 > "Develop processes and technical controls to identify, classify, securely handle, retain, and dispose of data."
 
@@ -100,7 +100,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 | **3.3** Configure data access control lists | • VLAN detection and verification<br>• Network segmentation mapping<br>• Subnet isolation analysis | • VLAN topology maps<br>• Segmentation compliance reports<br>• Traffic flow analysis        |
 | **3.10** Encrypt sensitive data in transit  | • TLS certificate inspection<br>• Encryption protocol detection<br>• Unencrypted protocol alerts   | • TLS compliance reports<br>• Weak cipher detection logs<br>• Unencrypted service inventory |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Configure VLAN monitoring for PHI/PCI networks
 - Enable TLS inspection and weak cipher alerts
@@ -116,7 +116,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 ### CIS Control 4: Secure Configuration of Enterprise Assets and Software
 
-**Requirement:**
+#### Requirement
 
 > "Establish and maintain the secure configuration of enterprise assets (end-user devices, including portable and
 > mobile; network devices; non-computing/IoT devices; and servers) and software (operating systems and applications)."
@@ -128,7 +128,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 | **4.1** Establish and maintain secure configuration process | • Baseline learning<br>• Configuration drift detection (fleet)<br>• Expected state monitoring | • Baseline configuration exports<br>• Drift detection reports<br>• Remediation recommendations |
 | **4.7** Manage default accounts                             | • Default credential detection (SNMP)<br>• Common service fingerprinting                      | • Default credential alerts<br>• Insecure service inventory                                    |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Enable baseline learning for 30 days before enforcement
 - Configure fleet management for multi-site drift detection
@@ -138,7 +138,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 ### CIS Control 7: Continuous Vulnerability Management
 
-**Requirement:**
+#### Requirement
 
 > "Develop a plan to continuously assess and track vulnerabilities on all enterprise assets within the enterprise's
 > infrastructure, to remediate, and minimize the window of opportunity for attackers."
@@ -153,7 +153,7 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 | **7.4** Perform automated application patch management          | • Service version detection<br>• Vulnerable service alerts<br>• Firmware version tracking                           | • Application version matrix<br>• Vulnerable service inventory                                     |
 | **7.5** Perform automated vulnerability scans                   | • Continuous network scanning<br>• Scheduled vulnerability assessment<br>• Real-time CVE matching                   | • Scan schedule configuration<br>• Scan completion logs<br>• Time-to-detection metrics             |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Configure vulnerability scanning to run daily or weekly
 - Enable EPSS (Exploitability Prediction) for prioritization
@@ -162,20 +162,20 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 **Key Differentiator:** The Seed doesn't just list CVEs - it provides **contextual risk scoring**:
 
-```
+```text
 CVE-2024-1234 on 192.168.1.10 (IP Camera, DMZ):
 - CVSS: 9.8 (Critical)
 - EPSS: 0.89 (89% probability of exploitation)
 - Exposure: Public-facing (DMZ)
 - Risk Score: 94/100 (CRITICAL)
 - Remediation: Update firmware to v2.3.1 OR block port 80
-```
+```python
 
 ---
 
 ### CIS Control 12: Network Infrastructure Management
 
-**Requirement:**
+#### Requirement
 
 > "Establish, implement, and actively manage (track, report, correct) network devices, in order to prevent attackers
 > from exploiting vulnerable network services and access points."
@@ -191,7 +191,7 @@ CVE-2024-1234 on 192.168.1.10 (IP Camera, DMZ):
 | **12.7** Ensure remote access uses MFA                               | • Remote access service detection<br>• VPN endpoint discovery                                         | • Remote access inventory                                                                   |
 | **12.8** Establish and maintain network infrastructure documentation | • **Automated network topology**<br>• Device relationship mapping<br>• Switch discovery documentation | • Auto-generated network diagrams<br>• Switch/port/VLAN documentation                       |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Enable LLDP/CDP monitoring for topology discovery
 - Configure VLAN detection for segmentation compliance
@@ -207,7 +207,7 @@ CVE-2024-1234 on 192.168.1.10 (IP Camera, DMZ):
 
 ### CIS Control 13: Network Monitoring and Defense
 
-**Requirement:**
+#### Requirement
 
 > "Operate processes and tooling to establish and maintain comprehensive network monitoring and defense against security
 > threats across the enterprise's network infrastructure and user base."
@@ -223,16 +223,16 @@ CVE-2024-1234 on 192.168.1.10 (IP Camera, DMZ):
 | **13.6** Collect network traffic flow logs  | • Device discovery logs<br>• Connection tracking<br>• Service usage logs                          | • Traffic flow exports<br>• Connection metadata                                                   |
 | **13.10** Deploy NIPS                       | • Port scan detection<br>• Malicious behavior identification<br>• Rapid alerting (<30 seconds)    | • Intrusion detection events<br>• Time-to-alert metrics                                           |
 
-**Implementation Notes:**
+#### Implementation Notes
 
 - Enable anomaly detection and baseline learning
 - Configure rogue device detection with automatic alerting
 - Set up port scan detection thresholds
 - Enable WebSocket real-time alerts
 
-**Key Capabilities:**
+#### Key Capabilities
 
-```
+```text
 Rogue Device Detection:
 - New MAC address appears → Alert within 60 seconds
 - Port scanning detected → Alert + quarantine recommendation
@@ -242,7 +242,7 @@ Anomaly Detection:
 - Gateway latency spike (12ms → 145ms) → Root cause analysis
 - DHCP timing degradation → Server overload detection
 - Unusual connection patterns → Potential compromise alert
-```
+```python
 
 ---
 
@@ -383,7 +383,7 @@ Anomaly Detection:
 
 #### Required Actions
 
-**1. Network Segmentation Verification (§164.312(a)(1)):**
+##### 1. Network Segmentation Verification (§164.312(a)(1))
 
 ```bash
 # Verify PHI networks are isolated
@@ -393,9 +393,9 @@ seed vlan --verify-isolation --critical-vlan 10 --report hipaa-segmentation.pdf
 ✓ VLAN 10 (PHI Network) isolated from guest network
 ✓ No cross-VLAN traffic detected
 ✓ Medical devices on dedicated VLAN 20
-```
+```text
 
-**2. Encryption Compliance (§164.312(e)(1)):**
+#### 2. Encryption Compliance (§164.312(e)(1))
 
 ```bash
 # Detect unencrypted PHI transmission
@@ -405,9 +405,9 @@ seed scan --protocol-audit --alert-unencrypted --vlan 10
 - HTTP (not HTTPS) detected on PHI network
 - Telnet, FTP, SMTP (unencrypted) detected
 - TLS < 1.2 detected
-```
+```text
 
-**3. Risk Analysis (§164.308(a)(1)(ii)(A)):**
+#### 3. Risk Analysis (§164.308(a)(1)(ii)(A))
 
 ```bash
 # Generate HIPAA risk assessment
@@ -418,9 +418,9 @@ seed vulnerabilities --risk-report --format pdf --hipaa-compliance
 - Vulnerability risk scores (CVSS + context)
 - Remediation priorities
 - Compliance status
-```
+```text
 
-**4. Device Inventory (§164.308(a)(5)(ii)(C)):**
+#### 4. Device Inventory (§164.308(a)(5)(ii)(C))
 
 ```bash
 # Export complete device inventory for HIPAA audit
@@ -430,7 +430,7 @@ seed devices export --format csv --include "ip,mac,hostname,device_type,os,servi
 - Complete asset inventory
 - Medical device identification
 - Unauthorized device detection
-```
+```python
 
 ---
 
@@ -477,21 +477,21 @@ seed devices export --format csv --include "ip,mac,hostname,device_type,os,servi
 
 ### K-12 Education (CIPA, FERPA)
 
-**Applicable Frameworks:**
+#### Applicable Frameworks
 
 - CIPA (Children's Internet Protection Act): Network filtering, monitoring
 - FERPA (Student privacy): Network segmentation, access control
 
-**The Seed Capabilities:**
+#### The Seed Capabilities
 
 - **Student WiFi isolation**: Verify student networks are segmented from staff/administrative
 - **Guest network verification**: Ensure guest WiFi has no access to student data networks
 - **Device classification**: Identify student devices vs administrative devices
 - **Rogue AP detection**: Detect unauthorized WiFi access points (student hotspots)
 
-**Use Cases:**
+#### Use Cases
 
-```
+```python
 1. BYOD Management:
    - Classify student personal devices
    - Verify isolation from administrative systems
@@ -506,20 +506,20 @@ seed devices export --format csv --include "ip,mac,hostname,device_type,os,servi
    - Export network topology for CIPA compliance
    - Document filtering effectiveness
    - Prove network segmentation for FERPA
-```
+```yaml
 
 ---
 
 ### Higher Education
 
-**Applicable Frameworks:**
+#### Applicable Frameworks
 
 - FERPA (Student records)
 - GLBA (Financial aid data)
 - HIPAA (Campus health centers)
 - Research compliance (ITAR, EAR for research universities)
 
-**The Seed Use Cases:**
+#### The Seed Use Cases
 
 - Multi-tenant network management (dorms, academic, research, healthcare)
 - Research network isolation (ITAR-controlled data)
@@ -530,13 +530,13 @@ seed devices export --format csv --include "ip,mac,hostname,device_type,os,servi
 
 ### State/Local Government
 
-**Applicable Frameworks:**
+#### Applicable Frameworks
 
 - NIST Cybersecurity Framework (widely adopted)
 - State-specific frameworks (e.g., NY SHIELD Act, CalOPPA)
 - CIS Controls (often required by cyber insurance)
 
-**The Seed Capabilities:**
+#### The Seed Capabilities
 
 - Multi-site government facility management (city hall, libraries, fire/police)
 - Public WiFi compliance (guest network isolation)
@@ -547,13 +547,13 @@ seed devices export --format csv --include "ip,mac,hostname,device_type,os,servi
 
 ### Federal Government (FedRAMP, FISMA)
 
-**Applicable Frameworks:**
+#### Applicable Frameworks
 
 - NIST SP 800-53 (Required for federal systems)
 - FedRAMP (Cloud service providers)
 - FISMA (Federal information systems)
 
-**The Seed Capabilities:**
+#### The Seed Capabilities
 
 - NIST 800-53 control mapping (see section above)
 - Continuous monitoring (FISMA requirement)
@@ -583,44 +583,44 @@ seed compliance --framework hipaa --sections 164.308,164.312 --format pdf
 
 # Custom Date Range (for quarterly audits)
 seed compliance --framework cis-v8 --start-date 2024-01-01 --end-date 2024-03-31 --format pdf
-```
+```text
 
 ### Audit Evidence Exports
 
-**Device Inventory (CIS 1, NIST ID.AM-1):**
+#### Device Inventory (CIS 1, NIST ID.AM-1)
 
 ```bash
 seed devices export --format csv --include-all --timestamp
 # Generates: device-inventory-20250115.csv
-```
+```text
 
-**Vulnerability Assessment (CIS 7, NIST ID.RA-1):**
+#### Vulnerability Assessment (CIS 7, NIST ID.RA-1)
 
 ```bash
 seed vulnerabilities export --risk-scored --format json
 # Generates: vulnerabilities-risk-scored-20250115.json
-```
+```text
 
-**Network Topology (CIS 12, NIST ID.AM-3):**
+#### Network Topology (CIS 12, NIST ID.AM-3)
 
 ```bash
 seed topology export --include-vlans --format png
 # Generates: network-topology-20250115.png
-```
+```text
 
-**Rogue Device Detection Log (CIS 13, NIST DE.CM-7):**
+#### Rogue Device Detection Log (CIS 13, NIST DE.CM-7)
 
 ```bash
 seed logs export --category rogue-devices --last-30-days --format csv
 # Generates: rogue-device-log-20250115.csv
-```
+```text
 
-**Anomaly Detection Timeline (NIST DE.AE-2):**
+#### Anomaly Detection Timeline (NIST DE.AE-2)
 
 ```bash
 seed anomalies export --last-quarter --format json
 # Generates: anomalies-Q1-2024.json
-```
+```yaml
 
 ---
 
@@ -628,35 +628,35 @@ seed anomalies export --last-quarter --format json
 
 ### HIPAA Compliance Quick Start
 
-**Week 1: Discovery and Inventory**
+#### Week 1: Discovery and Inventory
 
 - [ ] Enable device discovery on all network interfaces
 - [ ] Configure VLAN detection for PHI network identification
 - [ ] Enable device classification for medical device identification
 - [ ] Export baseline device inventory
 
-**Week 2: Segmentation Verification**
+#### Week 2: Segmentation Verification
 
 - [ ] Map all VLANs and document purpose (PHI, medical devices, guest, staff)
 - [ ] Verify PHI network isolation (no cross-VLAN traffic)
 - [ ] Identify medical IoT devices and verify segmentation
 - [ ] Document network topology for §164.312(a)(1) compliance
 
-**Week 3: Vulnerability Assessment**
+#### Week 3: Vulnerability Assessment
 
 - [ ] Enable CVE scanning for all devices
 - [ ] Configure risk scoring (CVSS + EPSS + exposure)
 - [ ] Prioritize medical device vulnerabilities
 - [ ] Generate risk analysis report for §164.308(a)(1)(ii)(A)
 
-**Week 4: Encryption and Monitoring**
+#### Week 4: Encryption and Monitoring
 
 - [ ] Enable TLS inspection for transmission security
 - [ ] Configure alerts for unencrypted PHI traffic
 - [ ] Enable rogue device detection
 - [ ] Set up anomaly detection baselines
 
-**Ongoing:**
+#### Ongoing
 
 - [ ] Weekly vulnerability scans
 - [ ] Monthly compliance reports
@@ -671,13 +671,13 @@ seed anomalies export --last-quarter --format json
 
 The Seed provides **real, auditable capabilities** that directly address compliance requirements:
 
-**What We DON'T Claim:**
+#### What We DON'T Claim
 
 - ❌ "The Seed makes you compliant" - Compliance requires process + tools
 - ❌ "Automatic compliance" - Still requires configuration and policy
 - ❌ "Replaces all security tools" - Complements existing security stack
 
-**What We DO Provide:**
+#### What We DO Provide
 
 - ✅ **Asset visibility**: Comprehensive device discovery and classification
 - ✅ **Vulnerability management**: Risk-scored CVE assessment with remediation guidance
@@ -717,14 +717,15 @@ Every The Seed feature that maps to a control provides:
 
 ---
 
-**Document Maintenance:**
+#### Document Maintenance
 
 - Review mappings quarterly as frameworks update
 - Validate new features against compliance requirements
 - Update evidence generation procedures as needed
 
-**Questions?**
+#### Questions?
 
 - Compliance inquiries: compliance@seed.com (future)
 - Technical implementation: See AI_INTEGRATION_PLAN.md
 - Healthcare-specific questions: See HEALTHCARE_MARKET_STRATEGY.md (to be created)
+````

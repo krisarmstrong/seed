@@ -10,7 +10,7 @@ This document defines the customer support and Technical Account Management (TAC
 Networks. The strategy is designed to scale from pre-launch through enterprise growth while maintaining high customer
 satisfaction with minimal overhead.
 
-**Key Principles:**
+#### Key Principles
 
 - Self-service first (documentation, knowledge base, community)
 - Tier-appropriate support channels (align with pricing)
@@ -24,7 +24,7 @@ satisfaction with minimal overhead.
 - Support software/tools: $6,000
 - Part-time support engineer: $24,000 (20 hrs/week @ $60/hr)
 
-**Expected Metrics (Year 1):**
+#### Expected Metrics (Year 1)
 
 - First Response Time: <2 hours (business hours)
 - Resolution Time: <24 hours (P1), <72 hours (P2)
@@ -57,19 +57,19 @@ satisfaction with minimal overhead.
 
 ### Free Tier ($0)
 
-**Support Channels:**
+#### Support Channels
 
 - Community forum (Discord/GitHub Discussions)
 - Documentation/knowledge base
 - GitHub issues (bug reports only)
 
-**SLA:**
+#### SLA
 
 - No guaranteed response time
 - Best-effort community support
 - Bug fixes included in regular releases
 
-**Limitations:**
+#### Limitations
 
 - No direct email/phone support
 - No priority bug fixes
@@ -79,13 +79,13 @@ satisfaction with minimal overhead.
 
 ### Starter Tier ($299/year)
 
-**Support Channels:**
+#### Support Channels
 
 - Email support (support@mustardseednetworks.com)
 - Community forum
 - Knowledge base
 
-**SLA:**
+#### SLA
 
 - **P1 (Critical):** First response within 4 business hours, resolution within 24 hours
 - **P2 (High):** First response within 8 business hours, resolution within 72 hours
@@ -94,7 +94,7 @@ satisfaction with minimal overhead.
 
 **Business Hours:** Monday-Friday, 9am-5pm EST (excluding US holidays)
 
-**Included:**
+#### Included
 
 - Unlimited email tickets
 - Bug fix priority (ahead of Free tier)
@@ -104,14 +104,14 @@ satisfaction with minimal overhead.
 
 ### Professional Tier ($799/year)
 
-**Support Channels:**
+#### Support Channels
 
 - Priority email support
 - Community forum
 - Knowledge base
 - Chat support (business hours)
 
-**SLA:**
+#### SLA
 
 - **P1 (Critical):** First response within 2 business hours, resolution within 12 hours
 - **P2 (High):** First response within 4 business hours, resolution within 48 hours
@@ -120,7 +120,7 @@ satisfaction with minimal overhead.
 
 **Business Hours:** Monday-Friday, 8am-6pm EST + Saturday 10am-2pm EST
 
-**Included:**
+#### Included
 
 - Priority queue (ahead of Starter)
 - Quarterly check-in calls
@@ -131,7 +131,7 @@ satisfaction with minimal overhead.
 
 ### Premium Tier ($1,999/year)
 
-**Support Channels:**
+#### Support Channels
 
 - Phone support (direct line)
 - Priority email & chat
@@ -139,7 +139,7 @@ satisfaction with minimal overhead.
 - Knowledge base
 - Screen sharing sessions
 
-**SLA:**
+#### SLA
 
 - **P1 (Critical):** First response within 1 hour, resolution within 8 hours (24/7 coverage)
 - **P2 (High):** First response within 2 business hours, resolution within 24 hours
@@ -149,7 +149,7 @@ satisfaction with minimal overhead.
 **Business Hours:** Monday-Friday, 8am-8pm EST + Saturday-Sunday 10am-4pm EST **After-Hours:** P1 emergencies only
 (on-call rotation)
 
-**Included:**
+#### Included
 
 - Named support engineer
 - Monthly check-in calls
@@ -162,7 +162,7 @@ satisfaction with minimal overhead.
 
 ### Enterprise Tier ($4,999/year)
 
-**Support Channels:**
+#### Support Channels
 
 - Dedicated Technical Account Manager (TAM)
 - Phone support (direct line + TAM cell)
@@ -170,7 +170,7 @@ satisfaction with minimal overhead.
 - On-site support (additional fee)
 - Executive escalation path
 
-**SLA:**
+#### SLA
 
 - **P1 (Critical):** First response within 30 minutes, resolution within 4 hours (24/7/365)
 - **P2 (High):** First response within 1 hour, resolution within 12 hours
@@ -179,7 +179,7 @@ satisfaction with minimal overhead.
 
 **Business Hours:** 24/7/365 coverage
 
-**Included:**
+#### Included
 
 - Dedicated TAM (assigned by name)
 - Weekly check-in calls
@@ -200,7 +200,7 @@ satisfaction with minimal overhead.
 **Platform:** Discord + GitHub Discussions **Purpose:** Peer-to-peer support, feature discussions, community engagement
 **Moderation:** Kris Armstrong + community moderators **Response Time:** Best-effort, typically <24 hours
 
-**Benefits:**
+#### Benefits
 
 - Searchable archive of solutions
 - Faster answers from community experts
@@ -214,9 +214,9 @@ satisfaction with minimal overhead.
 **Address:** support@mustardseednetworks.com **Platform:** Zendesk or HelpScout **Auto-Response:** Ticket created,
 expected response time based on tier **Routing:** Auto-assign based on customer tier and issue category
 
-**Email Template Example:**
+#### Email Template Example
 
-```
+````text
 Subject: [TICKET-12345] Your support request
 
 Hi [Customer Name],
@@ -234,7 +234,7 @@ We'll update you shortly. In the meantime, you may find these resources helpful:
 
 Best regards,
 The Seed Support Team
-```
+```yaml
 
 ---
 
@@ -252,14 +252,14 @@ questions, configuration help, status checks **Escalation:** Complex issues tran
 - Premium: Mon-Fri 8am-8pm EST, Sat-Sun 10am-4pm EST
 - Enterprise: 24/7/365
 
-**Call Flow:**
+#### Call Flow
 
 1. IVR: "Press 1 for technical support, 2 for sales, 3 for billing"
 2. Tier verification (license key or phone number lookup)
 3. Route to available engineer or voicemail
 4. Callback within SLA window
 
-**After-Hours (Enterprise P1 Only):**
+#### After-Hours (Enterprise P1 Only)
 
 - On-call rotation (PagerDuty)
 - TAM cell phone for Enterprise customers
@@ -279,14 +279,14 @@ Cases:** Troubleshooting, configuration walkthroughs, training
 
 **Definition:** Complete loss of service, critical feature unavailable, security breach, data loss
 
-**Examples:**
+#### Examples
 
 - The Seed application won't start
 - Discovery service crashes on all networks
 - Security vulnerability exploited
 - Data corruption or loss
 
-**SLA:**
+#### SLA
 
 - Free: Best-effort
 - Starter: 4 hours / 24 hours (response/resolution)
@@ -302,14 +302,14 @@ Cases:** Troubleshooting, configuration walkthroughs, training
 
 **Definition:** Significant feature degraded but workaround exists, multiple users affected
 
-**Examples:**
+#### Examples
 
 - WiFi survey data not saving correctly
 - Discovery only finds 50% of devices
 - Export to PDF fails
 - Performance degradation (slow but usable)
 
-**SLA:**
+#### SLA
 
 - Free: Best-effort
 - Starter: 8 hours / 72 hours
@@ -323,14 +323,14 @@ Cases:** Troubleshooting, configuration walkthroughs, training
 
 **Definition:** Single user affected, workaround available, non-critical feature impaired
 
-**Examples:**
+#### Examples
 
 - UI rendering issue in one browser
 - Report formatting incorrect
 - Specific device not fingerprinted correctly
 - Documentation error
 
-**SLA:**
+#### SLA
 
 - Free: Best-effort
 - Starter: 24 hours / 5 days
@@ -344,14 +344,14 @@ Cases:** Troubleshooting, configuration walkthroughs, training
 
 **Definition:** General question, feature request, cosmetic issue
 
-**Examples:**
+#### Examples
 
 - "How do I configure SNMP?"
 - "Can you add support for XYZ device?"
 - "Dark mode has wrong color on one button"
 - Documentation improvement suggestion
 
-**SLA:**
+#### SLA
 
 - Free: Best-effort
 - Starter: 48 hours / best-effort
@@ -365,13 +365,13 @@ Cases:** Troubleshooting, configuration walkthroughs, training
 
 ### Tier 1 → Tier 2 Escalation
 
-**Trigger:**
+#### Trigger
 
 - Ticket open for 50% of SLA window without resolution
 - Customer requests escalation
 - Issue requires engineering/development team
 
-**Process:**
+#### Process
 
 1. Support engineer updates ticket with summary, troubleshooting steps, logs collected
 2. Assigns to Tier 2 queue (engineering team)
@@ -382,23 +382,23 @@ Cases:** Troubleshooting, configuration walkthroughs, training
 
 ### Tier 2 → Executive Escalation
 
-**Trigger:**
+#### Trigger
 
 - P1 ticket open for 75% of SLA window without resolution
 - Customer dissatisfaction (CSAT < 3/5)
 - Enterprise customer requests executive attention
 - Legal/compliance issue
 
-**Process:**
+#### Process
 
 1. Engineering lead notifies Kris Armstrong (founder)
 2. Kris personally contacts customer within 1 hour
 3. Daily updates until resolution
 4. Post-mortem analysis required for all executive escalations
 
-**Executive Escalation Email Template:**
+#### Executive Escalation Email Template
 
-```
+```text
 Subject: [EXEC ESCALATION] Ticket #12345 - [Customer Name]
 
 Hi [Customer Name],
@@ -419,19 +419,19 @@ We value your business and appreciate your patience.
 Best regards,
 Kris Armstrong
 Founder, Mustard Seed Networks
-```
+```python
 
 ---
 
 ### Security Incident Escalation
 
-**Trigger:**
+#### Trigger
 
 - Security vulnerability reported
 - Data breach suspected
 - Compliance violation discovered
 
-**Process:**
+#### Process
 
 1. Immediate P1 escalation
 2. Notify founder + engineering lead within 15 minutes
@@ -445,7 +445,7 @@ Founder, Mustard Seed Networks
 
 ### TAM Role (Enterprise Tier Only)
 
-**Responsibilities:**
+#### Responsibilities
 
 - Single point of contact for all customer needs
 - Proactive account monitoring (health checks, usage reviews)
@@ -454,7 +454,7 @@ Founder, Mustard Seed Networks
 - Escalation management
 - Renewal and expansion discussions
 
-**Time Allocation per Enterprise Customer:**
+#### Time Allocation per Enterprise Customer
 
 - **Onboarding (Month 1):** 10 hours
   - Kickoff call (1 hour)
@@ -475,12 +475,12 @@ Founder, Mustard Seed Networks
 
 ### Quarterly Business Review (QBR)
 
-**Attendees:**
+#### Attendees
 
 - Customer: IT Director, Network Admin, Executive Sponsor
 - Mustard Seed: TAM, Support Engineer, Founder (optional)
 
-**Agenda (90 minutes):**
+#### Agenda (90 minutes)
 
 1. **Usage Review (20 min)**
    - Number of devices discovered
@@ -518,16 +518,16 @@ Founder, Mustard Seed Networks
 
 ### Proactive TAM Outreach
 
-**Monthly Health Check:**
+#### Monthly Health Check
 
 - Review usage metrics (are they using the product?)
 - Check error logs (any recurring issues?)
 - Identify opportunities (underutilized features)
 - Send personalized email with insights
 
-**Example Proactive Email:**
+#### Example Proactive Email
 
-```
+```python
 Subject: The Seed Health Check - December 2025
 
 Hi [Customer Name],
@@ -553,7 +553,7 @@ Best,
 [TAM Name]
 Technical Account Manager
 Mustard Seed Networks
-```
+```python
 
 ---
 
@@ -561,7 +561,7 @@ Mustard Seed Networks
 
 ### Helpdesk Platform
 
-**Options:**
+#### Options
 
 - **Zendesk** (Recommended): $49/agent/month, robust features, integrations
 - **HelpScout**: $25/agent/month, simpler, good for small teams
@@ -569,7 +569,7 @@ Mustard Seed Networks
 
 **Year 1 Recommendation:** HelpScout ($25/mo = $300/year for 1 agent)
 
-**Required Features:**
+#### Required Features
 
 - Email ticketing with auto-routing
 - Canned responses (macros)
@@ -582,7 +582,7 @@ Mustard Seed Networks
 
 ### Live Chat
 
-**Options:**
+#### Options
 
 - **Intercom**: $74/month, powerful but expensive
 - **Crisp**: $25/month, affordable, good for startups
@@ -590,7 +590,7 @@ Mustard Seed Networks
 
 **Year 1 Recommendation:** Crisp ($25/mo = $300/year)
 
-**Required Features:**
+#### Required Features
 
 - Proactive chat triggers ("Need help getting started?")
 - Canned responses
@@ -601,7 +601,7 @@ Mustard Seed Networks
 
 ### Phone System
 
-**Options:**
+#### Options
 
 - **Dialpad**: $15/user/month, modern, mobile-friendly
 - **RingCentral**: $20/user/month, enterprise features
@@ -609,7 +609,7 @@ Mustard Seed Networks
 
 **Year 1 Recommendation:** OpenPhone ($13/mo = $156/year for 1 number)
 
-**Required Features:**
+#### Required Features
 
 - Call recording
 - Voicemail transcription
@@ -621,7 +621,7 @@ Mustard Seed Networks
 
 ### Knowledge Base
 
-**Options:**
+#### Options
 
 - **GitBook**: Free for open-source, $29/month for private
 - **Notion**: $8/user/month, flexible but not purpose-built
@@ -629,9 +629,9 @@ Mustard Seed Networks
 
 **Year 1 Recommendation:** GitBook (Free tier for public docs)
 
-**Structure:**
+#### Structure
 
-```
+```text
 Knowledge Base
 ├── Getting Started
 │   ├── Installation (macOS, Linux, Docker)
@@ -666,7 +666,7 @@ Knowledge Base
     ├── PCI-DSS
     ├── SOC 2
     └── Best Practices
-```
+```yaml
 
 ---
 
@@ -674,9 +674,9 @@ Knowledge Base
 
 **Platform:** Discord (free) + GitHub Discussions (free)
 
-**Discord Structure:**
+#### Discord Structure
 
-```
+```text
 Mustard Seed Networks Community
 ├── #announcements (read-only)
 ├── #general-chat
@@ -687,9 +687,9 @@ Mustard Seed Networks Community
 ├── #feature-requests
 ├── #show-your-work (customer success stories)
 └── #dev-updates (changelog, beta features)
-```
+```python
 
-**Moderation:**
+#### Moderation
 
 - Kris Armstrong (admin)
 - 2-3 community moderators (power users, unpaid but get free Premium license)
@@ -698,13 +698,13 @@ Mustard Seed Networks Community
 
 ### Monitoring & Alerting
 
-**Tools:**
+#### Tools
 
 - **Sentry** (error tracking): Free tier, $26/month for 50K events
 - **Datadog** (APM): $15/host/month, monitor The Seed instances
 - **UptimeRobot** (uptime monitoring): Free for 50 monitors
 
-**Customer-Facing Status Page:**
+#### Customer-Facing Status Page
 
 - **StatusPage.io**: $29/month
 - Shows: API status, WebSocket status, known issues, scheduled maintenance
@@ -713,12 +713,12 @@ Mustard Seed Networks Community
 
 ### Customer Success Platform (Future)
 
-**For 500+ customers (Year 2+):**
+#### For 500+ customers (Year 2+)
 
 - **ChurnZero**: $12K/year, proactive health scoring
 - **Gainsight**: $25K/year, enterprise-grade
 
-**Features:**
+#### Features
 
 - Health scores (usage, engagement, support tickets)
 - Automated playbooks (low usage → send tutorial email)
@@ -733,7 +733,7 @@ Mustard Seed Networks Community
 
 **Goal:** 60% ticket deflection via self-service by Month 6
 
-**Content Types:**
+#### Content Types
 
 1. **Guides** (step-by-step instructions)
 2. **Tutorials** (walkthroughs with screenshots/videos)
@@ -741,7 +741,7 @@ Mustard Seed Networks Community
 4. **Troubleshooting** (common errors and solutions)
 5. **FAQs** (quick answers)
 
-**Example Articles:**
+#### Example Articles
 
 | Article                                      | Type            | Target Audience | Estimated Deflection |
 | -------------------------------------------- | --------------- | --------------- | -------------------- |
@@ -759,7 +759,7 @@ Mustard Seed Networks Community
 
 **Platform:** YouTube (Mustard Seed Networks channel)
 
-**Priority Videos (Year 1):**
+#### Priority Videos (Year 1)
 
 1. **Getting Started with The Seed** (5 min)
    - Installation, setup wizard, first login
@@ -776,7 +776,7 @@ Mustard Seed Networks Community
 5. **Advanced: API Integration** (15 min)
    - Authentication, making API calls, WebSocket events, building custom dashboards
 
-**Production:**
+#### Production
 
 - Use Loom or ScreenFlow for screen recording
 - Professional editing not required for Year 1
@@ -786,12 +786,12 @@ Mustard Seed Networks Community
 
 ### In-App Help
 
-**Contextual Tooltips:**
+#### Contextual Tooltips
 
 - Hover over setting → tooltip explains what it does
 - Example: "MTU (Maximum Transmission Unit): Largest packet size. Default 1500 is safe for most networks."
 
-**Guided Tours (First-Time Users):**
+#### Guided Tours (First-Time Users)
 
 - Use Shepherd.js or Intro.js
 - 5-step tour on first login:
@@ -801,7 +801,7 @@ Mustard Seed Networks Community
   4. "Settings drawer - configure interfaces, subnets, etc."
   5. "Need help? Click here for docs or chat with support"
 
-**Help Widget:**
+#### Help Widget
 
 - Bottom-right corner: "?" icon
 - Opens: Search knowledge base, contact support, community forum links
@@ -814,7 +814,7 @@ Mustard Seed Networks Community
 
 **Goal:** Reduce support workload by 30% using AI assistants
 
-**Tools:**
+#### Tools
 
 1. **HelpScout Beacon AI** (included): Suggests KB articles before ticket submission
 2. **Intercom Fin** ($0.99/resolution): AI chatbot answers common questions
@@ -826,7 +826,7 @@ Mustard Seed Networks Community
 
 #### 1. Ticket Deflection (Before Submission)
 
-**Flow:**
+##### Flow
 
 1. Customer types question in chat: "How do I change the network interface?"
 2. AI searches knowledge base, finds article "Configuring Network Interfaces"
@@ -840,7 +840,7 @@ Mustard Seed Networks Community
 
 #### 2. Auto-Categorization & Routing
 
-**Flow:**
+##### Flow
 
 1. Customer emails: "The app crashes when I click WiFi Survey"
 2. AI analyzes email:
@@ -857,7 +857,7 @@ Mustard Seed Networks Community
 
 #### 3. Suggested Responses (Agent Assist)
 
-**Flow:**
+##### Flow
 
 1. Support engineer receives ticket: "How do I export compliance report to PDF?"
 2. AI suggests response:
@@ -872,7 +872,7 @@ Mustard Seed Networks Community
 
 #### 4. Sentiment Analysis & Escalation Triggers
 
-**Flow:**
+##### Flow
 
 1. Customer replies to ticket: "This is ridiculous. I've been waiting 3 days for a fix!"
 2. AI detects:
@@ -888,14 +888,14 @@ Mustard Seed Networks Community
 
 ### AI Training Data
 
-**Sources:**
+#### Sources
 
 1. **Documentation:** All knowledge base articles, API docs, guides
 2. **Resolved Tickets:** Anonymized ticket history (questions + resolutions)
 3. **Code Repository:** GitHub issues, README, CLAUDE.md instructions
 4. **Community Forum:** Discord + GitHub Discussions (public posts only)
 
-**Fine-Tuning Process:**
+#### Fine-Tuning Process
 
 1. Export 1,000 resolved tickets (Q&A pairs)
 2. Clean and anonymize (remove customer names, IP addresses)
@@ -903,12 +903,12 @@ Mustard Seed Networks Community
 4. Test with 100 holdout tickets (accuracy target: 80%+)
 5. Deploy and monitor (human review for first month)
 
-**Cost:**
+#### Cost
 
 - Fine-tuning: $100 one-time
 - Inference: ~$50/month (estimated 1,000 queries @ $0.05 each)
 
-**ROI:**
+#### ROI
 
 - Cost: $150/month
 - Savings: 15 hours/week @ $60/hr = $3,600/month
@@ -937,7 +937,7 @@ Mustard Seed Networks Community
 
 **Sent to:** Kris Armstrong, Engineering Lead **Format:** Email + Dashboard (Zendesk/HelpScout)
 
-**Contents:**
+#### Contents
 
 1. **Volume:**
    - Total tickets: 47 (↑12% from last week)
@@ -970,7 +970,7 @@ Mustard Seed Networks Community
 
 **Audience:** Founder, leadership team (when applicable)
 
-**Contents:**
+#### Contents
 
 1. **Summary:**
    - Total tickets: 187 (↑5% MoM)
@@ -997,9 +997,9 @@ Mustard Seed Networks Community
 
 ### Quarterly Health Score (Customer Success Metric)
 
-**For Professional+ Tiers:**
+#### For Professional+ Tiers
 
-**Health Score Factors:**
+#### Health Score Factors
 
 1. **Product Usage (40%)**
    - Login frequency (daily = 10, weekly = 7, monthly = 3, none = 0)
@@ -1016,14 +1016,14 @@ Mustard Seed Networks Community
    - Feature feedback provided (yes = 10, no = 5)
    - Contract tenure (>1 year = 10, 6-12mo = 7, <6mo = 5)
 
-**Score Ranges:**
+#### Score Ranges
 
 - **90-100 (Green):** Healthy, expansion opportunity
 - **70-89 (Yellow):** Stable, maintain engagement
 - **50-69 (Orange):** At-risk, proactive outreach needed
 - **0-49 (Red):** Critical, executive intervention required
 
-**Actions Based on Score:**
+#### Actions Based on Score
 
 - **Green:** Upsell to higher tier, request case study/referral
 - **Yellow:** Continue regular cadence, offer training
@@ -1036,7 +1036,7 @@ Mustard Seed Networks Community
 
 ### Year 1 (Pre-Launch → 300 Customers)
 
-**Team:**
+#### Team
 
 - **Kris Armstrong (Founder):** 10 hours/week on support
   - Executive escalations
@@ -1049,7 +1049,7 @@ Mustard Seed Networks Community
   - Knowledge base content creation
   - Community moderation
 
-**Ticket Capacity:**
+#### Ticket Capacity
 
 - 20 hours/week @ 30 min/ticket = 40 tickets/week = 160 tickets/month
 - Expected volume: ~100-150 tickets/month (manageable)
@@ -1071,7 +1071,7 @@ Mustard Seed Networks Community
 
 ### Year 2 (300 → 1,200 Customers)
 
-**Team:**
+#### Team
 
 - **Kris Armstrong:** 5 hours/week (fewer escalations as team grows)
 - **Full-Time Support Lead:** $65K/year
@@ -1083,7 +1083,7 @@ Mustard Seed Networks Community
   - Tier 1 support (all channels)
   - 40 hours/week each = 80 hours/week total
 
-**Ticket Capacity:**
+#### Ticket Capacity
 
 - 80 hours/week @ 30 min/ticket = 160 tickets/week = 640 tickets/month
 - Expected volume: ~400-600 tickets/month (manageable)
@@ -1096,7 +1096,7 @@ Mustard Seed Networks Community
 
 ### Year 3 (1,200 → 3,500 Customers)
 
-**Team:**
+#### Team
 
 - **Director of Customer Success:** $90K/year (hire Month 18)
 - **Support Lead:** $70K/year
@@ -1117,9 +1117,9 @@ Mustard Seed Networks Community
 
 #### Starter & Professional Tiers (Self-Service)
 
-**Welcome Email (Day 0):**
+##### Welcome Email (Day 0)
 
-```
+```text
 Subject: Welcome to The Seed!
 
 Hi [Name],
@@ -1147,9 +1147,9 @@ Need help? Reply to this email or chat with us in the app.
 
 Let's grow something great together,
 The Seed Team
-```
+```typescript
 
-**Follow-Up Emails:**
+#### Follow-Up Emails
 
 - Day 3: "Have you run your first discovery scan yet?" (if not, send tutorial)
 - Day 7: "3 features you might have missed" (highlight underused features)
@@ -1160,7 +1160,7 @@ The Seed Team
 
 #### Premium Tier (White-Glove Onboarding)
 
-**Kickoff Call (Week 1):**
+##### Kickoff Call (Week 1)
 
 - Duration: 60 minutes
 - Attendees: Customer IT team + TAM
@@ -1171,13 +1171,13 @@ The Seed Team
   4. First discovery scan walkthrough (10 min)
   5. Q&A and next steps (5 min)
 
-**Configuration Review (Week 2):**
+#### Configuration Review (Week 2)
 
 - Duration: 30 minutes
 - Review: Interfaces, subnets, SNMP credentials, integrations
 - Optimize: Performance tuning, custom settings
 
-**Training Session (Week 3):**
+#### Training Session (Week 3)
 
 - Duration: 90 minutes
 - Cover: All features relevant to customer's use case
@@ -1187,18 +1187,18 @@ The Seed Team
 
 #### Enterprise Tier (Comprehensive Onboarding)
 
-**Weeks 1-4:**
+##### Weeks 1-4
 
 - Week 1: Kickoff call + installation assistance
 - Week 2: Configuration review + integration planning
 - Week 3: Admin training (90 min)
 - Week 4: End-user training (60 min) + custom workflow setup
 
-**Week 5:**
+#### Week 5
 
 - First QBR (check-in on progress, address issues)
 
-**Deliverables:**
+#### Deliverables
 
 - Custom runbook (tailored to their environment)
 - Integration documentation (if API/webhook used)
@@ -1208,14 +1208,14 @@ The Seed Team
 
 ### Support Engineer Training
 
-**Week 1: Product Deep Dive**
+#### Week 1: Product Deep Dive
 
 - Install The Seed on macOS and Linux
 - Complete all tutorials (discovery, WiFi, compliance, etc.)
 - Shadow Kris on 5 support tickets
 - Read all documentation
 
-**Week 2: Support Tools & Processes**
+#### Week 2: Support Tools & Processes
 
 - HelpScout/Zendesk training
 - SLA and priority definitions
@@ -1223,21 +1223,21 @@ The Seed Team
 - Canned responses and macros
 - Community moderation guidelines
 
-**Week 3: Technical Training**
+#### Week 3: Technical Training
 
 - Network fundamentals (TCP/IP, subnets, routing)
 - WiFi basics (channels, signal strength, interference)
 - SNMP and device fingerprinting
 - Common customer environments (healthcare, SMB)
 
-**Week 4: Soft Skills & Customer Success**
+#### Week 4: Soft Skills & Customer Success
 
 - Empathy and communication
 - De-escalation techniques
 - Upselling and expansion (when to mention higher tiers)
 - Case studies (real tickets, what went well/wrong)
 
-**Ongoing:**
+#### Ongoing
 
 - Weekly team sync (30 min) - review tough tickets, share learnings
 - Monthly product updates (when new features ship)
@@ -1249,7 +1249,7 @@ The Seed Team
 
 ### Feature Request Process
 
-**Submission:**
+#### Submission
 
 - Customers can submit via:
   - In-app feedback widget
@@ -1257,7 +1257,7 @@ The Seed Team
   - Community forum (#feature-requests)
   - GitHub Discussions (public roadmap)
 
-**Workflow:**
+#### Workflow
 
 1. **Support receives request**
    - Log in HelpScout + create GitHub Discussion
@@ -1280,7 +1280,7 @@ The Seed Team
    - Requestor notified: "Thanks for the suggestion! We've added it to our roadmap."
    - If implemented: "Great news! Your feature request [X] shipped in v1.5. Check it out!"
 
-**Top 10 Feature Requests (Public):**
+#### Top 10 Feature Requests (Public)
 
 - Published on website + GitHub
 - Updated monthly
@@ -1290,12 +1290,12 @@ The Seed Team
 
 ### Bug Report Process
 
-**Submission:**
+#### Submission
 
 - GitHub Issues (public bugs)
 - Support tickets (private/security bugs)
 
-**Workflow:**
+#### Workflow
 
 1. **Report submitted**
    - Support engineer validates (can they reproduce?)
@@ -1316,7 +1316,7 @@ The Seed Team
    - Support engineer comments on ticket: "Fixed in v1.3, releasing next Tuesday"
    - After release: "v1.3 is live! Please update and let us know if this resolves your issue."
 
-**Critical Bugs (P1):**
+#### Critical Bugs (P1)
 
 - Hotfix released within 24 hours if possible
 - All affected customers notified proactively via email
@@ -1327,7 +1327,7 @@ The Seed Team
 
 ### Incident Severity Levels
 
-**Sev 1 - Critical (Public Disclosure / Active Exploit)**
+#### Sev 1 - Critical (Public Disclosure / Active Exploit)
 
 - Active exploitation of vulnerability
 - Public disclosure of zero-day
@@ -1338,7 +1338,7 @@ The Seed Team
 
 ---
 
-**Sev 2 - High (Vulnerability Reported / Suspected Breach)**
+#### Sev 2 - High (Vulnerability Reported / Suspected Breach)
 
 - Security researcher reports vulnerability
 - Suspicious activity detected (potential breach)
@@ -1348,7 +1348,7 @@ The Seed Team
 
 ---
 
-**Sev 3 - Medium (Low-Risk Vulnerability)**
+#### Sev 3 - Medium (Low-Risk Vulnerability)
 
 - Dependency vulnerability (npm audit, govulncheck)
 - Theoretical vulnerability (no known exploit)
@@ -1360,7 +1360,7 @@ The Seed Team
 
 ### Incident Response Plan (Sev 1)
 
-**Phase 1: Detection & Containment (0-1 hour)**
+#### Phase 1: Detection & Containment (0-1 hour)
 
 1. **Alert received** (bug bounty, customer report, automated monitoring)
 2. **Confirm incident** (validate it's real, assess scope)
@@ -1393,14 +1393,14 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
 
 ### Security Bug Bounty Program (Future - Year 2)
 
-**Scope:**
+#### Scope
 
 - The Seed application (all versions)
 - API endpoints
 - Web frontend
 - Hosted infrastructure (if applicable)
 
-**Rewards:**
+#### Rewards
 
 - **Critical (RCE, auth bypass, SQLi):** $500-$2,000
 - **High (XSS, CSRF, info disclosure):** $200-$500
@@ -1417,7 +1417,7 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
 
 ### HIPAA Compliance Assistance (Healthcare Customers)
 
-**Common Questions:**
+#### Common Questions
 
 - "Is The Seed HIPAA compliant?"
   - **Answer:** The Seed is a diagnostic tool that runs on-premises. It does not store, transmit, or process PHI by
@@ -1434,7 +1434,7 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
     weak SNMP, rogue DHCP) that could violate HIPAA security rules. Run scans quarterly, export PDF reports, and attach
     to your compliance documentation.
 
-**Support Deliverables (Premium+ tiers):**
+#### Support Deliverables (Premium+ tiers)
 
 - HIPAA compliance checklist (how to use The Seed for audits)
 - Custom report templates (formatted for auditors)
@@ -1444,13 +1444,13 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
 
 ### PCI-DSS Support (Retail/Payment Customers)
 
-**Common Questions:**
+#### Common Questions
 
 - "Can The Seed help with PCI compliance?"
   - **Answer:** Yes. PCI-DSS requires network segmentation and vulnerability scanning. The Seed's VLAN discovery and
     vulnerability scanner help you verify segmentation and identify risks.
 
-**Support Deliverables (Premium+ tiers):**
+#### Support Deliverables (Premium+ tiers)
 
 - PCI compliance checklist
 - Network segmentation validation guide
@@ -1467,7 +1467,7 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
 **What:** Full-day training at customer site **Who:** Premium and Enterprise customers **Duration:** 8 hours (9am-5pm)
 **Delivered By:** Kris Armstrong or certified trainer **Price:** $2,500/day + travel expenses
 
-**Agenda:**
+#### Agenda
 
 - Morning: Product training (features, workflows)
 - Afternoon: Hands-on (WiFi survey, compliance reporting, custom integrations)
@@ -1497,7 +1497,7 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
 - Bill of materials (which APs, how many, where)
 - Installation guide
 
-**Price:**
+#### Price
 
 - Small site (<5,000 sq ft): $1,500
 - Medium site (5,000-20,000 sq ft): $3,500
@@ -1526,7 +1526,7 @@ days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed i
 
 ### Template 1: Welcome Email (All Tiers)
 
-```
+```text
 Subject: Welcome to The Seed!
 
 Hi [Name],
@@ -1558,13 +1558,13 @@ Let's grow something great together,
 The Seed Team
 
 P.S. - We'd love to hear what you're working on. Reply and tell us about your network!
-```
+```yaml
 
 ---
 
 ### Template 2: Ticket Received (Auto-Response)
 
-```
+```yaml
 Subject: [TICKET-12345] We've received your support request
 
 Hi [Name],
@@ -1588,13 +1588,13 @@ The Seed Support Team
 
 ---
 Need help faster? Chat with us in the app or join our community Discord.
-```
+```typescript
 
 ---
 
 ### Template 3: Escalation Notification (To Customer)
 
-```
+```typescript
 Subject: [TICKET-12345] Your ticket has been escalated
 
 Hi [Name],
@@ -1618,13 +1618,13 @@ We appreciate your patience and partnership.
 Best,
 [Support Engineer Name]
 The Seed Support Team
-```
+```python
 
 ---
 
 ### Template 4: Resolution & CSAT Survey
 
-```
+```python
 Subject: [TICKET-12345] Resolved - How did we do?
 
 Hi [Name],
@@ -1653,13 +1653,13 @@ Need anything else? Just reply to this email to reopen the ticket.
 Best,
 [Support Engineer Name]
 The Seed Support Team
-```
+```yaml
 
 ---
 
 ### Template 5: Proactive Outreach (Low Usage)
 
-```
+```text
 Subject: Getting the most out of The Seed
 
 Hi [Name],
@@ -1680,7 +1680,7 @@ Best,
 The Seed Team
 
 P.S. - Your subscription renews on [date]. Let me know if you have any questions about your plan.
-```
+```yaml
 
 ---
 
@@ -1700,3 +1700,4 @@ support engineer hired)
 _Let's grow something great together._
 
 **Mustard Seed Networks** _From a tiny seed, a mighty network grows._
+````

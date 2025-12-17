@@ -1,11 +1,11 @@
 # The Seed Design System
 
-This design system ensures consistent styling across the application. Instead of scattered utility
-classes, use the centralized theme tokens and component utilities.
+This design system ensures consistent styling across the application. Instead of scattered utility classes, use the
+centralized theme tokens and component utilities.
 
 ## Quick Start
 
-```tsx
+````tsx
 import { buttonClass, cardClass, cn } from '../styles/theme';
 
 // ❌ Bad - scattered utilities, hard to maintain
@@ -17,7 +17,7 @@ import { buttonClass, cardClass, cn } from '../styles/theme';
 <button className={buttonClass('primary', 'md')}>
   Click me
 </button>
-```
+```python
 
 ## Color System
 
@@ -69,7 +69,7 @@ spacing.major      // 12 (48px)
 
 // Usage
 <div className={`mb-${spacing.default} gap-${spacing.comfortable}`}>
-```
+```python
 
 ### Common Patterns
 
@@ -89,7 +89,7 @@ import { typography } from '../styles/theme';
 <h3 className={typography.size.xl}>      // 20px - card titles
 <h2 className={typography.size['2xl']}>  // 24px - section headings
 <h1 className={typography.size['3xl']}>  // 30px - page titles
-```
+```text
 
 ### Font Weights
 
@@ -98,7 +98,7 @@ import { typography } from '../styles/theme';
 <p className={typography.weight.medium}>    // 500 - emphasis
 <h3 className={typography.weight.semibold}> // 600 - headings
 <h1 className={typography.weight.bold}>     // 700 - major headings
-```
+```text
 
 ### Font Families
 
@@ -106,7 +106,7 @@ import { typography } from '../styles/theme';
 <p className={typography.family.body}>     // Inter - body text
 <h1 className={typography.family.display}> // Inter - headings
 <code className={typography.family.mono}>  // JetBrains Mono - code
-```
+```python
 
 ## Component Variants
 
@@ -139,7 +139,7 @@ import { buttonClass } from '../styles/theme';
 <button className={buttonClass('primary', 'lg', 'w-full')}>
   Full Width Button
 </button>
-```
+```python
 
 **Sizes**: `sm` | `md` | `lg`
 
@@ -161,7 +161,7 @@ import { inputClass } from '../styles/theme';
 
 // Custom additions
 <input className={inputClass('default', 'md', 'font-mono')} />
-```
+```python
 
 **Sizes**: `sm` | `md` | `lg`
 
@@ -187,7 +187,7 @@ import { cardClass } from '../styles/theme';
 <div className={cardClass('interactive', 'md')}>
   Clickable card
 </div>
-```
+```python
 
 **Variants**: `default` | `elevated` | `interactive`
 
@@ -203,7 +203,7 @@ import { badgeClass } from '../styles/theme';
 <span className={badgeClass('error')}>Failed</span>
 <span className={badgeClass('info')}>Info</span>
 <span className={badgeClass('primary')}>New</span>
-```
+```python
 
 **Variants**: `default` | `success` | `warning` | `error` | `info` | `primary`
 
@@ -222,7 +222,7 @@ import { modal, modalClass } from "../styles/theme";
     </div>
   </div>
 </div>;
-```
+```python
 
 **Sizes**: `sm` | `md` | `lg` | `xl` | `full`
 
@@ -241,7 +241,7 @@ import { status, cn } from '../styles/theme';
   <span className={cn(status.dot, status.color.success)} />
   <span>Connected</span>
 </div>
-```
+```python
 
 **Colors**: `success` | `warning` | `error` | `info` | `inactive`
 
@@ -254,7 +254,7 @@ import { section } from "../styles/theme";
 <div className={cn(section.container, section.width.lg)}>
   <div className={section.spacing.default}>{/* Content with consistent spacing */}</div>
 </div>;
-```
+```python
 
 **Widths**: `sm` | `md` | `lg` | `xl` | `full`
 
@@ -275,7 +275,7 @@ import { cn } from '../styles/theme';
   isDisabled && 'disabled-class',
   customClass
 )}>
-```
+```text
 
 ## Migration Guide
 
@@ -289,7 +289,7 @@ import { cn } from '../styles/theme';
 <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
   <h3 className="text-xl font-semibold mb-2">Title</h3>
 </div>
-```
+```python
 
 ### After (design system)
 
@@ -303,14 +303,13 @@ import { buttonClass, cardClass } from '../styles/theme';
 <div className={cardClass('default', 'lg')}>
   <h3 className="text-xl font-semibold mb-2">Title</h3>
 </div>
-```
+```text
 
 ## Benefits
 
-✅ **Consistency**: All components use the same design tokens ✅ **Maintainability**: Change once,
-update everywhere ✅ **Type Safety**: TypeScript autocomplete for variants ✅ **Accessibility**:
-Built-in focus states, contrast ratios ✅ **Dark Mode**: Automatic theme switching via CSS variables
-✅ **Performance**: No runtime CSS-in-JS overhead
+✅ **Consistency**: All components use the same design tokens ✅ **Maintainability**: Change once, update everywhere ✅
+**Type Safety**: TypeScript autocomplete for variants ✅ **Accessibility**: Built-in focus states, contrast ratios ✅
+**Dark Mode**: Automatic theme switching via CSS variables ✅ **Performance**: No runtime CSS-in-JS overhead
 
 ## Best Practices
 
@@ -320,3 +319,4 @@ Built-in focus states, contrast ratios ✅ **Dark Mode**: Automatic theme switch
 4. **Add custom classes** as the third parameter when needed
 5. **Document new patterns** if they're reused 3+ times
 6. **Keep colors semantic** - use status colors for meaning, not decoration
+````

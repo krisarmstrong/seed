@@ -9,19 +9,19 @@ significant limitations. **Not recommended** as a first choice for The Seed.
 
 ### Why Broadcom is Problematic
 
-**Driver Fragmentation:**
+#### Driver Fragmentation
 
 - Multiple competing drivers: `bcm43xx`, `b43`, `brcmfmac`, `wl` (proprietary)
 - Different chipsets require different drivers
 - Firmware often required (non-free)
 
-**Monitor Mode Support:**
+#### Monitor Mode Support
 
 - ⚠️ **Limited** - Varies significantly by chipset
 - Some chipsets: No monitor mode at all
 - Others: Works but unstable
 
-**Packet Injection:**
+#### Packet Injection
 
 - ❌ **Not supported** on most chipsets
 - Some community patches exist but unreliable
@@ -46,14 +46,14 @@ Intel or Atheros instead**.
 
 ### Identify Your Chipset
 
-```bash
+````bash
 lspci | grep -i broadcom
 # Example output:
 # 03:00.0 Network controller: Broadcom Inc. BCM4360 802.11ac
 
 lsusb | grep -i broadcom
 # For USB adapters
-```
+```text
 
 ### Install brcmfmac (Open-Source Driver)
 
@@ -67,7 +67,7 @@ sudo pacman -S broadcom-wl
 
 # Verify
 lsmod | grep brcmfmac
-```
+```text
 
 ### Install wl (Proprietary Driver)
 
@@ -92,7 +92,7 @@ EOF
 
 # Reboot
 sudo reboot
-```
+```yaml
 
 ---
 
@@ -103,7 +103,7 @@ sudo reboot
 ```bash
 iw list | grep -A 10 "Supported interface modes"
 # Look for: * monitor
-```
+```text
 
 ### Attempt to Enable Monitor Mode
 
@@ -114,9 +114,9 @@ sudo ip link set wlan0 up
 
 # Verify
 iw dev wlan0 info
-```
+```yaml
 
-**Expected Results:**
+#### Expected Results
 
 - BCM4360, BCM4352: May work but unstable
 - BCM43142 (wl driver): Will fail with "Operation not supported"
@@ -127,15 +127,15 @@ iw dev wlan0 info
 
 ### Issue: Monitor Mode Fails
 
-**Error:**
+#### Error
 
-```
+```text
 command failed: Operation not supported (-95)
-```
+```text
 
 **Cause:** Chipset/driver combination doesn't support monitor mode
 
-**Solution:**
+#### Solution
 
 - Try switching to `brcmfmac` driver if using `wl`
 - If still fails, Broadcom chipset doesn't support monitor mode
@@ -143,20 +143,20 @@ command failed: Operation not supported (-95)
 
 ### Issue: Firmware Missing
 
-**Error:**
+#### Error
 
-```
+```text
 brcmfmac: brcmf_c_preinit_dcmds: Firmware version = wl0: Nov 10 2015 06:38:10 version 7.35.180.80 FWID 01-abcdef12
 brcmfmac: brcmf_c_preinit_dcmds: Failed to get revision info: -110
-```
+```text
 
-**Solution:**
+#### Solution
 
 ```bash
 sudo apt install firmware-brcm80211
 sudo modprobe -r brcmfmac
 sudo modprobe brcmfmac
-```
+```yaml
 
 ### Issue: Slow Channel Switching
 
@@ -177,14 +177,14 @@ Many MacBooks use Broadcom Wi-Fi with custom Apple firmware:
 - BCM43602 (MacBook Pro 2015-2017)
 - BCM4364 (MacBook Air 2018-2019)
 
-**Linux Support:**
+#### Linux Support
 
 - ⚠️ **Varies significantly**
 - Usually works for managed mode (normal Wi-Fi)
 - **Monitor mode:** Often doesn't work
 - Requires `brcmfmac` driver
 
-**Recommendation for MacBook Users:**
+#### Recommendation for MacBook Users
 
 - Don't expect full diagnostics capabilities
 - Use external USB adapter (AR9271, Intel AX200-based USB)
@@ -208,7 +208,9 @@ If you already have Broadcom hardware:
 
    ```bash
    sudo ./scripts/test-hardware-compatibility.sh wlan0
-   ```
+```text
+
+```yaml
 
 2. If monitor mode works: Use it for basic diagnostics
 3. If monitor mode fails: Use for managed mode only, get external adapter for advanced features
@@ -252,3 +254,5 @@ _(Community will add failed attempts here)_
 **Last Updated:** 2025-12-14 **Total Community Reports:** 0 _(submit yours!)_
 
 [← Back to Home](Home) | [← Previous: Qualcomm Atheros](Qualcomm-Atheros-WiFi) | [Next: Realtek →](Realtek-WiFi)
+```text
+````

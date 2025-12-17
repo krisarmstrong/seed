@@ -76,6 +76,7 @@ export function useVulnerabilities() {
       const response = await fetch(url, {
         method: "POST",
         headers: getAuthHeaders(),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -98,6 +99,7 @@ export function useVulnerabilities() {
     try {
       const response = await fetch(`${API_BASE}/api/vulnerabilities/status`, {
         headers: getAuthHeaders(),
+        credentials: "include",
       });
       if (!response.ok) {
         return null;
@@ -117,6 +119,7 @@ export function useVulnerabilities() {
 
       const response = await fetch(url, {
         headers: getAuthHeaders(),
+        credentials: "include",
       });
       if (!response.ok) {
         return [];
@@ -137,6 +140,7 @@ export function useVulnerabilities() {
           `${API_BASE}/api/vulnerabilities/device?ip=${encodeURIComponent(ip)}`,
           {
             headers: getAuthHeaders(),
+            credentials: "include",
           }
         );
 
@@ -159,6 +163,7 @@ export function useVulnerabilities() {
     try {
       const response = await fetch(`${API_BASE}/api/vulnerabilities/settings`, {
         headers: getAuthHeaders(),
+        credentials: "include",
       });
       if (!response.ok) {
         return null;
@@ -179,6 +184,7 @@ export function useVulnerabilities() {
             "Content-Type": "application/json",
             ...getAuthHeaders(),
           },
+          credentials: "include",
           body: JSON.stringify(settings),
         });
 

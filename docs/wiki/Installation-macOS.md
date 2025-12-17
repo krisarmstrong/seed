@@ -13,10 +13,10 @@
 
 **Coming Soon:** The Seed will be available via Homebrew tap.
 
-```bash
+````bash
 # Not yet available - planned for launch
 brew install mustardseednetworks/tap/seed
-```
+```text
 
 ### Method 2: Download Binary
 
@@ -30,19 +30,23 @@ brew install mustardseednetworks/tap/seed
    tar -xzf seed-darwin-arm64.tar.gz  # Apple Silicon
    # OR
    tar -xzf seed-darwin-amd64.tar.gz  # Intel
-   ```
+```text
+
+```text
 
 3. **Move** to your PATH:
 
    ```bash
    sudo mv seed /usr/local/bin/
-   ```
+```text
 
 4. **Verify** installation:
 
    ```bash
    seed --version
-   ```
+```text
+
+```python
 
 ### Method 3: Build from Source
 
@@ -54,7 +58,7 @@ See [Building from Source](Building-from-Source) guide.
 
    ```bash
    seed
-   ```
+```text
 
 2. **macOS Permission Prompts:**
    - You'll see "seed wants to access files" - Click **OK**
@@ -73,18 +77,18 @@ See [Building from Source](Building-from-Source) guide.
 
 The Seed requires elevated privileges for packet capture.
 
-**macOS Ventura 13+ (Recommended):**
+#### macOS Ventura 13+ (Recommended)
 
 ```bash
 # Grant network access without full sudo
 sudo chmod +x /usr/local/bin/seed
-```
+```text
 
 **Alternative:** Run with sudo:
 
 ```bash
 sudo seed
-```
+```text
 
 ## Uninstallation
 
@@ -97,7 +101,7 @@ sudo rm /usr/local/bin/seed
 
 # Remove config files (optional)
 rm -rf ~/.config/seed
-```
+```text
 
 ## Next Steps
 
@@ -120,3 +124,4 @@ rm -rf ~/.config/seed
 - **Solution:** Check if port 8080 is already in use: `lsof -i :8080`
 
 [More Troubleshooting](Troubleshooting)
+````

@@ -22,7 +22,7 @@ protect revenue, enable trials, prevent abuse
 
 **Purpose:** Lead generation, product-led growth, freemium model
 
-**Features Included:**
+#### Features Included
 
 - Basic network discovery (ARP, ICMP)
 - WiFi scanning (basic)
@@ -32,7 +32,7 @@ protect revenue, enable trials, prevent abuse
 - Basic DHCP/DNS monitoring
 - Export to CSV
 
-**Limitations:**
+#### Limitations
 
 - Max 50 devices
 - No AI features
@@ -51,7 +51,7 @@ hobbyists, small home networks
 
 **Purpose:** Entry point for small businesses and consultants
 
-**Features Included:**
+#### Features Included
 
 - Everything in Free, plus:
 - ✅ Up to 200 devices
@@ -61,7 +61,7 @@ hobbyists, small home networks
 - ✅ Email support (48-hour response)
 - ✅ Remove branding from exports
 
-**Limitations:**
+#### Limitations
 
 - No predictive WiFi survey
 - No anomaly detection
@@ -77,7 +77,7 @@ Small IT departments, individual consultants, clinics
 
 **Purpose:** Primary offering for SMB, healthcare, MSPs
 
-**Features Included:**
+#### Features Included
 
 - Everything in Starter, plus:
 - ✅ Unlimited devices
@@ -92,7 +92,7 @@ Small IT departments, individual consultants, clinics
 - ✅ Priority email support (24-hour response)
 - ✅ Basic API access (100 calls/day)
 
-**Limitations:**
+#### Limitations
 
 - No predictive WiFi survey
 - No fleet management
@@ -108,7 +108,7 @@ Community hospitals, MSPs, network consultants, IT departments
 
 **Purpose:** WiFi consultants, professional deployments, flagship features
 
-**Features Included:**
+#### Features Included
 
 - Everything in Professional, plus:
 - ✅ **Predictive WiFi survey simulation** (FLAGSHIP)
@@ -123,7 +123,7 @@ Community hospitals, MSPs, network consultants, IT departments
 - ✅ Full API access (1,000 calls/day)
 - ✅ Dedicated Slack channel
 
-**Limitations:**
+#### Limitations
 
 - Single-site (for multi-site, upgrade to Enterprise)
 - No SSO/SAML
@@ -138,7 +138,7 @@ consultants, hospitals with complex WiFi, professional deployments
 
 **Purpose:** MSPs, large healthcare systems, multi-site deployments
 
-**Features Included:**
+#### Features Included
 
 - Everything in Premium, plus:
 - ✅ **Multi-site fleet management** (unlimited sites)
@@ -163,9 +163,9 @@ with 5+ healthcare clients, large health systems, enterprise IT
 
 ### **1. License Key System**
 
-**Generation:**
+#### Generation
 
-```
+````text
 Format: LLLL-TTTT-NNNN-CCCC-HHHH
 - L = License tier (FREE, STRT, PROF, PREM, ENTP)
 - T = Timestamp (Unix epoch, base36)
@@ -174,14 +174,14 @@ Format: LLLL-TTTT-NNNN-CCCC-HHHH
 - H = HMAC signature (prevent tampering)
 
 Example: PROF-A7K9M-12345-R8Q2-9F3D
-```
+```yaml
 
-**Storage:**
+#### Storage
 
 - Client-side: `~/.seed/license.key`
 - Server-side: License database (customer_id, license_key, tier, expiry, max_devices)
 
-**Validation:**
+#### Validation
 
 1. Parse license key
 2. Verify HMAC signature
@@ -195,21 +195,21 @@ Example: PROF-A7K9M-12345-R8Q2-9F3D
 
 **Purpose:** Prevent license sharing across organizations
 
-**Fingerprint Components:**
+#### Fingerprint Components
 
 - MAC address of primary interface
 - Hostname
 - CPU ID (if available)
 - Installation UUID (generated on first run)
 
-**Enforcement:**
+#### Enforcement
 
 - Free tier: 1 device per license
 - Starter: Up to 3 devices (laptop, desktop, server)
 - Pro/Premium/Enterprise: Up to 5 devices
 - Enterprise (custom): Negotiate for large deployments
 
-**Behavior:**
+#### Behavior
 
 - Soft limit: Warning after device limit exceeded
 - Hard limit: Block activation after 2x device limit
@@ -219,15 +219,15 @@ Example: PROF-A7K9M-12345-R8Q2-9F3D
 
 ### **3. Cloud License Validation**
 
-**Frequency:**
+#### Frequency
 
 - Every 24 hours (online check)
 - Grace period: 7 days offline (after last successful validation)
 - After grace period: Downgrade to Free tier features
 
-**Validation Endpoint:**
+#### Validation Endpoint
 
-```
+```text
 POST https://license.seed.com/api/v1/validate
 {
   "license_key": "PROF-...",
@@ -245,9 +245,9 @@ Response:
   "max_devices": 200,
   "api_quota": 100
 }
-```
+```go
 
-**Offline Mode:**
+#### Offline Mode
 
 - Cache last validation response
 - Allow offline use for 7 days
@@ -258,7 +258,7 @@ Response:
 
 ### **4. Feature Gating**
 
-**Backend Feature Flags:**
+#### Backend Feature Flags
 
 ```go
 type LicenseTier int
@@ -285,9 +285,9 @@ func (l *License) CanUse(feature string) bool {
         return false
     }
 }
-```
+```python
 
-**Frontend Feature Gating:**
+#### Frontend Feature Gating
 
 - Hide unavailable features in UI
 - Show "Upgrade to Premium" CTA when clicking disabled feature
@@ -299,13 +299,13 @@ func (l *License) CanUse(feature string) bool {
 
 ### **30-Day Free Trial**
 
-**Tiers Available:**
+#### Tiers Available
 
 - Professional: 30-day trial
 - Premium: 30-day trial (recommended default)
 - Enterprise: Custom evaluation period (60-90 days)
 
-**Trial Activation:**
+#### Trial Activation
 
 1. User signs up with email
 2. Credit card required (soft charge, no payment until trial ends)
@@ -313,7 +313,7 @@ func (l *License) CanUse(feature string) bool {
 4. Email reminders: Day 7, 14, 21, 28, 30
 5. Auto-convert to paid on Day 31 OR downgrade to Free tier
 
-**Trial Extensions:**
+#### Trial Extensions
 
 - Healthcare/education: Auto-approve 15-day extension
 - Enterprise POC: Sales can approve 30-60 day extension
@@ -325,14 +325,14 @@ func (l *License) CanUse(feature string) bool {
 
 **Purpose:** Sales demos, trade shows, screenshots
 
-**Features:**
+#### Features
 
 - Full Enterprise tier features
 - 7-day expiration (non-renewable)
 - Watermark: "DEMO LICENSE" on all exports
 - No credit card required
 
-**Activation:**
+#### Activation
 
 - Sales team can generate via admin portal
 - Pre-loaded demo data included
@@ -351,26 +351,26 @@ func (l *License) CanUse(feature string) bool {
 | 25-49 sites    | 35%      | $1,299/year each          |
 | 50+ sites      | 40%      | $1,199/year each          |
 
-**Enterprise tier includes volume pricing in base price ($4,999 = unlimited sites)**
+#### Enterprise tier includes volume pricing in base price ($4,999 = unlimited sites)
 
 ---
 
 ### **MSP Partner Program**
 
-**Tiers:**
+#### Tiers
 
 - **Registered Partner:** 10% discount, co-marketing
 - **Silver Partner:** 20% discount, dedicated support
 - **Gold Partner:** 30% discount, revenue share, white-label
 
-**Requirements:**
+#### Requirements
 
 - Manage 5+ healthcare clients (Silver)
 - Manage 20+ healthcare clients (Gold)
 - Complete The Seed certification training
 - Quarterly revenue targets
 
-**Revenue Share:**
+#### Revenue Share
 
 - Partner sells The Seed to their clients
 - Partner keeps 20-30% margin
@@ -384,7 +384,7 @@ func (l *License) CanUse(feature string) bool {
 
 **Discount:** 50% off all tiers (verify via .edu email or 501(c)(3) status)
 
-**Use Case:**
+#### Use Case
 
 - Universities, K-12 schools
 - Hospitals (non-profit only, not for-profit healthcare)
@@ -394,14 +394,14 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Government & SLED**
 
-**Special Licensing:**
+#### Special Licensing
 
 - No cloud validation required (air-gapped environments)
 - 90-day offline grace period
 - Custom procurement terms (NET 60, POs accepted)
 - FedRAMP compliance roadmap provided
 
-**Pricing:**
+#### Pricing
 
 - GSA Schedule pricing (once approved)
 - State contract pricing (once negotiated)
@@ -412,7 +412,7 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Tier Upgrades**
 
-**Mid-contract upgrade:**
+#### Mid-contract upgrade
 
 - Prorate current tier, apply credit to higher tier
 - Example: 6 months into Starter ($299/year) → Upgrade to Premium ($1,999/year)
@@ -420,7 +420,7 @@ func (l *License) CanUse(feature string) bool {
   - Charge: $1,999 - $150 = $1,849
   - New expiration: 12 months from upgrade date
 
-**Downgrades:**
+#### Downgrades
 
 - Allowed at renewal only (not mid-contract)
 - Grace period: Features remain active until renewal date
@@ -429,7 +429,7 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Legacy License Migration**
 
-**Perpetual → Subscription:**
+#### Perpetual → Subscription
 
 - If you offered perpetual licenses (one-time purchase) pre-2026
 - Grandfather perpetual customers for 3 years
@@ -441,7 +441,7 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Usage Telemetry**
 
-**What We Track (Privacy-Preserving):**
+#### What We Track (Privacy-Preserving)
 
 - License tier and expiration
 - Feature usage (which features are used, not network data)
@@ -449,7 +449,7 @@ func (l *License) CanUse(feature string) bool {
 - API call volume
 - Error rates and crashes (anonymous)
 
-**What We DON'T Track:**
+#### What We DON'T Track
 
 - Network topology
 - Device details (IPs, MACs, hostnames)
@@ -457,7 +457,7 @@ func (l *License) CanUse(feature string) bool {
 - User data (PHI, PCI, PII)
 - Geographic location (unless consented)
 
-**Opt-Out:**
+#### Opt-Out
 
 - Enterprise customers can disable telemetry (on-prem mode)
 - Must validate license via manual process quarterly
@@ -466,14 +466,14 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Audit Rights**
 
-**Enterprise Contracts:**
+#### Enterprise Contracts
 
 - The Seed reserves right to audit license usage annually
 - Advance notice: 30 days
 - Customer provides device count, site count, user count
 - If over-usage found: Pay true-up + 10% penalty OR terminate
 
-**Grace Period:**
+#### Grace Period
 
 - 30 days to remediate over-usage (buy more licenses)
 - No penalty if resolved within grace period
@@ -491,26 +491,26 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Enforcement Actions**
 
-**Tier 1 (Warning):**
+#### Tier 1 (Warning)
 
 - Email warning to license holder
 - In-app banner: "Please upgrade or reduce devices"
 - 14-day grace period to comply
 
-**Tier 2 (Soft Block):**
+#### Tier 2 (Soft Block)
 
 - Disable premium features (downgrade to Free tier)
 - Retain data, but limit functionality
 - Display upgrade prompt on every launch
 
-**Tier 3 (Hard Block):**
+#### Tier 3 (Hard Block)
 
 - Repeated violations after warnings
 - Suspected piracy/key sharing
 - Block license key (cannot validate)
 - Contact sales for resolution
 
-**Appeal Process:**
+#### Appeal Process
 
 - Email: license@seed.com
 - Legitimate cases resolved within 48 hours (e.g., company acquisition, system migration)
@@ -521,27 +521,27 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Features:**
 
-**Account Management:**
+#### Account Management
 
 - View license details (tier, expiration, device count)
 - Upgrade/downgrade tier
 - Update payment method
 - View invoices and payment history
 
-**Device Management:**
+#### Device Management
 
 - List activated devices
 - Deactivate old devices
 - See device fingerprints (last 4 chars of MAC)
 - Transfer license to new device
 
-**API Keys:**
+#### API Keys
 
 - Generate API keys (Professional tier+)
 - Revoke API keys
 - View API usage statistics
 
-**Billing:**
+#### Billing
 
 - Update credit card
 - Switch annual ↔ monthly
@@ -556,14 +556,14 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Payment Methods:**
 
-**Accepted:**
+#### Accepted
 
 - Credit/debit cards (Stripe)
 - ACH/bank transfer (Enterprise, annual only)
 - Purchase orders (Enterprise, government, NET 30-60)
 - Wire transfer (international, Enterprise)
 
-**Not Accepted:**
+#### Not Accepted
 
 - Cryptocurrency (too volatile, compliance issues)
 - PayPal (high fees, chargeback risk)
@@ -573,14 +573,14 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Billing Cycle:**
 
-**Monthly:**
+#### Monthly
 
 - Auto-renew on same day each month
 - 3-day grace period if payment fails
 - Retry payment 3 times (Day 1, 3, 7)
 - Suspend account after 7 days non-payment
 
-**Annual:**
+#### Annual
 
 - Auto-renew on anniversary
 - 30-day renewal notice email
@@ -591,18 +591,18 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Refund Policy:**
 
-**30-Day Money-Back Guarantee:**
+#### 30-Day Money-Back Guarantee
 
 - Full refund if unsatisfied within 30 days
 - No questions asked
 - Applies to first purchase only (not renewals)
 
-**Pro-rated Refunds:**
+#### Pro-rated Refunds
 
 - Annual subscription canceled mid-year: Pro-rated refund
 - Monthly: No refund (current month completes)
 
-**No Refunds:**
+#### No Refunds
 
 - Renewals (cancel before renewal date instead)
 - Enterprise contracts (negotiated separately)
@@ -613,13 +613,13 @@ func (l *License) CanUse(feature string) bool {
 
 ### **Backend:**
 
-**Storage:**
+#### Storage
 
 - Encrypted at rest (AES-256)
 - Hashed for lookups (HMAC-SHA256)
 - Access logged (audit trail)
 
-**Database Schema:**
+#### Database Schema
 
 ```sql
 CREATE TABLE licenses (
@@ -636,19 +636,19 @@ CREATE TABLE licenses (
 );
 
 CREATE INDEX idx_license_hash ON licenses(license_key_hash);
-```
+```yaml
 
 ---
 
 ### **Client-Side:**
 
-**Storage Location:**
+#### Storage Location
 
 - Linux: `~/.config/seed/license.key`
 - macOS: `~/Library/Application Support/The Seed/license.key`
 - Windows: `%APPDATA%\The Seed\license.key`
 
-**Permissions:**
+#### Permissions
 
 - Owner read-only (chmod 400)
 - Not world-readable
@@ -685,14 +685,14 @@ CREATE INDEX idx_license_hash ON licenses(license_key_hash);
 
 **Option:** Make core network monitoring open source, premium features proprietary
 
-**Pros:**
+#### Pros
 
 - Community contributions
 - Transparency builds trust
 - Easier adoption
 - Marketing value
 
-**Cons:**
+#### Cons
 
 - Competitors can fork
 - Harder to monetize
@@ -704,7 +704,7 @@ CREATE INDEX idx_license_hash ON licenses(license_key_hash);
 
 ## License Compliance Checklist
 
-**Before Launch:**
+### Before Launch
 
 - [ ] Implement license key generation
 - [ ] Build license validation API
@@ -717,7 +717,7 @@ CREATE INDEX idx_license_hash ON licenses(license_key_hash);
 - [ ] Add offline grace period logic
 - [ ] Write license enforcement docs
 
-**Post-Launch:**
+#### Post-Launch
 
 - [ ] Monitor license violations
 - [ ] Track tier conversion rates
@@ -770,10 +770,11 @@ CREATE INDEX idx_license_hash ON licenses(license_key_hash);
 
 ---
 
-**Next Steps:**
+#### Next Steps
 
 1. Implement license key system (Sprint 1)
 2. Build customer portal (Sprint 2)
 3. Integrate Stripe billing (Sprint 2)
 4. Create trial signup flow (Sprint 3)
 5. Launch beta with Professional tier trial
+````

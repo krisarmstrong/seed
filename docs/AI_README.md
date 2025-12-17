@@ -8,9 +8,9 @@
 
 ### **1. [AI_INTEGRATION_PLAN.md](./AI_INTEGRATION_PLAN.md)** (Technical)
 
-**23KB | Detailed Architecture & Implementation**
+#### 23KB | Detailed Architecture & Implementation
 
-**What's Inside:**
+#### What's Inside
 
 - Complete technical architecture (backend/frontend)
 - Package structure (`internal/ai/*`)
@@ -26,9 +26,9 @@
 
 ### **2. [AI_ISSUES_SUMMARY.md](./AI_ISSUES_SUMMARY.md)** (Business)
 
-**18KB | Issues, Pricing, Strategy, Revenue**
+#### 18KB | Issues, Pricing, Strategy, Revenue
 
-**What's Inside:**
+#### What's Inside
 
 - All 24 GitHub issues organized by milestone
 - **UPDATED PRICING TIERS** (Starter/Pro/Premium/Enterprise)
@@ -75,13 +75,13 @@
 
 ### Key Features by Tier
 
-**Starter ($299/year):**
+#### Starter ($299/year)
 
 - Network discovery, WiFi scanning, speed tests
 - Basic AI device classification
 - Network health scoring
 
-**Professional ($799/year):**
+#### Professional ($799/year)
 
 - Everything in Starter, PLUS:
 - AI root cause analysis
@@ -101,7 +101,7 @@
 - White-label reports
 - Priority support
 
-**Enterprise ($4,999/year):**
+#### Enterprise ($4,999/year)
 
 - Everything in Premium, PLUS:
 - Multi-site fleet management (unlimited sites)
@@ -112,27 +112,27 @@
 
 ### ROI Justification
 
-**Premium Tier - WiFi Consultants:**
+#### Premium Tier - WiFi Consultants
 
-```
+````text
 Single site survey project: $3,000-5,000 client charge
 Time saved with predictive survey: 6 hours
 Do 2 projects/month = $1,800-3,600/month extra revenue
 Software cost: $166/month
 
 ROI: 11-22x monthly, 132-264x annually 🤯
-```
+```text
 
-**Enterprise Tier - MSPs:**
+#### Enterprise Tier - MSPs
 
-```
+```text
 Manage 20 client networks
 Labor savings: 10 hours/month × $150 = $1,500/month
 Annual savings: $18,000
 Software cost: $4,999/year
 
 ROI: 3.6x in labor savings alone
-```
+```yaml
 
 ---
 
@@ -152,7 +152,7 @@ ROI: 3.6x in labor savings alone
 
 ### Why It's Unique
 
-**NO COMPETITOR OFFERS THIS.**
+#### NO COMPETITOR OFFERS THIS
 
 - Ekahau ($2-5K): Manual surveying only
 - NetAlly ($10K+): No predictive capability
@@ -173,7 +173,7 @@ ROI: 3.6x in labor savings alone
 - Ray tracing for obstacle detection
 - Genetic algorithm for AP placement optimization
 
-**This feature alone justifies the $1,999/year Premium tier.**
+#### This feature alone justifies the $1,999/year Premium tier
 
 ---
 
@@ -355,26 +355,26 @@ ROI: 3.6x in labor savings alone
 
 ### Tagline
 
-**"Design your network before you deploy it."**
+#### "Design your network before you deploy it."
 
 ### Value Props by Persona
 
-**For WiFi Consultants:**
+#### For WiFi Consultants
 
 > "Stop wasting time on trial-and-error WiFi deployments. Our AI predicts coverage BEFORE you hang a single access
 > point. Plan perfect WiFi in 2 hours, not 2 days. One deployment pays for your entire year."
 
-**For Network Technicians:**
+#### For Network Technicians
 
 > "Stop guessing, start knowing. AI diagnoses problems in seconds. Ask 'Why is DHCP slow?' and get instant root cause
 > analysis with remediation steps. Reduce troubleshooting time by 60%."
 
-**For Security Analysts:**
+#### For Security Analysts
 
 > "Not just CVE lists - actual risk scores with context. CVSS + exploitability + network exposure + remediation plans.
 > Prioritize what actually matters, fix vulnerabilities 40% faster."
 
-**For MSPs:**
+#### For MSPs
 
 > "One tool for network diagnostics, WiFi planning, and security across all your client sites. Fleet-wide visibility,
 > comparative analytics, white-label reports. $4,999/year vs $50K+ for separate tools."
@@ -421,3 +421,4 @@ https://github.com/krisarmstrong/seed/milestones
 **Ready to build the future of network diagnostics?** 🚀
 
 **Next Step:** Review pricing strategy, approve tiers, and kick off Phase 1 (AI Foundation).
+````

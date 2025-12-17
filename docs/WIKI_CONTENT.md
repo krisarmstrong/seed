@@ -23,7 +23,7 @@ The wiki pages are located in the `docs/wiki/` directory:
 
 ## Wiki Structure
 
-```text
+````text
 Home
 ├── Getting Started
 │   ├── Installation (macOS)
@@ -57,7 +57,7 @@ Home
 │   ├── Contributing
 │   └── Development Environment
 └── FAQ
-```
+```python
 
 ---
 
@@ -88,17 +88,17 @@ The wiki is enabled. Now you need to add content.
 
 Wiki pages auto-link via `[[Page-Name]]` syntax.
 
-**Example:**
+#### Example
 
 ```markdown
 See the [Installation Guide](Installation-macOS) for setup instructions.
-```
+```text
 
 or
 
 ```markdown
 See the [[Installation-macOS|Installation Guide]] for setup instructions.
-```
+```python
 
 ### Step 4: Add Sidebar
 
@@ -116,3 +116,4 @@ Create a page named `_Sidebar.md` using content from `docs/wiki/_Sidebar.md`.
 ---
 
 **Document Owner:** Kris Armstrong **Last Updated:** December 2025
+````

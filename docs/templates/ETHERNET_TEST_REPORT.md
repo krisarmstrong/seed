@@ -10,13 +10,13 @@ Use this template to document Ethernet NIC testing results. Submit via the
 
 **Vendor ID/Product ID**: [lspci or lsusb output]
 
-```
+````text
 # For PCI devices
 lspci -nn | grep -i ethernet
 
 # For USB devices
 lsusb | grep -i ethernet
-```
+```python
 
 ## System Information
 
@@ -31,14 +31,14 @@ Run the hardware compatibility test script and paste the output:
 
 ```bash
 sudo ./scripts/test-hardware-compatibility.sh eth0
-```
+```xml
 
 <details>
 <summary>Full Test Output (click to expand)</summary>
 
-```
+```json
 [Paste full test script output here]
-```
+```xml
 
 </details>
 
@@ -71,7 +71,7 @@ If supported, document test results:
 
 ```bash
 sudo ethtool --cable-test eth0
-```
+```text
 
 - Result: [PASS/FAIL]
 - Length reported: [meters]
@@ -110,7 +110,7 @@ sudo ethtool --cable-test eth0
 ```bash
 # Any special setup required
 # e.g., driver parameters, firmware updates, etc.
-```
+```yaml
 
 ## The Seed Feature Compatibility
 
@@ -184,3 +184,4 @@ Document any problems:
 
 **Tested By**: [Your GitHub username] **Test Date**: [YYYY-MM-DD] **Script Version**: [Git commit hash or script
 version] **Cable Used**: [Cat5e/Cat6/Cat6a, length]
+````

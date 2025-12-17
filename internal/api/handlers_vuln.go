@@ -50,6 +50,15 @@ func (s *Server) handleVulnerabilityScan(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// Check if scan is already in progress
+	if s.vulnScanner.IsRunning() {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"status":  "scan already in progress",
+			"running": true,
+		})
+		return
+	}
+
 	// Run scan in background
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)

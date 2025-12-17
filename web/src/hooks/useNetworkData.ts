@@ -185,22 +185,27 @@ export function useNetworkData(options: UseNetworkDataOptions = {}) {
         api.get<{ neighbors: DiscoveryNeighbor[] }>("/api/discovery"),
       ]);
 
+      // Extract data with proper type narrowing for PromiseSettledResult
       setNetworkData({
         linkStatus: linkRes.status === "fulfilled" ? linkRes.value : null,
         interfaces:
-          interfacesRes.status === "fulfilled" ? interfacesRes.value.interfaces || [] : [],
+          interfacesRes.status === "fulfilled" && interfacesRes.value
+            ? interfacesRes.value.interfaces || []
+            : [],
         currentInterface:
-          currentInterfaceRes.status === "fulfilled"
+          currentInterfaceRes.status === "fulfilled" && currentInterfaceRes.value
             ? currentInterfaceRes.value.interface || ""
             : "",
         ipConfig: ipConfigRes.status === "fulfilled" ? ipConfigRes.value : null,
         gateway: gatewayRes.status === "fulfilled" ? gatewayRes.value : null,
-        dnsResults: dnsRes.status === "fulfilled" ? dnsRes.value.results || [] : [],
-        vlanInfo: vlanRes.status === "fulfilled" ? vlanRes.value.vlans || [] : [],
+        dnsResults: dnsRes.status === "fulfilled" && dnsRes.value ? dnsRes.value.results || [] : [],
+        vlanInfo: vlanRes.status === "fulfilled" && vlanRes.value ? vlanRes.value.vlans || [] : [],
         publicIP: publicIPRes.status === "fulfilled" ? publicIPRes.value : null,
         systemHealth: healthRes.status === "fulfilled" ? healthRes.value : null,
         discoveryNeighbors:
-          discoveryRes.status === "fulfilled" ? discoveryRes.value.neighbors || [] : [],
+          discoveryRes.status === "fulfilled" && discoveryRes.value
+            ? discoveryRes.value.neighbors || []
+            : [],
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch network data";
