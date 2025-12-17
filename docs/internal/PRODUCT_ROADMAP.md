@@ -9,7 +9,7 @@
 **Mission:** Make professional network diagnostics accessible to everyone through AI-powered insights and predictive
 planning.
 
-**Product Pillars:**
+#### Product Pillars
 
 1. **Network Intelligence** - Comprehensive visibility + AI analysis
 2. **WiFi Planning** - Predictive survey + optimization (flagship)
@@ -38,44 +38,44 @@ planning.
 
 ### Features
 
-**AI Infrastructure (#575)**
+#### AI Infrastructure (#575)
 
 - AI service architecture (local + cloud providers)
 - Feature flag system for AI capabilities
 - Provider abstraction layer (local ML, Claude API)
 
-**Time-Series Storage (#576)**
+#### Time-Series Storage (#576)
 
 - SQLite-based metric storage
 - 30-day retention with aggregation
 - Query API for historical data
 
-**Baseline Learning (#577)**
+#### Baseline Learning (#577)
 
 - Statistical baseline calculation (mean, stddev, percentiles)
 - Online learning (continuous updates)
 - Per-metric baselines (latency, DHCP, DNS, etc.)
 
-**Device Classification (#578)**
+#### Device Classification (#578)
 
 - AI-powered device type detection (90%+ accuracy)
 - Classification confidence scores
 - Device type tagging (printer, camera, server, etc.)
 
-**Network Health Scoring (#579)**
+#### Network Health Scoring (#579)
 
 - 0-100 health score algorithm
 - Component breakdown (physical, network, performance, security)
 - Trend detection (improving/stable/degrading)
 
-**Frontend Insight Cards (#580)**
+#### Frontend Insight Cards (#580)
 
 - HealthScoreCard component
 - InsightCard component
 - DeviceClassificationBadge
 - Storybook stories for all components
 
-**Configuration (#581)**
+#### Configuration (#581)
 
 - AI feature configuration (YAML)
 - License tier integration
@@ -100,41 +100,41 @@ planning.
 
 ### Features
 
-**Root Cause Analysis (#582)**
+#### Root Cause Analysis (#582)
 
 - DHCP timing analysis (which phase is slow?)
 - Gateway latency diagnosis (local vs ISP)
 - DNS failure root cause
 - Multi-factor correlation
 
-**Anomaly Detection (#583)**
+#### Anomaly Detection (#583)
 
 - Z-score based detection (>3σ)
 - Pattern anomalies (spikes, sustained degradation)
 - Multi-metric correlation
 - Real-time alerting (<30 seconds)
 
-**Vulnerability Risk Assessment (#584)**
+#### Vulnerability Risk Assessment (#584)
 
 - Contextual risk scoring (CVSS + EPSS + exposure)
 - Network exposure analysis (DMZ, internal, isolated)
 - Prioritized remediation recommendations
 - HIPAA/CIS compliance integration
 
-**Natural Language Query (#585)**
+#### Natural Language Query (#585)
 
 - Claude API integration with tool calling
 - Common queries: "Why is DHCP slow?", "Which devices are vulnerable?"
 - Conversational interface
 - Query history
 
-**Guided Troubleshooting (#586)**
+#### Guided Troubleshooting (#586)
 
 - Step-by-step diagnostic workflows
 - Automated checks where possible
 - Exportable troubleshooting logs
 
-**Adaptive Thresholds (#587)**
+#### Adaptive Thresholds (#587)
 
 - Network-aware threshold recommendations
 - Baseline-driven suggestions
@@ -159,20 +159,20 @@ planning.
 
 ### Features
 
-**Coverage Heatmap Generation (#588)**
+#### Coverage Heatmap Generation (#588)
 
 - IDW/Kriging interpolation
 - 10cm resolution grid
 - Multi-floor support
 - Professional visualization
 
-**Dead Zone Detection (#589)**
+#### Dead Zone Detection (#589)
 
 - Contiguous low-coverage area identification
 - Severity ranking
 - Remediation recommendations
 
-**AP Placement Optimization (#590)**
+#### AP Placement Optimization (#590)
 
 - Genetic algorithm for placement
 - Cost optimization (minimize AP count)
@@ -186,13 +186,13 @@ planning.
 - Professional PDF export with BOM
 - **Target accuracy:** ±10 dB
 
-**Channel Interference Analysis (#592)**
+#### Channel Interference Analysis (#592)
 
 - Channel utilization stats
 - Co-channel interference detection
 - Optimal channel recommendations
 
-**Roaming Pattern Analysis (#593)**
+#### Roaming Pattern Analysis (#593)
 
 - Handoff analysis
 - Ping-pong detection
@@ -218,35 +218,35 @@ planning.
 
 ### Features
 
-**Predictive Maintenance (#594)**
+#### Predictive Maintenance (#594)
 
 - Link failure prediction (24-48h early warning)
 - Time-series forecasting
 - Device health trending
 - Proactive alerts
 
-**Automated Reporting (#595)**
+#### Automated Reporting (#595)
 
 - PDF/HTML report generation
 - HIPAA/CIS/NIST compliance templates
 - White-label customization
 - Scheduled reports
 
-**Rogue Device Detection (#596)**
+#### Rogue Device Detection (#596)
 
 - Behavior-based anomaly detection
 - Port scan detection
 - Unauthorized device alerting
 - Quarantine recommendations
 
-**Multi-Site Fleet Management (#597)**
+#### Multi-Site Fleet Management (#597)
 
 - Cross-site comparative analytics
 - Configuration drift detection
 - Fleet-wide vulnerability rollup
 - Centralized dashboard
 
-**Capacity Planning (#598)**
+#### Capacity Planning (#598)
 
 - Growth forecasting
 - Resource utilization trends
@@ -269,33 +269,33 @@ planning.
 
 ### Focus Areas
 
-**Stability & Performance**
+#### Stability & Performance
 
 - 99.9% uptime SLA
 - <100ms API response time (p95)
 - Zero data loss guarantee
 
-**Security & Compliance**
+#### Security & Compliance
 
 - SOC 2 Type 1 certification (in progress)
 - GDPR compliance
 - HIPAA Business Associate readiness
 
-**Enterprise Features**
+#### Enterprise Features
 
 - SSO/SAML authentication
 - Role-based access control (RBAC)
 - Audit logging
 - SLA agreements
 
-**Documentation**
+#### Documentation
 
 - Complete user guides
 - API reference documentation
 - Compliance implementation guides
 - Video tutorials
 
-**Support**
+#### Support
 
 - 24/7 support for Enterprise tier
 - Knowledge base (100+ articles)
@@ -316,26 +316,26 @@ planning.
 
 ### Q1 2027 - Q4 2027
 
-**Advanced Analytics**
+#### Advanced Analytics
 
 - Machine learning for device fingerprinting
 - LSTM for time-series prediction
 - Computer vision for cable/equipment recognition
 
-**Integrations**
+#### Integrations
 
 - Slack/Teams notifications
 - ServiceNow/Jira ticketing
 - Prometheus/Grafana metrics
 - SIEM integrations (Splunk, QRadar)
 
-**Hardware Partnerships**
+#### Hardware Partnerships
 
 - Spectrum analyzer integration
 - Professional survey hardware bundles
 - Raspberry Pi appliance
 
-**New Verticals**
+#### New Verticals
 
 - Retail (guest WiFi + PCI compliance)
 - Manufacturing (ICS/SCADA network monitoring)
@@ -373,13 +373,13 @@ planning.
 
 **Debt Allocation:** 20% of each sprint dedicated to tech debt
 
-**Categories:**
+#### Categories
 
 1. **Critical Debt** - Blocks new features, security risk (fix immediately)
 2. **Important Debt** - Slows development, impacts quality (fix within 2 sprints)
 3. **Opportunistic Debt** - Refactor when touching code anyway
 
-**Examples:**
+#### Examples
 
 - Critical: SQL injection vulnerability, memory leak
 - Important: Slow test suite (>5 minutes), missing error handling
@@ -389,21 +389,21 @@ planning.
 
 ## Sunset Policy
 
-**When to Deprecate Features:**
+### When to Deprecate Features
 
 - Usage <5% of user base for 6+ months
 - Better replacement available
 - High maintenance cost, low value
 - Security risk cannot be mitigated
 
-**Deprecation Process:**
+#### Deprecation Process
 
 1. Announce 6 months in advance
 2. Mark as deprecated in docs/UI
 3. Provide migration path
 4. Remove after 12 months
 
-**Never Deprecate Without Replacement:**
+#### Never Deprecate Without Replacement
 
 - Core network monitoring features
 - Compliance-related features (HIPAA, CIS)
@@ -413,20 +413,20 @@ planning.
 
 ## Roadmap Governance
 
-**Review Cadence:**
+### Review Cadence
 
 - **Monthly:** Adjust sprint priorities
 - **Quarterly:** Review milestone progress, adjust roadmap
 - **Annually:** Revisit vision and multi-year strategy
 
-**Stakeholder Input:**
+#### Stakeholder Input
 
 - Product: Prioritizes based on customer feedback
 - Engineering: Estimates effort, identifies technical dependencies
 - Sales: Provides market/competitive intelligence
 - Support: Highlights pain points from tickets
 
-**Changes Require:**
+#### Changes Require
 
 - Major roadmap shift (>1 month delay): CEO approval
 - Feature reprioritization: Product + Engineering consensus
@@ -477,7 +477,7 @@ planning.
 
 ## Appendix: Feature Backlog (Not Scheduled)
 
-**Good Ideas, But Not Now:**
+### Good Ideas, But Not Now
 
 - Mobile app (iOS/Android)
 - Network automation (auto-remediation)
@@ -487,7 +487,7 @@ planning.
 - IoT device provisioning
 - Network access control (NAC)
 
-**Why Deferred:**
+#### Why Deferred
 
 - Scope creep risk
 - Niche use cases (<10% of users)

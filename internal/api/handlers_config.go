@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"path/filepath"
+	"regexp"
 
 	"github.com/krisarmstrong/seed/internal/config"
 )
@@ -82,6 +83,9 @@ func (s *Server) handleConfigRestore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Limit request body size to prevent DoS attacks (fixes #682)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
+
 	var req RestoreRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
@@ -150,6 +154,15 @@ func (s *Server) handleConfigBackupDelete(w http.ResponseWriter, r *http.Request
 		http.Error(w, "name parameter is required", http.StatusBadRequest)
 		return
 	}
+
+	// Prevent path traversal attacks (fixes #683)
+	// Only allow alphanumeric, dash, underscore, and dot characters
+	if !regexp.MustCompile(`^[a-zA-Z0-9._-]+$`).MatchString(backupName) {
+		http.Error(w, "Invalid backup name", http.StatusBadRequest)
+		return
+	}
+	// Strip any directory components as additional safety measure
+	backupName = filepath.Base(backupName)
 
 	backupDir := filepath.Dir(s.configPath)
 	backupMgr := config.NewBackupManager(s.configPath, backupDir, 10)

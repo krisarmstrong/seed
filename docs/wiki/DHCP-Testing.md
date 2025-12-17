@@ -23,15 +23,15 @@ are detected. This test environment allows you to simulate both legitimate and r
 
 1. Configure The Seed to know about your legitimate DHCP server:
 
-   ```yaml
-   # seed.yaml
-   dhcp:
-     rogue_detection:
-       enabled: true
-       known_servers:
-         - 192.168.1.1 # Your router's IP
-       alert_on_detection: true
-   ```
+````yaml
+# seed.yaml
+dhcp:
+  rogue_detection:
+    enabled: true
+    known_servers:
+      - 192.168.1.1 # Your router's IP
+    alert_on_detection: true
+```text
 
 2. Restart The Seed and verify no alerts appear
 
@@ -43,18 +43,18 @@ are detected. This test environment allows you to simulate both legitimate and r
 
 1. Install dnsmasq on test machine:
 
-   ```bash
-   sudo apt-get update
-   sudo apt-get install dnsmasq
-   ```
+```bash
+sudo apt-get update
+sudo apt-get install dnsmasq
+```text
 
 2. Stop system's NetworkManager DHCP to avoid conflicts:
 
-   ```bash
-   sudo systemctl stop NetworkManager
-   # Or just disable its DHCP:
-   sudo nmcli connection modify "YourConnection" ipv4.method manual
-   ```
+```bash
+sudo systemctl stop NetworkManager
+# Or just disable its DHCP:
+sudo nmcli connection modify "YourConnection" ipv4.method manual
+```text
 
 3. Create test dnsmasq config (`/etc/dnsmasq-test.conf`):
 
@@ -76,42 +76,48 @@ are detected. This test environment allows you to simulate both legitimate and r
 
    # DHCP server identifier
    dhcp-authoritative
-   ```
+```text
+
+```text
 
 4. Start rogue DHCP server:
 
    ```bash
    sudo dnsmasq -C /etc/dnsmasq-test.conf -d
    # -d flag keeps it in foreground for easy stopping
-   ```
+```text
 
 5. Verify it's sending DHCP OFFERs:
 
    ```bash
    # On The Seed server
    sudo tcpdump -i enp0s1 -n port 67 or port 68
-   ```
+```text
+
+```text
 
 6. Trigger DHCP discovery (on any client machine):
 
    ```bash
    sudo dhclient -r eth0  # Release current lease
    sudo dhclient eth0     # Request new lease
-   ```
+```text
 
 7. Check The Seed web UI or API for rogue DHCP alert:
 
    ```bash
    curl -k -H "Authorization: Bearer YOUR_TOKEN" \
      https://192.168.64.7:8443/api/dhcp/rogue
-   ```
+```text
+
+```text
 
 8. Stop rogue server:
 
    ```bash
    # Press Ctrl+C in dnsmasq terminal
    sudo systemctl start NetworkManager  # Restore network
-   ```
+```text
 
 #### Option B: Using isc-dhcp-server
 
@@ -120,7 +126,9 @@ are detected. This test environment allows you to simulate both legitimate and r
    ```bash
    sudo apt-get update
    sudo apt-get install isc-dhcp-server
-   ```
+```text
+
+```text
 
 2. Configure `/etc/dhcp/dhcpd.conf`:
 
@@ -135,20 +143,22 @@ are detected. This test environment allows you to simulate both legitimate and r
      option routers 192.168.64.1;
      option domain-name-servers 8.8.8.8, 8.8.4.4;
    }
-   ```
+```text
 
 3. Configure interface in `/etc/default/isc-dhcp-server`:
 
    ```bash
    INTERFACESv4="eth0"  # Change to your interface
-   ```
+```text
+
+```text
 
 4. Start server:
 
    ```bash
    sudo systemctl start isc-dhcp-server
    sudo systemctl status isc-dhcp-server
-   ```
+```text
 
 5. Verify and test same as Option A steps 5-7
 
@@ -156,7 +166,9 @@ are detected. This test environment allows you to simulate both legitimate and r
 
    ```bash
    sudo systemctl stop isc-dhcp-server
-   ```
+```text
+
+```text
 
 ### Scenario 3: Multiple DHCP Servers (Mixed)
 
@@ -169,7 +181,7 @@ are detected. This test environment allows you to simulate both legitimate and r
      rogue_detection:
        known_servers:
          - 192.168.64.1 # Legitimate router
-   ```
+```text
 
 2. Start rogue server on 192.168.64.50 (different IP)
 
@@ -193,7 +205,9 @@ are detected. This test environment allows you to simulate both legitimate and r
      -H "Content-Type: application/json" \
      -d '{"server": "192.168.64.50", "description": "Test server"}' \
      https://192.168.64.7:8443/api/dhcp/rogue/servers
-   ```
+```text
+
+```python
 
 3. Verify alerts stop
 
@@ -203,13 +217,13 @@ are detected. This test environment allows you to simulate both legitimate and r
    curl -k -X DELETE \
      -H "Authorization: Bearer YOUR_TOKEN" \
      "https://192.168.64.7:8443/api/dhcp/rogue/servers?server=192.168.64.50"
-   ```
+```bash
 
 5. Verify alerts resume
 
 ## Network Topology for Testing
 
-```
+```bash
 ┌─────────────────────────────────────────────┐
 │             Test Network (192.168.64.0/24)   │
 ├─────────────────────────────────────────────┤
@@ -233,7 +247,7 @@ are detected. This test environment allows you to simulate both legitimate and r
 │          └──────────────────────┘           │
 │                                             │
 └─────────────────────────────────────────────┘
-```
+```text
 
 ## Packet Capture for Verification
 
@@ -247,7 +261,7 @@ sudo tcpdump -i enp0s1 -vvv -n \
 
 # Analysis
 sudo tcpdump -r dhcp_capture.pcap -n -vvv | grep -i "DHCP-Message Option 53"
-```
+```text
 
 ## Expected DHCP Packet Flow
 
@@ -278,7 +292,7 @@ getcap /home/krisarmstrong/seed/seed
 # Check rogue detector is running
 curl -k -H "Authorization: Bearer TOKEN" \
   https://192.168.64.7:8443/api/dhcp/rogue/config
-```
+```text
 
 ### Firewall Blocking DHCP
 
@@ -289,7 +303,7 @@ sudo ufw allow 68/udp
 
 # Or disable firewall temporarily
 sudo ufw disable
-```
+```text
 
 ### Multiple Network Interfaces
 
@@ -300,7 +314,7 @@ sudo dnsmasq -C /etc/dnsmasq-test.conf \
   --interface=eth0 \
   --bind-interfaces \
   -d
-```
+```text
 
 ## Cleanup
 
@@ -319,7 +333,7 @@ sudo systemctl start NetworkManager
 
 # Remove test configs
 sudo rm /etc/dnsmasq-test.conf
-```
+```text
 
 ## Automated Test Script
 
@@ -331,13 +345,13 @@ See `scripts/test-dhcp-rogue.sh` for automated testing.
 
 ```bash
 GET /api/dhcp/rogue
-```
+```text
 
 ### Get Known Servers
 
 ```bash
 GET /api/dhcp/rogue/servers
-```
+```text
 
 ### Add Known Server
 
@@ -347,13 +361,13 @@ POST /api/dhcp/rogue/servers
   "server": "192.168.64.1",
   "description": "Main router"
 }
-```
+```text
 
 ### Remove Known Server
 
 ```bash
 DELETE /api/dhcp/rogue/servers?server=192.168.64.1
-```
+```text
 
 ### Update Configuration
 
@@ -364,7 +378,7 @@ PUT /api/dhcp/rogue/config
   "alert_on_detection": true,
   "known_servers": ["192.168.64.1"]
 }
-```
+```text
 
 ## Security Considerations
 
@@ -383,3 +397,4 @@ Running unauthorized DHCP servers on corporate or public networks may violate po
 - [RFC 2131 - DHCP](https://tools.ietf.org/html/rfc2131)
 - [RFC 2132 - DHCP Options](https://tools.ietf.org/html/rfc2132)
 - [DHCP Security Best Practices](https://www.cisco.com/c/en/us/support/docs/ip/dynamic-address-allocation-resolution/13670-18.html)
+````

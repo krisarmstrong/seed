@@ -7,7 +7,7 @@ development tasks
 
 ## Executive Summary
 
-**TL;DR:**
+### TL;DR
 
 - **Opus 4.5:** Complex architecture, strategic planning, code review ($$$ but worth it)
 - **Sonnet 4.5:** Daily coding, debugging, refactoring (best bang/buck)
@@ -25,7 +25,7 @@ development tasks
 
 ### 1.1 Claude Opus 4.5
 
-**Capabilities:**
+#### Capabilities
 
 - **Intelligence:** Highest reasoning ability (PhD-level)
 - **Context:** 200K tokens (entire codebase fits)
@@ -36,7 +36,7 @@ development tasks
   - Multi-file refactoring
   - Research & analysis (market, competitive)
 
-**Best Use Cases for The Seed:**
+#### Best Use Cases for The Seed
 
 | Task                     | Why Opus                                    | Example                                                                   |
 | ------------------------ | ------------------------------------------- | ------------------------------------------------------------------------- |
@@ -46,26 +46,26 @@ development tasks
 | **Compliance Mapping**   | Complex regulatory requirements             | "Map our features to HIPAA §164.312(e)(1) with audit evidence"            |
 | **Competitive Analysis** | Deep industry knowledge, strategic thinking | "Compare our WiFi planning to Ekahau—where do we win/lose?"               |
 
-**When NOT to Use Opus:**
+#### When NOT to Use Opus
 
 - ❌ Simple code completion (overkill, expensive)
 - ❌ Boilerplate generation (Sonnet is fine)
 - ❌ Quick debugging (Sonnet or Gemini faster/cheaper)
 - ❌ Repetitive tasks (use Copilot)
 
-**Cost:**
+#### Cost
 
 - **API:** $15/M input tokens, $75/M output tokens
 - **Pro Subscription:** $20/month (5x rate limits)
 - **Estimated Monthly:** $100-200 for strategic use (10-20 complex tasks)
 
-**Recommendation: Use for 20% of tasks (high-value, complex work)**
+#### Recommendation: Use for 20% of tasks (high-value, complex work)
 
 ---
 
 ### 1.2 Claude Sonnet 4.5
 
-**Capabilities:**
+#### Capabilities
 
 - **Intelligence:** Very high (90% of Opus, 1/5th the cost)
 - **Speed:** 2-3x faster than Opus
@@ -77,7 +77,7 @@ development tasks
   - Testing
   - Documentation
 
-**Best Use Cases for The Seed:**
+#### Best Use Cases for The Seed
 
 | Task                       | Why Sonnet                               | Example                                                             |
 | -------------------------- | ---------------------------------------- | ------------------------------------------------------------------- |
@@ -88,33 +88,33 @@ development tasks
 | **API Endpoints**          | Boilerplate + business logic             | "Add REST endpoint for vulnerability scanning"                      |
 | **Documentation**          | Clear, concise, accurate                 | "Document this WiFi scanning package with examples"                 |
 
-**When to Use Sonnet:**
+#### When to Use Sonnet
 
 - ✅ **Default choice for 80% of development tasks**
 - ✅ When speed matters more than perfection
 - ✅ When cost is a concern (early-stage startup)
 - ✅ Iterative development (try, test, refine)
 
-**Cost:**
+#### Cost
 
 - **API:** $3/M input, $15/M output (5x cheaper than Opus)
 - **Pro Subscription:** $20/month
 - **Estimated Monthly:** $50-100 for daily use
 
-**Recommendation: Primary workhorse for daily coding**
+#### Recommendation: Primary workhorse for daily coding
 
 ---
 
 ### 1.3 Claude Haiku 3.5
 
-**Capabilities:**
+#### Capabilities
 
 - **Intelligence:** Good (suitable for simple tasks)
 - **Speed:** 10x faster than Opus
 - **Cost:** $0.25/M input, $1.25/M output (60x cheaper than Opus!)
 - **Strengths:** Fast responses, cheap, good for simple tasks
 
-**Best Use Cases:**
+#### Best Use Cases
 
 - Quick code snippets
 - Simple documentation
@@ -122,13 +122,13 @@ development tasks
 - Bash scripts
 - Config files (YAML, JSON)
 
-**When to Use Haiku:**
+#### When to Use Haiku
 
 - ✅ Speed > intelligence (latency-sensitive)
 - ✅ Cost optimization (high-volume tasks)
 - ✅ Simple, repetitive work
 
-**Recommendation: Use for 10-20% of tasks (simple, high-volume)**
+#### Recommendation: Use for 10-20% of tasks (simple, high-volume)
 
 ---
 
@@ -136,7 +136,7 @@ development tasks
 
 ### 2.1 Gemini 2.0 Flash
 
-**Capabilities:**
+#### Capabilities
 
 - **Intelligence:** Very high (comparable to Sonnet)
 - **Speed:** Extremely fast (2M tokens/sec output!)
@@ -148,7 +148,7 @@ development tasks
   - Multimodal (can analyze diagrams, screenshots)
   - Free tier is production-ready
 
-**Best Use Cases for The Seed:**
+#### Best Use Cases for The Seed
 
 | Task                         | Why Gemini                  | Example                                                         |
 | ---------------------------- | --------------------------- | --------------------------------------------------------------- |
@@ -158,52 +158,52 @@ development tasks
 | **Code Search**              | Fast semantic search        | "Find all places we use unsafe pointer operations"              |
 | **Batch Processing**         | Free tier = 1,500 req/day   | "Generate tests for all 50 API endpoints"                       |
 
-**When to Use Gemini:**
+#### When to Use Gemini
 
 - ✅ Cost optimization (use free tier first)
 - ✅ Very large context needed (>200K tokens)
 - ✅ Image/diagram analysis
 - ✅ Batch operations (leverage free tier)
 
-**Cost:**
+#### Cost
 
 - **Free Tier:** 1,500 requests/day (!!!)
 - **Paid:** $0.30/M input, $1.20/M output (cheaper than Claude)
 - **Estimated Monthly:** $0-20 (mostly free tier)
 
-**Recommendation: Primary tool for documentation and large-context analysis**
+#### Recommendation: Primary tool for documentation and large-context analysis
 
 ---
 
 ### 2.2 Gemini 2.0 Pro
 
-**Capabilities:**
+#### Capabilities
 
 - **Intelligence:** Highest (competitive with Opus)
 - **Context:** 2M tokens (10x Claude!)
 - **Multimodal:** Vision, audio, video
 - **Cost:** $1.25/M input, $10/M output (cheaper than Opus)
 
-**Best Use Cases:**
+#### Best Use Cases
 
 - Processing entire codebase in one shot
 - Video analysis (e.g., analyzing competitor product demos)
 - Complex reasoning with massive context
 
-**Recommendation: Use sparingly (Flash is usually sufficient)**
+#### Recommendation: Use sparingly (Flash is usually sufficient)
 
 ---
 
 ## 3. GitHub Copilot
 
-**Capabilities:**
+### Capabilities
 
 - **Real-time code completion** in VSCode/JetBrains/Vim
 - **Context-aware:** Uses surrounding code
 - **Multi-language:** Go, TypeScript, React, Python, etc.
 - **Chat mode:** Ask questions in IDE
 
-**Best Use Cases for The Seed:**
+#### Best Use Cases for The Seed
 
 | Task                       | Why Copilot                        | Example                                                        |
 | -------------------------- | ---------------------------------- | -------------------------------------------------------------- |
@@ -213,20 +213,20 @@ development tasks
 | **Documentation Comments** | Suggests doc comments              | Type "// Package discovery..." and it completes                |
 | **Inline Chat**            | Ask questions without leaving IDE  | "Why is this function slow?"                                   |
 
-**When to Use Copilot:**
+#### When to Use Copilot
 
 - ✅ **ALWAYS** - runs in background, minimal friction
 - ✅ Writing new functions (autocomplete 40-60% of code)
 - ✅ Exploring APIs (suggests method calls)
 - ✅ Learning new libraries (shows examples)
 
-**Cost:**
+#### Cost
 
 - **Individual:** $10/month
 - **Business:** $19/user/month
 - **Estimated Monthly:** $10-19
 
-**Recommendation: ESSENTIAL TOOL - must-have for daily coding**
+#### Recommendation: ESSENTIAL TOOL - must-have for daily coding
 
 ---
 
@@ -234,7 +234,7 @@ development tasks
 
 ### 4.1 ChatGPT o1-preview / o1-pro
 
-**Capabilities:**
+#### Capabilities
 
 - **Reasoning:** Extended "thinking" time (up to 60 seconds)
 - **Strengths:**
@@ -243,7 +243,7 @@ development tasks
   - Complex problem-solving
   - Physics/RF calculations
 
-**Best Use Cases for The Seed:**
+#### Best Use Cases for The Seed
 
 | Task                     | Why o1                                   | Example                                                       |
 | ------------------------ | ---------------------------------------- | ------------------------------------------------------------- |
@@ -252,43 +252,43 @@ development tasks
 | **Performance Analysis** | Big-O analysis, optimization             | "Optimize this O(n²) device discovery to O(n log n)"          |
 | **Security Analysis**    | Threat modeling, attack vectors          | "Analyze this authentication flow for TOCTOU vulnerabilities" |
 
-**When to Use o1:**
+#### When to Use o1
 
 - ✅ Math-heavy problems (RF propagation, statistics)
 - ✅ Algorithm design (optimization, search)
 - ✅ Formal reasoning (proofs, security analysis)
 
-**Cost:**
+#### Cost
 
 - **o1-preview:** $15/M input, $60/M output
 - **o1-pro:** $200/month subscription (higher limits)
 - **Estimated Monthly:** $20-50 (occasional use)
 
-**Recommendation: Use for 5-10% of tasks (math, algorithms)**
+#### Recommendation: Use for 5-10% of tasks (math, algorithms)
 
 ---
 
 ### 4.2 ChatGPT GPT-4 Turbo
 
-**Capabilities:**
+#### Capabilities
 
 - **Intelligence:** High (similar to Claude Sonnet)
 - **Speed:** Fast
 - **Cost:** $10/M input, $30/M output
 
-**Best Use Cases:**
+#### Best Use Cases
 
 - General-purpose coding
 - Brainstorming
 - Quick Q&A
 
-**When to Use GPT-4:**
+#### When to Use GPT-4
 
 - ✅ When you're already in ChatGPT interface
 - ✅ Need image generation (DALL-E integration)
 - ✅ Web search integration (ChatGPT can browse)
 
-**Recommendation: Backup option (Claude Sonnet is better for code)**
+#### Recommendation: Backup option (Claude Sonnet is better for code)
 
 ---
 
@@ -334,24 +334,24 @@ development tasks
 
 ### 6.1 Daily Development Workflow
 
-**Morning (Planning & Architecture):**
+#### Morning (Planning & Architecture)
 
 1. **Claude Opus:** Review roadmap, prioritize tasks, architect complex features
 2. **GitHub Copilot:** Keep running in background
 
-**Daytime (Coding):**
+#### Daytime (Coding)
 
 1. **GitHub Copilot:** Autocomplete as you type (40% of code)
 2. **Claude Sonnet:** When stuck, need debugging, or implementing features
 3. **Gemini Flash:** Quick documentation lookups, large context searches
 
-**Afternoon (Testing & Review):**
+#### Afternoon (Testing & Review)
 
 1. **Claude Sonnet:** Generate tests, review code
 2. **Gemini Flash:** Batch generate docs for new features
 3. **Claude Opus:** Final review before commit (complex features only)
 
-**Evening (Documentation & Planning):**
+#### Evening (Documentation & Planning)
 
 1. **Gemini Flash:** Generate/update documentation
 2. **ChatGPT GPT-4:** Write blog posts, marketing content
@@ -363,9 +363,9 @@ development tasks
 
 **Feature:** Implement Predictive WiFi Survey
 
-**Step 1: Architecture Design (Claude Opus)**
+#### Step 1: Architecture Design (Claude Opus)
 
-```
+````go
 Prompt: "Design the architecture for predictive WiFi survey feature:
 - RF path loss modeling (FSPL + log-distance + wall attenuation)
 - Heatmap generation (IDW interpolation)
@@ -377,11 +377,11 @@ Consider: performance (10K sample points), accuracy (±10 dB), extensibility."
 Output: Detailed architecture doc, package structure, data flow
 Cost: ~$3
 Time: 20 minutes
-```
+```text
 
-**Step 2: Implement Core Algorithm (ChatGPT o1)**
+#### Step 2: Implement Core Algorithm (ChatGPT o1)
 
-```
+```text
 Prompt: "Implement log-distance path loss formula with wall attenuation:
 PL(d) = PL(d0) + 10×n×log10(d/d0) + Σ(wall_attenuation)
 
@@ -394,11 +394,11 @@ Include:
 Output: Go code with math, unit tests, validation
 Cost: ~$2
 Time: 30 minutes
-```
+```go
 
-**Step 3: Implement REST API (Claude Sonnet + Copilot)**
+#### Step 3: Implement REST API (Claude Sonnet + Copilot)
 
-```
+```go
 # Copilot autocompletes as you type:
 type PredictiveSurveyRequest struct {
     FloorPlan FloorPlan `json:"floor_plan"`
@@ -416,11 +416,11 @@ Prompt: "Implement POST /api/survey/predict endpoint that:
 Output: Complete handler function with validation, tests
 Cost: ~$0.50
 Time: 15 minutes
-```
+```tsx
 
-**Step 4: Frontend Implementation (Claude Sonnet + Copilot)**
+#### Step 4: Frontend Implementation (Claude Sonnet + Copilot)
 
-```
+```tsx
 # Copilot autocompletes React components
 # Claude Sonnet helps with complex state management:
 
@@ -434,11 +434,11 @@ Use React hooks, TypeScript, Tailwind CSS"
 Output: Complete React component with TypeScript types
 Cost: ~$0.80
 Time: 25 minutes
-```
+```text
 
-**Step 5: Testing (Claude Sonnet)**
+#### Step 5: Testing (Claude Sonnet)
 
-```
+```text
 Prompt: "Generate unit tests for RF path loss algorithm:
 - Test FSPL calculation at 1m, 10m, 100m
 - Test log-distance with different path loss exponents
@@ -448,11 +448,11 @@ Prompt: "Generate unit tests for RF path loss algorithm:
 Output: Comprehensive Go tests with edge cases
 Cost: ~$0.30
 Time: 10 minutes
-```
+```text
 
-**Step 6: Documentation (Gemini Flash - FREE)**
+#### Step 6: Documentation (Gemini Flash - FREE)
 
-```
+```text
 Prompt: "Generate documentation for predictive WiFi survey:
 - Package overview
 - API endpoint specs (request/response examples)
@@ -464,11 +464,11 @@ Prompt: "Generate documentation for predictive WiFi survey:
 Output: Markdown docs, API specs, code examples
 Cost: $0 (free tier)
 Time: 5 minutes
-```
+```text
 
-**Step 7: Code Review (Claude Opus)**
+#### Step 7: Code Review (Claude Opus)
 
-```
+```text
 Prompt: "Review this predictive WiFi survey implementation:
 [paste all code: algorithm, API, frontend, tests]
 
@@ -482,9 +482,9 @@ Check for:
 Output: Detailed review with suggestions
 Cost: ~$5
 Time: 15 minutes
-```
+```yaml
 
-**Total:**
+#### Total
 
 - **Cost:** ~$12
 - **Time:** 2 hours
@@ -496,31 +496,31 @@ Time: 15 minutes
 
 ### 7.1 Minimize Costs Without Sacrificing Quality
 
-**Strategy 1: Use Free Tiers Aggressively**
+#### Strategy 1: Use Free Tiers Aggressively
 
 - **Gemini Flash:** 1,500 requests/day FREE
 - Use for: documentation, batch processing, large context analysis
 - **Savings:** $50-100/month
 
-**Strategy 2: Right-Size Model Selection**
+#### Strategy 2: Right-Size Model Selection
 
 - Don't use Opus for simple tasks (use Sonnet or Haiku)
 - Don't use Sonnet for boilerplate (use Copilot or Gemini)
 - **Savings:** $100-200/month
 
-**Strategy 3: Batch Operations**
+#### Strategy 3: Batch Operations
 
 - Generate all tests at once (one API call) vs one-by-one
 - Document all endpoints together (use Gemini's large context)
 - **Savings:** $20-50/month
 
-**Strategy 4: Cache Common Queries**
+#### Strategy 4: Cache Common Queries
 
 - Save architecture decisions, design patterns, code snippets locally
 - Don't re-ask the same questions
 - **Savings:** $10-30/month
 
-**Strategy 5: Use Copilot for 80% of Typing**
+#### Strategy 5: Use Copilot for 80% of Typing
 
 - $10/month flat fee = unlimited autocomplete
 - Reduces need for AI code generation by 40%
@@ -530,7 +530,7 @@ Time: 15 minutes
 
 ### 7.2 Monthly Budget Allocation
 
-**Recommended Monthly Spend: $200-400**
+#### Recommended Monthly Spend: $200-400
 
 | Tool                          | Subscription | Usage Cost  | Total        | % of Budget |
 | ----------------------------- | ------------ | ----------- | ------------ | ----------- |
@@ -541,7 +541,7 @@ Time: 15 minutes
 | **ChatGPT o1-pro** (optional) | $200         | -           | $200         | 40-50%      |
 | **Total**                     | **$59-259**  | **$70-170** | **$129-429** | **100%**    |
 
-**Lean Startup Budget (< $100/month):**
+#### Lean Startup Budget (< $100/month)
 
 - ✅ GitHub Copilot: $19 (essential)
 - ✅ Claude Pro: $20 (for API credits)
@@ -550,7 +550,7 @@ Time: 15 minutes
 - ❌ Skip o1-pro (use o1-preview on demand)
 - **Total: $39/month + pay-as-you-go Sonnet/Opus usage**
 
-**Growth Budget ($200-400/month):**
+#### Growth Budget ($200-400/month)
 
 - ✅ All of above
 - ✅ ChatGPT Plus or o1-pro
@@ -562,16 +562,16 @@ Time: 15 minutes
 
 ### 8.1 Development Phase (Now - v0.110.0)
 
-**Primary Tools:**
+#### Primary Tools
 
 1. **GitHub Copilot ($19/mo):** Always on, autocomplete 40% of code
 2. **Claude Sonnet 4.5 ($20/mo Pro + usage):** Daily coding, debugging
 3. **Gemini 2.0 Flash (FREE):** Documentation, large context analysis
 4. **Claude Opus 4.5 (as needed):** Architecture, code review ($50-100/mo usage)
 
-**Total: $90-150/month**
+#### Total: $90-150/month
 
-**Workflow:**
+#### Workflow
 
 - Morning: Opus for architecture (15 min)
 - Day: Sonnet + Copilot for coding (8 hours)
@@ -582,14 +582,14 @@ Time: 15 minutes
 
 ### 8.2 Sales & Marketing Phase (v0.110.0+)
 
-**Additional Tools:**
+#### Additional Tools
 
 1. **ChatGPT GPT-4 ($20/mo Plus):** Blog posts, social media, emails
 2. **Claude Opus 4.5 (increased usage):** Sales playbook, case studies, ROI calculators
 
-**Total: $120-200/month**
+#### Total: $120-200/month
 
-**Workflow:**
+#### Workflow
 
 - Sales content: Opus (persuasive, strategic)
 - Marketing content: GPT-4 (creative, SEO)
@@ -599,14 +599,14 @@ Time: 15 minutes
 
 ### 8.3 Growth Phase (v1.0.0+)
 
-**Full Stack:**
+#### Full Stack
 
 - GitHub Copilot: $19/mo × team size (4 engineers = $76/mo)
 - Claude Pro: $20/mo × team size (or enterprise API)
 - Gemini: Free tier (supplement with paid if needed)
 - ChatGPT o1-pro: $200/mo (1 seat for algorithm work)
 
-**Total: $300-500/month for 4-person team**
+#### Total: $300-500/month for 4-person team
 
 ---
 
@@ -660,9 +660,9 @@ Time: 15 minutes
 
 ## 11. Conclusion
 
-**Recommended Stack for The Seed:**
+### Recommended Stack for The Seed
 
-**Core Tools (Essential):**
+#### Core Tools (Essential)
 
 1. **GitHub Copilot ($19/mo):** Real-time autocomplete, 40% of code written
 2. **Claude Sonnet 4.5 ($20/mo Pro + $50-100 usage):** Daily coding workhorse
@@ -674,7 +674,7 @@ Time: 15 minutes
 **Total Monthly Cost: $129-439** **Developer Productivity Gain: 5-20x** **ROI: 10x minimum** (saves $2,000-8,000/month
 in developer time)
 
-**Key Insight:**
+#### Key Insight
 
 - **Use the right tool for the job**
 - Don't use a sledgehammer (Opus) when a screwdriver (Sonnet) will do
@@ -686,3 +686,4 @@ time** = **best investment you'll make**.
 ---
 
 **Document Owner:** Engineering Team **Next Review:** Monthly (optimize tool usage, track ROI)
+````

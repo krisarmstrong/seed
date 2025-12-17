@@ -9,14 +9,14 @@ have limitations. **Intel or Atheros preferred for reliability**.
 
 ### Why MediaTek is Improving
 
-**Recent Progress:**
+#### Recent Progress
 
 - `mt76` driver in mainline kernel (actively developed)
 - Improving nl80211 support
 - Some chipsets support monitor mode
 - Better than Realtek, not as good as Intel
 
-**Remaining Issues:**
+#### Remaining Issues
 
 - Monitor mode support varies by chipset
 - Packet injection limited
@@ -32,21 +32,21 @@ preferred** for reliability.
 
 ### MT7921 (Wi-Fi 6, Common in Laptops)
 
-**Moderate Support**
+#### Moderate Support
 
 - **Driver:** `mt76` (in-kernel since 5.12)
 - **Form Factor:** M.2 2230, PCIe
 - **Bands:** 2.4GHz, 5GHz
 - **Max Speed:** 2400 Mbps
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - Monitor Mode: ⚠️ Limited (varies by kernel version)
 - Channel Switching: ✅ Good
 - Signal Quality: ⚠️ Variable
 - Packet Injection: ❌ Not supported
 
-**Notes:**
+#### Notes
 
 - Common in budget laptops (HP, Lenovo)
 - Works well for managed mode
@@ -59,14 +59,14 @@ preferred** for reliability.
 
 ### MT7922 (Wi-Fi 6E)
 
-**Improving Support**
+#### Improving Support
 
 - **Driver:** `mt76` (in-kernel since 5.18)
 - **Form Factor:** M.2 2230
 - **Bands:** 2.4GHz, 5GHz, 6GHz
 - **Max Speed:** 2400 Mbps
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - Monitor Mode: ⚠️ Limited (kernel 6.0+ recommended)
 - Channel Switching: ✅ Good
@@ -74,7 +74,7 @@ preferred** for reliability.
 - Packet Injection: ❌ Not supported
 - 6GHz Support: ✅ Yes (basic, no monitor mode)
 
-**Notes:**
+#### Notes
 
 - 6GHz support is recent (kernel 6.0+)
 - Monitor mode on 6GHz not reliable
@@ -86,21 +86,21 @@ preferred** for reliability.
 
 ### MT7612U (USB, Wi-Fi 5)
 
-**Better USB Option**
+#### Better USB Option
 
 - **Driver:** `mt76x2u` (in-kernel)
 - **Form Factor:** USB 3.0
 - **Bands:** 2.4GHz, 5GHz
 - **Max Speed:** 867 Mbps
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - Monitor Mode: ⚠️ Partial
 - Channel Switching: ✅ Good
 - Signal Quality: ✅ Good
 - Packet Injection: ⚠️ Limited
 
-**Notes:**
+#### Notes
 
 - Better than Realtek USB adapters
 - Some monitor mode support
@@ -112,14 +112,14 @@ preferred** for reliability.
 
 ### MT7615/MT7663 (Wi-Fi 5, Older)
 
-**Basic Support**
+#### Basic Support
 
 - **Driver:** `mt76` (in-kernel)
 - **Form Factor:** M.2, PCIe
 - **Bands:** 2.4GHz, 5GHz
 - **Max Speed:** 1733 Mbps
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - Monitor Mode: ⚠️ Limited
 - Channel Switching: ✅ Good
@@ -134,13 +134,13 @@ preferred** for reliability.
 
 ### Verify MediaTek Chipset
 
-```bash
+````bash
 lspci | grep -i mediatek
 # Example: MediaTek Inc. MT7921 802.11ax
 
 lsusb | grep -i mediatek
 # For USB adapters
-```
+```text
 
 ### Check Driver Status
 
@@ -150,7 +150,7 @@ lsmod | grep mt76
 # mt7921e (or mt7922e, mt76x2u, etc.)
 # mt76_connac_lib
 # mt76
-```
+```text
 
 ### Install Firmware (if needed)
 
@@ -164,7 +164,7 @@ sudo pacman -S linux-firmware
 
 # Verify firmware loaded
 dmesg | grep -i mediatek
-```
+```text
 
 ### Test Monitor Mode
 
@@ -180,9 +180,9 @@ sudo ip link set wlan0 up
 
 # Verify
 iw dev wlan0 info
-```
+```yaml
 
-**Expected Result:**
+#### Expected Result
 
 - MT7921: May work on kernel 5.15+, unstable on older kernels
 - MT7922: Limited, especially on 6GHz
@@ -205,9 +205,9 @@ sudo apt install linux-generic-hwe-22.04
 
 # Or use mainline kernel (advanced)
 # https://kernel.ubuntu.com/~kernel-ppa/mainline/
-```
+```bash
 
-**Recommended Kernels:**
+#### Recommended Kernels
 
 - MT7921: 5.15+ (better with 6.0+)
 - MT7922: 6.0+ (6.1+ preferred)
@@ -220,7 +220,7 @@ cd /tmp
 git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 sudo cp -r linux-firmware/mediatek/* /lib/firmware/mediatek/
 sudo update-initramfs -u
-```
+```yaml
 
 ---
 
@@ -253,13 +253,13 @@ sudo update-initramfs -u
 
 ### Issue: Monitor Mode Fails on MT7921
 
-**Error:**
+#### Error
 
-```
+```text
 command failed: Operation not supported (-95)
-```
+```text
 
-**Solution:**
+#### Solution
 
 ```bash
 # Update to kernel 5.15 or newer
@@ -268,25 +268,25 @@ uname -r  # Check current version
 # If kernel <5.15, upgrade
 sudo apt install linux-generic-hwe-22.04
 sudo reboot
-```
+```text
 
 ### Issue: Firmware Loading Failure
 
-**Error:**
+#### Error
 
-```
+```text
 mt7921e: Failed to load firmware
 mt7921e: Download BIN timeout
-```
+```python
 
-**Solution:**
+#### Solution
 
 ```bash
 # Reinstall firmware
 sudo apt install --reinstall linux-firmware
 
 # Or get latest from git (see above)
-```
+```yaml
 
 ### Issue: Inconsistent Signal Quality
 
@@ -302,13 +302,13 @@ sudo apt install --reinstall linux-firmware
 
 ### ⚠️ **Maybe** - For Budget Builds
 
-**When MediaTek makes sense:**
+#### When MediaTek makes sense
 
 - Budget constraint (often cheaper than Intel)
 - Managed mode only (no diagnostics)
 - Latest kernel available (6.0+)
 
-**When to choose Intel instead:**
+#### When to choose Intel instead
 
 - Need reliable monitor mode
 - Site surveys and diagnostics
@@ -316,7 +316,7 @@ sudo apt install --reinstall linux-firmware
 - Packet injection
 - Professional/production use
 
-**Price Comparison:**
+#### Price Comparison
 
 - MediaTek MT7921: $12-18 USD
 - Intel AX200: $15-25 USD
@@ -369,3 +369,4 @@ _(Community will report problems here)_
 recent kernels.
 
 [← Back to Home](Home) | [← Previous: Realtek](Realtek-WiFi) | [Next: Intel Ethernet →](Intel-Ethernet)
+````

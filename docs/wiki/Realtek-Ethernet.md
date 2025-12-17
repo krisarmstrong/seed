@@ -15,14 +15,14 @@ The Seed cable testing**.
 - `r8125` driver: No cable testing support
 - Consumer chipsets: No TDR hardware capability
 
-**Attempted Test:**
+#### Attempted Test
 
-```bash
+````bash
 sudo ethtool --cable-test eth0
 # Output: netlink error: Operation not supported
-```
+```yaml
 
-**Why is this?**
+#### Why is this?
 
 1. **Hardware limitation** - Consumer Realtek chips don't have TDR circuitry
 2. **Driver limitation** - Even if hardware supported it, Linux driver doesn't expose it
@@ -36,7 +36,7 @@ sudo ethtool --cable-test eth0
 
 ### RTL8111/RTL8168 (Most Common)
 
-**Consumer Gigabit - No TDR**
+#### Consumer Gigabit - No TDR
 
 - **Chipset:** Realtek RTL8111 or RTL8168
 - **Driver:** `r8169` (in-kernel)
@@ -44,14 +44,14 @@ sudo ethtool --cable-test eth0
 - **Found In:** 90% of consumer motherboards, laptops
 - **Price:** Usually built-in (free)
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ❌ **Not supported**
 - Link Speed Detection: ✅ Accurate
 - LLDP/CDP Capture: ✅ Works
 - Basic Diagnostics: ✅ Works (no cable testing)
 
-**Use Cases:**
+#### Use Cases
 
 - Basic network diagnostics (link status, DHCP, DNS)
 - LLDP/CDP neighbor discovery
@@ -61,21 +61,21 @@ sudo ethtool --cable-test eth0
 
 ### RTL8125 (2.5 Gigabit)
 
-**Modern Consumer 2.5GbE - No TDR**
+#### Modern Consumer 2.5GbE - No TDR
 
 - **Chipset:** Realtek RTL8125
 - **Driver:** `r8169` (in-kernel since 5.9) or `r8125` (out-of-tree)
 - **Speed:** 10/100/1000/2500 Mbps
 - **Found In:** Modern motherboards (2019+)
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ❌ **Not supported**
 - 2.5GbE Support: ✅ Yes
 - Link Speed Detection: ✅ Accurate
 - Basic Diagnostics: ✅ Works (no cable testing)
 
-**Notes:**
+#### Notes
 
 - Common on AMD B550/X570 and Intel Z490+ motherboards
 - Works great for basic diagnostics
@@ -85,20 +85,20 @@ sudo ethtool --cable-test eth0
 
 ### RTL8153 (USB Ethernet)
 
-**USB to Gigabit Adapter - No TDR**
+#### USB to Gigabit Adapter - No TDR
 
 - **Chipset:** Realtek RTL8153
 - **Driver:** `r8152` (in-kernel)
 - **Form Factor:** USB 3.0 to Gigabit RJ45
 - **Speed:** 10/100/1000 Mbps
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ❌ **Not supported**
 - USB Adapter: ✅ Works
 - Basic Diagnostics: ✅ Works
 
-**Common Adapters:**
+#### Common Adapters
 
 - Anker USB-C to Ethernet
 - Cable Matters USB 3.0 to Gigabit
@@ -112,7 +112,7 @@ While Realtek doesn't support TDR cable testing, they work perfectly for:
 
 ### Supported The Seed Features
 
-**✅ Working Features:**
+#### ✅ Working Features
 
 - Link status detection (carrier, up/down)
 - Speed detection (10/100/1000/2500 Mbps)
@@ -126,7 +126,7 @@ While Realtek doesn't support TDR cable testing, they work perfectly for:
 - Gateway ping testing
 - Network device discovery
 
-**❌ Not Working:**
+#### ❌ Not Working
 
 - Cable diagnostics (TDR)
 - Cable length measurement
@@ -134,7 +134,7 @@ While Realtek doesn't support TDR cable testing, they work perfectly for:
 
 ### Recommendation
 
-**If you have Realtek NIC:**
+#### If you have Realtek NIC
 
 - ✅ Use it for all diagnostics **except cable testing**
 - ✅ Add Intel I210 PCIe card ($20-35) for cable diagnostics
@@ -154,7 +154,7 @@ ethtool -i eth0
 # driver: r8169
 # version: 5.15.0-91-generic
 # firmware-version: rtl8168h-2_0.0.2 02/26/15
-```
+```text
 
 ### Confirm No TDR Support
 
@@ -163,7 +163,7 @@ sudo ethtool --cable-test eth0
 # Output: netlink error: Operation not supported
 
 # This is expected and normal for Realtek
-```
+```text
 
 ### Use for Basic Diagnostics
 
@@ -181,7 +181,7 @@ sudo tcpdump -i eth0 -e -n 'ether proto 0x88cc'
 # Run The Seed - WORKS (minus cable card)
 sudo ./seed --interface eth0
 # All cards work except Cable Diagnostics
-```
+```typescript
 
 ---
 
@@ -189,7 +189,7 @@ sudo ./seed --interface eth0
 
 ### ❌ **Don't Replace** - If You Don't Need TDR
 
-**Keep Realtek if:**
+#### Keep Realtek if
 
 - You only need link status, LLDP, DHCP, DNS testing
 - Motherboard has built-in Realtek (free)
@@ -199,13 +199,13 @@ sudo ./seed --interface eth0
 
 ### ✅ **Add Intel Card** - If You Need TDR
 
-**Best Approach:**
+#### Best Approach
 
 1. Keep using Realtek for general diagnostics
 2. Add Intel I210 PCIe card ($20-35) for cable testing
 3. Switch interfaces in The Seed when you need cable diagnostics
 
-**Installation:**
+#### Installation
 
 ```bash
 # Install Intel I210 in PCIe slot
@@ -217,7 +217,7 @@ sudo ./seed --interface eth0
 # Switch to Intel for cable testing
 sudo ./seed --interface eth1
 # Cable Diagnostics card now available
-```
+```yaml
 
 ---
 
@@ -233,32 +233,34 @@ sudo ./seed --interface eth1
 
 ```bash
 sudo ethtool -s eth0 speed 1000 duplex full autoneg off
-```
+```text
 
 ### Issue: Link Drops Under Load
 
 **Symptom:** Link randomly disconnects during high traffic
 
-**Solutions:**
+#### Solutions
 
 1. Update kernel (newer `r8169` driver versions)
 2. Disable power saving:
 
    ```bash
    sudo ethtool -s eth0 wol d
-   ```
+```text
+
+```text
 
 3. Disable offloading:
 
    ```bash
    sudo ethtool -K eth0 tso off gso off
-   ```
+```text
 
 ### Issue: Driver Not Loading
 
 **Symptom:** No network after boot
 
-**Solution:**
+#### Solution
 
 ```bash
 # Load driver manually
@@ -266,7 +268,7 @@ sudo modprobe r8169
 
 # Make permanent
 echo "r8169" | sudo tee -a /etc/modules
-```
+```yaml
 
 ---
 
@@ -303,3 +305,4 @@ you need cable testing.
 
 [← Back to Home](Home) | [← Previous: Broadcom Ethernet](Broadcom-Ethernet) |
 [Next: Marvell Ethernet →](Marvell-Ethernet)
+````

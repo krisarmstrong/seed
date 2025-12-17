@@ -5,8 +5,8 @@
 **Product**: "The Seed" by Mustard Seed Networks  
 **Module**: `github.com/krisarmstrong/seed`  
 **Binary**: `seed`  
-**What**: Professional network diagnostic appliance - portable hardware device plugged into network
-jacks for real-time diagnostics via web UI.
+**What**: Professional network diagnostic appliance - portable hardware device plugged into network jacks for real-time
+diagnostics via web UI.
 
 ## Architecture & Tech Stack
 
@@ -17,8 +17,7 @@ jacks for real-time diagnostics via web UI.
 
 ### Critical Dependencies
 
-- **gopacket/libpcap**: Raw packet capture for LLDP/CDP/EDP/FDP switch discovery, VLAN detection,
-  DHCP monitoring
+- **gopacket/libpcap**: Raw packet capture for LLDP/CDP/EDP/FDP switch discovery, VLAN detection, DHCP monitoring
 - **vishvananda/netlink**: Linux netlink for interface management, routing tables
 - **mdlayher/wifi**: nl80211 interface for WiFi diagnostics
 - **gorilla/websocket**: Real-time dashboard updates
@@ -35,11 +34,11 @@ Cards: Link, Cable, Switch (LLDP/CDP), VLAN, WiFi, DHCP, DNS, Gateway, Public IP
 
 ### 2. WebSocket Broadcast System
 
-```go
+````go
 // Broadcast loop skips work when no clients connected (optimization)
 if s.wsHub.ClientCount() == 0 { continue }
 s.broadcastAllCards()  // Collects & pushes all card data
-```
+```text
 
 Frontend connects once, receives typed `CardUpdate` messages, routes to appropriate card state.
 
@@ -64,13 +63,13 @@ API handlers split by domain into `handlers_*.go` files:
 cfg.RLock()
 defer cfg.RUnlock()
 // Read operations
-```
+```bash
 
 Config persists to `configs/seed.yaml` on updates. Default file: `configs/seed.yaml`.
 
 ### 5. ICMP Capabilities
 
-Ping requires `CAP_NET_RAW`. Check with `discovery.CheckICMPPrivilegesWithMessage()`.  
+Ping requires `CAP_NET_RAW`. Check with `discovery.CheckICMPPrivilegesWithMessage()`.
 Gracefully degrades if unavailable - logs warning, disables ping-dependent features.
 
 ## Development Workflow
@@ -92,7 +91,7 @@ make test-frontend  # Vitest + Playwright
 # Linting
 make lint           # All linters
 make fix            # Auto-fix issues
-```
+```bash
 
 ### Key Commands
 
@@ -102,8 +101,7 @@ make fix            # Auto-fix issues
 
 ### Reproducible Builds
 
-Always use `-trimpath -buildvcs=false` flags (enforced in Makefile, CI). See `go.mod` for exact Go
-version.
+Always use `-trimpath -buildvcs=false` flags (enforced in Makefile, CI). See `go.mod` for exact Go version.
 
 ## Code Standards
 
@@ -123,12 +121,12 @@ See `STYLE_GUIDE.md` for comprehensive standards.
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 feat(wifi): add WPA3 support
 fix(dhcp): correct phase timing calculation
 docs(api): update WebSocket message format
 chore(deps): update gopacket to v1.1.20
-```
+```python
 
 ### Frontend Theming
 
@@ -138,7 +136,7 @@ chore(deps): update gopacket to v1.1.20
 <h1 className="heading-1">Page Title</h1>
 <p className="body-small">Description</p>
 <button className="text-status-success">Connected</button>
-```
+```typescript
 
 Color tokens in `web/src/index.css` as CSS variables, mapped in `web/src/styles/theme.ts`.
 
@@ -146,23 +144,22 @@ Color tokens in `web/src/index.css` as CSS variables, mapped in `web/src/styles/
 
 ### Interface Auto-Detection Issues
 
-**Open Issue**: Hardcoded interface names (`eth0`, `en0`) break portability across Linux distros and
-macOS. See Issue #572.
+**Open Issue**: Hardcoded interface names (`eth0`, `en0`) break portability across Linux distros and macOS. See Issue
+#572.
 
 **Pattern to avoid**:
 
 ```go
 iface := "eth0"  // ❌ Hardcoded
-```
+```text
 
 **Correct approach**:
 
 ```go
 iface, err := network.GetDefaultInterface()  // ✅ Dynamic detection
-```
+```go
 
-Dynamic detection in `internal/network/interfaces.go`. Always use config-driven or auto-detected
-interfaces.
+Dynamic detection in `internal/network/interfaces.go`. Always use config-driven or auto-detected interfaces.
 
 ### Security Considerations
 
@@ -188,7 +185,7 @@ Use build tags for platform-specific code:
 // +build linux
 
 package gateway
-```
+```typescript
 
 Common split: `gateway_linux.go` vs `gateway_darwin.go` (macOS stubs for development).
 
@@ -215,7 +212,7 @@ I18n via `react-i18next`. Translation files in `locales/{lang}/common.json`:
 ```tsx
 const { t } = useTranslation("common");
 <p>{t("link.status")}</p>;
-```
+```text
 
 ## Known Issues & Workarounds
 
@@ -232,10 +229,10 @@ sudo ./deploy/systemd/install.sh     # Install service
 sudo systemctl status seed           # Check status
 journalctl -u seed -f                # View logs
 sudo ./deploy/systemd/uninstall.sh   # Uninstall
-```
+```bash
 
-Logs: `logs/seed.log` (rotated via lumberjack)  
-Config: `configs/seed.yaml`  
+Logs: `logs/seed.log` (rotated via lumberjack)
+Config: `configs/seed.yaml`
 Default HTTPS port: `8443`
 
 ## Useful Files for Context
@@ -262,4 +259,5 @@ make lint-fix         # Auto-fix linting issues
 
 # Deployment
 make deploy DEPLOY_HOST=192.168.1.100  # Deploy to remote server
-```
+```text
+````

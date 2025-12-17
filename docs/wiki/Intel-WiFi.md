@@ -323,7 +323,7 @@ sudo systemctl stop NetworkManager
 
 **Symptoms:**
 
-```
+```text
 iwlwifi 0000:03:00.0: Failed to load firmware chunk!
 iwlwifi 0000:03:00.0: Could not load the [0] uCode section
 ```

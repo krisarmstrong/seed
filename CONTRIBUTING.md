@@ -1,7 +1,7 @@
 # Contributing to The Seed
 
-Thank you for your interest in contributing to The Seed! This document provides guidelines and
-instructions for contributing.
+Thank you for your interest in contributing to The Seed! This document provides guidelines and instructions for
+contributing.
 
 ## Code of Conduct
 
@@ -18,7 +18,7 @@ Be respectful, inclusive, and professional in all interactions.
 
 ### Development Setup
 
-```bash
+````bash
 # Clone the repository
 git clone https://github.com/krisarmstrong/seed.git
 cd seed
@@ -34,7 +34,7 @@ make test
 
 # Run linting
 make lint
-```
+```bash
 
 ### Systemd Service Installation (Ubuntu/Linux)
 
@@ -53,12 +53,12 @@ sudo systemctl status seed
 sudo systemctl stop seed
 sudo systemctl restart seed
 journalctl -u seed -f      # View logs
-```
+```text
 
-**First-Boot Credential Retrieval:**
+#### First-Boot Credential Retrieval
 
-The install script automatically generates and displays initial admin credentials. If you need to
-manually generate credentials (e.g., for headless deployments):
+The install script automatically generates and displays initial admin credentials. If you need to manually generate
+credentials (e.g., for headless deployments):
 
 ```bash
 # Generate credentials and display on stdout
@@ -69,17 +69,17 @@ seed credentials -file /path/to/credentials.txt
 
 # Output as JSON (for scripting)
 seed credentials -json
-```
+```text
 
-The credentials file is created with mode 0600 (owner read/write only). **Delete this file
-immediately after retrieving the password.**
+The credentials file is created with mode 0600 (owner read/write only). **Delete this file immediately after retrieving
+the password.**
 
-**Uninstall:**
+#### Uninstall
 
 ```bash
 sudo ./deploy/systemd/uninstall.sh          # Keep configs
 sudo ./deploy/systemd/uninstall.sh --purge  # Remove everything
-```
+```text
 
 ## Development Workflow
 
@@ -95,18 +95,17 @@ Use descriptive branch names with prefixes:
 
 ### Commit Messages
 
-We use [Conventional Commits](https://www.conventionalcommits.org/). All commits must follow this
-format:
+We use [Conventional Commits](https://www.conventionalcommits.org/). All commits must follow this format:
 
-```
+```text
 type(scope): description
 
 [optional body]
 
 [optional footer]
-```
+```text
 
-**Types:**
+#### Types
 
 - `feat` - New feature
 - `fix` - Bug fix
@@ -119,14 +118,14 @@ type(scope): description
 - `ci` - CI/CD changes
 - `build` - Build system changes
 
-**Examples:**
+#### Examples
 
-```
+```text
 feat(dhcp): add phase timing breakdown
 fix(websocket): resolve connection drop on idle
 docs: update installation instructions
 chore(deps): upgrade gopacket to v1.2.0
-```
+```python
 
 ### Pull Request Process
 
@@ -141,9 +140,9 @@ chore(deps): upgrade gopacket to v1.2.0
 
 Use the same format as commit messages:
 
-```
+```text
 feat(dhcp): add phase timing breakdown (#123)
-```
+```bash
 
 ## Code Standards
 
@@ -165,8 +164,7 @@ feat(dhcp): add phase timing breakdown (#123)
 
 #### Storybook
 
-We use [Storybook](https://storybook.js.org/) for developing and documenting UI components in
-isolation.
+We use [Storybook](https://storybook.js.org/) for developing and documenting UI components in isolation.
 
 ```bash
 # Start Storybook development server
@@ -174,7 +172,7 @@ cd web && npm run storybook
 
 # Build Storybook static site
 cd web && npm run build-storybook
-```
+```bash
 
 When creating new UI components:
 
@@ -213,7 +211,7 @@ cd web && npm test -- --coverage
 
 # E2E tests (requires running server)
 make test-e2e
-```
+```go
 
 ### Test Requirements
 
@@ -255,7 +253,7 @@ func TestValidateURL(t *testing.T) {
         })
     }
 }
-```
+```go
 
 #### Test Isolation with Temporary Resources
 
@@ -280,7 +278,7 @@ func TestConfigLoad(t *testing.T) {
     }
     // assertions...
 }
-```
+```go
 
 #### Mocking External Dependencies
 
@@ -314,7 +312,7 @@ func TestServiceFetch(t *testing.T) {
     svc := &Service{client: mock}
     // test svc.Fetch()...
 }
-```
+```tsx
 
 #### Race Condition Checks
 
@@ -322,7 +320,7 @@ Always run tests with `-race` for concurrent code:
 
 ```bash
 go test -race ./internal/websocket/...
-```
+```tsx
 
 ### React Frontend Testing
 
@@ -360,11 +358,11 @@ describe("MyComponent", () => {
     expect(mockFetch).toHaveBeenCalledWith("/api/data", expect.any(Object));
   });
 });
-```
+```text
 
 #### Mocking Strategies
 
-**Mocking fetch:**
+##### Mocking fetch
 
 ```typescript
 mockFetch.mockImplementation((url: string) => {
@@ -373,9 +371,9 @@ mockFetch.mockImplementation((url: string) => {
   }
   return createMockResponse({});
 });
-```
+```typescript
 
-**Mocking WebSocket:**
+#### Mocking WebSocket
 
 ```typescript
 beforeEach(() => {
@@ -389,9 +387,9 @@ it("handles WebSocket messages", () => {
   ws.simulateMessage({ type: "update", data: {} });
   // assertions...
 });
-```
+```text
 
-**Mocking localStorage:**
+#### Mocking localStorage
 
 ```typescript
 it("persists auth token", () => {
@@ -399,7 +397,7 @@ it("persists auth token", () => {
   render(<AuthComponent />);
   expect(mockLocalStorage.setItem).toHaveBeenCalledWith("token", "test-token");
 });
-```
+```tsx
 
 #### Testing Async Code
 
@@ -417,7 +415,7 @@ it("loads data asynchronously", async () => {
     expect(screen.getByRole("list")).toBeInTheDocument();
   });
 });
-```
+```tsx
 
 #### Testing Context Providers
 
@@ -436,7 +434,7 @@ it("uses settings context", () => {
   renderWithProviders(<SettingsConsumer />);
   // assertions...
 });
-```
+```python
 
 ### Test Data Factories
 
@@ -451,7 +449,7 @@ it("handles expired token", () => {
   mockLocalStorage.setItem("token", expiredToken.token);
   // ...
 });
-```
+```python
 
 ### Common Patterns
 
@@ -465,8 +463,8 @@ it("handles expired token", () => {
 
 ### Issue Templates
 
-We use GitHub Issue Forms for consistent, well-structured issues. When creating an issue, select the
-appropriate template:
+We use GitHub Issue Forms for consistent, well-structured issues. When creating an issue, select the appropriate
+template:
 
 | Template        | Prefix       | Use Case                                   |
 | --------------- | ------------ | ------------------------------------------ |
@@ -534,13 +532,12 @@ Include:
 
 ## Hardware Testing Contributions
 
-The Seed's advanced features (WiFi scanning, cable diagnostics, etc.) depend on hardware support. We
-welcome hardware compatibility reports from the community!
+The Seed's advanced features (WiFi scanning, cable diagnostics, etc.) depend on hardware support. We welcome hardware
+compatibility reports from the community!
 
 ### Reporting Hardware Compatibility
 
-Use the **Hardware Report** issue template to document your experience with specific network
-adapters. Include:
+Use the **Hardware Report** issue template to document your experience with specific network adapters. Include:
 
 - **Hardware details**: Make, model, chipset
 - **Platform**: OS, kernel version, driver
@@ -558,21 +555,21 @@ adapters. Include:
 
 ### What to Test
 
-**WiFi Adapters:**
+#### WiFi Adapters
 
 - Passive scanning (`internal/wifi/scanner_*.go`)
 - Channel availability
 - Signal strength accuracy
 - Packet injection (if applicable)
 
-**Ethernet NICs:**
+#### Ethernet NICs
 
 - Cable diagnostics/TDR (`internal/cable/cable_*.go`)
 - Link speed detection
 - Autonegotiation
 - Statistics accuracy
 
-**Platform-Specific:**
+#### Platform-Specific
 
 - macOS WiFi scanning via CoreWLAN
 - Linux nl80211 support
@@ -580,14 +577,14 @@ adapters. Include:
 
 ### Hardware Testing Label
 
-Issues labeled `hardware-testing` track compatibility testing efforts. Feel free to claim tests from
-the backlog or propose new hardware to test.
+Issues labeled `hardware-testing` track compatibility testing efforts. Feel free to claim tests from the backlog or
+propose new hardware to test.
 
 ### Example Hardware Report
 
 ```markdown
-**Hardware**: Intel AX200 WiFi 6 Adapter **OS**: Ubuntu 22.04 LTS (kernel 5.15.0) **Driver**:
-iwlwifi **Chipset**: Intel AX200
+**Hardware**: Intel AX200 WiFi 6 Adapter **OS**: Ubuntu 22.04 LTS (kernel 5.15.0) **Driver**: iwlwifi **Chipset**: Intel
+AX200
 
 **Features Tested**:
 
@@ -596,9 +593,9 @@ iwlwifi **Chipset**: Intel AX200
 - ✅ Interface switching: Seamless
 - ❌ Packet injection: Not tested
 
-**Notes**: Required `sudo` for scanning. Performance excellent. **Recommendation**: Highly
-recommended for WiFi survey features.
-```
+**Notes**: Required `sudo` for scanning. Performance excellent. **Recommendation**: Highly recommended for WiFi survey
+features.
+```text
 
 ## Questions?
 
@@ -607,3 +604,4 @@ recommended for WiFi survey features.
 - File an issue for bugs or features
 
 Thank you for contributing!
+````

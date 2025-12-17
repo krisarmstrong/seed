@@ -16,7 +16,7 @@ Each release contains the following files for each platform (linux-amd64, linux-
 
 Install the following tools to verify signatures and inspect SBOMs:
 
-```bash
+````bash
 # Install cosign for signature verification
 # macOS
 brew install cosign
@@ -32,7 +32,7 @@ brew install syft
 
 # Linux
 curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-```
+```text
 
 ## Verifying Binary Signatures
 
@@ -50,7 +50,7 @@ PLATFORM=linux-amd64  # Change to your platform
 gh release download $VERSION \
   -p "seed-${PLATFORM}*" \
   -R krisarmstrong/seed
-```
+```python
 
 Or download manually from the [GitHub Releases](https://github.com/krisarmstrong/seed/releases) page.
 
@@ -63,13 +63,13 @@ cosign verify-blob \
   --certificate-identity-regexp='https://github.com/krisarmstrong/seed' \
   --certificate-oidc-issuer='https://token.actions.githubusercontent.com' \
   seed-${PLATFORM}
-```
+```text
 
 Expected output:
 
-```
+```text
 Verified OK
-```
+```text
 
 ### Step 3: Verify the SBOM Signature
 
@@ -80,13 +80,13 @@ cosign verify-blob \
   --certificate-identity-regexp='https://github.com/krisarmstrong/seed' \
   --certificate-oidc-issuer='https://token.actions.githubusercontent.com' \
   seed-${PLATFORM}.sbom.json
-```
+```text
 
 Expected output:
 
-```
+```text
 Verified OK
-```
+```python
 
 ## Understanding the Signatures
 
@@ -120,7 +120,7 @@ cat seed-${PLATFORM}.sbom.json | jq '.'
 
 # List all components
 cat seed-${PLATFORM}.sbom.json | jq '.components[] | {name, version}'
-```
+```text
 
 ### Using Syft
 
@@ -132,7 +132,7 @@ grype sbom:./seed-${PLATFORM}.sbom.json
 
 # Convert SBOM to other formats
 syft convert seed-${PLATFORM}.sbom.json -o spdx-json
-```
+```text
 
 ## Verification in CI/CD
 
@@ -159,7 +159,7 @@ To automate verification in your CI/CD pipeline:
     # Make executable
     chmod +x seed-${PLATFORM}
     mv seed-${PLATFORM} /usr/local/bin/seed
-```
+```python
 
 ## Troubleshooting
 
@@ -184,7 +184,7 @@ For keyless verification, you may need to set:
 
 ```bash
 export COSIGN_EXPERIMENTAL=1
-```
+```yaml
 
 This enables experimental keyless verification mode in older cosign versions. Newer versions (>= 2.0) don't require
 this.
@@ -205,3 +205,4 @@ If you discover a security vulnerability in The Seed, please report it privately
 ---
 
 **Last Updated**: 2025-12-14 **Applies to**: The Seed v0.14.0 and later
+````

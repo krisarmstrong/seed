@@ -6,9 +6,8 @@
 
 ## Overview
 
-The Seed is a professional-grade network diagnostic appliance designed for network technicians and
-engineers. It provides real-time visibility into network connectivity through a modern card-based
-web interface.
+The Seed is a professional-grade network diagnostic appliance designed for network technicians and engineers. It
+provides real-time visibility into network connectivity through a modern card-based web interface.
 
 ### Target Platform
 
@@ -73,7 +72,7 @@ web interface.
 
 ### Project Structure
 
-```
+````typescript
 seed/
 ├── .github/
 │   ├── workflows/
@@ -125,7 +124,7 @@ seed/
 ├── go.mod
 ├── go.sum
 └── package.json               # Root for frontend tooling
-```
+```python
 
 ---
 
@@ -247,7 +246,7 @@ Track each phase of DHCP transaction:
 
 ## UI Wireframe
 
-```
+```python
 ┌──────────────────────────────────────────────────────────────────┐
 │  ◉ The Seed                              [eth0 ▾]  [🌙]  [⚙️]   │
 ├──────────────────────────────────────────────────────────────────┤
@@ -300,7 +299,7 @@ Settings Drawer (slides from right):
 │                         │
 │ [Export JSON]           │
 └─────────────────────────┘
-```
+```yaml
 
 ---
 
@@ -414,3 +413,4 @@ Issues will be created for each feature with labels:
 ---
 
 _Last updated: 2025-12-02_ _Version: Draft 1.0_
+````

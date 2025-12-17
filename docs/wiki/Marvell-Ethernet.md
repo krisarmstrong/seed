@@ -9,13 +9,13 @@
 
 ### Why Marvell is Uncommon
 
-**Market Position:**
+#### Market Position
 
 - Less common than Intel, Broadcom, or Realtek
 - Found in some older servers and specialty hardware
 - Driver support varies significantly by chipset
 
-**TDR Support:**
+#### TDR Support
 
 - **Server chipsets:** May support basic TDR
 - **Consumer chipsets:** Usually no TDR support
@@ -29,50 +29,50 @@
 
 ### Marvell 88E1512 (PHY Chip)
 
-**Often Found on Embedded Boards**
+#### Often Found on Embedded Boards
 
 - **Type:** PHY (Physical Layer) chip
 - **Driver:** `marvell` PHY driver + MAC driver (varies)
 - **Speed:** 10/100/1000 Mbps
 - **TDR Support:** ⚠️ **Varies** (depends on MAC driver)
 
-**Found In:**
+#### Found In
 
 - Raspberry Pi Compute Module carrier boards
 - Industrial Ethernet devices
 - Embedded systems
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ⚠️ **Unknown** (test required)
 - Link Speed Detection: ✅ Accurate
 - Basic Diagnostics: ✅ Works
 
-**Testing:**
+#### Testing
 
-```bash
+````bash
 sudo ethtool --cable-test eth0
 # May work, may not - depends on implementation
-```
+```yaml
 
 ---
 
 ### Marvell Yukon 88E8056 (Consumer)
 
-**Common in Older Motherboards/Laptops**
+#### Common in Older Motherboards/Laptops
 
 - **Chipset:** Marvell Yukon 88E8056
 - **Driver:** `sky2` (in-kernel)
 - **Speed:** 10/100/1000 Mbps
 - **Found In:** 2005-2010 era motherboards
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ❌ **Not supported**
 - Link Speed Detection: ✅ Accurate
 - Basic Diagnostics: ✅ Works
 
-**Notes:**
+#### Notes
 
 - Older chipset, mostly replaced by Realtek/Intel
 - No TDR support in Linux driver
@@ -81,14 +81,14 @@ sudo ethtool --cable-test eth0
 
 ### Marvell 88E1111 (Legacy PHY)
 
-**Older Embedded/Server PHY**
+#### Older Embedded/Server PHY
 
 - **Type:** PHY chip
 - **Driver:** `marvell` PHY driver
 - **Speed:** 10/100/1000 Mbps
 - **TDR Support:** ❌ **Not typically supported**
 
-**Notes:**
+#### Notes
 
 - Legacy chipset (pre-2010)
 - Found in older embedded systems
@@ -99,7 +99,7 @@ sudo ethtool --cable-test eth0
 
 ### Supported The Seed Features
 
-**✅ Generally Working:**
+#### ✅ Generally Working
 
 - Link status detection
 - Speed/duplex detection
@@ -107,13 +107,13 @@ sudo ethtool --cable-test eth0
 - LLDP/CDP packet capture
 - Basic network diagnostics
 
-**❌ Usually Not Working:**
+#### ❌ Usually Not Working
 
 - Cable diagnostics (TDR)
 - Cable length measurement
 - Fault detection
 
-**⚠️ Varies By Chipset:**
+#### ⚠️ Varies By Chipset
 
 - Some Marvell server NICs may support TDR
 - Most consumer/embedded chipsets do not
@@ -132,7 +132,7 @@ ethtool -i eth0
 # driver: sky2 (for Yukon)
 # or
 # driver: mvneta (for embedded)
-```
+```text
 
 ### Test for TDR Support
 
@@ -145,7 +145,7 @@ sudo ethtool --cable-test eth0
 
 # If not supported:
 # netlink error: Operation not supported
-```
+```text
 
 ### Use for Basic Diagnostics
 
@@ -160,7 +160,7 @@ sudo tcpdump -i eth0 'ether proto 0x88cc'
 
 # Run The Seed (basic features)
 sudo ./seed --interface eth0
-```
+```yaml
 
 ---
 
@@ -168,7 +168,7 @@ sudo ./seed --interface eth0
 
 ### ❌ **Don't Purchase** - For New Builds
 
-**Reasons:**
+#### Reasons
 
 - Limited availability (not as common as Intel/Realtek)
 - Uncertain TDR support
@@ -177,7 +177,7 @@ sudo ./seed --interface eth0
 
 ### ✅ **Maybe** - If You Already Have It
 
-**If your system has Marvell:**
+#### If your system has Marvell
 
 1. Test for TDR support: `sudo ethtool --cable-test eth0`
 2. If TDR works: Great! Use it.
@@ -196,20 +196,20 @@ sudo ./seed --interface eth0
 ```bash
 sudo ethtool --cable-test eth0
 # Either works or doesn't - only way to know
-```
+```text
 
 ### Issue: Driver Not Loading
 
 **Symptom:** Network interface not detected
 
-**Solution:**
+#### Solution
 
 ```bash
 # Try loading driver manually
 sudo modprobe sky2   # For Yukon chipsets
 # or
 sudo modprobe mvneta # For embedded chipsets
-```
+```yaml
 
 ---
 
@@ -247,3 +247,4 @@ _(Community will report confirmed no-TDR models)_
 **Last Updated:** 2025-12-14 **Recommendation:** Test if you have it, but buy Intel I210/I350 for new hardware.
 
 [← Back to Home](Home) | [← Previous: Realtek Ethernet](Realtek-Ethernet)
+````

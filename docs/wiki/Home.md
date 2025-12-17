@@ -43,4 +43,4 @@ The Seed is open source! Contributions are welcome.
 
 _From a tiny seed, a mighty network grows._
 
-**Mustard Seed Networks**
+#### Mustard Seed Networks

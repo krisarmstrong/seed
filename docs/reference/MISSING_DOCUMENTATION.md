@@ -22,7 +22,7 @@
 
 **Why needed:** Can't deploy to production safely without documented process
 
-**Should include:**
+#### Should include
 
 - Pre-deployment checklist
 - Build process (make all → verify tests pass)
@@ -42,7 +42,7 @@
 
 **Why needed:** HIPAA compliance requires documented security policies
 
-**Should include:**
+#### Should include
 
 - Password requirements (length, complexity, rotation)
 - Access control (who can access what)
@@ -62,7 +62,7 @@
 
 **Why needed:** Consistent customer experience, support team can follow
 
-**Should include:**
+#### Should include
 
 - Welcome email template (already in SUPPORT_STRATEGY)
 - License key generation and delivery
@@ -81,7 +81,7 @@
 
 **Why needed:** Know what to do when production breaks
 
-**Should include:**
+#### Should include
 
 - Incident severity levels (P0, P1, P2, P3)
 - Escalation paths (support → engineering → founder)
@@ -99,7 +99,7 @@
 
 **Why needed:** Onboard new developers quickly
 
-**Should include:**
+#### Should include
 
 - Prerequisites (Go, Node, Docker, etc.)
 - Clone repo, install dependencies
@@ -118,7 +118,7 @@
 
 **Why needed:** Consistent releases, nothing forgotten
 
-**Should include:**
+#### Should include
 
 - Version numbering (semantic versioning)
 - Release checklist (tests pass, changelog updated, etc.)
@@ -138,7 +138,7 @@
 
 **Why needed:** Sales team knows when/how to discount
 
-**Should include:**
+#### Should include
 
 - When to discount (non-profit, education, multi-year)
 - How much to discount (max 20% off list price)
@@ -157,7 +157,7 @@
 
 **Why needed:** Maintain code quality as team grows
 
-**Should include:**
+#### Should include
 
 - What to review (functionality, tests, security, performance)
 - How to review (PR template, checklist)
@@ -177,7 +177,7 @@
 
 **Why needed:** Developers integrating with The Seed
 
-**Should include:**
+#### Should include
 
 - Authentication (JWT tokens, login/logout)
 - REST endpoints (all /api/\* routes)
@@ -194,7 +194,7 @@
 
 ### 2. **Advanced Features Guides**
 
-**Files:**
+#### Files
 
 - `docs/wiki/WiFi-Survey-Guide.md`
 - `docs/wiki/Vulnerability-Scanning-Guide.md`
@@ -202,7 +202,7 @@
 
 **Why needed:** Users need detailed guides for complex features
 
-**Should include:**
+#### Should include
 
 - Step-by-step walkthroughs
 - Screenshots/videos
@@ -220,7 +220,7 @@
 
 **Why needed:** Users can self-serve instead of opening tickets
 
-**Should include:**
+#### Should include
 
 - Common errors and solutions
 - Performance issues (slow scans, high CPU)
@@ -236,14 +236,14 @@
 
 ### 4. **Migration Guides**
 
-**Files:**
+#### Files
 
 - `docs/wiki/Migrate-from-Ekahau.md`
 - `docs/wiki/Migrate-from-SolarWinds.md`
 
 **Why needed:** Convince competitors' customers to switch
 
-**Should include:**
+#### Should include
 
 - Export data from competitor tool
 - Import into The Seed (if possible)
@@ -261,7 +261,7 @@
 
 **Why needed:** Some users prefer video over text
 
-**Should include:**
+#### Should include
 
 - Getting Started (5 min)
 - Network Discovery Deep Dive (8 min)
@@ -276,29 +276,29 @@
 
 ### Internal
 
-**Partnership Agreement Templates**
+#### Partnership Agreement Templates
 
 - File: `docs/internal/PARTNERSHIP_TEMPLATE.md`
 - When: Before first partnership (reseller, integration partner)
 
-**RFP Response Templates**
+#### RFP Response Templates
 
 - File: `docs/internal/RFP_TEMPLATE.md`
 - When: When targeting enterprise/government (they love RFPs)
 
-**HR Policies**
+#### HR Policies
 
 - File: `docs/internal/HR_POLICIES.md`
 - When: Before first full-time hire
 - Includes: Compensation, benefits, PTO, remote work, etc.
 
-**Backup & Disaster Recovery**
+#### Backup & Disaster Recovery
 
 - File: `docs/internal/DISASTER_RECOVERY.md`
 - When: When customer data is critical
 - Includes: Backup schedules, restore procedures, failover
 
-**Legal Compliance**
+#### Legal Compliance
 
 - File: `docs/internal/LEGAL_COMPLIANCE.md`
 - When: Before launch
@@ -306,31 +306,31 @@
 
 ### External
 
-**Configuration Reference**
+#### Configuration Reference
 
 - File: `docs/wiki/Configuration-Reference.md`
 - Complete reference of all config options
 - YAML schema, examples, defaults
 
-**CLI Reference**
+#### CLI Reference
 
 - File: `docs/wiki/CLI-Reference.md`
 - All commands and flags
 - Examples for each command
 
-**Performance Tuning Guide**
+#### Performance Tuning Guide
 
 - File: `docs/wiki/Performance-Tuning.md`
 - How to optimize for large networks (1,000+ devices)
 - Memory/CPU tuning, scan optimization
 
-**Security Best Practices**
+#### Security Best Practices
 
 - File: `docs/wiki/Security-Best-Practices.md`
 - How to secure The Seed deployment
 - Firewall rules, HTTPS, strong passwords
 
-**Integration Guides**
+#### Integration Guides
 
 - Files: `docs/wiki/Integration-ServiceNow.md`, etc.
 - How to integrate with other tools
@@ -375,7 +375,7 @@
 
 ## 🎯 Immediate Action Items
 
-**Create NOW (before production):**
+### Create NOW (before production)
 
 1. **DEPLOYMENT.md** - Critical for safe deployments
 2. **SECURITY_POLICIES.md** - Critical for HIPAA compliance
@@ -383,7 +383,7 @@
 **Create SOON (within 1 month):** 3. **API-Reference.md** - Enable integrations 4. **INCIDENT_RESPONSE.md** - Know what
 to do when things break
 
-**Create LATER (when needed):**
+#### Create LATER (when needed)
 
 - Everything else based on priority above
 
@@ -399,7 +399,7 @@ to do when things break
 
 **Current Coverage:** ~60-65% complete
 
-**Top Gaps:**
+#### Top Gaps
 
 1. Deployment procedures (CRITICAL)
 2. Security policies (CRITICAL for HIPAA)

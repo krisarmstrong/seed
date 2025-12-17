@@ -8,19 +8,19 @@ JSON Schema (Draft 2020-12) for the Seed configuration file (`config.yaml`).
 
 ### Usage
 
-**Validation with VS Code:**
+#### Validation with VS Code
 
 Add to `.vscode/settings.json`:
 
-```json
+````json
 {
   "yaml.schemas": {
     "./schemas/config.schema.json": "config.yaml"
   }
 }
-```
+```bash
 
-**Validation with command-line tools:**
+#### Validation with command-line tools
 
 ```bash
 # Using ajv-cli
@@ -30,7 +30,7 @@ ajv validate -s schemas/config.schema.json -d config.yaml
 # Using check-jsonschema
 pip install check-jsonschema
 check-jsonschema --schemafile schemas/config.schema.json config.yaml
-```
+```python
 
 ### Schema Details
 
@@ -79,3 +79,4 @@ When making changes to `internal/config/config.go`:
 2. Increment `ConfigVersion` if breaking changes
 3. Test with real config files
 4. Document any new validation rules
+````

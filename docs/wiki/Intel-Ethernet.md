@@ -220,7 +220,7 @@ sudo ethtool --cable-test eth0
 
 ### Example Output - Good Cable
 
-```
+```text
 Cable test started for eth0.
 Cable test completed for eth0.
 Pair A code: OK
@@ -235,7 +235,7 @@ Pair D length: 23m
 
 ### Example Output - Open (Disconnected) Cable
 
-```
+```text
 Cable test started for eth0.
 Cable test completed for eth0.
 Pair A code: Open
@@ -252,7 +252,7 @@ Pair D length: 2m
 
 ### Example Output - Short Circuit
 
-```
+```text
 Cable test started for eth0.
 Cable test completed for eth0.
 Pair A code: Short within Pair

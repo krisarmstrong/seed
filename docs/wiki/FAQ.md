@@ -20,7 +20,7 @@ It tells you **what's wrong** with your network and **how to fix it** - not just
 
 **Free tier:** Yes! Up to 50 devices, community support, no AI features.
 
-**Paid tiers:**
+#### Paid tiers
 
 - Starter: $299/year (200 devices, AI classification)
 - Professional: $799/year (unlimited devices, full AI)
@@ -42,13 +42,13 @@ Yes! The Seed is open source under the AGPL-3.0 license.
 
 ### What platforms does The Seed support?
 
-**Supported:**
+#### Supported
 
 - macOS (Ventura 13.0+, Apple Silicon + Intel)
 - Linux (Ubuntu 22.04+, Debian 11+, RHEL 8+)
 - Docker (cross-platform)
 
-**Not supported (yet):**
+#### Not supported (yet)
 
 - Windows (planned for future release)
 - Mobile (iOS/Android - planned for WiFi survey mobile app)
@@ -59,9 +59,9 @@ Yes! The Seed is open source under the AGPL-3.0 license.
 
 **Linux:** Use `setcap` to grant network capabilities without full sudo:
 
-```bash
+````bash
 sudo setcap cap_net_raw=+ep /usr/local/bin/seed
-```
+```python
 
 ### Can I run The Seed on a server without a GUI?
 
@@ -93,13 +93,13 @@ Example: Run on Ubuntu server, access UI from laptop browser.
 
 **Typical accuracy:** 85-95% compared to real-world survey.
 
-**Good enough for:**
+#### Good enough for
 
 - Estimating AP count (how many do I need?)
 - Budget planning (before proposal)
 - Initial design (before site visit)
 
-**Not a replacement for:**
+#### Not a replacement for
 
 - Final validation (always do on-site survey for critical deployments)
 - Complex RF environments (stadiums, warehouses with metal/concrete)
@@ -159,20 +159,20 @@ solution.
 
 ### What data does The Seed collect?
 
-**During network scans:**
+#### During network scans
 
 - IP addresses, MAC addresses, hostnames
 - Open ports, services
 - OS fingerprints
 - SNMP data (if configured)
 
-**Stored locally:**
+#### Stored locally
 
 - Scan results (in SQLite database)
 - Config files (YAML)
 - Logs (application logs, audit logs)
 
-**Never collected:**
+#### Never collected
 
 - Network traffic content (no DPI, no packet inspection beyond headers)
 - Passwords (except hashed admin passwords for web UI login)
@@ -184,7 +184,7 @@ solution.
 
 ### The Seed isn't finding all my devices. Why?
 
-**Common causes:**
+#### Common causes
 
 1. **Firewall blocking ICMP:** Some devices block ping.
    - **Fix:** Enable TCP port scan (Settings then Discovery then Methods then TCP)
@@ -203,13 +203,15 @@ solution.
 
 ### Web UI won't load. What's wrong?
 
-**Check:**
+#### Check
 
 1. **Is The Seed running?**
 
    ```bash
    ps aux | grep seed
-   ```
+```text
+
+```text
 
    If not, start it: `seed` (or `sudo systemctl start seed` if using systemd)
 
@@ -217,9 +219,9 @@ solution.
 
    ```bash
    lsof -i :8080  # macOS/Linux
-   ```
+```text
 
-   If another service is using 8080, stop it or configure The Seed to use different port.
+If another service is using 8080, stop it or configure The Seed to use different port.
 
 3. **Firewall blocking?**
    - Check firewall rules: `sudo ufw status` (Ubuntu) or `sudo firewall-cmd --list-all` (RHEL)
@@ -231,7 +233,7 @@ solution.
 
 ### Speed test fails / shows 0 Mbps. Why?
 
-**Common causes:**
+#### Common causes
 
 1. **No internet connection:** Speed test requires internet.
    - **Fix:** Check gateway: `ping 8.8.8.8`
@@ -249,7 +251,7 @@ solution.
 ```bash
 seed reset-password admin
 # Enter new password when prompted
-```
+```text
 
 #### Option 2: Reset via config file
 
@@ -264,7 +266,7 @@ seed reset-password admin
 sudo systemctl stop seed
 rm -rf ~/.config/seed
 sudo systemctl start seed
-```
+```python
 
 **Warning:** This deletes all scan history, settings, and user accounts.
 
@@ -276,7 +278,7 @@ sudo systemctl start seed
 
 **Yes!** The free tier has no time limit.
 
-**Free tier includes:**
+#### Free tier includes
 
 - Up to 50 devices
 - Network discovery
@@ -284,7 +286,7 @@ sudo systemctl start seed
 - Speed testing
 - Community support (forum, GitHub)
 
-**Free tier does NOT include:**
+#### Free tier does NOT include
 
 - AI features (device classification, root cause analysis)
 - Vulnerability scanning
@@ -293,15 +295,15 @@ sudo systemctl start seed
 
 ### What happens if I exceed the device limit?
 
-**Free tier (50 devices):**
+#### Free tier (50 devices)
 
 - Discovery will find all devices
 - UI will show all devices
 - But a banner will prompt you to upgrade
 
-**You can continue using for free, but some features will be limited.**
+#### You can continue using for free, but some features will be limited
 
-**Paid tiers:**
+#### Paid tiers
 
 - Starter: 200 devices (hard limit, won't scan beyond 200)
 - Professional: Unlimited devices
@@ -323,12 +325,12 @@ sudo systemctl start seed
 
 **Yes.** Licenses are tied to organization, not hardware.
 
-**How to transfer:**
+#### How to transfer
 
 1. Deactivate license on old server (Settings then License then Deactivate)
 2. Activate license on new server (enter license key during setup)
 
-**Limitations:**
+#### Limitations
 
 - One active instance per license (can't run on 2 servers simultaneously)
 - Enterprise tier allows multi-site (multiple active instances)
@@ -339,13 +341,13 @@ sudo systemctl start seed
 
 ### How do I get help?
 
-**Free tier:**
+#### Free tier
 
 - Community forum (Discord, TBD)
 - GitHub Discussions: <https://github.com/krisarmstrong/seed/discussions>
 - Documentation: This wiki
 
-**Paid tiers:**
+#### Paid tiers
 
 - Email support: support@mustardseednetworks.com
 - Priority support (Professional+)
@@ -378,7 +380,7 @@ sudo systemctl start seed
 
 ### How can I contribute to The Seed?
 
-**Ways to contribute:**
+#### Ways to contribute
 
 1. **Code:** Submit PRs for bug fixes, features
    - [Contributing Guide](Contributing)
@@ -394,15 +396,15 @@ sudo systemctl start seed
 
 ### I found a security vulnerability. How do I report it?
 
-**DO NOT create a public GitHub issue.**
+#### DO NOT create a public GitHub issue
 
-**Instead:**
+#### Instead
 
 - Email: security@mustardseednetworks.com
 - Subject: "Security Vulnerability Report"
 - Include: Description, steps to reproduce, impact
 
-**We commit to:**
+#### We commit to
 
 - Respond within 24 hours
 - Fix critical vulnerabilities within 7 days
@@ -458,8 +460,9 @@ sudo systemctl start seed
 
 ---
 
-**Still have questions?**
+#### Still have questions?
 
 - Ask in [GitHub Discussions](https://github.com/krisarmstrong/seed/discussions)
 - Email support@mustardseednetworks.com
 - Join our Discord (TBD)
+````

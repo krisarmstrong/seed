@@ -1,7 +1,7 @@
 # Logging Package - Structured Logging with Automatic Redaction
 
-This package provides structured logging utilities built on Go's `log/slog` with automatic redaction
-of sensitive data like passwords, tokens, and API keys.
+This package provides structured logging utilities built on Go's `log/slog` with automatic redaction of sensitive data
+like passwords, tokens, and API keys.
 
 ## Migration Status
 
@@ -27,7 +27,7 @@ Files with `log.Printf` calls that need migration to `slog`:
 
 ### Migration Pattern
 
-```go
+````go
 // Before
 log.Printf("Starting server on port %d", port)
 log.Printf("Error: %v", err)
@@ -38,20 +38,19 @@ slog.Error("Operation failed", "error", err)
 
 // With request context (in handlers):
 logging.InfoContext(ctx, "Request processed", "method", r.Method, "path", r.URL.Path)
-```
+```python
 
 ## Why Use This Package?
 
-**Problem:** Logging request bodies, headers, or error messages can accidentally expose sensitive
-information like:
+**Problem:** Logging request bodies, headers, or error messages can accidentally expose sensitive information like:
 
 - Passwords in login requests
 - JWT tokens in Authorization headers
 - API keys in URL parameters
 - Session cookies
 
-**Solution:** This package provides drop-in replacements for `log.Printf` and utilities for safely
-logging HTTP requests, headers, and data structures.
+**Solution:** This package provides drop-in replacements for `log.Printf` and utilities for safely logging HTTP
+requests, headers, and data structures.
 
 ## Quick Start
 
@@ -65,7 +64,7 @@ log.Printf("error: %v", err) // May contain passwords!
 
 // Use:
 logging.Logf("error: %v", err) // Automatically redacted
-```
+```text
 
 ### HTTP Request Logging
 
@@ -75,7 +74,7 @@ log.Printf("request headers: %v", r.Header) // Exposes Authorization!
 
 // Use:
 logging.LogRequest(r, "incoming request") // Safe
-```
+```text
 
 ### Map/JSON Redaction
 
@@ -92,7 +91,7 @@ log.Printf("user data: %v", data) // Leaks password!
 // Use:
 safeData := logging.RedactMap(data)
 log.Printf("user data: %v", safeData) // password: [REDACTED]
-```
+```text
 
 ### Header Redaction
 
@@ -100,7 +99,7 @@ log.Printf("user data: %v", safeData) // password: [REDACTED]
 // Redact Authorization, Cookie, X-API-Key headers
 safeHeaders := logging.RedactHeaders(r.Header)
 log.Printf("headers: %v", safeHeaders) // Safe to log
-```
+```text
 
 ## API Reference
 
@@ -111,13 +110,13 @@ Drop-in replacement for `log.Printf` with automatic redaction.
 ```go
 logging.Logf("user %s login failed: %v", username, err)
 // Automatically redacts passwords/tokens in err.Error()
-```
+```python
 
 ### `RedactString(s string) string`
 
 Redacts sensitive patterns from a string.
 
-**Redacted patterns:**
+#### Redacted patterns
 
 - `password=...`
 - `token=...`
@@ -130,13 +129,13 @@ Redacts sensitive patterns from a string.
 msg := "login failed with password=secret123"
 safe := logging.RedactString(msg)
 // Result: "login failed with [REDACTED]"
-```
+```text
 
 ### `RedactHeaders(headers http.Header) map[string]string`
 
 Returns headers with sensitive values redacted.
 
-**Redacted headers:**
+#### Redacted headers
 
 - `Authorization`
 - `Cookie`
@@ -149,13 +148,13 @@ Returns headers with sensitive values redacted.
 ```go
 safeHeaders := logging.RedactHeaders(r.Header)
 log.Printf("request headers: %v", safeHeaders)
-```
+```text
 
 ### `RedactMap(data map[string]interface{}) map[string]interface{}`
 
 Redacts fields with sensitive names or values.
 
-**Redacted field names:**
+#### Redacted field names
 
 - Contains "password"
 - Contains "secret"
@@ -171,7 +170,7 @@ data := map[string]interface{}{
 }
 safe := logging.RedactMap(data)
 // password and auth_token are [REDACTED]
-```
+```text
 
 ### `LogRequest(r *http.Request, message string)`
 
@@ -180,7 +179,7 @@ Logs an HTTP request with safe header redaction.
 ```go
 logging.LogRequest(r, "incoming API request")
 // Logs: method, path, client IP, and REDACTED headers
-```
+```text
 
 ### `SafeError(err error, context string) error`
 
@@ -190,7 +189,7 @@ Creates a safe error with redacted content.
 err := someFunction() // May contain password in error message
 safeErr := logging.SafeError(err, "database connection")
 return safeErr // Safe to return to client or log
-```
+```go
 
 ## Examples
 
@@ -206,7 +205,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
         return
     }
 }
-```
+```python
 
 ### After (SAFE ✅)
 
@@ -223,7 +222,7 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
         return
     }
 }
-```
+```go
 
 ## Testing
 
@@ -231,7 +230,7 @@ The package includes comprehensive tests:
 
 ```bash
 go test ./internal/logging/... -v
-```
+```text
 
 Test coverage:
 
@@ -251,9 +250,9 @@ The CI pipeline includes automated checks for unsafe logging patterns:
   run: |
     # Fails if code uses log.Print with r.Body, passwords, etc.
     # Enforces use of logging.Redact* functions
-```
+```text
 
-**Detected patterns:**
+#### Detected patterns
 
 - `log.Print.*r.Body`
 - `log.Print.*password`
@@ -288,3 +287,4 @@ When adding new sensitive patterns:
 2. Add test cases in `redact_test.go`
 3. Run tests: `go test ./internal/logging/... -v`
 4. Update CI patterns in `.github/workflows/ci.yml` if needed
+````

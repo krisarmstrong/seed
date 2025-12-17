@@ -579,7 +579,13 @@ func (s *Server) sendInitialState(client *Client) {
 // close safely closes the client connection exactly once.
 func (c *Client) close() {
 	c.closeOnce.Do(func() {
-		c.hub.unregister <- c
+		// Use non-blocking send with timeout to prevent deadlock (fixes #686)
+		select {
+		case c.hub.unregister <- c:
+			// Successfully sent unregister request
+		case <-time.After(100 * time.Millisecond):
+			// Channel full or hub not responding, proceed with close anyway
+		}
 		c.conn.Close()
 	})
 }

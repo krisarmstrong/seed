@@ -6,12 +6,12 @@
 
 ## 📂 Documentation Structure
 
-```
+````text
 docs/
 ├── wiki/          # 👥 USER-FACING (external, will be published)
 ├── internal/      # 🔒 TEAM-ONLY (never published)
 └── reference/     # 📚 META (documentation about documentation)
-```
+```yaml
 
 ---
 
@@ -21,13 +21,13 @@ docs/
 
 **Audience:** Customers, beta testers, community
 
-**Will be published to:**
+#### Will be published to
 
 - GitHub Wiki (when enabled)
 - OR public docs site (docs.mustardseednetworks.com)
 - Currently accessible to beta testers with repo access
 
-**Contents:**
+#### Contents
 
 - Installation guides (macOS, Linux, Docker)
 - Quick start tutorials
@@ -47,7 +47,7 @@ docs/
 
 **Audience:** Team members only (founder, employees, contractors with access)
 
-**Contents:**
+#### Contents
 
 ### Business & Strategy
 
@@ -94,7 +94,7 @@ docs/
 
 **Audience:** Team members, documentation maintainers
 
-**Contents:**
+#### Contents
 
 - DOCUMENTATION_STRUCTURE.md - Complete guide to doc organization
 - WIKI_CONTENT.md - Source content for wiki population
@@ -164,7 +164,7 @@ When The Seed launches publicly:
 
 ## 📞 Contact
 
-**Questions about documentation:**
+### Questions about documentation
 
 - Email: kris.armstrong@mustardseednetworks.com
 
@@ -172,4 +172,5 @@ When The Seed launches publicly:
 
 _From a tiny seed, a mighty network grows._
 
-**Mustard Seed Networks**
+#### Mustard Seed Networks
+````

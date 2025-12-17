@@ -12,6 +12,7 @@ import (
 	"github.com/krisarmstrong/seed/internal/network"
 	"github.com/krisarmstrong/seed/internal/validation"
 	"github.com/krisarmstrong/seed/internal/vlan"
+	"github.com/krisarmstrong/seed/internal/wifi"
 )
 
 // IP configuration mode constants.
@@ -756,6 +757,59 @@ func (s *Server) handleWiFiStatus(w http.ResponseWriter, r *http.Request) {
 		"isWireless":        isWireless,
 		"availableAdapters": availableAdapters,
 		"canScan":           isWireless && len(availableAdapters) > 0,
+	})
+}
+
+// handleWiFiChannelGraph returns channel overlap graph data for WiFi visualization.
+// It scans available networks and organizes them by frequency band with channel overlap information.
+func (s *Server) handleWiFiChannelGraph(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.wifiScanner == nil {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"available": false,
+			"error":     "WiFi scanner not initialized",
+			"data":      nil,
+		})
+		return
+	}
+
+	// Check if interface is wireless
+	if s.wifiManager == nil || !s.wifiManager.IsWireless() {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"available": false,
+			"error":     "No wireless adapter available. Connect a WiFi adapter to scan networks.",
+			"data":      nil,
+		})
+		return
+	}
+
+	// Perform scan
+	networks, err := s.wifiScanner.Scan()
+	if err != nil {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"available": true,
+			"error":     err.Error(),
+			"data":      nil,
+		})
+		return
+	}
+
+	// Get connected network BSSID
+	connectedBSSID := ""
+	if info := s.wifiManager.GetInfo(); info != nil {
+		connectedBSSID = info.BSSID
+	}
+
+	// Generate channel graph data
+	data := wifi.GetChannelGraphData(networks, connectedBSSID)
+
+	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+		"available": true,
+		"data":      data,
 	})
 }
 

@@ -53,9 +53,9 @@
 
 **Recommendation:** Dependabot (GitHub native, free for private repos)
 
-**Implementation:**
+#### Implementation
 
-```yaml
+````yaml
 # .github/dependabot.yml
 version: 2
 updates:
@@ -90,9 +90,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-```
+```bash
 
-**Benefits:**
+#### Benefits
 
 - Automated security updates
 - Keeps dependencies current
@@ -111,7 +111,7 @@ updates:
 
 **Recommendation:** go-licenses + license-checker (npm)
 
-**Implementation:**
+#### Implementation
 
 ```yaml
 # .github/workflows/ci.yml - add to quality job
@@ -124,9 +124,9 @@ updates:
   working-directory: web
   run: |
     npx license-checker --production --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC0-1.0"
-```
+```bash
 
-**Makefile target:**
+#### Makefile target
 
 ```makefile
 license-check: ## Check license compliance
@@ -134,9 +134,9 @@ license-check: ## Check license compliance
 	go-licenses check ./... --disallowed_types=forbidden,restricted
 	@echo "Checking npm licenses..."
 	cd web && npx license-checker --production --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC0-1.0"
-```
+```yaml
 
-**Benefits:**
+#### Benefits
 
 - Avoid GPL/AGPL contamination
 - Required for enterprise/healthcare sales
@@ -152,7 +152,7 @@ license-check: ## Check license compliance
 
 **Recommendation:** syft + grype (Anchore)
 
-**Implementation:**
+#### Implementation
 
 ```yaml
 # .github/workflows/release.yml
@@ -169,9 +169,9 @@ license-check: ## Check license compliance
     sbom: seed-sbom.spdx.json
     fail-build: true
     severity-cutoff: high
-```
+```yaml
 
-**Benefits:**
+#### Benefits
 
 - Supply chain transparency
 - Required for healthcare/gov compliance
@@ -189,15 +189,15 @@ license-check: ## Check license compliance
 
 **Recommendation:** conventional-changelog (uses commit messages)
 
-**Implementation:**
+#### Implementation
 
 ```json
 // web/package.json - add scripts
 "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
 "changelog:all": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
-```
+```bash
 
-**GitHub Action:**
+#### GitHub Action
 
 ```yaml
 # .github/workflows/release.yml
@@ -205,9 +205,9 @@ license-check: ## Check license compliance
   run: |
     npm install -g conventional-changelog-cli
     conventional-changelog -p angular -i CHANGELOG.md -s
-```
+```python
 
-**Benefits:**
+#### Benefits
 
 - Auto-generated from commit messages
 - Follows semantic versioning
@@ -223,7 +223,7 @@ license-check: ## Check license compliance
 
 **Recommendation:** bundlesize + size-limit
 
-**Implementation:**
+#### Implementation
 
 ```json
 // web/package.json
@@ -249,18 +249,18 @@ license-check: ## Check license compliance
     }
   ]
 }
-```
+```bash
 
-**CI integration:**
+#### CI integration
 
 ```yaml
 # .github/workflows/ci.yml - add to frontend job
 - name: Check bundle size
   working-directory: web
   run: npm run size
-```
+```go
 
-**Benefits:**
+#### Benefits
 
 - Prevents performance regression
 - Alerts on bloat before merge
@@ -276,7 +276,7 @@ license-check: ## Check license compliance
 
 **Recommendation:** swag (Go Swagger) for auto-generated OpenAPI docs
 
-**Implementation:**
+#### Implementation
 
 ```go
 // Add Swagger annotations to handlers
@@ -290,25 +290,25 @@ license-check: ## Check license compliance
 func (h *Handler) GetStatus(w http.ResponseWriter, r *http.Request) {
     // ...
 }
-```
+```text
 
-**Makefile:**
+#### Makefile
 
 ```makefile
 docs-api: ## Generate API documentation
 	swag init -g cmd/seed/main.go -o docs/api
-```
+```bash
 
-**CI check:**
+#### CI check
 
 ```yaml
 - name: Verify API docs are up to date
   run: |
     make docs-api
     git diff --exit-code docs/api/
-```
+```yaml
 
-**Benefits:**
+#### Benefits
 
 - Always up-to-date API docs
 - Interactive Swagger UI
@@ -324,7 +324,7 @@ docs-api: ## Generate API documentation
 
 **Recommendation:** Lighthouse CI for performance/accessibility audits
 
-**Implementation:**
+#### Implementation
 
 ```yaml
 # .github/workflows/ci.yml
@@ -336,9 +336,9 @@ docs-api: ## Generate API documentation
       https://localhost:8443/login
     uploadArtifacts: true
     temporaryPublicStorage: true
-```
+```text
 
-**lighthouserc.json:**
+#### lighthouserc.json
 
 ```json
 {
@@ -353,9 +353,9 @@ docs-api: ## Generate API documentation
     }
   }
 }
-```
+```yaml
 
-**Benefits:**
+#### Benefits
 
 - Catch performance regressions
 - Accessibility compliance
@@ -371,7 +371,7 @@ docs-api: ## Generate API documentation
 
 **Recommendation:** SonarCloud (free for open source, affordable for private)
 
-**Implementation:**
+#### Implementation
 
 ```yaml
 # .github/workflows/ci.yml
@@ -380,9 +380,9 @@ docs-api: ## Generate API documentation
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-```
+```bash
 
-**Benefits:**
+#### Benefits
 
 - Code smell detection
 - Security hotspot tracking
@@ -546,7 +546,7 @@ docs-api: ## Generate API documentation
 **Current State:** Your CI pipeline is already **A+ quality** with comprehensive linting, testing, and security
 scanning.
 
-**Top 3 Missing Tools:**
+#### Top 3 Missing Tools
 
 1. 🔴 **Dependabot** - Automated dependency updates (add immediately)
 2. 🔴 **License compliance** - Required for enterprise (add before first customer)
@@ -555,3 +555,4 @@ scanning.
 **Total cost to add all high-priority tools:** $0
 
 **Next step:** Add Dependabot configuration today (5 minutes).
+````
