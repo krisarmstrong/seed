@@ -8,13 +8,18 @@ import (
 
 // ScannedNetwork represents a WiFi network discovered during scanning.
 type ScannedNetwork struct {
-	SSID      string    `json:"ssid"`
-	BSSID     string    `json:"bssid"`
-	Signal    int       `json:"signal"` // dBm
-	Channel   int       `json:"channel"`
-	Frequency int       `json:"frequency"` // MHz
-	Security  string    `json:"security"`
-	LastSeen  time.Time `json:"lastSeen"`
+	SSID         string    `json:"ssid"`
+	BSSID        string    `json:"bssid"`
+	Signal       int       `json:"signal"` // dBm
+	Channel      int       `json:"channel"`
+	Frequency    int       `json:"frequency"` // MHz
+	Security     string    `json:"security"`
+	ChannelWidth int       `json:"channelWidth"` // 20, 40, 80, 160, 320 MHz
+	NoiseFloor   int       `json:"noiseFloor"`   // dBm (typically -90 to -100)
+	SNR          int       `json:"snr"`          // Signal-to-Noise Ratio (Signal - NoiseFloor)
+	HTMode       string    `json:"htMode"`       // HT20, HT40, VHT80, HE160, EHT320, etc.
+	IsDFS        bool      `json:"isDFS"`        // true if channel is DFS (Dynamic Frequency Selection)
+	LastSeen     time.Time `json:"lastSeen"`
 }
 
 // Scanner scans for available WiFi networks.
