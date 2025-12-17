@@ -121,7 +121,7 @@ auth:
     default_username: admin
     default_password_hash: ""
     session_timeout: 24h0m0s
-    jwt_secret: tAXZ0wHph1gCHwO8v3N3cVTfk6eeZfIH5ELmVYAC3qw=
+    jwt_secret: ""  # Auto-generated on first run if empty
 security:
     allowed_origins: []
     vulnerability_scanning:

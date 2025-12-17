@@ -866,6 +866,12 @@ func (s *Server) handleSetMTU(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate MTU value
+	if err := validation.ValidateMTU(req.MTU); err != nil {
+		http.Error(w, fmt.Sprintf("Invalid MTU: %v", err), http.StatusBadRequest)
+		return
+	}
+
 	// Use current interface if not specified
 	iface := req.Interface
 	if iface == "" {
