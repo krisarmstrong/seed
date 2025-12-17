@@ -4,8 +4,8 @@
 
 ## Overview
 
-The Seed's advanced diagnostic capabilities depend heavily on hardware support. This guide helps you
-select compatible network adapters for optimal functionality.
+The Seed's advanced diagnostic capabilities depend heavily on hardware support. This guide helps you select compatible
+network adapters for optimal functionality.
 
 ## Quick Reference
 
@@ -123,8 +123,8 @@ select compatible network adapters for optimal functionality.
 
 ### What is TDR?
 
-Time Domain Reflectometry (TDR) tests cable quality by sending electrical signals and analyzing
-reflections. It can detect:
+Time Domain Reflectometry (TDR) tests cable quality by sending electrical signals and analyzing reflections. It can
+detect:
 
 - Cable length
 - Opens (disconnected cables)
@@ -209,7 +209,7 @@ reflections. It can detect:
 
 To verify if your NIC supports TDR on Linux:
 
-```bash
+````bash
 # Check if ethtool supports cable test
 sudo ethtool --cable-test eth0
 
@@ -219,7 +219,7 @@ sudo ethtool --cable-test eth0
 
 # If not supported:
 # Operation not supported
-```
+```python
 
 ### TDR Capabilities Matrix
 
@@ -316,8 +316,7 @@ sudo ethtool --cable-test eth0
 
 ### Tested Configurations
 
-We maintain a list of tested hardware at:
-**https://github.com/krisarmstrong/seed/wiki/Tested-Hardware**
+We maintain a list of tested hardware at: **https://github.com/krisarmstrong/seed/wiki/Tested-Hardware**
 
 Please contribute your test results!
 
@@ -327,18 +326,17 @@ Please contribute your test results!
 
 ### Q: Will my built-in laptop Wi-Fi work?
 
-**A:** For basic connectivity status, yes. For advanced diagnostics (monitor mode, site surveys), it
-depends on the chipset. Check `lspci | grep -i wireless` and compare to the compatibility table
-above.
+**A:** For basic connectivity status, yes. For advanced diagnostics (monitor mode, site surveys), it depends on the
+chipset. Check `lspci | grep -i wireless` and compare to the compatibility table above.
 
 ### Q: Why doesn't my Realtek NIC support cable testing?
 
-**A:** TDR requires specialized PHY hardware and driver support. Consumer Realtek chips prioritize
-cost over advanced diagnostics. Use Intel server NICs for TDR.
+**A:** TDR requires specialized PHY hardware and driver support. Consumer Realtek chips prioritize cost over advanced
+diagnostics. Use Intel server NICs for TDR.
 
 ### Q: Can I use USB adapters?
 
-**A:**
+#### A
 
 - **Wi-Fi USB:** Yes, Atheros AR9271 dongles work great
 - **Ethernet USB:** Works for basic diagnostics, but no TDR support
@@ -353,8 +351,7 @@ cost over advanced diagnostics. Use Intel server NICs for TDR.
 
 ### Q: What about Bluetooth adapters for diagnostics?
 
-**A:** Bluetooth diagnostics are planned for v2.0. Any Bluetooth 5.0+ adapter should work when
-implemented.
+**A:** Bluetooth diagnostics are planned for v2.0. Any Bluetooth 5.0+ adapter should work when implemented.
 
 ---
 
@@ -387,3 +384,4 @@ Found a chipset that works (or doesn't)? Help the community:
 - New chipsets are released
 - Driver support changes significantly
 - User testing reveals new compatibility information
+````

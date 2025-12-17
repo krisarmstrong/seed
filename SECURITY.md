@@ -9,8 +9,7 @@
 
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security issue, please report it
-responsibly.
+We take security vulnerabilities seriously. If you discover a security issue, please report it responsibly.
 
 ### How to Report
 
@@ -97,5 +96,5 @@ The following are out of scope:
 
 ## Acknowledgments
 
-We appreciate security researchers who help keep The Seed secure. Contributors will be acknowledged
-in release notes unless they prefer to remain anonymous.
+We appreciate security researchers who help keep The Seed secure. Contributors will be acknowledged in release notes
+unless they prefer to remain anonymous.

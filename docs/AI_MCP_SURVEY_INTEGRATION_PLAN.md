@@ -105,7 +105,7 @@ Based on [Ekahau AI Pro](https://www.peerspot.com/products/ekahau-ai-pro-reviews
 
 ### How AI + MCP + Survey Work Together
 
-```
+````text
 ┌─────────────────────────────────────────────────────────────────┐
 │                        User Request                              │
 │         "Design WiFi for this floor plan"                       │
@@ -146,11 +146,11 @@ Based on [Ekahau AI Pro](https://www.peerspot.com/products/ekahau-ai-pro-reviews
 │  RF Propagation        Channel Planner      Device Discovery     │
 │  Heatmap Generator     AP Database          Health Scoring       │
 └─────────────────────────────────────────────────────────────────┘
-```
+```python
 
 ### AI-Powered WiFi Planning Flow
 
-```
+```python
 Step 1: Input
 ─────────────────────────────────────────────────────────
 User uploads floor plan → AI asks about:
@@ -189,7 +189,7 @@ AI generates:
   - Channel plan
   - Bill of materials
   - Installation notes
-```
+```typescript
 
 ---
 
@@ -390,3 +390,4 @@ AI generates:
 - [MCP Protocol](https://modelcontextprotocol.io)
 - [RF Propagation Models](https://en.wikipedia.org/wiki/Log-distance_path_loss_model)
 - [IEEE 802.11 Standards](https://www.ieee802.org/11/)
+````

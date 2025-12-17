@@ -66,13 +66,13 @@ Beta testers with repo access can read files directly
 
 ## Maintenance
 
-**When to update:**
+### When to update
 
 - New release (document new features)
 - Bug fixes (update troubleshooting)
 - Hardware tested (add to compatibility)
 
-**Who updates:**
+#### Who updates
 
 - Engineering (feature docs)
 - Support (FAQ, troubleshooting)

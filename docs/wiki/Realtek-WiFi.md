@@ -66,13 +66,13 @@ site surveys, no packet injection**.
 
 ### Identify Your Chipset
 
-```bash
+````bash
 lspci | grep -i realtek
 # Example: Realtek Semiconductor Co., Ltd. RTL8821CE 802.11ac
 
 lsusb | grep -i realtek
 # For USB adapters
-```
+```text
 
 ### Option 1: In-Kernel Drivers (Managed Mode Only)
 
@@ -85,7 +85,7 @@ sudo modprobe rtw88_8821ce
 
 # For rtw89 (RTL8852AE, RTL8852BE)
 sudo modprobe rtw89_8852ae
-```
+```bash
 
 **Result:** Basic Wi-Fi connectivity, **no monitor mode**.
 
@@ -109,7 +109,7 @@ sudo modprobe 88XXau
 
 # Test monitor mode
 sudo airmon-ng start wlan0
-```
+```yaml
 
 **Success Rate:** ~50% depending on kernel version, chipset revision, phase of moon.
 
@@ -119,16 +119,16 @@ sudo airmon-ng start wlan0
 
 ### Issue: Driver Won't Compile
 
-**Error:**
+#### Error
 
-```
+```text
 make: *** [Makefile:1234] Error 1
 fatal error: linux/something.h: No such file or directory
-```
+```bash
 
 **Cause:** Kernel headers missing or incompatible driver version
 
-**Solution:**
+#### Solution
 
 ```bash
 # Install headers
@@ -138,15 +138,15 @@ sudo apt install linux-headers-$(uname -r)
 cd rtl8812au
 git checkout <older-commit>
 sudo make clean && sudo make dkms_install
-```
+```text
 
 ### Issue: Monitor Mode Fails
 
-**Error:**
+#### Error
 
-```
+```text
 command failed: Operation not supported (-95)
-```
+```bash
 
 **Cause:** Driver doesn't support monitor mode
 
@@ -158,7 +158,7 @@ command failed: Operation not supported (-95)
 
 **Cause:** DKMS driver didn't rebuild for new kernel
 
-**Solution:**
+#### Solution
 
 ```bash
 # Reinstall driver
@@ -168,7 +168,7 @@ sudo make dkms_install
 
 # Or use previous kernel
 # (Select old kernel at GRUB boot menu)
-```
+```yaml
 
 ---
 
@@ -176,7 +176,7 @@ sudo make dkms_install
 
 ### ❌ **Absolutely NO** - For The Seed
 
-**Instead, buy:**
+#### Instead, buy
 
 - **Wi-Fi 6:** Intel AX200 ($15-25)
 - **Wi-Fi 6E:** Intel AX210 ($20-35)
@@ -229,3 +229,4 @@ _(Community reports will be added here)_
 **Last Updated:** 2025-12-14 **Recommendation:** **Don't buy Realtek for network diagnostics.**
 
 [← Back to Home](Home) | [← Previous: Broadcom](Broadcom-WiFi) | [Next: MediaTek →](MediaTek-WiFi)
+````

@@ -8,7 +8,7 @@
 
 This document defines the visual identity, voice, and brand standards for **The Seed** by **Mustard Seed Networks**.
 
-**Brand Essence:**
+#### Brand Essence
 
 - **Core Metaphor:** From a tiny seed, a mighty network grows
 - **Personality:** Approachable, intelligent, growth-oriented, trustworthy
@@ -40,18 +40,18 @@ establishes the foundation and direction for brand development.
 
 ### Origin Story
 
-**The Parable of the Mustard Seed:**
+#### The Parable of the Mustard Seed
 
 > "The kingdom of heaven is like a mustard seed, which a man took and planted in his field. Though it is the smallest of
 > all seeds, yet when it grows, it is the largest of garden plants and becomes a tree, so that the birds come and perch
 > in its branches." — Matthew 13:31-32
 
-**Our Interpretation:**
+#### Our Interpretation
 
 From the smallest diagnostic scan, comprehensive network insight grows. A single seed of data planted in the right soil
 (AI analysis) becomes a mighty tree of actionable intelligence.
 
-**Founder Story:**
+#### Founder Story
 
 Kris Armstrong spent years working in healthcare IT, watching network admins waste hours troubleshooting mysterious
 network issues and thousands of dollars on WiFi site surveys. He saw expensive enterprise tools that were too complex
@@ -67,20 +67,20 @@ businesses that make up the backbone of our communities.
 
 **Category:** AI-Powered Network Diagnostic Platform
 
-**Positioning Statement:**
+#### Positioning Statement
 
 > "For healthcare and SMB IT teams who waste hours troubleshooting network issues and thousands on WiFi site surveys,
 > The Seed is an AI-powered diagnostic platform that tells you exactly what's wrong in seconds and lets you plan WiFi
 > coverage before buying access points. Unlike SolarWinds or Ekahau, The Seed combines network diagnostics, WiFi
 > planning, and compliance automation in one affordable platform starting at $299/year."
 
-**Target Audiences:**
+#### Target Audiences
 
 1. **Primary:** Healthcare IT (hospitals, clinics, medical practices)
 2. **Secondary:** SMB Network Admins (50-500 employees)
 3. **Tertiary:** WiFi Consultants (budget-conscious, smaller projects)
 
-**Brand Pillars:**
+#### Brand Pillars
 
 1. **Simplicity**
    - Complex networks made simple
@@ -116,7 +116,7 @@ If The Seed were a person, they would be:
 - **Trustworthy:** Reliable, secure, keeps promises
 - **Down-to-earth:** No corporate jargon, no BS
 
-**Visual Metaphors:**
+#### Visual Metaphors
 
 - **Seeds & Growth:** Germination, roots, sprouting, trees
 - **Nature & Organic:** Natural, sustainable, life-giving
@@ -127,14 +127,14 @@ If The Seed were a person, they would be:
 
 ### Visual Style Direction
 
-**Overall Aesthetic:**
+#### Overall Aesthetic
 
 - Modern but warm (not cold/sterile like enterprise software)
 - Clean and uncluttered (white space is good)
 - Natural elements (organic shapes, earth tones)
 - Professional but approachable (not stuffy)
 
-**Avoid:**
+#### Avoid
 
 - Generic tech stock photos (servers in blue light, etc.)
 - Overly corporate (stiff, formal, intimidating)
@@ -147,7 +147,7 @@ If The Seed were a person, they would be:
 
 ### Logo Status: TO BE DESIGNED
 
-**Logo Concepts to Explore:**
+#### Logo Concepts to Explore
 
 #### Concept 1: Sprouting Seed Icon
 
@@ -167,7 +167,7 @@ If The Seed were a person, they would be:
 - Subtle seed icon integrated (e.g., dot over "i" replaced with seed, or "o" in "Seed" becomes seed shape)
 - Professional, versatile
 
-**Logo Requirements:**
+#### Logo Requirements
 
 - Scalable (works at 16px favicon, works on billboard)
 - Monochrome version (for black/white printing)
@@ -175,18 +175,18 @@ If The Seed were a person, they would be:
 - Horizontal version (for headers, email signatures)
 - Vertical/stacked version (for narrow layouts)
 
-**File Formats Needed:**
+#### File Formats Needed
 
 - SVG (vector, primary format)
 - PNG (transparent background, various sizes: 512px, 256px, 128px, 64px, 32px, 16px)
 - PDF (for print materials)
 
-**Clear Space:**
+#### Clear Space
 
 - Minimum clear space around logo: Equal to height of "S" in "Seed"
 - Never place text or other elements within clear space
 
-**Minimum Size:**
+#### Minimum Size
 
 - Digital: 24px height (for legibility)
 - Print: 0.5 inches height
@@ -207,21 +207,21 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 ### Primary Colors
 
-**Seed Green (Primary Brand Color)**
+#### Seed Green (Primary Brand Color)
 
 - Hex: `#2D7A3E` (to be finalized)
 - RGB: `45, 122, 62`
 - Use: Primary CTA buttons, links, accents, logo (primary version)
 - Meaning: Growth, health, life, prosperity
 
-**Soil Brown (Secondary)**
+#### Soil Brown (Secondary)
 
 - Hex: `#5C4033` (to be finalized)
 - RGB: `92, 64, 51`
 - Use: Headers, grounding elements, secondary accents
 - Meaning: Foundation, stability, earth
 
-**Sky Blue (Tertiary)**
+#### Sky Blue (Tertiary)
 
 - Hex: `#4A90E2` (to be finalized)
 - RGB: `74, 144, 226`
@@ -232,7 +232,7 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 ### Neutral Colors
 
-**Neutrals (Grayscale)**
+#### Neutrals (Grayscale)
 
 - **Midnight:** `#1A1A1A` - Headlines, body text
 - **Charcoal:** `#333333` - Secondary text
@@ -246,22 +246,22 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 ### Functional Colors
 
-**Success (Positive States)**
+#### Success (Positive States)
 
 - Green: `#28A745`
 - Use: Success messages, healthy status, checkmarks
 
-**Warning (Caution States)**
+#### Warning (Caution States)
 
 - Amber: `#FFC107`
 - Use: Warnings, moderate priority alerts
 
-**Error (Negative States)**
+#### Error (Negative States)
 
 - Red: `#DC3545`
 - Use: Errors, critical alerts, destructive actions
 
-**Info (Informational)**
+#### Info (Informational)
 
 - Blue: `#17A2B8`
 - Use: Informational messages, tips, help text
@@ -270,13 +270,13 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 ### Color Accessibility
 
-**WCAG 2.1 AA Compliance Required:**
+#### WCAG 2.1 AA Compliance Required
 
 - Text contrast ratio minimum: 4.5:1 (normal text), 3:1 (large text 18pt+)
 - Always test color combinations for accessibility
 - Provide non-color indicators (icons, labels) in addition to color
 
-**Tools:**
+#### Tools
 
 - WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
 - Figma plugin: Stark (accessibility checker)
@@ -285,22 +285,22 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 ### Color Usage Guidelines
 
-**Primary Actions:**
+#### Primary Actions
 
 - Use **Seed Green** for primary CTAs ("Get Started", "Download", "Sign Up")
 - Reserve for most important action on page (only one primary CTA per section)
 
-**Secondary Actions:**
+#### Secondary Actions
 
 - Use **Soil Brown** or outlined buttons (green border, white fill)
 
-**Backgrounds:**
+#### Backgrounds
 
 - Prefer **Snow** (#F8F8F8) for page backgrounds
 - Use **Pure White** for content cards, modals
 - Avoid pure black backgrounds (use Midnight #1A1A1A instead)
 
-**Text:**
+#### Text
 
 - Body text: **Midnight** on **Snow/White** backgrounds
 - Headings: **Midnight** (can use **Seed Green** for emphasis)
@@ -313,7 +313,7 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 ### Typeface Selection: TO BE FINALIZED
 
-**Recommended Directions:**
+#### Recommended Directions
 
 #### Option 1: Modern Sans-Serif (Recommended)
 
@@ -335,9 +335,9 @@ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use o
 
 - Use native system fonts for performance
 
-```css
+````css
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
-```
+```python
 
 **Why:** Fast, familiar, no font loading delay
 
@@ -345,7 +345,7 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica
 
 ### Typography Scale
 
-**Recommended Scale (Responsive):**
+#### Recommended Scale (Responsive)
 
 | Element              | Desktop         | Mobile          | Weight         |
 | -------------------- | --------------- | --------------- | -------------- |
@@ -360,13 +360,13 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica
 | Button               | 16px / 1rem     | 14px / 0.875rem | Medium (500)   |
 | Code                 | 14px / 0.875rem | 14px / 0.875rem | Regular (400)  |
 
-**Line Height:**
+#### Line Height
 
 - Headings: 1.2-1.3 (tight)
 - Body text: 1.6-1.8 (comfortable for reading)
 - Captions: 1.4-1.5
 
-**Letter Spacing:**
+#### Letter Spacing
 
 - Headings: -0.02em (slightly tighter)
 - Body: 0 (default)
@@ -392,20 +392,20 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 **Direction:** Line icons (outline style) with consistent stroke weight
 
-**Characteristics:**
+#### Characteristics
 
 - **Stroke weight:** 2px (1.5px for small sizes)
 - **Style:** Rounded corners (not sharp angles)
 - **Complexity:** Simple, clear, recognizable at small sizes
 - **Color:** Inherit from context (not hardcoded colors in SVG)
 
-**Recommended Icon Sets:**
+#### Recommended Icon Sets
 
 - **Lucide Icons:** https://lucide.dev (clean, modern, open source)
 - **Heroicons:** https://heroicons.com (Tailwind CSS, free)
 - **Feather Icons:** https://feathericons.com (minimal, consistent)
 
-**Custom Icons:**
+#### Custom Icons
 
 - Use same stroke weight and corner radius as chosen icon set
 - 24x24px artboard (scales well to 16px, 32px, 48px)
@@ -415,22 +415,22 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 ### Icon Usage
 
-**Navigation:**
+#### Navigation
 
 - Use icons + labels (not icons alone - aids recognition)
 - Active state: Fill icon or change color to Seed Green
 
-**Features:**
+#### Features
 
 - Illustrate features with icons (WiFi waves, network nodes, shield, etc.)
 - Pair with short headline and description
 
-**Buttons:**
+#### Buttons
 
 - Leading icon (left side): ✅ Download, ⚙️ Settings
 - Avoid trailing icons unless indicating direction (→ Next)
 
-**Status Indicators:**
+#### Status Indicators
 
 - ✅ Green checkmark: Success, healthy, completed
 - ⚠️ Yellow warning triangle: Warning, needs attention
@@ -443,21 +443,21 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 ### Photography Style: TO BE CREATED
 
-**Direction:**
+#### Direction
 
 - Authentic, not stock photo-y
 - Real people in real environments (hospitals, offices, server rooms)
 - Natural lighting (not overly staged)
 - Diverse representation (age, gender, ethnicity)
 
-**Subject Matter:**
+#### Subject Matter
 
 - Healthcare workers using technology
 - IT professionals troubleshooting networks
 - Modern office environments
 - Clean, organized server rooms (not chaotic cable nightmares)
 
-**Avoid:**
+#### Avoid
 
 - Cheesy stock photos (person pointing at screen with fake smile)
 - Generic server room with blue lighting
@@ -470,19 +470,19 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 **Direction:** Simple, clean, explanatory (not decorative)
 
-**Use Cases:**
+#### Use Cases
 
 - Explain complex concepts (WiFi heatmaps, network topology)
 - Onboarding/empty states ("No devices found yet - run your first scan!")
 - Error states ("Connection lost - check your internet")
 
-**Style:**
+#### Style
 
 - Line art (consistent with icon style)
 - Minimal color (Seed Green + one accent)
 - Geometric shapes (avoid overly organic/hand-drawn)
 
-**Recommended Illustration Sets (as starting point):**
+#### Recommended Illustration Sets (as starting point)
 
 - **unDraw:** https://undraw.co (free, customizable color)
 - **Storyset:** https://storyset.com (free, animated option)
@@ -493,49 +493,53 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 ### Brand Voice
 
-**Core Attributes:**
+#### Core Attributes
 
 1. **Clear**
    - Plain English, not jargon
    - Short sentences, active voice
    - Explain technical concepts simply
 
-   **Example:**
-   - ❌ "Utilize our heuristic algorithms to ascertain root causality of network degradation"
-   - ✅ "The Seed tells you what's wrong with your network and how to fix it"
+#### Example
+
+- ❌ "Utilize our heuristic algorithms to ascertain root causality of network degradation"
+- ✅ "The Seed tells you what's wrong with your network and how to fix it"
 
 2. **Confident**
    - We know our stuff, we're not guessing
    - Make bold claims (but back them up)
    - Don't hedge with "maybe", "probably", "hopefully"
 
-   **Example:**
-   - ❌ "The Seed might be able to help identify some network issues"
-   - ✅ "The Seed finds network issues in seconds"
+#### Example
+
+- ❌ "The Seed might be able to help identify some network issues"
+- ✅ "The Seed finds network issues in seconds"
 
 3. **Helpful**
    - Focus on solving customer problems
    - Offer guidance, not just features
    - Anticipate questions and answer them
 
-   **Example:**
-   - ❌ "Advanced SNMP v3 support"
-   - ✅ "Connect to managed switches securely with SNMP v3 (here's how to configure it)"
+#### Example
+
+- ❌ "Advanced SNMP v3 support"
+- ✅ "Connect to managed switches securely with SNMP v3 (here's how to configure it)"
 
 4. **Human**
    - Write like a person, not a corporation
    - Use "we", "you", "us" (not "one" or passive voice)
    - Inject personality (but stay professional)
 
-   **Example:**
-   - ❌ "Upon installation, configuration parameters must be specified"
-   - ✅ "When you first install The Seed, we'll walk you through a quick setup"
+#### Example
+
+- ❌ "Upon installation, configuration parameters must be specified"
+- ✅ "When you first install The Seed, we'll walk you through a quick setup"
 
 ---
 
 ### Tone Variations
 
-**Tone changes based on context, but voice stays consistent.**
+#### Tone changes based on context, but voice stays consistent
 
 #### Marketing Website (Optimistic, Inspiring)
 
@@ -571,25 +575,25 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 ### Writing Guidelines
 
-**Headings:**
+#### Headings
 
 - Front-load keywords (SEO + scannability)
 - Use action verbs ("Plan WiFi Coverage Before Buying APs" not "WiFi Planning Feature")
 - Ask questions ("Wasting Hours on Network Issues?" for problem/agitation)
 
-**Body Copy:**
+#### Body Copy
 
 - One idea per paragraph
 - Use bullets for lists (easier to scan than paragraphs)
 - Bold key phrases (helps skimmers)
 
-**CTAs (Calls to Action):**
+#### CTAs (Calls to Action)
 
 - Be specific ("Download The Seed for macOS" not "Download")
 - Use first person when appropriate ("Start My Free Trial" not "Start Free Trial")
 - Create urgency without being pushy ("Try It Free Today" not "HURRY LIMITED TIME OFFER!!!")
 
-**Word Choice:**
+#### Word Choice
 
 - **Use:** Simple, everyday words
 - **Avoid:** Corporate jargon, buzzwords, overused tech terms
@@ -602,7 +606,7 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 
 ### Tagline Options (TO BE FINALIZED)
 
-**Contenders:**
+#### Contenders
 
 1. "From a tiny seed, a mighty network grows"
 2. "Network diagnostics made simple"
@@ -610,7 +614,7 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 4. "AI-powered network intelligence"
 5. "Know your network inside and out"
 
-**Testing Criteria:**
+#### Testing Criteria
 
 - Memorable (can you repeat it after hearing once?)
 - Differentiated (could this apply to competitors?)
@@ -627,7 +631,7 @@ invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smal
 **Subheadline:** "Scan your network for vulnerabilities, plan WiFi coverage for new wings, and generate audit-ready
 reports in minutes - not weeks."
 
-**Proof Points:**
+#### Proof Points
 
 - "Find rogue DHCP servers before they cause an outage"
 - "Prove your network is segmented for HIPAA compliance"
@@ -642,7 +646,7 @@ reports in minutes - not weeks."
 **Subheadline:** "AI tells you exactly what's wrong with your network and how to fix it - no more googling error
 messages at 2am."
 
-**Proof Points:**
+#### Proof Points
 
 - "Discover every device on your network in 60 seconds"
 - "Root cause analysis in plain English, not tech jargon"
@@ -657,7 +661,7 @@ messages at 2am."
 **Subheadline:** "Predictive WiFi planning lets you design coverage and estimate AP count BEFORE going on-site. Save
 time, impress clients, win more projects."
 
-**Proof Points:**
+#### Proof Points
 
 - "Generate professional heatmaps and reports"
 - "$1,999/year - 60% cheaper than Ekahau"
@@ -678,7 +682,7 @@ time, impress clients, win more projects."
 
 ### Website (mustardseednetworks.com)
 
-**Homepage Structure:**
+#### Homepage Structure
 
 1. **Hero Section:**
    - Headline: Value prop
@@ -711,7 +715,7 @@ time, impress clients, win more projects."
    - "Start diagnosing your network in 30 minutes"
    - Download buttons
 
-**Footer:**
+#### Footer
 
 - About Us
 - Documentation
@@ -725,26 +729,26 @@ time, impress clients, win more projects."
 
 ### Social Media
 
-**LinkedIn (Primary B2B Channel):**
+#### LinkedIn (Primary B2B Channel)
 
 - Company Page: "Mustard Seed Networks"
 - Kris Armstrong personal profile (thought leadership)
 - Content: Product updates, healthcare IT tips, customer stories
 - Tone: Professional, informative
 
-**Twitter/X:**
+#### Twitter/X
 
 - @MustardSeedNet (to be registered)
 - Content: Quick tips, industry news, product updates
 - Tone: Casual but professional, conversational
 
-**YouTube:**
+#### YouTube
 
 - Channel: "Mustard Seed Networks"
 - Content: Tutorials, demos, webinars
 - Thumbnails: Consistent style (brand colors, clean text, screenshots)
 
-**Reddit:**
+#### Reddit
 
 - Participate (don't spam) in:
   - r/networking
@@ -759,26 +763,26 @@ time, impress clients, win more projects."
 
 **From Name:** "The Seed Team" or "Kris Armstrong (Mustard Seed Networks)"
 
-**Subject Lines:**
+#### Subject Lines
 
 - Be clear, not clever (unless very confident)
 - Front-load value ("New: Predictive WiFi Planning" not "You're going to love this")
 - Keep under 50 characters (mobile preview)
 
-**Email Design:**
+#### Email Design
 
 - Plain text preferred for transactional/personal emails
 - HTML for newsletters/announcements (branded template)
 - Always include plain text version (accessibility + spam filters)
 
-**Signature:**
+#### Signature
 
-```
+```text
 Kris Armstrong
 Founder, Mustard Seed Networks
 The Seed - AI-Powered Network Diagnostics
 https://mustardseednetworks.com
-```
+```python
 
 ---
 
@@ -786,7 +790,7 @@ https://mustardseednetworks.com
 
 ### One-Pager (Sales Sheet)
 
-**Front Side:**
+#### Front Side
 
 - Logo + tagline
 - Headline: "Network Diagnostics Made Simple"
@@ -794,13 +798,13 @@ https://mustardseednetworks.com
 - Pricing tiers (simplified: Free, Pro $799, Premium $1,999, Enterprise $4,999)
 - CTA: QR code → website
 
-**Back Side:**
+#### Back Side
 
 - "How The Seed Compares" - competitive comparison table
 - Customer testimonial (when available)
 - "Get Started" - download links or contact info
 
-**Specs:**
+#### Specs
 
 - 8.5" x 11" (folds to 8.5" x 5.5")
 - Full color
@@ -810,7 +814,7 @@ https://mustardseednetworks.com
 
 ### Business Cards
 
-**Front:**
+#### Front
 
 - Logo
 - Name: Kris Armstrong
@@ -818,13 +822,13 @@ https://mustardseednetworks.com
 - Email: kris.armstrong@mustardseednetworks.com
 - Phone: (TBD)
 
-**Back:**
+#### Back
 
 - Tagline: "From a tiny seed, a mighty network grows"
 - Website: mustardseednetworks.com
 - QR code → website
 
-**Specs:**
+#### Specs
 
 - Standard size: 3.5" x 2"
 - Thick stock (32pt)
@@ -834,19 +838,19 @@ https://mustardseednetworks.com
 
 ### Slide Deck (Conference/Demo)
 
-**Template:**
+#### Template
 
 - Title slide: Logo, presentation title, presenter name
 - Section dividers: Full-bleed background color (Seed Green or Soil Brown), white text
 - Content slides: White background, minimal text, large visuals
 - Footer: Logo + slide number
 
-**Fonts:**
+#### Fonts
 
 - Headings: 36pt minimum
 - Body: 24pt minimum (readable from back of room)
 
-**Images:**
+#### Images
 
 - Full-bleed or clean padding
 - No pixelated or stretched images
@@ -855,18 +859,18 @@ https://mustardseednetworks.com
 
 ### Video (Demo/Tutorial)
 
-**Intro (5 seconds):**
+#### Intro (5 seconds)
 
 - Animated logo + tagline
 - Music: Upbeat but not distracting (royalty-free: Epidemic Sound, Artlist)
 
-**Content:**
+#### Content
 
 - Screen recording: High resolution (1920x1080 minimum)
 - Voiceover: Clear, conversational (not monotone robot)
 - Captions: Always (accessibility + silent autoplay on social)
 
-**Outro (5 seconds):**
+#### Outro (5 seconds)
 
 - CTA: "Download The Seed at mustardseednetworks.com"
 - Logo
@@ -908,7 +912,7 @@ risk!" - icky) ❌ Be overly casual ("Hey dude, check this out!" - we're B2B) �
 
 ## Brand Evolution
 
-**This is version 1.0 - a foundation, not a final answer.**
+### This is version 1.0 - a foundation, not a final answer
 
 As we grow, our brand will evolve. Expect updates:
 
@@ -917,7 +921,7 @@ As we grow, our brand will evolve. Expect updates:
 - After major product milestones (v2.0, etc.)
 - Annually (refresh to stay modern)
 
-**Guardrails:**
+#### Guardrails
 
 - Don't change brand drastically (confuses customers)
 - Evolve, don't reinvent (unless major pivot)
@@ -962,17 +966,17 @@ As we grow, our brand will evolve. Expect updates:
 
 ## Approval Process
 
-**Minor Brand Usage (Day-to-Day):**
+### Minor Brand Usage (Day-to-Day)
 
 - Kris Armstrong approves (or delegates to Marketing Manager when hired)
 - Examples: Social media posts, blog graphics, support materials
 
-**Major Brand Changes:**
+#### Major Brand Changes
 
 - Kris Armstrong final approval
 - Examples: Logo redesign, color palette change, tagline change
 
-**External Brand Usage (Partners, Press):**
+#### External Brand Usage (Partners, Press)
 
 - Require approval before publication
 - Provide brand assets and guidelines
@@ -982,12 +986,12 @@ As we grow, our brand will evolve. Expect updates:
 
 ## Contact
 
-**Brand Questions:**
+### Brand Questions
 
 - Email: kris.armstrong@mustardseednetworks.com
 - Subject: "Brand Guidelines Question"
 
-**Request Brand Assets:**
+#### Request Brand Assets
 
 - Email same address with subject "Brand Asset Request"
 - Include: What asset, what format, what purpose
@@ -1010,3 +1014,4 @@ As we grow, our brand will evolve. Expect updates:
 _From a tiny seed, a mighty network grows._
 
 **Mustard Seed Networks** **The Seed - AI-Powered Network Diagnostics**
+````

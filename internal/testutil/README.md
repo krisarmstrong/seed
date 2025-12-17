@@ -14,7 +14,7 @@ across all test files.
 
 ### Using Test Defaults
 
-```go
+````go
 import "github.com/krisarmstrong/seed/internal/testutil"
 
 func TestMyFunction(t *testing.T) {
@@ -26,7 +26,7 @@ func TestMyFunction(t *testing.T) {
     passwordHash := defaults.Auth.PasswordHash   // Pre-computed bcrypt hash
     jwtSecret := defaults.Auth.JWTSecret         // Test JWT secret
 }
-```
+```go
 
 ### Building Custom Configurations
 
@@ -44,7 +44,7 @@ func TestWithCustomConfig(t *testing.T) {
     // Use config in tests
     // ...
 }
-```
+```go
 
 ### Using MustBuild for Validation
 
@@ -57,7 +57,7 @@ func TestRequiresValidConfig(t *testing.T) {
 
     // Config is guaranteed valid here
 }
-```
+```go
 
 ### Using Pre-built Fixtures
 
@@ -86,7 +86,7 @@ func TestStandardScan(t *testing.T) {
     // Standard ARP + ICMP discovery
     cfg := testutil.StandardScanConfig()
 }
-```
+```go
 
 ## ConfigBuilder Methods
 
@@ -133,7 +133,7 @@ type TestDefaults struct {
     Discovery        DiscoveryDefaults
     NetworkDiscovery NetworkDiscoveryDefaults
 }
-```
+```python
 
 ### AuthDefaults
 
@@ -197,7 +197,7 @@ func TestOldWay(t *testing.T) {
         // ... dozens more lines
     }
 }
-```
+```go
 
 ### After (Using testutil)
 
@@ -209,7 +209,7 @@ func TestNewWay(t *testing.T) {
         WithPort(8080).
         Build()
 }
-```
+```go
 
 ## Best Practices
 
@@ -235,7 +235,7 @@ func TestAuthWithDefaults(t *testing.T) {
     // Test authentication
     // The password is defaults.Auth.Password
 }
-```
+```go
 
 ### Testing Discovery Profiles
 
@@ -256,7 +256,7 @@ func TestDiscoveryProfiles(t *testing.T) {
         })
     }
 }
-```
+```go
 
 ### Testing Setup Wizard
 
@@ -269,7 +269,7 @@ func TestSetupWizard(t *testing.T) {
         t.Error("expected empty password to trigger setup")
     }
 }
-```
+```text
 
 ## Maintenance
 
@@ -290,4 +290,5 @@ go tool cover -html=coverage.out
 
 # Run with race detector
 go test ./internal/testutil/... -race
-```
+```text
+````

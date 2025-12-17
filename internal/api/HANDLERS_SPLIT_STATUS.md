@@ -4,8 +4,8 @@
 
 ### Completed
 
-✅ Created comprehensive split plan (HANDLERS_SPLIT_PLAN.md) ✅ Created `handlers_auth.go` with
-authentication handlers (demonstration)
+✅ Created comprehensive split plan (HANDLERS_SPLIT_PLAN.md) ✅ Created `handlers_auth.go` with authentication handlers
+(demonstration)
 
 ### handlers_auth.go Contents
 
@@ -18,7 +18,7 @@ Successfully extracted and organized:
 
 ### Next Steps to Complete Split
 
-**To activate handlers_auth.go:**
+#### To activate handlers_auth.go
 
 1. Remove duplicate types/functions from `handlers.go`:
    - Lines 85-96: LoginRequest, LoginResponse types

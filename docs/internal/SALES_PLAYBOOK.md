@@ -25,7 +25,7 @@
 
 ### What is The Seed?
 
-**The Seed is an AI-powered network diagnostic platform that helps IT teams:**
+#### The Seed is an AI-powered network diagnostic platform that helps IT teams
 
 - Discover and classify network devices automatically
 - Diagnose network issues with root cause analysis
@@ -61,22 +61,22 @@
 
 ### Pain Points We Solve
 
-**For IT Directors:**
+#### For IT Directors
 
 - ❌ **Pain:** "We spend 20+ hours per week troubleshooting network issues"
 - ✅ **Solution:** AI root cause analysis tells you exactly what's wrong in seconds
 
-**For Network Engineers:**
+#### For Network Engineers
 
 - ❌ **Pain:** "WiFi site surveys cost $3,000-5,000 and take weeks to schedule"
 - ✅ **Solution:** Predictive WiFi planner shows coverage BEFORE you buy APs
 
-**For HIPAA Officers:**
+#### For HIPAA Officers
 
 - ❌ **Pain:** "Proving HIPAA compliance is a nightmare of manual documentation"
 - ✅ **Solution:** One-click compliance reports with auditable evidence
 
-**For MSPs:**
+#### For MSPs
 
 - ❌ **Pain:** "We can't afford to send techs on-site for every network issue"
 - ✅ **Solution:** Remote diagnostics + fleet management across all client sites
@@ -87,7 +87,7 @@
 
 ### Ideal Customer Profile (ICP)
 
-**Primary Market: Healthcare (70% of focus)**
+#### Primary Market: Healthcare (70% of focus)
 
 | Attribute              | Value                                                                          |
 | ---------------------- | ------------------------------------------------------------------------------ |
@@ -101,7 +101,7 @@
 | **Decision Maker**     | IT Director, CIO, BioMed Engineer                                              |
 | **Decision Process**   | 30-90 day sales cycle, requires budget approval                                |
 
-**Secondary Market: SMB (20% of focus)**
+#### Secondary Market: SMB (20% of focus)
 
 | Attribute             | Value                                                        |
 | --------------------- | ------------------------------------------------------------ |
@@ -111,7 +111,7 @@
 | **Pain Points**       | No dedicated network engineer, outsourced IT, growth scaling |
 | **Decision Maker**    | IT Manager, Office Manager, CEO                              |
 
-**Tertiary Market: MSPs (10% of focus)**
+#### Tertiary Market: MSPs (10% of focus)
 
 | Attribute             | Value                                                          |
 | --------------------- | -------------------------------------------------------------- |
@@ -148,25 +148,25 @@
 
 ### BANT Qualification Framework
 
-**Budget:**
+#### Budget
 
 - "What's your annual IT/network budget?"
 - "Have you budgeted for network tools this year?"
 - **Qualify if:** $10K+ available for software tools
 
-**Authority:**
+#### Authority
 
 - "Who else is involved in this decision?"
 - "What's your approval process for new software?"
 - **Qualify if:** Talking to decision maker or strong influencer
 
-**Need:**
+#### Need
 
 - "What's your biggest network challenge right now?"
 - "How much time do you spend troubleshooting per week?"
 - **Qualify if:** Clear pain point that costs >$5K/year
 
-**Timeline:**
+#### Timeline
 
 - "When do you need this solved by?"
 - "What happens if you don't fix this soon?"
@@ -193,31 +193,31 @@
 
 ### Pain Point Discovery
 
-**Troubleshooting & Downtime:**
+#### Troubleshooting & Downtime
 
 - "How much time does your team spend troubleshooting network issues each week?"
 - "When was the last time you had a network outage? How long did it take to fix?"
 - "Do you know what's wrong when users complain about slow WiFi, or is it trial and error?"
 
-**WiFi Planning:**
+#### WiFi Planning
 
 - "How do you plan WiFi coverage for new facilities or expansions?"
 - "Have you ever deployed access points and found dead zones you didn't expect?"
 - "What did your last WiFi site survey cost? How long did it take?"
 
-**Compliance:**
+#### Compliance
 
 - "Are you subject to HIPAA, PCI, or other compliance frameworks?"
 - "How do you document your network security for audits?"
 - "How much time do you spend preparing for compliance audits?"
 
-**Security:**
+#### Security
 
 - "How do you detect unauthorized devices on your network?"
 - "Have you had any security incidents in the past year?"
 - "How quickly can you identify vulnerable devices after a CVE is published?"
 
-**Cost & Budget:**
+#### Cost & Budget
 
 - "What's the cost of network downtime to your organization per hour?"
 - "How much do you pay for WiFi site surveys, consultants, or external support?"
@@ -249,17 +249,17 @@
 
 ### Demo Structure (30-45 minutes)
 
-**1. Introduction (5 minutes)**
+#### 1. Introduction (5 minutes)
 
 - Quick recap of discovery call: "You mentioned you spend 15 hours per week troubleshooting and just had a WiFi outage
   last week, right?"
 - Agenda overview: "I'll show you exactly how The Seed solves those problems in about 30 minutes"
 
-**2. The "Wow Moment" (10 minutes)**
+#### 2. The "Wow Moment" (10 minutes)
 
-**Start with their #1 pain point. Examples:**
+#### Start with their #1 pain point. Examples
 
-**If their pain is troubleshooting:**
+#### If their pain is troubleshooting
 
 - Show AI Root Cause Analysis: "Here's a real issue—DHCP is slow. Most tools stop there. Watch this..."
 - Click into insight: "The Seed tells you EXACTLY why: the DHCP server took 850ms to respond, which is 3x your baseline.
@@ -267,7 +267,7 @@
 - **Wow moment:** "Instead of spending 2 hours checking switches, cables, and configs, you know in 10 seconds it's the
   DHCP server."
 
-**If their pain is WiFi:**
+#### If their pain is WiFi
 
 - Show Predictive WiFi Survey: "Here's a floor plan. You're thinking about adding WiFi. Most people buy 3 APs and hope.
   Watch this..."
@@ -275,13 +275,13 @@
 - **Wow moment:** "Before you spend $3,000 on APs, you see exactly where coverage will be. No surprises, no site survey
   fees."
 
-**If their pain is compliance:**
+#### If their pain is compliance
 
 - Show HIPAA Compliance Report: "Click one button, get an auditor-ready PDF showing how you meet HIPAA
   §164.312(e)(1)..."
 - **Wow moment:** "Instead of 40 hours of manual documentation, it's done in 30 seconds."
 
-**3. Feature Walkthrough (15 minutes)**
+#### 3. Feature Walkthrough (15 minutes)
 
 Walk through the dashboard showing:
 
@@ -290,7 +290,7 @@ Walk through the dashboard showing:
 - Anomaly detection ("This device is using 10x more bandwidth than usual—that's a red flag")
 - Vulnerability scanner ("These 5 devices have high-risk CVEs, prioritized by exposure")
 
-**4. Objection Pre-emption (5 minutes)**
+#### 4. Objection Pre-emption (5 minutes)
 
 Address common objections BEFORE they ask:
 
@@ -298,7 +298,7 @@ Address common objections BEFORE they ask:
 - "Great question—we're the only tool with predictive WiFi planning. No one else lets you plan coverage before buying
   APs."
 
-**5. Next Steps & Call to Action (5 minutes)**
+#### 5. Next Steps & Call to Action (5 minutes)
 
 - "Based on what you've seen, does this solve your [pain point]?"
 - **If yes:** "Great! Let's get you started with a 30-day trial of the Premium tier so you can see the WiFi planner in
@@ -332,20 +332,20 @@ Address common objections BEFORE they ask:
 
 ### Pricing Strategy
 
-**Positioning:**
+#### Positioning
 
 - Price 60-75% below competitors (Ekahau $5K, AirMagnet $3K-15K)
 - Lead with Premium tier ($1,999) for WiFi consultants
 - Land-and-expand with Starter ($299) for SMB, upsell to Pro/Premium
 
-**Discounts:**
+#### Discounts
 
 - **Annual upfront:** Included (no monthly option yet)
 - **Multi-year:** 10% off 2-year, 15% off 3-year
 - **Non-profit/Education:** 25% off
 - **MSP volume:** See MSP pricing below
 
-**MSP Pricing (Volume Discounts):**
+#### MSP Pricing (Volume Discounts)
 
 | Sites       | Discount | Example: 20 sites @ Premium         |
 | ----------- | -------- | ----------------------------------- |
@@ -356,26 +356,26 @@ Address common objections BEFORE they ask:
 
 ### Pricing Objections & Responses
 
-**"That's too expensive"**
+#### "That's too expensive"
 
 - **Probe:** "Too expensive compared to what? What are you spending now on site surveys, consultant hours, or network
   downtime?"
 - **Reframe:** "Let's look at ROI. If you do 2 WiFi surveys per year at $3,000 each, that's $6,000. The Seed is $1,999
   and you can do unlimited surveys. You save $4,000 in year one alone."
 
-**"We don't have budget right now"**
+#### "We don't have budget right now"
 
 - **Probe:** "When does your next budget cycle start?"
 - **Reframe:** "What's the cost of NOT fixing this? If your team wastes 10 hours per week at $50/hour, that's $26,000
   per year. The Seed costs $799. Even a 10% time savings pays for itself."
 
-**"Can we get a discount?"**
+#### "Can we get a discount?"
 
 - **Deflect:** "Our pricing is already 60% below competitors like Ekahau. That said, we do offer discounts for annual
   pre-payment [already included], multi-year commitments [10-15% off], and non-profit/education [25% off]. Which applies
   to you?"
 
-**"We need to try it first"**
+#### "We need to try it first"
 
 - **Agree:** "Absolutely! That's why we offer a 30-day trial of the Premium tier. You'll see the value before you
   commit."
@@ -386,18 +386,18 @@ Address common objections BEFORE they ask:
 
 ### Common Objections & Responses
 
-**1. "We already have [SolarWinds / PRTG / Nagios / etc.]"**
+#### 1. "We already have [SolarWinds / PRTG / Nagios / etc.]"
 
-**Response:**
+#### Response
 
 - "Great tools for monitoring! What we hear from customers is those tools tell you WHAT is broken, but not WHY or HOW to
   fix it. Do you find yourself spending hours correlating data to find root causes?"
 - **Differentiation:** "The Seed's AI tells you exactly why DHCP is slow (server response time) or why WiFi is weak
   (interference on channel 6). It's the difference between a symptom and a diagnosis."
 
-**2. "We can't justify the cost"**
+#### 2. "We can't justify the cost"
 
-**Response:**
+#### Response
 
 - "I understand budget is tight. Let's look at what you're spending now:"
   - WiFi site survey: $3,000-5,000 per deployment
@@ -406,17 +406,17 @@ Address common objections BEFORE they ask:
 - "If The Seed saves just 2 hours per week or eliminates one site survey, it pays for itself. Does that math work for
   you?"
 
-**3. "We're not ready to buy right now"**
+#### 3. "We're not ready to buy right now"
 
-**Response:**
+#### Response
 
 - **Probe urgency:** "I totally understand. What would need to change for this to become a priority?"
 - **Nurture:** "No problem. How about I send you a case study from [similar customer] and we reconnect in 3 months?"
 - **Trial offer:** "Or, would a no-risk 30-day trial make sense so you can see the value when you're ready?"
 
-**4. "We need to evaluate other options"**
+#### 4. "We need to evaluate other options"
 
-**Response:**
+#### Response
 
 - "Smart approach—you should compare. Which other tools are you looking at?"
 - **If they say Ekahau:** "Ekahau is the gold standard for WiFi surveys, no question. The difference is Ekahau requires
@@ -424,9 +424,9 @@ Address common objections BEFORE they ask:
   predictive vs reactive."
 - **Battle card:** [See Competitive Battle Cards section]
 
-**5. "Our IT team can build this in-house"**
+#### 5. "Our IT team can build this in-house"
 
-**Response:**
+#### Response
 
 - "You've got talented people—I believe it! Question: how long would it take to build AI root cause analysis, WiFi RF
   propagation modeling, and compliance reporting?"
@@ -434,9 +434,9 @@ Address common objections BEFORE they ask:
   in engineering time. Plus ongoing maintenance. Is that the best use of your team's time, or would you rather focus on
   strategic projects?"
 
-**6. "We don't need AI, we have experienced engineers"**
+#### 6. "We don't need AI, we have experienced engineers"
 
-**Response:**
+#### Response
 
 - "Your engineers are your biggest asset! The Seed doesn't replace them—it makes them 10x more productive. Instead of
   spending 2 hours troubleshooting, they get answers in 10 seconds and can focus on projects that drive the business
@@ -444,16 +444,16 @@ Address common objections BEFORE they ask:
 - "Think of it like spell-check for writers. Good writers don't need spell-check, but it makes them faster and catches
   mistakes."
 
-**7. "What if it doesn't work for our environment?"**
+#### 7. "What if it doesn't work for our environment?"
 
-**Response:**
+#### Response
 
 - "Great question. That's exactly why we offer a 30-day trial. You'll test it in YOUR environment with YOUR network. If
   it doesn't deliver value, you don't pay. Fair?"
 
-**8. "We need more features before we can commit"**
+#### 8. "We need more features before we can commit"
 
-**Response:**
+#### Response
 
 - **Probe:** "What specific features are you missing?"
 - **Roadmap:** "Good news—that's on our roadmap for [quarter]. Can I show you our product roadmap?"
@@ -467,33 +467,33 @@ Address common objections BEFORE they ask:
 
 **When to compete:** WiFi consultants, healthcare facilities planning deployments
 
-**Ekahau Strengths:**
+#### Ekahau Strengths
 
 - Industry standard, 60%+ market share
 - Professional-grade survey accuracy
 - Spectrum analysis (requires hardware)
 - Established brand, large customer base
 
-**Ekahau Weaknesses:**
+#### Ekahau Weaknesses
 
 - Requires expensive on-site surveys ($3K-5K per deployment)
 - Hardware bundle costs $5,000-20,000
 - Reactive (survey AFTER APs deployed to verify)
 - No AI insights, no compliance features
 
-**The Seed Advantages:**
+#### The Seed Advantages
 
 - **Predictive survey** - Plan BEFORE buying APs (Ekahau can't do this)
 - 60-75% cheaper ($1,999 vs $5,000-20,000)
 - Software-only, no hardware required
 - AI root cause analysis + compliance reporting (Ekahau doesn't have)
 
-**Positioning:**
+#### Positioning
 
 > "Ekahau is the Cadillac of WiFi surveys—if you have $5K per deployment and need spectrum analysis, go with them. But
 > if you want to PLAN coverage before you buy APs and save thousands, The Seed's predictive survey is the only option."
 
-**Sales Trap to Avoid:**
+#### Sales Trap to Avoid
 
 - ❌ Don't compete head-to-head on traditional survey accuracy (they'll win)
 - ✅ Compete on predictive planning + integrated security + price
@@ -504,28 +504,28 @@ Address common objections BEFORE they ask:
 
 **When to compete:** Enterprise IT, government, large healthcare systems
 
-**AirMagnet Strengths:**
+#### AirMagnet Strengths
 
 - NetAlly brand (trusted in enterprise)
 - Comprehensive wireless analysis
 - Integration with NetAlly hardware (AirCheck, LinkSprinter)
 - Strong in enterprise/government
 
-**AirMagnet Weaknesses:**
+#### AirMagnet Weaknesses
 
 - Complex, steep learning curve
 - Expensive ($3,000-15,000 depending on edition)
 - Reactive surveys only (no predictive planning)
 - Requires Windows (not cross-platform)
 
-**The Seed Advantages:**
+#### The Seed Advantages
 
 - Predictive WiFi planning (AirMagnet doesn't have)
 - Modern web UI, easier to learn
 - 75-85% cheaper
 - Cross-platform (runs on any OS)
 
-**Positioning:**
+#### Positioning
 
 > "AirMagnet is built for Fortune 500 enterprise. If you have complex requirements and enterprise budget, it's a solid
 > choice. But if you want predictive planning and a tool your whole team can use without a PhD, The Seed is built for
@@ -537,33 +537,33 @@ Address common objections BEFORE they ask:
 
 **When to compete:** WiFi consultants, SMB planning deployments
 
-**Hamina Strengths:**
+#### Hamina Strengths
 
 - Cloud-based, modern UI
 - Good RF propagation modeling
 - Heatmap prediction (similar to us)
 - Automated AP placement
 
-**Hamina Weaknesses:**
+#### Hamina Weaknesses
 
 - WiFi-only (no network diagnostics, security, compliance)
 - Requires manual floor plan creation
 - No AI root cause analysis
 - Limited integrations
 
-**The Seed Advantages:**
+#### The Seed Advantages
 
 - **All-in-one platform:** WiFi + network diagnostics + security + compliance
 - AI-powered root cause analysis (Hamina doesn't have)
 - Anomaly detection, vulnerability scanning (Hamina doesn't have)
 - HIPAA/CIS compliance reporting (Hamina doesn't have)
 
-**Positioning:**
+#### Positioning
 
 > "Hamina is great if you ONLY need WiFi planning. But if you want WiFi planning AND network troubleshooting AND
 > compliance reporting in one platform, The Seed is the only option."
 
-**This is Our Toughest Competitor:**
+#### This is Our Toughest Competitor
 
 - Hamina's RF modeling is strong—we MUST match their ±10 dB accuracy or we lose
 - They're cloud-native, we're on-prem/hybrid (could be strength or weakness)
@@ -575,28 +575,28 @@ Address common objections BEFORE they ask:
 
 **When to compete:** Field techs, MSPs doing site surveys
 
-**NetAlly Strengths:**
+#### NetAlly Strengths
 
 - Hardware-bundled (AirMapper Site Survey app + AirCheck G3 hardware)
 - Trusted brand for field techs
 - Rugged, portable hardware
 - Good for on-site surveys
 
-**NetAlly Weaknesses:**
+#### NetAlly Weaknesses
 
 - Hardware required ($2,500+ for AirCheck G3)
 - Reactive surveys only (no predictive planning)
 - Limited AI/analytics
 - iPad-only (not cross-platform)
 
-**The Seed Advantages:**
+#### The Seed Advantages
 
 - Predictive WiFi planning (NetAlly can't do this)
 - Software-only, no hardware required
 - Cross-platform (any device)
 - AI diagnostics + compliance (NetAlly doesn't have)
 
-**Positioning:**
+#### Positioning
 
 > "NetAlly is perfect for field techs doing hands-on surveys with hardware. But if you want to PLAN WiFi coverage from
 > your desk without buying $2,500 hardware, The Seed's predictive survey is the way to go."
@@ -607,33 +607,33 @@ Address common objections BEFORE they ask:
 
 **When to compete:** Small IT teams, budget-conscious customers
 
-**Free Tools Strengths:**
+#### Free Tools Strengths
 
 - Free (can't beat $0)
 - Mature, well-documented
 - Large community support
 - Highly customizable
 
-**Free Tools Weaknesses:**
+#### Free Tools Weaknesses
 
 - Require deep networking expertise
 - No AI insights, manual analysis required
 - Fragmented (need 5-10 tools to do what The Seed does in one)
 - No support, no SLA
 
-**The Seed Advantages:**
+#### The Seed Advantages
 
 - **AI does the analysis for you** (free tools just collect data)
 - All-in-one platform (vs. 10 separate tools)
 - Professional support + SLA
 - Compliance-ready reports (free tools can't generate)
 
-**Positioning:**
+#### Positioning
 
 > "Free tools are great if you have a senior network engineer with 40 hours per week to analyze data. But if you want AI
 > to tell you exactly what's wrong in 10 seconds, The Seed pays for itself in time savings alone."
 
-**Sales Trap to Avoid:**
+#### Sales Trap to Avoid
 
 - ❌ Don't compete on price (free always wins)
 - ✅ Compete on TIME SAVINGS and AI insights
@@ -644,7 +644,7 @@ Address common objections BEFORE they ask:
 
 ### Time Savings ROI
 
-**Assumptions:**
+#### Assumptions
 
 - Average IT hourly rate: $50/hour
 - Current troubleshooting time: 10-20 hours/week
@@ -656,7 +656,7 @@ Address common objections BEFORE they ask:
 | 15 hours/week @ $50/hour | 40% reduction = 6 hours saved/week  | **$15,600/year** |
 | 20 hours/week @ $50/hour | 50% reduction = 10 hours saved/week | **$26,000/year** |
 
-**ROI:**
+#### ROI
 
 - Starter Tier ($299): **26x-87x ROI**
 - Professional Tier ($799): **10x-33x ROI**
@@ -666,7 +666,7 @@ Address common objections BEFORE they ask:
 
 ### WiFi Survey Cost Savings
 
-**Assumptions:**
+#### Assumptions
 
 - Traditional site survey cost: $3,000-5,000 per deployment
 - The Seed predictive survey: Included in Premium tier ($1,999/year)
@@ -677,7 +677,7 @@ Address common objections BEFORE they ask:
 | 2 surveys/year   | $6,000           | $1,999        | **$4,001**  |
 | 5 surveys/year   | $15,000          | $1,999        | **$13,001** |
 
-**ROI:**
+#### ROI
 
 - 1 survey: **1.5x ROI**
 - 2 surveys: **3x ROI**
@@ -687,7 +687,7 @@ Address common objections BEFORE they ask:
 
 ### Downtime Prevention ROI
 
-**Assumptions:**
+#### Assumptions
 
 - Average cost of network downtime: $5,600/hour (Gartner)
 - The Seed prevents 50% of failures with 24h early warning
@@ -698,7 +698,7 @@ Address common objections BEFORE they ask:
 | 4 hours/year     | $22,400/year | $11,200/year                  | **$11,200** |
 | 1 hour/quarter   | $22,400/year | $11,200/year                  | **$11,200** |
 
-**ROI (vs. Premium tier $1,999):**
+#### ROI (vs. Premium tier $1,999)
 
 - 4 hours/year downtime prevented: **5.6x ROI**
 - 1 hour/month prevented: **16.8x ROI**
@@ -707,7 +707,7 @@ Address common objections BEFORE they ask:
 
 ### Compliance Audit ROI
 
-**Assumptions:**
+#### Assumptions
 
 - External consultant for HIPAA audit: $5,000-15,000
 - Internal staff time for audit prep: 40-80 hours @ $50/hour = $2,000-4,000
@@ -718,7 +718,7 @@ Address common objections BEFORE they ask:
 | $7,000/year (consultant + staff) | $3,500/year                   | **$3,500** |
 | $15,000/year                     | $7,500/year                   | **$7,500** |
 
-**ROI (vs. Premium tier $1,999):**
+#### ROI (vs. Premium tier $1,999)
 
 - Small audit: **1.75x ROI**
 - Large audit: **3.75x ROI**
@@ -727,7 +727,7 @@ Address common objections BEFORE they ask:
 
 ### Total Economic Impact (TEI) Example
 
-**Scenario: 100-bed community hospital**
+#### Scenario: 100-bed community hospital
 
 | Category                               | Annual Savings |
 | -------------------------------------- | -------------- |
@@ -746,18 +746,18 @@ Address common objections BEFORE they ask:
 
 ### Pure Commission Model Analysis
 
-**Can you pay sales reps 100% commission with no base salary?**
+#### Can you pay sales reps 100% commission with no base salary?
 
-**Short Answer: Yes, but it's risky and limits your talent pool.**
+#### Short Answer: Yes, but it's risky and limits your talent pool
 
-**Pros:**
+#### Pros
 
 - ✅ Zero fixed costs—only pay when revenue comes in
 - ✅ Highly motivated reps (their income depends on closing deals)
 - ✅ Low financial risk for early-stage company
 - ✅ Easy to scale up/down (no layoff costs)
 
-**Cons:**
+#### Cons
 
 - ❌ Hard to attract top talent (most want base salary for stability)
 - ❌ High turnover (reps leave if they don't close deals in first 90 days)
@@ -765,7 +765,7 @@ Address common objections BEFORE they ask:
 - ❌ Difficult to enforce activities (can't require daily calls if no base)
 - ❌ May attract "coin-operated" reps who don't care about product/mission
 
-**Recommendation:**
+#### Recommendation
 
 - **Pure commission works for:**
   - Inside sales reps (remote, transactional sales)
@@ -782,20 +782,20 @@ Address common objections BEFORE they ask:
 
 ### Commission Structure Options
 
-**Option 1: Pure Commission (No Base)**
+#### Option 1: Pure Commission (No Base)
 
-**Structure:**
+#### Structure
 
 - Base Salary: $0
 - Commission: **30-40%** of Annual Contract Value (ACV)
 - Target Earnings: $60K-120K (depends on closures)
 
-**Example:**
+#### Example
 
 - Rep closes $200K in ACV
 - Commission: $200K × 35% = **$70,000**
 
-**When to Use:**
+#### When to Use
 
 - 1099 contractors, not W2 employees
 - Channel partners / resellers
@@ -803,16 +803,16 @@ Address common objections BEFORE they ask:
 
 ---
 
-**Option 2: Low Base + High Commission (Recommended)**
+#### Option 2: Low Base + High Commission (Recommended)
 
-**Structure:**
+#### Structure
 
 - Base Salary: **$40,000-50,000**
 - Commission: **20-25%** of ACV
 - OTE (On-Target Earnings): $80K-100K
 - Accelerators: 30% commission after 100% of quota
 
-**Example:**
+#### Example
 
 - Base: $40,000
 - Quota: $300K ACV
@@ -823,7 +823,7 @@ Address common objections BEFORE they ask:
   - Next $150K: $45,000 (30% accelerator)
   - **Total: $145,000**
 
-**When to Use:**
+#### When to Use
 
 - W2 inside sales reps (full-time employees)
 - Early hires (need to attract talent with stability)
@@ -831,9 +831,9 @@ Address common objections BEFORE they ask:
 
 ---
 
-**Option 3: SaaS Tiered Commission (Industry Standard)**
+#### Option 3: SaaS Tiered Commission (Industry Standard)
 
-**Structure:**
+#### Structure
 
 - Base Salary: **$50,000-60,000**
 - Commission Tiers:
@@ -844,7 +844,7 @@ Address common objections BEFORE they ask:
 - OTE: $100K-120K
 - Quota: $400K-500K ACV
 
-**Example:**
+#### Example
 
 - Base: $60,000
 - Quota: $400K
@@ -855,7 +855,7 @@ Address common objections BEFORE they ask:
 - **Total Commission: $91,000**
 - **Total Earnings: $151,000**
 
-**When to Use:**
+#### When to Use
 
 - Scaling sales team (3+ reps)
 - Want to reward top performers
@@ -865,7 +865,7 @@ Address common objections BEFORE they ask:
 
 ### Recommended Commission Plan for The Seed
 
-**Year 1: Low Base + High Commission (2 reps)**
+#### Year 1: Low Base + High Commission (2 reps)
 
 | Component   | Value                                                  |
 | ----------- | ------------------------------------------------------ |
@@ -876,7 +876,7 @@ Address common objections BEFORE they ask:
 | Accelerator | 30% commission above 100% quota                        |
 | Ramp Period | 90 days (50% quota Month 1, 75% Month 2, 100% Month 3) |
 
-**Why This Works:**
+#### Why This Works
 
 - Low fixed cost ($80K for 2 reps)
 - Attractive to talent ($100K+ OTE)
@@ -894,7 +894,7 @@ Address common objections BEFORE they ask:
 | **Premium**  | **$1,999**   | **$500**         | **Sweet spot—focus here**         |
 | Enterprise   | $4,999       | $1,250           | High effort, longer sales cycle   |
 
-**Sales Strategy:**
+#### Sales Strategy
 
 - Lead with **Premium tier** ($1,999) for healthcare/WiFi consultants
 - **80% of focus should be Premium tier** (best commission per effort)
@@ -905,19 +905,19 @@ Address common objections BEFORE they ask:
 
 ### Clawbacks & Terms
 
-**Clawback Policy:**
+#### Clawback Policy
 
 - If customer cancels within 90 days: **100% clawback**
 - If customer cancels within 180 days: **50% clawback**
 - After 180 days: No clawback
 
-**Why Clawbacks Matter:**
+#### Why Clawbacks Matter
 
 - Prevents reps from selling to unqualified customers who churn fast
 - Incentivizes proper discovery and qualification
 - Aligns rep incentives with long-term customer success
 
-**Payment Terms:**
+#### Payment Terms
 
 - Commission paid monthly (not upfront)
 - Paid only on COLLECTED revenue (not invoiced revenue)
@@ -927,7 +927,7 @@ Address common objections BEFORE they ask:
 
 ### Sales Compensation Examples
 
-**Example 1: Rep Closes $250K Quota (100%)**
+#### Example 1: Rep Closes $250K Quota (100%)
 
 | Deal               | Tier         | ACV                         | Commission (25%)       |
 | ------------------ | ------------ | --------------------------- | ---------------------- |
@@ -937,11 +937,11 @@ Address common objections BEFORE they ask:
 | MSP (15 sites)     | Premium      | $1,699 × 15 = $25,485       | $6,371                 |
 | **Total**          |              | **$91,842 ACV**             | **$22,961 commission** |
 
-**Wait, that's only $91K, not $250K quota?**
+#### Wait, that's only $91K, not $250K quota?
 
 True! This is why quotas are STRETCH goals. Let's recalculate for a realistic scenario:
 
-**Example 2: Rep Closes $200K (80% of Quota)**
+#### Example 2: Rep Closes $200K (80% of Quota)
 
 | Quarter   | Deals Closed             | ACV             | Commission             |
 | --------- | ------------------------ | --------------- | ---------------------- |
@@ -951,7 +951,7 @@ True! This is why quotas are STRETCH goals. Let's recalculate for a realistic sc
 | Q4        | 3 Premium, 10 Pro        | $13,987         | $3,497                 |
 | **Total** |                          | **$61,952 ACV** | **$15,488 commission** |
 
-**Total Earnings Year 1:**
+#### Total Earnings Year 1
 
 - Base: $40,000
 - Commission: $15,488
@@ -963,26 +963,26 @@ True! This is why quotas are STRETCH goals. Let's recalculate for a realistic sc
 
 ### Scaling the Sales Team
 
-**Phase 1: Founder-Led Sales (Months 1-6)**
+#### Phase 1: Founder-Led Sales (Months 1-6)
 
 - CEO closes first 10-20 customers
 - Learn messaging, objections, ideal customer profile
 - Document sales process
 - **Cost: $0 (founder time)**
 
-**Phase 2: First Sales Hire (Months 7-12)**
+#### Phase 2: First Sales Hire (Months 7-12)
 
 - Hire 1 inside sales rep (low base + high commission)
 - Target: $150K-200K ACV Year 1
 - **Cost: $40K base + $15K-25K commission = $55K-65K total**
 
-**Phase 3: Scale to 2 Reps (Months 13-18)**
+#### Phase 3: Scale to 2 Reps (Months 13-18)
 
 - Hire 2nd rep (same model)
 - Rep 1 now at full productivity ($250K+ ACV)
 - **Cost: $80K base + $40K-60K commission = $120K-140K total**
 
-**Phase 4: Add Sales Manager (Months 19-24)**
+#### Phase 4: Add Sales Manager (Months 19-24)
 
 - Hire sales manager when you have 3+ reps
 - Sales manager: $80K base + 5% override on team revenue
@@ -1017,9 +1017,9 @@ True! This is why quotas are STRETCH goals. Let's recalculate for a realistic sc
 
 ### Email Templates
 
-**Prospecting Email (Cold Outreach)**
+#### Prospecting Email (Cold Outreach)
 
-```
+````bash
 Subject: Save 10 hours/week on network troubleshooting
 
 Hi [First Name],
@@ -1033,11 +1033,11 @@ Most IT directors we work with say 10-20 hours. The Seed's AI tells you exactly 
 Would it make sense to see a 10-minute demo? I can show you how a hospital IT director saved 15 hours per week using The Seed.
 
 [Your Name]
-```
+```bash
 
-**Follow-Up After Demo**
+#### Follow-Up After Demo
 
-```
+```bash
 Subject: Next Steps: The Seed 30-Day Trial
 
 Hi [First Name],
@@ -1053,11 +1053,11 @@ Great talking with you today! As discussed, here's what happens next:
 Sound good? Click here to pick a time for the success check-in: [Calendly link]
 
 [Your Name]
-```
+```python
 
-**Trial Conversion (Day 25 of 30)**
+#### Trial Conversion (Day 25 of 30)
 
-```
+```python
 Subject: 5 days left in your The Seed trial
 
 Hi [First Name],
@@ -1073,7 +1073,7 @@ Based on what you've seen, does The Seed solve your [pain point from discovery c
 If yes, I'll send over a proposal this week so we can get you up and running without interruption.
 
 [Your Name]
-```
+```yaml
 
 ---
 
@@ -1104,14 +1104,14 @@ If yes, I'll send over a proposal this week so we can get you up and running wit
 
 **Formula:** Total Sales & Marketing Cost / New Customers
 
-**Example:**
+#### Example
 
 - Sales rep cost: $55,000/year
 - Marketing spend: $20,000/year
 - New customers: 25/year
 - **CAC: $75,000 / 25 = $3,000 per customer**
 
-**Is This Good?**
+#### Is This Good?
 
 - LTV (Lifetime Value) for Premium customer: $1,999 × 3 years × 70% gross margin = **$4,197**
 - **LTV:CAC Ratio: 1.4:1** (❌ Too low, need 3:1+)
@@ -1123,14 +1123,14 @@ If yes, I'll send over a proposal this week so we can get you up and running wit
 
 ### New Sales Rep Onboarding (Week 1-4)
 
-**Week 1: Product Training**
+#### Week 1: Product Training
 
 - Day 1: Company vision, mission, product overview
 - Day 2-3: Hands-on product training (become a power user)
 - Day 4: Competitive landscape (battle cards)
 - Day 5: Shadow founder/senior rep on 3 demos
 
-**Week 2: Sales Process**
+#### Week 2: Sales Process
 
 - Day 1: CRM training (HubSpot)
 - Day 2: Discovery call training (BANT, pain point identification)
@@ -1138,14 +1138,14 @@ If yes, I'll send over a proposal this week so we can get you up and running wit
 - Day 4: Objection handling workshop
 - Day 5: Contract & pricing training
 
-**Week 3: Practice & Certification**
+#### Week 3: Practice & Certification
 
 - Day 1-2: Role play demos (must pass certification)
 - Day 3: Create first outbound prospecting list
 - Day 4: Send first prospecting emails (manager review)
 - Day 5: First live demo (shadowed by manager)
 
-**Week 4: Ramp to Quota**
+#### Week 4: Ramp to Quota
 
 - Month 1: 50% quota (learning mode)
 - Month 2: 75% quota (building pipeline)
@@ -1155,7 +1155,7 @@ If yes, I'll send over a proposal this week so we can get you up and running wit
 
 ## Sales Playbook Summary
 
-**TL;DR for Sales Reps:**
+### TL;DR for Sales Reps
 
 1. **Ideal Customer:** Healthcare (100-500 employees), SMB IT teams, WiFi consultants
 2. **Primary Pain Points:** Troubleshooting takes too long, WiFi site surveys cost $3K-5K, compliance audits are manual
@@ -1172,3 +1172,4 @@ If yes, I'll send over a proposal this week so we can get you up and running wit
 **Document Owner:** Sales Team **Next Review:** Quarterly (or after 25 customers closed)
 
 **Questions or Feedback?** Contact [sales-enablement@seed.com]
+````

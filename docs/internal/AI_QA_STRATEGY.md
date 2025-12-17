@@ -7,7 +7,7 @@ dedicated QA team
 
 ## Executive Summary
 
-**Problem:**
+### Problem
 
 - Small team (founder + 1-2 engineers) can't afford dedicated QA
 - Manual testing is slow and error-prone
@@ -23,7 +23,7 @@ dedicated QA team
 - **AI performance testing** (load patterns, bottleneck detection)
 - **AI security testing** (fuzzing, vulnerability detection)
 
-**Expected Outcomes:**
+#### Expected Outcomes
 
 - **Test Coverage:** 40% → 90%+ (backend + frontend)
 - **Bug Detection:** Catch 80%+ of bugs before production
@@ -38,7 +38,7 @@ dedicated QA team
 
 ### 1.1 AI Testing Pyramid
 
-```
+````text
            /\
           /  \         E2E Tests (10%)
          /    \        - AI-generated Playwright tests
@@ -51,7 +51,7 @@ dedicated QA team
   /   Unit Tests     \ Unit Tests (60%)
  /                    \- AI-generated test cases
 /______________________\- AI mutation testing
-```
+```go
 
 **Principle:** Use AI to generate tests at all levels, not just unit tests.
 
@@ -80,7 +80,7 @@ dedicated QA team
 
 **Goal:** Achieve 90%+ code coverage using AI-generated tests.
 
-**Approach:**
+#### Approach
 
 1. **AI writes tests as you code** (GitHub Copilot autocomplete)
 2. **AI generates comprehensive test suites** (Claude Sonnet batch generation)
@@ -91,7 +91,7 @@ dedicated QA team
 
 ### 2.2 Implementation
 
-**Step 1: GitHub Copilot Autocomplete (Real-Time)**
+#### Step 1: GitHub Copilot Autocomplete (Real-Time)
 
 As you write code, Copilot suggests tests:
 
@@ -121,19 +121,19 @@ func TestClassifyDevice(t *testing.T) {
     }
     // Copilot generates test loop...
 }
-```
+```go
 
 **Effectiveness:** 40-60% of tests written automatically.
 
 ---
 
-**Step 2: Claude Sonnet Batch Generation**
+#### Step 2: Claude Sonnet Batch Generation
 
 For existing code without tests:
 
-**Prompt:**
+#### Prompt
 
-```
+```go
 Generate comprehensive unit tests for this Go package:
 
 [paste entire package code: device_classifier.go, fingerprinter.go, etc.]
@@ -147,7 +147,7 @@ Requirements:
 - 90%+ code coverage
 
 Output: Complete test file (device_classifier_test.go)
-```
+```yaml
 
 **Output:** 200-500 lines of test code in 30 seconds.
 
@@ -155,13 +155,13 @@ Output: Complete test file (device_classifier_test.go)
 
 ---
 
-**Step 3: AI-Guided Mutation Testing**
+#### Step 3: AI-Guided Mutation Testing
 
 **Mutation Testing:** Introduce bugs intentionally, see if tests catch them.
 
-**AI Enhancement:**
+#### AI Enhancement
 
-```
+```text
 Prompt (Claude Opus):
 "Here's my code and tests:
 [paste code + tests]
@@ -172,7 +172,7 @@ Perform mutation testing:
 3. For uncaught mutations, generate additional tests
 
 Output: Test cases that improve mutation score to 80%+"
-```
+```yaml
 
 **Effectiveness:** Find blind spots in test coverage.
 
@@ -180,7 +180,7 @@ Output: Test cases that improve mutation score to 80%+"
 
 ### 2.3 Metrics & Automation
 
-**CI Integration:**
+#### CI Integration
 
 ```yaml
 # .github/workflows/ai-test-coverage.yml
@@ -218,7 +218,7 @@ jobs:
             echo "Coverage $COVERAGE% is below 80%"
             exit 1
           fi
-```
+```yaml
 
 **Goal:** CI fails if coverage drops below 80%.
 
@@ -230,7 +230,7 @@ jobs:
 
 **Goal:** AI generates Playwright tests for all critical user flows.
 
-**Approach:**
+#### Approach
 
 1. **AI converts user stories → Playwright tests**
 2. **AI generates test data** (realistic network configs, devices, etc.)
@@ -241,9 +241,9 @@ jobs:
 
 ### 3.2 AI-Generated Playwright Tests
 
-**Prompt (ChatGPT GPT-4):**
+#### Prompt (ChatGPT GPT-4)
 
-```
+```text
 Generate Playwright E2E tests for The Seed:
 
 User Story:
@@ -263,9 +263,9 @@ Generate Playwright test in TypeScript with:
 - Proper waits (not hardcoded timeouts)
 - Assertions for each acceptance criteria
 - Comments explaining each step
-```
+```python
 
-**Output:**
+#### Output
 
 ```typescript
 // tests/discovery.spec.ts
@@ -302,7 +302,7 @@ test.describe("Network Discovery", () => {
     await expect(page.locator(".device-details-modal")).toBeVisible();
   });
 });
-```
+```python
 
 **Effectiveness:** AI writes 80-90% of E2E test code.
 
@@ -314,16 +314,16 @@ test.describe("Network Discovery", () => {
 
 **Tool:** Percy + AI analysis
 
-**How It Works:**
+#### How It Works
 
 1. Percy captures screenshots on every commit
 2. AI compares screenshots to baseline
 3. **AI identifies intentional vs unintentional changes**
 4. AI flags visual bugs (misaligned buttons, broken CSS)
 
-**AI Enhancement (Claude Opus):**
+#### AI Enhancement (Claude Opus)
 
-```
+```python
 Prompt:
 "Compare these two screenshots of the Dashboard page:
 [baseline.png] vs [current.png]
@@ -341,11 +341,11 @@ Context:
 - Design system uses #0066CC as primary color
 
 Output: Categorize changes as INTENTIONAL or BUG with reasoning."
-```
+```text
 
-**AI Response:**
+#### AI Response
 
-```
+```text
 ANALYSIS:
 1. Button moved 5px left - BUG (likely CSS regression, not related to commit)
 2. Font size 16px → 14px - INTENTIONAL (mobile responsive fix makes sense)
@@ -354,7 +354,7 @@ ANALYSIS:
 RECOMMENDATION:
 - Approve font size change
 - Reject button position + color changes (file bug report)
-```
+```yaml
 
 **Effectiveness:** Reduce false positives by 70% (AI filters out noise).
 
@@ -366,7 +366,7 @@ RECOMMENDATION:
 
 **Goal:** AI generates realistic load tests and identifies bottlenecks.
 
-**Approach:**
+#### Approach
 
 1. **AI generates k6 load test scripts**
 2. **AI analyzes performance results**
@@ -376,9 +376,9 @@ RECOMMENDATION:
 
 ### 4.2 AI-Generated Load Tests
 
-**Prompt (Claude Sonnet):**
+#### Prompt (Claude Sonnet)
 
-```
+```text
 Generate k6 load test script for The Seed API:
 
 Endpoints to test:
@@ -403,9 +403,9 @@ Generate k6 JavaScript with:
 - Proper think time (users don't spam requests instantly)
 - Authentication (JWT tokens)
 - Assertions for each endpoint
-```
+```python
 
-**Output:**
+#### Output
 
 ```javascript
 // load-test.js (k6 script)
@@ -467,13 +467,13 @@ export default function () {
 
   sleep(5); // Think time before next iteration
 }
-```
+```text
 
-**Run:**
+#### Run
 
 ```bash
 k6 run load-test.js
-```
+```yaml
 
 **Effectiveness:** AI writes load tests in 5 minutes vs 2 hours manually.
 
@@ -481,11 +481,11 @@ k6 run load-test.js
 
 ### 4.3 AI Performance Analysis
 
-**After Load Test Completes:**
+#### After Load Test Completes
 
-**Prompt (Claude Opus):**
+#### Prompt (Claude Opus)
 
-```
+```text
 Analyze k6 performance test results:
 
 [paste k6 output JSON]
@@ -504,18 +504,19 @@ Questions:
 3. What optimizations do you recommend?
 
 Context:
+
 - Database: SQLite
 - Backend: Go with gorilla/mux
 - 10,000 devices in database
-```
 
-**AI Response:**
+#### AI Response
 
-````
+```sql
+
 ROOT CAUSE ANALYSIS:
 
 1. HIGH LATENCY (450ms p95):
-   - SQLite query: SELECT * FROM devices ORDER BY last_seen DESC
+   - SQLite query: SELECT \* FROM devices ORDER BY last_seen DESC
    - Full table scan on 10K rows (no index on last_seen column)
    - Query takes 300-400ms under load
 
@@ -526,26 +527,16 @@ ROOT CAUSE ANALYSIS:
 
 RECOMMENDATIONS:
 
-1. ADD INDEX (immediate, 10x speedup):
-   ```sql
-   CREATE INDEX idx_devices_last_seen ON devices(last_seen DESC);
-````
+1. ADD INDEX (immediate, 10x speedup): CREATE INDEX idx_devices_last_seen ON devices(last_seen DESC); Expected: 450ms →
+   50ms p95
 
-Expected: 450ms → 50ms p95
+2. ENABLE WAL MODE (immediate, allow concurrent reads): PRAGMA journal_mode = WAL; Expected: 380 req/sec → 600 req/sec
 
-1. ENABLE WAL MODE (immediate, allow concurrent reads):
-
-   ```sql
-   PRAGMA journal_mode = WAL;
-   ```
-
-   Expected: 380 req/sec → 600 req/sec
-
-2. ADD CACHING (short-term, 5x speedup):
+3. ADD CACHING (short-term, 5x speedup):
    - Cache /api/devices response for 30 seconds
    - Use Redis or in-memory cache (go-cache) Expected: 50ms → 10ms for cached requests
 
-3. MIGRATE TO TIMESCALEDB (long-term, 100x speedup at scale):
+4. MIGRATE TO TIMESCALEDB (long-term, 100x speedup at scale):
    - SQLite struggles with 10K+ concurrent writes
    - TimescaleDB handles 100K+ inserts/sec Expected: Handle 10x more load
 
@@ -556,7 +547,7 @@ PRIORITY:
 3. Add caching (1 hour, 5x gain) ← DO THIS WEEK
 4. Migrate to TimescaleDB (2 weeks, 100x gain) ← DO IF >5K DEVICES
 
-```
+```yaml
 
 **Effectiveness:** AI identifies root cause + prioritized fixes in 2 minutes vs 2 hours manually.
 
@@ -568,7 +559,8 @@ PRIORITY:
 
 **Goal:** Use AI to find vulnerabilities before attackers do.
 
-**Approach:**
+#### Approach
+
 1. **AI-powered fuzzing** (generate malicious inputs)
 2. **AI threat modeling** (identify attack vectors)
 3. **AI code review for security** (find SQL injection, XSS, etc.)
@@ -580,13 +572,15 @@ PRIORITY:
 
 **Tool:** Custom AI fuzzer using ChatGPT API
 
-**How It Works:**
+#### How It Works
+
 1. AI generates 1,000+ malicious inputs
 2. Send inputs to API endpoints
 3. Monitor for crashes, errors, unexpected behavior
 
-**Prompt (ChatGPT GPT-4):**
-```
+#### Prompt (ChatGPT GPT-4)
+
+```text
 
 Generate 100 malicious inputs to test this API endpoint for vulnerabilities:
 
@@ -606,14 +600,20 @@ Vulnerability types to test:
 - XXE (XML external entity)
 - SSRF (server-side request forgery)
 
-Output format: [ {"subnet": "'; DROP TABLE devices; --", "timeout": 30}, {"subnet": "| whoami", "timeout": 30},
-{"subnet": "../../../etc/passwd", "timeout": 30}, ... ]
+Output format:
 
-````
+```json
+[
+  { "subnet": "'; DROP TABLE devices; --", "timeout": 30 },
+  { "subnet": "| whoami", "timeout": 30 },
+  { "subnet": "../../../etc/passwd", "timeout": 30 }
+]
+```python
 
 **AI Output:** 100 malicious test cases
 
-**Test Runner:**
+#### Test Runner
+
 ```python
 # ai_fuzzer.py
 import requests
@@ -635,7 +635,7 @@ for i, payload in enumerate(malicious_inputs):
         print(f"SQL INJECTION: Payload #{i} returned SQL error")
     if "root:x:0:0" in resp.text:
         print(f"PATH TRAVERSAL: Payload #{i} leaked /etc/passwd")
-````
+```yaml
 
 **Effectiveness:** Find 80%+ of input validation bugs in 10 minutes.
 
@@ -643,9 +643,9 @@ for i, payload in enumerate(malicious_inputs):
 
 ### 5.3 AI Threat Modeling
 
-**Prompt (Claude Opus):**
+#### Prompt (Claude Opus)
 
-```
+```text
 Perform threat modeling for The Seed authentication system:
 
 Code:
@@ -668,11 +668,11 @@ Output:
 1. List 10 highest-risk threats
 2. For each: severity (Critical/High/Medium/Low), likelihood, impact
 3. Mitigation recommendations (prioritized)
-```
+```text
 
-**AI Response:**
+#### AI Response
 
-```
+```text
 THREAT MODEL: The Seed Authentication
 
 TOP 10 THREATS:
@@ -705,7 +705,7 @@ PRIORITY FIX LIST:
 2. Add token expiry validation (10 min) ← FIX NOW
 3. Implement refresh tokens (2 hours) ← FIX THIS WEEK
 4. Upgrade to RS256 (4 hours) ← FIX THIS MONTH
-```
+```typescript
 
 **Effectiveness:** Identify security issues AI finds bugs manual review misses.
 
@@ -717,15 +717,15 @@ PRIORITY FIX LIST:
 
 **Scenario:** Production bug reported
 
-**User Report:**
+#### User Report
 
 > "Dashboard shows 'Error loading devices' but network scan completed successfully."
 
-**AI-Assisted Debugging (Claude Opus):**
+#### AI-Assisted Debugging (Claude Opus)
 
-**Prompt:**
+#### Prompt
 
-```
+```typescript
 Debug this production issue:
 
 User report: "Dashboard shows 'Error loading devices' but scan completed successfully"
@@ -742,35 +742,24 @@ Steps to reproduce:
 3. Dashboard shows error instead of device list
 
 Question: What's the root cause and how do we fix it?
-```
 
-**AI Response:**
+#### AI Response
 
-````
+```typescript
+
 ROOT CAUSE:
 
-1. BACKEND (devices_handler.go line 78):
-   ```go
-   devices, err := db.GetDevices()
-   if err != nil {
-       http.Error(w, "Error loading devices", 500)
-       return
-   }
-````
+1. BACKEND (devices_handler.go line 78): devices, err := db.GetDevices() if err != nil { http.Error(w, "Error loading
+   devices", 500) return }
+   - GetDevices() returns empty slice + nil error if no devices found
+   - BUT frontend expects error to be non-nil if devices is empty
 
-- GetDevices() returns empty slice + nil error if no devices found
-- BUT frontend expects error to be non-nil if devices is empty
-
-1. FRONTEND (DeviceList.tsx line 45):
-
-   ```typescript
-   const { data, error } = useSWR('/api/devices');
-   if (error) return <ErrorMessage />;
-   if (!data || data.devices.length === 0) return <EmptyState />;
-   ```
-
+2. FRONTEND (DeviceList.tsx line 45): const { data, error } = useSWR('/api/devices'); if (error) return
+   <ErrorMessage />; if (!data || data.devices.length === 0) return <EmptyState />;
    - Frontend shows error if API returns 500
    - BUT backend returns 500 when it should return 200 + empty array
+
+```text
 
 RACE CONDITION:
 
@@ -783,41 +772,36 @@ FIX:
 
 1. BACKEND: Return 200 + empty array (not 500 error):
 
-   ```go
-   devices, err := db.GetDevices()
-   if err != nil {
-       log.Error("Database error:", err)
-       http.Error(w, "Database error", 500)
-       return
-   }
-   // Return empty array, not error
-   json.NewEncoder(w).Encode(map[string]interface{}{
-       "devices": devices, // Could be empty
-       "count": len(devices),
-   })
-   ```
+```text
+
+devices, err := db.GetDevices() if err != nil { log.Error("Database error:", err) http.Error(w, "Database error", 500)
+return } // Return empty array, not error json.NewEncoder(w).Encode(map[string]interface{}{ "devices": devices, // Could
+be empty "count": len(devices), })
+
+```text
 
 2. FRONTEND: Show empty state (not error):
 
-   ```typescript
-   if (error && error.status === 500) return <ErrorMessage />;
-   if (!data || data.devices.length === 0) return <EmptyState message="No devices found yet. Run a scan to discover devices." />;
-   ```
+```text
+
+if (error && error.status === 500) return <ErrorMessage />; if (!data || data.devices.length === 0) return
+<EmptyState message="No devices found yet. Run a scan to discover devices." />;
+
+```text
 
 3. FIX RACE CONDITION: Wait for DB commit before responding:
 
-   ```go
-   // In ScanHandler
-   tx.Commit() // Ensure devices are committed
-   time.Sleep(100 * time.Millisecond) // Grace period for replication
-   ```
+```text
+
+// In ScanHandler tx.Commit() // Ensure devices are committed time.Sleep(100 \* time.Millisecond) // Grace period for
+replication
+
+```yaml
 
 TESTING:
 
 - Add E2E test: "Start scan → wait for completion → verify devices load"
 - Add unit test: "GetDevices returns empty array (not error) when no devices"
-
-```
 
 **Effectiveness:** AI provides root cause + fix in 2 minutes vs 2 hours debugging.
 
@@ -835,10 +819,11 @@ TESTING:
 
 ### 7.2 Examples
 
-**Generate Realistic Device Data (Claude Sonnet):**
+#### Generate Realistic Device Data (Claude Sonnet)
 
-**Prompt:**
-```
+#### Prompt
+
+```text
 
 Generate 100 realistic network device profiles for testing:
 
@@ -861,9 +846,8 @@ For each device:
 
 Output: JSON array
 
-````
+#### AI Output
 
-**AI Output:**
 ```json
 [
   {
@@ -885,10 +869,9 @@ Output: JSON array
     "model": "Virtual Machine",
     "ports": [22, 80, 443, 3306],
     "os": "Linux 5.15.0"
-  },
-  // ... 98 more devices
+  }
 ]
-````
+```yaml
 
 **Use Case:** Seed test database for load testing, E2E tests, demos.
 
@@ -898,9 +881,9 @@ Output: JSON array
 
 ### 8.1 Developer Workflow (AI-Assisted TDD)
 
-**Step 1: Write Test First (AI-Generated)**
+#### Step 1: Write Test First (AI-Generated)
 
-```
+```text
 Developer: "I need to implement DHCP timing analysis. Generate tests."
 
 AI (Claude Sonnet):
@@ -908,21 +891,21 @@ AI (Claude Sonnet):
 [generates 50 lines of table-driven tests covering all scenarios]"
 
 Developer: Reviews tests, adjusts edge cases, commits.
-```
+```text
 
-**Step 2: Implement Feature (AI-Assisted)**
+#### Step 2: Implement Feature (AI-Assisted)
 
-```
+```text
 Developer: Starts typing implementation...
 
 GitHub Copilot: Autocompletes 60% of code based on tests.
 
 Developer: Fills in business logic, runs tests.
-```
+```text
 
-**Step 3: Tests Fail (AI Debug)**
+#### Step 3: Tests Fail (AI Debug)
 
-```
+```text
 Developer: "This test is failing: TestDHCPTimingAnalysis/slow_offer"
 
 AI (Claude Sonnet):
@@ -932,11 +915,11 @@ AI (Claude Sonnet):
 3. Missing: offerTime := time.Since(startTime) after OFFER
 
 Fix: [shows code patch]"
-```
+```text
 
-**Step 4: Tests Pass (AI Review)**
+#### Step 4: Tests Pass (AI Review)
 
-```
+```text
 Developer: All tests pass! Ready to commit.
 
 AI (Claude Opus):
@@ -949,11 +932,11 @@ AI (Claude Opus):
 - ⚠️  Documentation: Missing function comment
 
 Recommendation: Fix performance + security before merge."
-```
+```text
 
-**Step 5: Merge (AI Monitors)**
+#### Step 5: Merge (AI Monitors)
 
-```
+```text
 After merge, AI monitors production:
 - Sentry reports error: "DHCP analysis panicked on malformed packet"
 
@@ -963,7 +946,7 @@ AI (Claude Opus):
 - Fix: Add nil check before packet.Data[4:8]
 - Prevention: Add fuzzing test for malformed packets
 - Rollback: Revert commit abc123 immediately"
-```
+```python
 
 ---
 
@@ -980,7 +963,7 @@ AI (Claude Opus):
 | **Regression Tests**   | 100 tests (manual limit)  | 1,000+ tests (AI-generated)   | **10x test volume**    |
 | **Time to Market**     | 2-week QA cycle           | 2-day AI QA cycle             | **7x faster releases** |
 
-**ROI Calculation:**
+#### ROI Calculation
 
 - **Cost:** $300/month × 12 = $3,600/year
 - **Savings:** $56K (no QA hire) + $35K (developer time saved @ $50/hour) = **$91K/year**
@@ -990,21 +973,21 @@ AI (Claude Opus):
 
 ### 9.2 When to Hire Human QA (vs AI Only)
 
-**Use AI Only:**
+#### Use AI Only
 
 - ✅ Team size <5 engineers
 - ✅ Test automation coverage >80%
 - ✅ Founders are technical (can supervise AI)
 - ✅ Budget-constrained (early-stage startup)
 
-**Hire Human QA When:**
+#### Hire Human QA When
 
 - ❌ Team size >10 engineers
 - ❌ Complex manual testing needed (hardware integration, user interviews)
 - ❌ Regulatory compliance requires human sign-off (FDA, HIPAA audits)
 - ❌ AI-generated tests have >10% false positive rate
 
-**Hybrid Approach (Best of Both):**
+#### Hybrid Approach (Best of Both)
 
 - **AI handles:** Unit tests, integration tests, performance tests, security fuzzing
 - **Human handles:** Exploratory testing, usability testing, compliance sign-off
@@ -1059,14 +1042,14 @@ AI (Claude Opus):
 
 ## 11. Conclusion
 
-**Key Takeaways:**
+### Key Takeaways
 
 1. **AI can replace 80% of manual QA work** (unit tests, E2E tests, performance tests, security fuzzing)
 2. **Cost: $300/month vs $60K/year** for human QA (25x ROI)
 3. **Quality improvement: 60% → 90% test coverage**, 70% → 85% bug detection
 4. **Time savings: 40 hours/week → 5 hours/week** on testing
 
-**Recommended Stack:**
+#### Recommended Stack
 
 - **GitHub Copilot** ($19/mo): Real-time test autocomplete
 - **Claude Sonnet** ($50-100/mo): Batch test generation
@@ -1074,16 +1057,16 @@ AI (Claude Opus):
 - **Percy** ($100/mo): Visual regression testing
 - **k6 + AI** ($50/mo): Performance testing
 
-**Total: $250-330/month**
+#### Total: $250-330/month
 
-**Action Plan:**
+#### Action Plan
 
 1. **Week 1:** Enable Copilot, AI-generate tests for 5 packages
 2. **Week 2:** Set up E2E tests (Playwright + AI)
 3. **Week 3:** Add CI gates (coverage, AI code review)
 4. **Week 4:** Performance + security testing (k6, fuzzing)
 
-**Expected Outcome:**
+#### Expected Outcome
 
 - 90%+ test coverage by Month 3
 - <1% production bug rate by Month 6
@@ -1096,3 +1079,4 @@ enterprise-grade budget.
 ---
 
 **Document Owner:** Engineering Team **Next Review:** Quarterly (evaluate AI QA effectiveness, adjust tools/budget)
+````

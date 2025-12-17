@@ -1,7 +1,7 @@
 # The Seed Style Guide
 
-This document defines the official coding standards and naming conventions for the The Seed project.
-All contributors should follow these guidelines to ensure consistency and maintainability.
+This document defines the official coding standards and naming conventions for the The Seed project. All contributors
+should follow these guidelines to ensure consistency and maintainability.
 
 ## Table of Contents
 
@@ -19,12 +19,12 @@ All contributors should follow these guidelines to ensure consistency and mainta
 
 Use `snake_case` for all Go files:
 
-```
+````text
 internal/api/handlers.go
 internal/api/rate_limit.go
 internal/discovery/arp_linux.go
 internal/network/interfaces_darwin.go
-```
+```typescript
 
 Platform-specific files use `_linux.go` or `_darwin.go` suffixes.
 
@@ -32,41 +32,41 @@ Platform-specific files use `_linux.go` or `_darwin.go` suffixes.
 
 Use `PascalCase` for component files:
 
-```
-web/src/components/cards/LinkCard.tsx
-web/src/components/ui/StatusBadge.tsx
-web/src/components/settings/SettingsDrawer.tsx
-```
+```typescript
+web / src / components / cards / LinkCard.tsx;
+web / src / components / ui / StatusBadge.tsx;
+web / src / components / settings / SettingsDrawer.tsx;
+```typescript
 
 ### React Hooks
 
 Use `camelCase` with `use` prefix:
 
-```
-web/src/hooks/useWebSocket.ts
-web/src/hooks/useApi.ts
-web/src/hooks/useTheme.ts
-```
+```typescript
+web / src / hooks / useWebSocket.ts;
+web / src / hooks / useApi.ts;
+web / src / hooks / useTheme.ts;
+```typescript
 
 ### Test Files
 
 - **Go**: `*_test.go` in the same directory
 - **React**: `*.test.ts` or `*.test.tsx` co-located with source
 
-```
-internal/api/handlers_test.go
-web/src/hooks/useWebSocket.test.ts
-web/src/components/ui/Card.test.tsx
-```
+```typescript
+internal / api / handlers_test.go;
+web / src / hooks / useWebSocket.test.ts;
+web / src / components / ui / Card.test.tsx;
+```typescript
 
 ### Story Files (Storybook)
 
 Use `*.stories.tsx` co-located with components:
 
-```
-web/src/components/ui/Card.stories.tsx
-web/src/components/ui/StatusBadge.stories.tsx
-```
+```typescript
+web / src / components / ui / Card.stories.tsx;
+web / src / components / ui / StatusBadge.stories.tsx;
+```go
 
 ## Variable & Function Naming
 
@@ -92,7 +92,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) { ... }
 // Bad
 type server struct { ... }  // Should be Server if used externally
 func Handle_Request() { ... }  // No underscores
-```
+```typescript
 
 ### TypeScript
 
@@ -124,7 +124,7 @@ function DeviceCard({ device }: { device: NetworkDevice }) {
 interface network_device { ... }  // Use PascalCase
 function device_card() { ... }    // Components use PascalCase
 const IsExpanded = true;          // Variables use camelCase
-```
+```text
 
 ## Go Code Standards
 
@@ -141,7 +141,7 @@ if err != nil {
 
 // Bad
 result, _ := doSomething()  // Ignored error
-```
+```go
 
 ### Documentation
 
@@ -153,7 +153,7 @@ Document all exported functions:
 func NewServer(cfg *Config) (*Server, error) {
     // ...
 }
-```
+```go
 
 ### Struct Tags
 
@@ -164,7 +164,7 @@ type Config struct {
     Port     int    `json:"port" yaml:"port"`
     Hostname string `json:"hostname" yaml:"hostname" validate:"required"`
 }
-```
+```tsx
 
 ### Import Grouping
 
@@ -182,7 +182,7 @@ import (
     "github.com/krisarmstrong/seed/internal/config"
     "github.com/krisarmstrong/seed/internal/discovery"
 )
-```
+```tsx
 
 ## TypeScript/React Code Standards
 
@@ -226,7 +226,7 @@ export function Card({ title, status, children }: CardProps) {
     </div>
   );
 }
-```
+```python
 
 ### Design System Usage
 
@@ -244,7 +244,7 @@ import { buttonClass, cn, icon } from '../styles/theme';
 <button className="px-4 py-2 bg-blue-500 text-white">Save</button>
 <span className="text-gray-900 dark:text-white">Label</span>
 <Settings className="w-4 h-4" />
-```
+```text
 
 See [web/THEMING.md](web/THEMING.md) for complete design system documentation.
 
@@ -273,7 +273,7 @@ function Button({ variant, onClick, children }: {
   loading?: boolean;
   children: React.ReactNode;
 }) { ... }
-```
+```yaml
 
 ## API Design
 
@@ -329,7 +329,7 @@ Use consistent JSON response structure:
     "pageSize": 20
   }
 }
-```
+```go
 
 ## Documentation Standards
 
@@ -360,7 +360,7 @@ type Scanner struct {
 func (s *Scanner) Scan(ctx context.Context, subnet string) ([]Device, error) {
     // ...
 }
-```
+```typescript
 
 ### TypeScript/JSDoc Documentation
 
@@ -394,19 +394,19 @@ interface Device {
   /** Whether the device responded to ICMP */
   isOnline: boolean;
 }
-```
+```text
 
 ## Git Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) format:
 
-```
+```text
 type(scope): description
 
 [optional body]
 
 [optional footer]
-```
+```yaml
 
 ### Types
 
@@ -436,7 +436,7 @@ Common scopes for this project:
 
 ### Examples
 
-```
+```text
 feat(discovery): add SNMP v3 support for device profiling
 
 fix(ui): resolve dark mode flicker on page load (closes #123)
@@ -446,7 +446,7 @@ docs: update API endpoint documentation
 chore(deps): upgrade gopacket to v1.2.0
 
 refactor(api): extract rate limiting to middleware
-```
+```text
 
 ### Footer
 
@@ -459,5 +459,5 @@ refactor(api): extract rate limiting to middleware
 - [web/THEMING.md](web/THEMING.md) - Design system tokens and patterns
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
 - [Effective Go](https://go.dev/doc/effective_go) - Go best practices
-- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/) - React + TS
-  patterns
+- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/) - React + TS patterns
+````

@@ -24,18 +24,18 @@
 
 1. **Install dependencies:**
 
-   **Ubuntu/Debian:**
+#### Ubuntu/Debian
 
-   ```bash
-   sudo apt update
-   sudo apt install libpcap0.8
-   ```
+````bash
+sudo apt update
+sudo apt install libpcap0.8
+```text
 
-   **RHEL/AlmaLinux/Fedora:**
+#### RHEL/AlmaLinux/Fedora
 
-   ```bash
-   sudo dnf install libpcap
-   ```
+```bash
+sudo dnf install libpcap
+```text
 
 2. **Download** the latest release:
 
@@ -43,32 +43,38 @@
    wget https://github.com/krisarmstrong/seed/releases/latest/download/seed-linux-amd64.tar.gz
    # OR for ARM64
    wget https://github.com/krisarmstrong/seed/releases/latest/download/seed-linux-arm64.tar.gz
-   ```
+```text
+
+```text
 
 3. **Extract** the archive:
 
    ```bash
    tar -xzf seed-linux-amd64.tar.gz
-   ```
+```text
 
 4. **Move** to your PATH:
 
    ```bash
    sudo mv seed /usr/local/bin/
    sudo chmod +x /usr/local/bin/seed
-   ```
+```text
+
+```text
 
 5. **Grant network capture capabilities:**
 
    ```bash
    sudo setcap cap_net_raw=+ep /usr/local/bin/seed
-   ```
+```text
 
 6. **Verify** installation:
 
    ```bash
    seed --version
-   ```
+```text
+
+```python
 
 ### Method 2: Build from Source
 
@@ -76,13 +82,13 @@ See [Building from Source](Building-from-Source) guide.
 
 ## Running as a Service (systemd)
 
-**Recommended for servers and production deployments.**
+### Recommended for servers and production deployments
 
 1. **Create systemd service file:**
 
    ```bash
    sudo nano /etc/systemd/system/seed.service
-   ```
+```text
 
 2. **Add configuration:**
 
@@ -105,19 +111,23 @@ See [Building from Source](Building-from-Source) guide.
 
    [Install]
    WantedBy=multi-user.target
-   ```
+```text
+
+```text
 
 3. **Create dedicated user:**
 
    ```bash
    sudo useradd -r -s /bin/false seed
-   ```
+```text
 
 4. **Grant capabilities:**
 
    ```bash
    sudo setcap cap_net_raw=+ep /usr/local/bin/seed
-   ```
+```text
+
+```text
 
 5. **Enable and start:**
 
@@ -125,36 +135,38 @@ See [Building from Source](Building-from-Source) guide.
    sudo systemctl daemon-reload
    sudo systemctl enable seed
    sudo systemctl start seed
-   ```
+```text
 
 6. **Check status:**
 
    ```bash
    sudo systemctl status seed
-   ```
+```text
+
+```text
 
 7. **View logs:**
 
    ```bash
    sudo journalctl -u seed -f
-   ```
+```text
 
 ## Firewall Configuration
 
-**Allow Web UI access (port 8080):**
+### Allow Web UI access (port 8080)
 
-**UFW (Ubuntu):**
+#### UFW (Ubuntu)
 
 ```bash
 sudo ufw allow 8080/tcp
-```
+```text
 
-**firewalld (RHEL/Fedora):**
+#### firewalld (RHEL/Fedora)
 
 ```bash
 sudo firewall-cmd --permanent --add-port=8080/tcp
 sudo firewall-cmd --reload
-```
+```text
 
 ## Uninstallation
 
@@ -173,7 +185,7 @@ sudo systemctl daemon-reload
 # Remove config files (optional)
 sudo rm -rf /etc/seed
 sudo rm -rf ~/.config/seed
-```
+```text
 
 ## Next Steps
 
@@ -196,3 +208,4 @@ sudo rm -rf ~/.config/seed
 - **Solution:** Check logs: `sudo journalctl -u seed -n 50`
 
 [More Troubleshooting](Troubleshooting)
+````

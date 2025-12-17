@@ -23,13 +23,13 @@ ecosystem with vendor partnerships, automation, and monetization.
 
 **Goal:** Establish relationships with 2-3 hardware vendors for testing equipment and technical support.
 
-**Target Vendors:**
+#### Target Vendors
 
 - **Tier 1:** Intel (WiFi AX200/210, Ethernet I350/I210)
 - **Tier 2:** Qualcomm Atheros (AR9271 USB adapter)
 - **Tier 3:** Broadcom (server NICs with TDR)
 
-**Partnership Benefits Matrix:**
+#### Partnership Benefits Matrix
 
 | Benefit       | To Vendor                       | To The Seed                       |
 | ------------- | ------------------------------- | --------------------------------- |
@@ -38,7 +38,7 @@ ecosystem with vendor partnerships, automation, and monetization.
 | Documentation | Linux compatibility data        | Official specs, reference designs |
 | Marketing     | Featured in The Seed docs       | Co-marketing opportunities        |
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Vendor partnership proposal template
 - [ ] Outreach to 5+ vendors
@@ -46,13 +46,13 @@ ecosystem with vendor partnerships, automation, and monetization.
 - [ ] Receive 3+ review units for testing
 - [ ] Create "The Seed Certified" badge criteria
 
-**Success Metrics:**
+#### Success Metrics
 
 - 2+ vendor partnerships by Month 9
 - 5+ vendor-provided review units
 - 1+ co-marketing campaign (blog post, case study)
 
-**Implementation Steps:**
+#### Implementation Steps
 
 1. **Month 6:** Draft partnership proposal, identify vendor contacts
 2. **Month 7:** Outreach to Intel, Qualcomm, Broadcom
@@ -67,9 +67,9 @@ ecosystem with vendor partnerships, automation, and monetization.
 
 **Goal:** Scale hardware compatibility data collection beyond manual reports.
 
-**Privacy-First Architecture:**
+#### Privacy-First Architecture
 
-```yaml
+````yaml
 # Configuration in seed.yaml
 telemetry:
   enabled: false # Opt-in only, default disabled
@@ -106,11 +106,11 @@ telemetry:
     - User data (usernames, paths)
     - Network traffic or packet data
     - Geographic location beyond country code
-```
+```text
 
-**User Consent UI:**
+#### User Consent UI
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ Help Improve Hardware Compatibility                    │
 ├─────────────────────────────────────────────────────────┤
@@ -131,9 +131,9 @@ telemetry:
 │                                                         │
 │ Privacy Policy: seed.io/privacy                   │
 └─────────────────────────────────────────────────────────┘
-```
+```text
 
-**Sample Telemetry Payload:**
+#### Sample Telemetry Payload
 
 ```json
 {
@@ -177,11 +177,11 @@ telemetry:
     "arch": "x86_64"
   }
 }
-```
+```text
 
-**Backend Infrastructure:**
+#### Backend Infrastructure
 
-```
+```text
 ┌──────────────┐
 │ The Seed    │
 │ Client       │
@@ -218,16 +218,16 @@ telemetry:
 │ GET /wifi?chipset=ax200 - Stats      │
 │ GET /compatibility - Matrix data     │
 └──────────────────────────────────────┘
-```
+```yaml
 
-**Cost Estimate:**
+#### Cost Estimate
 
 - Serverless function: $0-5/month (low traffic)
 - Database: $10-20/month (aggregated data only)
 - Domain/SSL: $15/year
 - **Total: ~$15-30/month**
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Privacy policy and consent UI
 - [ ] Open-source telemetry client code
@@ -236,7 +236,7 @@ telemetry:
 - [ ] Wiki integration (auto-generated compatibility matrix)
 - [ ] Annual privacy audit checklist
 
-**Success Metrics:**
+#### Success Metrics
 
 - 100+ users opt-in within 3 months
 - 500+ unique hardware configurations documented
@@ -249,11 +249,11 @@ telemetry:
 
 **Goal:** Simplify purchasing, generate revenue for project sustainability.
 
-**Kit Offerings:**
+#### Kit Offerings
 
 #### Kit 1: "Network Technician Starter" ($150-200)
 
-**Contents:**
+##### Contents
 
 - Intel I210-T1 Gigabit NIC (PCIe x1) - $25-35
 - Intel AX200 WiFi M.2 adapter - $15-20
@@ -267,7 +267,7 @@ telemetry:
 
 #### Kit 2: "Professional WiFi Survey" ($250-350)
 
-**Contents:**
+##### Contents
 
 - Intel AX210 WiFi 6E adapter - $25-35
 - High-gain dual-band antennas - $30-40
@@ -282,7 +282,7 @@ telemetry:
 
 #### Kit 3: "Enterprise Cable Diagnostics" ($350-450)
 
-**Contents:**
+##### Contents
 
 - Intel I350-T4 Quad NIC (4-port TDR) - $80-120
 - Cable tester accessories - $30-50
@@ -295,7 +295,7 @@ telemetry:
 
 **Affiliate Revenue:** $35-50 per kit
 
-**Implementation:**
+#### Implementation
 
 ```markdown
 <!-- Example wiki integration -->
@@ -323,16 +323,16 @@ Perfect for field diagnostics and troubleshooting.
 
 _Disclosure: The Seed participates in affiliate programs. Purchases through these links support the project at no extra
 cost to you. We only recommend hardware we've tested and documented._
-```
+```typescript
 
-**Legal Requirements:**
+#### Legal Requirements
 
 - FTC disclosure on all affiliate links
 - Clear "Build Your Own" alternative always provided
 - No exclusive vendor arrangements
 - Annual review of pricing accuracy
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] 3+ curated hardware kits defined
 - [ ] Amazon affiliate account setup
@@ -341,14 +341,14 @@ cost to you. We only recommend hardware we've tested and documented._
 - [ ] Bundle landing pages in wiki
 - [ ] Revenue tracking dashboard
 
-**Success Metrics:**
+#### Success Metrics
 
 - 50+ kits sold in first 6 months
 - $1,000-2,000 revenue (Year 1)
 - 4.5+ star average customer ratings
 - 80%+ find bundles helpful (survey)
 
-**Revenue Allocation:**
+#### Revenue Allocation
 
 - 50% → Server/infrastructure costs
 - 30% → Hardware for community testing
@@ -360,7 +360,7 @@ cost to you. We only recommend hardware we've tested and documented._
 
 **Goal:** Lower barrier to entry, improve user experience, reduce support burden.
 
-**Video Series Plan:**
+#### Video Series Plan
 
 #### Series 1: Hardware Installation (4 videos, 30-40 min total)
 
@@ -440,7 +440,7 @@ cost to you. We only recommend hardware we've tested and documented._
    - Reducing scan time
    - Multi-interface setups
 
-**Production Specifications:**
+#### Production Specifications
 
 - **Format:** 1080p video, screen recording + narration
 - **Tools:** OBS Studio (free), Audacity for audio
@@ -448,20 +448,20 @@ cost to you. We only recommend hardware we've tested and documented._
 - **Length:** 5-12 minutes per video (attention span)
 - **Assets:** Downloadable slides, command references
 
-**Publishing:**
+#### Publishing
 
 - **Primary:** YouTube (The Seed official channel)
 - **Secondary:** Embedded in wiki pages
 - **Distribution:** Reddit (r/networking, r/homelab), HackerNews
 - **SEO:** Titles like "How to Install Intel AX200 WiFi Adapter Linux"
 
-**Community Contributions:**
+#### Community Contributions
 
 - Accept community-submitted videos (quality review)
 - Credit contributors prominently
 - Reward top contributors with hardware giveaways
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] YouTube channel setup
 - [ ] Video production equipment ($300-500: mic, lighting)
@@ -469,7 +469,7 @@ cost to you. We only recommend hardware we've tested and documented._
 - [ ] Videos embedded in wiki
 - [ ] Community contribution guidelines
 
-**Success Metrics:**
+#### Success Metrics
 
 - 10,000+ total views (Year 1)
 - 100+ subscribers
@@ -485,7 +485,7 @@ cost to you. We only recommend hardware we've tested and documented._
 
 #### 5a. Pricing & Version Staleness Detection
 
-**Implementation:**
+##### Implementation
 
 ```python
 #!/usr/bin/env python3
@@ -560,9 +560,9 @@ def create_staleness_issue(items):
         body=issue_body,
         labels=["documentation", "maintenance", "automated"]
     )
-```
+```text
 
-**GitHub Actions Workflow:**
+#### GitHub Actions Workflow
 
 ```yaml
 # .github/workflows/hardware-maintenance.yml
@@ -595,9 +595,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AMAZON_API_KEY: ${{ secrets.AMAZON_AFFILIATE_API }}
         run: python scripts/check-hardware-staleness.py
-```
+```python
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Staleness detection script
 - [ ] Weekly GitHub Actions workflow
@@ -608,7 +608,7 @@ jobs:
 
 **Goal:** Generate wiki entries from hardware-report issues automatically.
 
-**Workflow:**
+#### Workflow
 
 1. User submits hardware-report issue
 2. GitHub Actions triggers on label "hardware-report"
@@ -617,7 +617,7 @@ jobs:
 5. Create PR to add entry to appropriate wiki page
 6. Maintainer reviews and merges
 
-**Example:**
+#### Example
 
 ```yaml
 # .github/workflows/wiki-update-from-issue.yml
@@ -656,9 +656,9 @@ jobs:
           title: "Add hardware test report to wiki"
           body: "Auto-generated from hardware-report issue #${{ github.event.issue.number }}"
           labels: documentation, automated
-```
+```yaml
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Issue parsing script
 - [ ] Wiki generation script
@@ -669,31 +669,31 @@ jobs:
 
 ## Success Metrics Summary
 
-**Partnerships:**
+### Partnerships
 
 - 2+ active vendor relationships
 - 5+ review units received
 - 1+ co-marketing initiative
 
-**Telemetry (if approved):**
+#### Telemetry (if approved)
 
 - 100+ opt-in users
 - 500+ hardware configs documented
 - 0 privacy incidents
 
-**Hardware Kits:**
+#### Hardware Kits
 
 - 50+ kits sold
 - $1,000-2,000 revenue
 - 4.5+ star ratings
 
-**Video Content:**
+#### Video Content
 
 - 12+ videos published
 - 10,000+ views
 - 20% support reduction
 
-**Automation:**
+#### Automation
 
 - Weekly staleness checks
 - Auto-generated wiki entries
@@ -701,19 +701,19 @@ jobs:
 
 ## Budget & Resources
 
-**One-Time Costs:**
+### One-Time Costs
 
 - Video equipment: $300-500
 - Legal review (disclosures): $500-1,000
 - Initial hardware purchases: $300-500
 
-**Recurring Costs:**
+#### Recurring Costs
 
 - Telemetry infrastructure: $15-30/month
 - Domain/hosting: $10-20/month
 - Amazon affiliate fees: $0 (percentage-based)
 
-**Revenue Potential:**
+#### Revenue Potential
 
 - Hardware kits: $1,000-5,000/year
 - Vendor testing contracts: $1,000-3,000/year
@@ -722,43 +722,43 @@ jobs:
 
 ## Timeline
 
-**Month 6:**
+### Month 6
 
 - Draft vendor partnership proposals
 - Design telemetry architecture
 - Define hardware kits
 
-**Month 7:**
+#### Month 7
 
 - Vendor outreach begins
 - Telemetry privacy review
 - Video production planning
 
-**Month 8:**
+#### Month 8
 
 - First vendor partnership established
 - Telemetry implementation starts
 - Hardware kit affiliate setup
 
-**Month 9:**
+#### Month 9
 
 - Receive first review units
 - Telemetry beta testing
 - First videos published
 
-**Month 10:**
+#### Month 10
 
 - Vendor-partnered test reports published
 - Telemetry public launch (opt-in)
 - Hardware kits available for purchase
 
-**Month 11:**
+#### Month 11
 
 - Second vendor partnership
 - Video series 50% complete
 - Automated maintenance workflows live
 
-**Month 12:**
+#### Month 12
 
 - Phase 4 retrospective
 - Revenue analysis
@@ -766,22 +766,22 @@ jobs:
 
 ## Risk Management
 
-**Privacy Concerns:**
+### Privacy Concerns
 
 - Mitigation: Open-source telemetry, annual audits, easy opt-out
 - Escalation: Disable telemetry if any privacy incident
 
-**Vendor Conflicts:**
+#### Vendor Conflicts
 
 - Mitigation: Editorial independence policy, community review
 - Escalation: Terminate partnership, disclose publicly
 
-**Revenue Dependence:**
+#### Revenue Dependence
 
 - Mitigation: Diversified revenue (kits, partnerships, optional donations)
 - Escalation: Reduce scope if revenue targets not met
 
-**Community Pushback:**
+#### Community Pushback
 
 - Mitigation: Transparent communication, surveys, feedback loops
 - Escalation: Pivot based on community feedback
@@ -799,9 +799,10 @@ Before Phase 4 implementation:
 
 ---
 
-**Related Documents:**
+#### Related Documents
 
 - [Phase 3 Progress Tracking](#511)
 - [Phase 5 Roadmap](HARDWARE_PHASE5_PLAN.md) (future)
 - [Privacy Policy Template](templates/PRIVACY_POLICY.md) (to be created)
 - [Vendor Partnership Template](templates/VENDOR_PARTNERSHIP.md) (to be created)
+````

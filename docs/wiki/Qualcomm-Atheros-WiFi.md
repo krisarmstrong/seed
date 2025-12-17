@@ -235,7 +235,7 @@ done
 
 **Symptoms:**
 
-```
+```text
 ath9k_htc: Firmware htc_9271.fw requested
 ath9k_htc: Failed to find firmware
 ```
@@ -279,7 +279,7 @@ sudo apt update && sudo apt upgrade linux-firmware
 
 **Symptoms:**
 
-```
+```text
 ath9k_htc: TX power exceeds regulatory limit
 ```
 

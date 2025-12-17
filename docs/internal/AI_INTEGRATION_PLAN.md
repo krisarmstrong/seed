@@ -64,7 +64,7 @@ it lacks intelligent analysis, pattern recognition, and actionable insights. By 
 
 **Goal:** Establish AI infrastructure and deliver quick wins
 
-**Deliverables:**
+#### Deliverables
 
 1. AI service architecture and API endpoints
 2. Device classification system
@@ -80,7 +80,7 @@ it lacks intelligent analysis, pattern recognition, and actionable insights. By 
 
 **Goal:** Add intelligent analysis and recommendations
 
-**Deliverables:**
+#### Deliverables
 
 1. Root cause analysis engine for performance issues
 2. Anomaly detection system with alerting
@@ -96,7 +96,7 @@ it lacks intelligent analysis, pattern recognition, and actionable insights. By 
 
 **Goal:** Predictive and optimization capabilities
 
-**Deliverables:**
+#### Deliverables
 
 1. WiFi coverage optimization with heatmaps
 2. Predictive survey simulation
@@ -112,7 +112,7 @@ it lacks intelligent analysis, pattern recognition, and actionable insights. By 
 
 ### Backend Architecture
 
-```
+````text
 ┌─────────────────────────────────────────────────────┐
 │                  The Seed Core                     │
 │         (Existing data collection services)         │
@@ -146,11 +146,11 @@ it lacks intelligent analysis, pattern recognition, and actionable insights. By 
 │  - Anomaly   │          │                 │
 │    detect    │          └─────────────────┘
 └──────────────┘
-```
+```text
 
 ### New Go Packages
 
-```
+```text
 internal/
 ├── ai/
 │   ├── analyzer/          # Root cause analysis
@@ -168,11 +168,11 @@ internal/
 │       └── prediction/    # Predictive survey
 └── storage/
     └── timeseries/        # Time-series metric storage
-```
+```text
 
 ### New API Endpoints
 
-```
+```text
 # Analysis
 GET  /api/ai/health                      # Network health score
 GET  /api/ai/insights                    # Top insights/recommendations
@@ -207,11 +207,11 @@ GET  /api/ai/reports/templates           # Available report templates
 # Baseline & Learning
 GET  /api/ai/baselines                   # Learned baselines
 POST /api/ai/baselines/reset             # Reset learning
-```
+```sql
 
 ### Frontend Components
 
-```
+```typescript
 web/src/components/ai/
 ├── InsightCard.tsx              # Top insights dashboard card
 ├── HealthScoreCard.tsx          # Network health visualization
@@ -222,7 +222,7 @@ web/src/components/ai/
 ├── WiFiHeatmap.tsx              # Coverage heatmap overlay
 ├── TroubleshootingAssistant.tsx # Guided troubleshooting
 └── RecommendationPanel.tsx      # AI recommendations
-```
+```sql
 
 ---
 
@@ -232,7 +232,7 @@ web/src/components/ai/
 
 For baseline learning and anomaly detection, we need historical metric storage:
 
-**Options:**
+#### Options
 
 1. **SQLite with time-series extension** (simple, embedded)
 2. **PostgreSQL with TimescaleDB** (full-featured, scalable)
@@ -240,7 +240,7 @@ For baseline learning and anomaly detection, we need historical metric storage:
 
 **Recommendation:** Start with SQLite + custom time-series tables, migrate to TimescaleDB if needed
 
-**Schema:**
+#### Schema
 
 ```sql
 CREATE TABLE metrics (
@@ -254,7 +254,7 @@ CREATE TABLE metrics (
 
 CREATE INDEX idx_metrics_time ON metrics(timestamp);
 CREATE INDEX idx_metrics_type ON metrics(metric_type, metric_name);
-```
+```yaml
 
 **Retention:** Keep 30 days of granular data, aggregate older data to hourly/daily
 
@@ -267,19 +267,19 @@ CREATE INDEX idx_metrics_type ON metrics(metric_type, metric_name);
 **Current State:** Survey collects point samples with RSSI values **AI Enhancement:** Interpolate signal strength across
 entire floor plan
 
-**Algorithm:**
+#### Algorithm
 
 - Inverse Distance Weighting (IDW) for spatial interpolation
 - Kriging for more advanced interpolation with uncertainty
 - Consider wall materials and attenuation factors
 
-**Output:**
+#### Output
 
 - Full-resolution heatmap (10cm grid)
 - Color-coded signal strength (-90 dBm to -30 dBm)
 - Coverage percentage by signal quality (excellent/good/fair/poor)
 
-**API:**
+#### API
 
 ```json
 POST /api/ai/wifi/heatmap
@@ -303,17 +303,17 @@ Response:
     {"x": 450, "y": 320, "area_sqm": 12.5, "min_rssi": -85}
   ]
 }
-```
+```python
 
 ### 2. Dead Zone Detection
 
-**Algorithm:**
+#### Algorithm
 
 - Identify contiguous regions below threshold (-75 dBm)
 - Calculate area and centroid
 - Prioritize by size and criticality
 
-**Output:**
+#### Output
 
 ```json
 {
@@ -329,24 +329,24 @@ Response:
     }
   ]
 }
-```
+```text
 
 ### 3. AP Placement Optimization
 
-**Algorithm:**
+#### Algorithm
 
 - Genetic algorithm or simulated annealing
 - Objective: Maximize coverage, minimize dead zones, minimize AP count
 - Constraints: Power limits, channel interference, backhaul availability
 
-**Input:**
+#### Input
 
 - Floor plan dimensions and wall locations
 - Desired coverage threshold (-70 dBm)
 - Budget (max number of APs)
 - Existing AP locations (optional)
 
-**Output:**
+#### Output
 
 ```json
 {
@@ -367,19 +367,19 @@ Response:
   },
   "improvement": "+27.3% excellent coverage"
 }
-```
+```python
 
 ### 4. Channel Interference Analysis
 
 **Current State:** See which channels are in use **AI Enhancement:** Recommend optimal channel assignments
 
-**Algorithm:**
+#### Algorithm
 
 - Analyze channel overlap (2.4GHz: 1, 6, 11 non-overlapping)
 - Measure interference from neighboring networks
 - Recommend channel changes to minimize co-channel interference
 
-**Output:**
+#### Output
 
 ```json
 {
@@ -403,38 +403,38 @@ Response:
   },
   "expected_improvement": "Reduce interference by 45%"
 }
-```
+```text
 
 ### 5. Predictive Survey Simulation
 
 **Concept:** Simulate coverage BEFORE deploying APs
 
-**Input:**
+#### Input
 
 - Floor plan with wall materials
 - Proposed AP locations and models
 - Desired coverage targets
 
-**Algorithm:**
+#### Algorithm
 
 - Path loss modeling (free space + wall attenuation)
 - Multi-AP interference modeling
 - Roaming simulation
 
-**Output:**
+#### Output
 
 - Predicted heatmap
 - Coverage statistics
 - Problem areas
 - Recommendations
 
-**Use Cases:**
+#### Use Cases
 
 - "What if I add an AP here?"
 - "Can I remove this AP without losing coverage?"
 - "Which AP model do I need for this space?"
 
-**API:**
+#### API
 
 ```json
 POST /api/ai/wifi/predict
@@ -462,17 +462,17 @@ Response:
     "Consider reducing AP power to -3dBm to minimize interference"
   ]
 }
-```
+```text
 
 ### 6. Roaming Pattern Analysis
 
-**Algorithm:**
+#### Algorithm
 
 - Track device handoffs between APs during survey
 - Identify ping-pong roaming (switching back and forth)
 - Recommend RSSI threshold adjustments
 
-**Output:**
+#### Output
 
 ```json
 {
@@ -484,7 +484,7 @@ Response:
     "Increase roaming threshold to -72 dBm"
   ]
 }
-```
+```go
 
 ---
 
@@ -492,21 +492,21 @@ Response:
 
 ### Hybrid Approach (Recommended)
 
-**Local Models (Privacy, Speed, Offline):**
+#### Local Models (Privacy, Speed, Offline)
 
 - Device classification (port patterns → device type)
 - Anomaly detection (statistical methods, lightweight ML)
 - Threshold recommendations (rule-based + simple ML)
 - Heatmap interpolation (mathematical algorithms)
 
-**Cloud LLM (Advanced Reasoning):**
+#### Cloud LLM (Advanced Reasoning)
 
 - Root cause analysis (complex multi-factor reasoning)
 - Natural language query (requires language understanding)
 - Report generation (narrative explanations)
 - Troubleshooting guidance (contextual recommendations)
 
-**Implementation:**
+#### Implementation
 
 ```go
 type AIProvider interface {
@@ -529,7 +529,7 @@ func GetProvider(cfg Config) AIProvider {
     }
     return &LocalProvider{}
 }
-```
+```text
 
 ### Feature Flags
 
@@ -554,7 +554,7 @@ ai:
     heatmap_generation: true
     ap_optimization: true
     predictive_survey: true
-```
+```python
 
 ---
 
@@ -571,7 +571,7 @@ ai:
 - [ ] Network health scoring
 - [ ] Insight cards UI
 
-**Success Criteria:**
+#### Success Criteria
 
 - Devices auto-tagged with type (printer, camera, etc.)
 - Network health score visible on dashboard
@@ -590,7 +590,7 @@ ai:
 - [ ] Guided troubleshooting
 - [ ] Adaptive threshold recommendations
 
-**Success Criteria:**
+#### Success Criteria
 
 - "Why is DHCP slow?" returns actionable diagnosis
 - Anomalies detected and alerted within 30 seconds
@@ -610,7 +610,7 @@ ai:
 - [ ] Predictive survey simulation
 - [ ] Roaming pattern analysis
 
-**Success Criteria:**
+#### Success Criteria
 
 - Heatmap generated from 10+ survey points
 - Dead zones identified and recommendations provided
@@ -630,7 +630,7 @@ ai:
 - [ ] Network behavior analysis
 - [ ] Capacity planning
 
-**Success Criteria:**
+#### Success Criteria
 
 - Link failures predicted 24-48 hours in advance
 - PDF reports generated for compliance
@@ -715,7 +715,7 @@ ai:
 - "What are my critical vulnerabilities?"
 - "Is this device authorized?"
 - "Are there any rogue devices?"
-```
+```python
 
 ---
 
@@ -829,7 +829,7 @@ The phased approach allows for iterative development, early user feedback, and r
 intelligence and device classification provides immediate, tangible value while building the foundation for more
 advanced features.
 
-**Next Steps:**
+#### Next Steps
 
 1. Create GitHub issues for Phase 1 features
 2. Set up development environment with AI dependencies
@@ -841,3 +841,4 @@ advanced features.
 
 **Document Version:** 1.0 **Last Updated:** 2025-12-15 **Author:** AI Integration Team **Status:** Approved for
 Implementation
+````

@@ -56,6 +56,9 @@ func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
 		sendJSONResponse(w, http.StatusOK, resp)
 
 	case http.MethodPost:
+		// Limit request body size to prevent DoS attacks (fixes #682)
+		r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
+
 		// Start/stop detection
 		var req struct {
 			Action string `json:"action"` // "start" or "stop"
@@ -158,6 +161,9 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 		sendJSONResponse(w, http.StatusOK, resp)
 
 	case http.MethodPut:
+		// Limit request body size to prevent DoS attacks (fixes #682)
+		r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
+
 		// Update configuration
 		var req struct {
 			Enabled          *bool    `json:"enabled,omitempty"`
@@ -350,6 +356,9 @@ func (s *Server) getSNMPSettings(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
+	// Limit request body size to prevent DoS attacks (fixes #682)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
+
 	var req SNMPSettingsResponse
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)

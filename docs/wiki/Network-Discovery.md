@@ -60,14 +60,14 @@ Each discovered device shows:
 
 ### Filtering and Sorting
 
-**Filter by:**
+#### Filter by
 
 - Device type (computers, printers, phones, IoT)
 - Manufacturer (Apple, Cisco, HP, etc.)
 - Status (online, offline)
 - VLAN (if detected)
 
-**Sort by:**
+#### Sort by
 
 - IP address (ascending/descending)
 - Hostname (alphabetical)
@@ -75,19 +75,19 @@ Each discovered device shows:
 
 ### Export
 
-**Export to:**
+#### Export to
 
 - CSV (spreadsheet import)
 - JSON (API integration)
 - PDF (documentation, compliance reports)
 
-**Example CSV:**
+#### Example CSV
 
-```csv
+````csv
 IP Address,MAC Address,Hostname,Type,Manufacturer,OS,Last Seen
 192.168.1.1,AA:BB:CC:DD:EE:FF,router.local,Router,Ubiquiti,UniFi OS,2024-12-15 10:30:00
 192.168.1.100,11:22:33:44:55:66,janes-macbook,Computer,Apple,macOS 14.2,2024-12-15 10:29:00
-```
+```python
 
 ## Device Fingerprinting
 
@@ -98,7 +98,7 @@ The Seed uses **AI-powered fingerprinting** to identify:
 - **Manufacturer:** Apple, HP, Cisco, etc. (from MAC OUI database)
 - **Services:** HTTP, SSH, RDP, SMB, SNMP (from port scan)
 
-**How it works:**
+#### How it works
 
 1. Collect fingerprint data (TTL, TCP window size, open ports, etc.)
 2. AI model classifies device based on patterns
@@ -120,7 +120,7 @@ If you have managed switches with SNMP configured:
    - Devices grouped by VLAN ID
    - Color-coded for easy identification
 
-**Example:**
+#### Example
 
 - VLAN 10 (Office): 30 devices
 - VLAN 20 (Guest): 10 devices
@@ -130,19 +130,19 @@ If you have managed switches with SNMP configured:
 
 ### Subnet Notation
 
-**Single subnet:**
+#### Single subnet
 
 ```text
 192.168.1.0/24
-```
+```text
 
-**Multiple subnets:**
+#### Multiple subnets
 
 ```text
 192.168.1.0/24,10.0.0.0/24,172.16.0.0/16
-```
+```typescript
 
-**CIDR ranges:**
+#### CIDR ranges
 
 - `/24` = 256 IPs (192.168.1.0 - 192.168.1.255)
 - `/16` = 65,536 IPs (10.0.0.0 - 10.0.255.255)
@@ -164,7 +164,7 @@ Save common configurations as profiles:
    - Select "Main Office" from dropdown
    - Click "Run Discovery"
 
-**Built-in profiles:**
+#### Built-in profiles
 
 - Default (current subnet, all methods)
 - Quick (ARP only, fast but limited)
@@ -172,20 +172,20 @@ Save common configurations as profiles:
 
 ## Performance
 
-**Scan times (typical):**
+### Scan times (typical)
 
 - 50 devices (/24 subnet): 10-30 seconds
 - 200 devices (/23 subnet): 30-60 seconds
 - 1,000 devices (/22 subnet): 2-5 minutes
 
-**Factors affecting speed:**
+#### Factors affecting speed
 
 - Number of IPs to scan
 - Discovery methods enabled (ARP fastest, TCP slowest)
 - Network latency
 - Device responsiveness
 
-**Tips for faster scans:**
+#### Tips for faster scans
 
 - Limit subnets to active ranges (not entire /16)
 - Use ARP-only for local subnet (fastest)
@@ -216,3 +216,4 @@ Save common configurations as profiles:
 - [SNMP Configuration](SNMP-Settings)
 - [Vulnerability Scanning](Vulnerability-Scanning)
 - [API: Discovery Endpoints](API-Discovery)
+````

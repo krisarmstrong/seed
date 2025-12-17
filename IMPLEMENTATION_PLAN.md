@@ -2,8 +2,8 @@
 
 ## Overview
 
-This document outlines the implementation plan for addressing all open GitHub issues, organized into
-phases by priority and dependency order.
+This document outlines the implementation plan for addressing all open GitHub issues, organized into phases by priority
+and dependency order.
 
 ---
 
@@ -22,9 +22,9 @@ phases by priority and dependency order.
 
 **Files to Check**:
 
-```bash
+````bash
 golangci-lint run --enable staticcheck 2>&1 | grep -E "^internal/"
-```
+```yaml
 
 **Estimated Effort**: 2-4 hours
 
@@ -38,7 +38,7 @@ golangci-lint run --enable staticcheck 2>&1 | grep -E "^internal/"
 
 ```bash
 grep -rn "eth0\|en0\|enp\|wlan0\|wlp" internal/
-```
+```yaml
 
 **Replace With**: Dynamic interface detection via `internal/network/interfaces.go`
 
@@ -54,7 +54,7 @@ grep -rn "eth0\|en0\|enp\|wlan0\|wlp" internal/
 
 ```bash
 echo "22" > web/.nvmrc
-```
+```text
 
 **Update** `web/package.json`:
 
@@ -64,7 +64,7 @@ echo "22" > web/.nvmrc
     "node": ">=22.0.0"
   }
 }
-```
+```yaml
 
 **Estimated Effort**: 30 minutes
 
@@ -78,14 +78,14 @@ echo "22" > web/.nvmrc
 
 **Files to Create**:
 
-```
+```text
 internal/network/detection/
 ├── detection.go      # Main detection logic
 ├── scoring.go        # Interface scoring algorithm
 ├── chipsets.go       # Chipset database and identification
 ├── capabilities.go   # TDR/DOM capability detection
 └── detection_test.go # Comprehensive tests
-```
+```go
 
 **Core Algorithm**:
 
@@ -125,7 +125,7 @@ func ScoreInterface(iface net.Interface) InterfaceScore {
 
     return InterfaceScore{Score: score, ...}
 }
-```
+```python
 
 **Chipset Database** (from issue #571):
 
@@ -150,7 +150,7 @@ type InterfaceInfo struct {
     FriendlyName string `json:"friendlyName"`  // "Intel I225-V 2.5GbE"
     Description  string `json:"description"`   // "2.5 Gigabit Ethernet"
 }
-```
+```go
 
 **Frontend Changes**:
 
@@ -171,7 +171,7 @@ type SurveyConfig struct {
     Adapters []string `json:"adapters"` // Multiple adapters
     Primary  string   `json:"primary"`  // Primary adapter
 }
-```
+```go
 
 **UI Changes**:
 
@@ -218,7 +218,7 @@ func processDevice(d Device) error {
     }
     return ErrUnknownDeviceType
 }
-```
+```yaml
 
 **Estimated Effort**: 8-12 hours
 
@@ -276,7 +276,7 @@ case StatusWarning:
 case StatusUnknown:
     return "unknown"
 }
-```
+```go
 
 **Estimated Effort**: 2-3 hours
 
@@ -301,7 +301,7 @@ const (
     MsgSuccess = "success"
     MsgError   = "error"
 )
-```
+```yaml
 
 **Estimated Effort**: 2-3 hours
 
@@ -342,7 +342,7 @@ const (
     "test:native": "node --test"
   }
 }
-```
+```yaml
 
 **Estimated Effort**: 4-6 hours
 
@@ -375,7 +375,7 @@ const (
 
 ```bash
 golangci-lint run ./...
-```
+```bash
 
 **Expected Result**: 0 issues
 
@@ -384,7 +384,7 @@ golangci-lint run ./...
 ```bash
 make test
 cd web && npm test
-```
+```typescript
 
 ### 5.2 Close Epic Issue (#567)
 
@@ -394,7 +394,7 @@ Once all child issues are resolved, close the epic with summary.
 
 ## Implementation Order Summary
 
-```
+```typescript
 Priority Order (by issue number):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. #565 - staticcheck (BUGS)        ← Start here
@@ -412,7 +412,7 @@ Priority Order (by issue number):
 13. #568 - Node.js features
 14. #570 - test runner eval
 15. #567 - close EPIC
-```
+```bash
 
 ---
 
@@ -445,7 +445,7 @@ gh pr create --title "fix(lint): resolve staticcheck issues" \
 # 6. After merge, tag if milestone reached
 git tag -a v0.103.0 -m "v0.103.0: Code quality improvements"
 git push origin --tags
-```
+```yaml
 
 ---
 
@@ -476,3 +476,4 @@ git push origin --tags
 - Commits use conventional commit format
 - Issues closed via commit messages (`Closes #XXX`)
 - Each phase ends with a version tag
+````

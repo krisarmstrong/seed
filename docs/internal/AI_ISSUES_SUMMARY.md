@@ -25,7 +25,7 @@ milestone/phase and prioritized for implementation.
 | #580    | Create AI Insight Cards for dashboard                      | High     | `component: ai`, `component: frontend` |
 | #581    | Add AI feature configuration and feature flags             | Medium   | `component: ai`, `ai: foundation`      |
 
-**Deliverables:**
+#### Deliverables
 
 - ✅ AI service architecture with local and cloud providers
 - ✅ Time-series metric storage (SQLite-based)
@@ -49,7 +49,7 @@ milestone/phase and prioritized for implementation.
 | #586    | Implement guided troubleshooting assistant                  | Medium   | `component: ai`, `ai: intelligence`             |
 | #587    | Implement adaptive threshold recommendations                | Medium   | `component: ai`, `ai: intelligence`             |
 
-**Deliverables:**
+#### Deliverables
 
 - ✅ Root cause analysis for slow DHCP, high latency, DNS failures
 - ✅ Real-time anomaly detection (<30 seconds)
@@ -73,7 +73,7 @@ milestone/phase and prioritized for implementation.
 | #592    | Implement channel interference analysis and optimization    | Medium       | `component: ai`, `ai: wifi`, `card: wifi` |
 | #593    | Implement roaming pattern analysis and optimization         | Medium       | `component: ai`, `ai: wifi`               |
 
-**Deliverables:**
+#### Deliverables
 
 - ✅ Coverage heatmap generation from sparse samples (IDW/Kriging)
 - ✅ Automatic dead zone detection with recommendations
@@ -82,7 +82,7 @@ milestone/phase and prioritized for implementation.
 - ✅ Channel interference analysis and recommendations
 - ✅ Roaming pattern optimization
 
-**🌟 Killer Feature: Predictive WiFi Survey**
+#### 🌟 Killer Feature: Predictive WiFi Survey
 
 - Upload floor plan, mark walls, place virtual APs
 - Get instant coverage prediction BEFORE deployment
@@ -104,7 +104,7 @@ milestone/phase and prioritized for implementation.
 | #597    | Implement multi-site fleet management and comparison       | Low      | `component: ai`, `component: backend` |
 | #598    | Implement capacity planning and network growth forecasting | Low      | `component: ai`, `component: backend` |
 
-**Deliverables:**
+#### Deliverables
 
 - ✅ Predictive maintenance (predict failures 24-48 hours early)
 - ✅ Automated PDF/HTML report generation
@@ -223,7 +223,7 @@ milestone/phase and prioritized for implementation.
 
 ### Market Positioning
 
-**The Seed is enterprise-grade software with unique AI capabilities.**
+#### The Seed is enterprise-grade software with unique AI capabilities
 
 - Competitors: Ekahau ($2-5K), NetAlly ($10K+), Fluke Networks ($5-15K)
 - Consultants charge: $150-300/hour for WiFi site surveys
@@ -290,7 +290,7 @@ Everything in Premium, PLUS:
 
 ### Pricing Justification
 
-**For WiFi Consultants (Premium tier):**
+#### For WiFi Consultants (Premium tier)
 
 - Typical site survey charge: $3,000-5,000
 - Predictive survey: Plan in 2 hours (not 8+ hours)
@@ -299,7 +299,7 @@ Everything in Premium, PLUS:
 - Software cost: $166/month
 - **ROI: 36-60x** 🤯
 
-**For MSPs (Enterprise tier):**
+#### For MSPs (Enterprise tier)
 
 - Manage 20 client networks
 - Save 10 hours/month troubleshooting = $1,500/month @ $150/hour
@@ -308,36 +308,36 @@ Everything in Premium, PLUS:
 
 ### Revenue Projection
 
-**Target Market:**
+#### Target Market
 
 - 10,000 MSPs (managed service providers)
 - 50,000 network consultants
 - 100,000 IT departments (SMB)
 
-**Conservative Estimate:**
+#### Conservative Estimate
 
 - Year 1: 300 Starter ($90K) + 150 Pro ($120K) + 50 Premium ($100K) = **$310K ARR**
 - Year 2: 1,500 Starter ($450K) + 800 Pro ($640K) + 300 Premium ($600K) + 20 Enterprise ($100K) = **$1.79M ARR**
 - Year 3: 3,000 Starter ($897K) + 1,500 Pro ($1.2M) + 500 Premium ($1M) + 50 Enterprise ($250K) = **$3.35M ARR**
 
-**Optimistic Estimate:**
+#### Optimistic Estimate
 
 - Year 3: 5,000 Starter ($1.5M) + 3,000 Pro ($2.4M) + 1,500 Premium ($3M) + 200 Enterprise ($1M) = **$7.9M ARR**
 
 ### Pricing Strategy
 
-**Annual Discounts:**
+#### Annual Discounts
 
 - Monthly pricing: Full price
 - Annual pricing: **Save 17%** (equivalent to 2 months free)
 
-**Early Adopter Program:**
+#### Early Adopter Program
 
 - **50% off first year** for first 100 customers
 - Lock in pricing for life (grandfathered)
 - Get case studies and testimonials
 
-**Free Trial:**
+#### Free Trial
 
 - **30-day full-featured trial** (Premium tier)
 - Credit card required
@@ -413,7 +413,7 @@ Everything in Premium, PLUS:
 
 ### Tagline
 
-**"Design your network before you deploy it"**
+#### "Design your network before you deploy it"
 
 ### Key Messages
 
@@ -505,7 +505,7 @@ Everything in Premium, PLUS:
 
 ## Summary
 
-**What We've Created:**
+### What We've Created
 
 - ✅ Comprehensive AI integration plan (docs/AI_INTEGRATION_PLAN.md)
 - ✅ 4 GitHub milestones spanning 12+ months
@@ -519,7 +519,7 @@ Everything in Premium, PLUS:
 WiFi planning**. No competitor offers this combination of features at this price point. The predictive WiFi survey
 feature alone (#591) is a game-changer worth the premium tier pricing.
 
-**Estimated Impact:**
+#### Estimated Impact
 
 - 60-80% reduction in troubleshooting time
 - 50% reduction in WiFi deployment time
@@ -531,4 +531,4 @@ Intelligence) to deliver the flagship predictive survey feature within 6 months.
 
 ---
 
-**Ready to build the future of network diagnostics? 🚀**
+#### Ready to build the future of network diagnostics? 🚀

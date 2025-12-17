@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.12.1](https://github.com/krisarmstrong/netscope/compare/v0.12.0...v0.12.1) (2025-12-09)
 
@@ -60,7 +60,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-**Backend (Go)**
+#### Backend (Go)
 
 - HTTP/HTTPS server with auto-generated self-signed TLS certificates
 - WebSocket server for real-time card updates with heartbeat/ping-pong
@@ -69,7 +69,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Configuration loading from YAML with sensible defaults
 - Graceful shutdown handling
 
-**Frontend (React + TypeScript)**
+#### Frontend (React + TypeScript)
 
 - WebSocket hook with auto-reconnect and connection status
 - Authentication hook with login/logout flow
@@ -80,7 +80,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Responsive grid layout (mobile-friendly)
 - WiFi Vigilante color scheme (dark mode default)
 
-**Infrastructure**
+#### Infrastructure
 
 - CI/CD pipeline with GitHub Actions
 - Security scanning with CodeQL

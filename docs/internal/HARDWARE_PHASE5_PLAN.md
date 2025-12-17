@@ -14,7 +14,7 @@ sustainability through diversified revenue and governance models.
 **From:** Community hardware testing program **To:** Industry-standard platform for network diagnostic hardware and
 expertise
 
-**Key Pillars:**
+#### Key Pillars
 
 1. **Global Reach** - International markets, multi-language support
 2. **Professional Services** - Training, certification, consulting
@@ -31,15 +31,15 @@ expertise
 
 #### 1a. Internationalization (i18n)
 
-**Language Support:**
+##### Language Support
 
 - **Priority 1:** Spanish, Mandarin Chinese, French, German
 - **Priority 2:** Japanese, Korean, Portuguese, Russian
 - **Priority 3:** Community-contributed translations
 
-**Implementation:**
+#### Implementation
 
-```typescript
+````typescript
 // web/src/i18n/locales/es.json
 {
   "nav": {
@@ -60,15 +60,15 @@ expertise
     }
   }
 }
-```
+```tsx
 
-**Wiki Translation:**
+#### Wiki Translation
 
 - Machine translation + community review for hardware pages
 - Localized vendor recommendations (e.g., AliExpress for Asia markets)
 - Regional pricing in local currencies
 
-**Hardware Availability by Region:**
+#### Hardware Availability by Region
 
 | Region                 | WiFi Adapters       | Ethernet NICs    | Notes                                |
 | ---------------------- | ------------------- | ---------------- | ------------------------------------ |
@@ -78,7 +78,7 @@ expertise
 | **Latin America**      | Realtek, TP-Link    | Realtek          | Import challenges, affordability key |
 | **Africa/Middle East** | Mixed, USB adapters | Realtek, generic | Availability limited, USB preferred  |
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] i18n framework implementation (React-i18next)
 - [ ] 4+ language translations (80%+ coverage)
@@ -86,7 +86,7 @@ expertise
 - [ ] Currency conversion for pricing
 - [ ] Regional vendor partnerships (AliExpress, Mercado Libre)
 
-**Success Metrics:**
+#### Success Metrics
 
 - 30%+ non-English traffic
 - 5+ language communities contributing
@@ -98,23 +98,23 @@ expertise
 
 **Goal:** Establish vendor relationships in key markets.
 
-**Asia Pacific:**
+#### Asia Pacific
 
 - **MediaTek** - WiFi 6E/7 chipsets (competitive pricing)
 - **TP-Link** - USB WiFi adapters (consumer-friendly)
 - **Huawei** - Enterprise NICs (data center market)
 
-**Europe:**
+#### Europe
 
 - **Siemens** - Industrial Ethernet NICs
 - **Mikrotik** - RouterBoard NICs with diagnostics
 
-**Emerging Markets:**
+#### Emerging Markets
 
 - **Local distributors** - Smaller MOQs, direct-to-consumer
 - **AliExpress vendors** - Budget hardware validation
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] 2+ Asia-Pacific vendor partnerships
 - [ ] European distributor relationships
@@ -128,9 +128,9 @@ expertise
 
 #### 2a. The Seed Certified Technician Program
 
-**Certification Levels:**
+##### Certification Levels
 
-**Level 1: Network Diagnostics Fundamentals**
+#### Level 1: Network Diagnostics Fundamentals
 
 - Target: Help desk, junior network techs
 - Duration: 8 hours (self-paced online)
@@ -144,7 +144,7 @@ expertise
 - Assessment: 50-question exam (70% passing)
 - Certification: Digital badge, 2-year validity
 
-**Level 2: Advanced Hardware Diagnostics**
+#### Level 2: Advanced Hardware Diagnostics
 
 - Target: Network engineers, field technicians
 - Duration: 16 hours (online + hands-on lab)
@@ -159,7 +159,7 @@ expertise
 - Certification: Digital badge + certificate, 2-year validity
 - Includes: Hardware kit (Intel I210 + AX200, $150 value)
 
-**Level 3: The Seed Consultant (Enterprise)**
+#### Level 3: The Seed Consultant (Enterprise)
 
 - Target: Network consultants, MSPs, VARs
 - Duration: 24 hours (online + on-site workshop)
@@ -174,21 +174,21 @@ expertise
 - Certification: Professional certificate, 2-year validity
 - Benefits: Listed in "Find a Consultant" directory, co-marketing
 
-**Platform:**
+#### Platform
 
 - **LMS:** Moodle or Teachable
 - **Video:** Recorded lectures + live Q&A sessions
 - **Labs:** Virtual environments (GNS3, EVE-NG) + hardware kits
 - **Exams:** ProctorU or similar for certification integrity
 
-**Revenue Model:**
+#### Revenue Model
 
 - 100 Level 1 certs/year × $199 = $19,900
 - 50 Level 2 certs/year × $499 = $24,950
 - 20 Level 3 certs/year × $1,499 = $29,980
 - **Total: ~$75,000/year**
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Curriculum development (3 levels)
 - [ ] LMS platform setup
@@ -196,7 +196,7 @@ expertise
 - [ ] Digital badge integration (Credly, Accredible)
 - [ ] Marketing and enrollment campaigns
 
-**Success Metrics:**
+#### Success Metrics
 
 - 150+ certifications issued (Year 1)
 - 4.5+ star course ratings
@@ -207,9 +207,9 @@ expertise
 
 #### 2b. Consulting & Custom Development
 
-**Service Offerings:**
+##### Service Offerings
 
-**Network Diagnostics Consulting:**
+#### Network Diagnostics Consulting
 
 - **Scope:** On-site or remote diagnostics for complex network issues
 - **Rate:** $200-350/hour
@@ -219,7 +219,7 @@ expertise
   - Network discovery and security assessment
   - Custom diagnostic script development
 
-**Custom Development:**
+#### Custom Development
 
 - **Scope:** Feature development for enterprise needs
 - **Examples:**
@@ -230,20 +230,20 @@ expertise
 - **Rate:** $150-250/hour
 - **Retainers:** $5,000-15,000/month for ongoing support
 
-**Managed Services:**
+#### Managed Services
 
 - **Offering:** The Seed appliances deployed at client sites with remote monitoring
 - **MRR:** $500-2,000/site depending on SLA
 - **Target:** MSPs managing 10+ client networks
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Consulting service packages defined
 - [ ] Statement of Work (SOW) templates
 - [ ] Time tracking and invoicing system
 - [ ] Case studies from first 5 projects
 
-**Revenue Potential:**
+#### Revenue Potential
 
 - 10 consulting projects/year × $5,000 avg = $50,000
 - 3 custom dev contracts/year × $25,000 avg = $75,000
@@ -260,16 +260,16 @@ expertise
 
 **Current:** Business Source License (BSL 1.1) - Free for non-commercial
 
-**New Tiers:**
+#### New Tiers
 
-**Community Edition (Free Forever)**
+#### Community Edition (Free Forever)
 
 - All core diagnostic features
 - Single-user operation
 - Community support only
 - BSL 1.1 → Apache 2.0 after 4 years
 
-**Professional Edition ($500/year per technician)**
+#### Professional Edition ($500/year per technician)
 
 - Multi-user accounts with RBAC
 - Scheduled test automation
@@ -277,7 +277,7 @@ expertise
 - Priority email support (48h SLA)
 - Commercial use license
 
-**Enterprise Edition ($2,500/year per organization + $200/seat)**
+#### Enterprise Edition ($2,500/year per organization + $200/seat)
 
 - All Professional features
 - Centralized management console
@@ -287,7 +287,7 @@ expertise
 - On-site training (1 session/year)
 - Feature requests prioritization
 
-**Enterprise Plus (Custom Pricing)**
+#### Enterprise Plus (Custom Pricing)
 
 - All Enterprise features
 - On-premises or private cloud deployment
@@ -296,7 +296,7 @@ expertise
 - Legal indemnification
 - Dedicated account manager
 
-**License Enforcement:**
+#### License Enforcement
 
 ```go
 // internal/license/license.go
@@ -327,16 +327,16 @@ func (l *License) Validate() error {
 func (l *License) HasFeature(feature string) bool {
     // Check if feature is enabled
 }
-```
+```yaml
 
-**Revenue Model:**
+#### Revenue Model
 
 - 20 Professional licenses/year × $500 = $10,000
 - 5 Enterprise orgs × $2,500 + (5 seats avg × $200) = $17,500
 - 2 Enterprise Plus deals × $25,000 avg = $50,000
 - **Total: ~$77,500/year**
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] License key generation and validation
 - [ ] Feature gating implementation
@@ -348,21 +348,21 @@ func (l *License) HasFeature(feature string) bool {
 
 #### 3b. Support & SLA Offerings
 
-**Community Support (Free):**
+##### Community Support (Free)
 
 - GitHub issues, discussions
 - Wiki documentation
 - Community Discord/Slack
 - Best-effort response (no SLA)
 
-**Professional Support ($500/year, included with Professional license):**
+#### Professional Support ($500/year, included with Professional license)
 
 - Priority email support
 - 48-hour response SLA (business hours)
 - Bug fix priority
 - Quarterly product roadmap updates
 
-**Enterprise Support ($2,500+/year, included with Enterprise license):**
+#### Enterprise Support ($2,500+/year, included with Enterprise license)
 
 - Dedicated support portal
 - 24-hour response SLA (business hours)
@@ -370,7 +370,7 @@ func (l *License) HasFeature(feature string) bool {
 - Monthly check-in calls
 - Access to private beta features
 
-**Enterprise Plus Support ($10,000+/year):**
+#### Enterprise Plus Support ($10,000+/year)
 
 - 24/7/365 support hotline
 - 4-hour critical issue SLA
@@ -378,7 +378,7 @@ func (l *License) HasFeature(feature string) bool {
 - Quarterly on-site visits (optional)
 - Custom runbook development
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Support ticketing system (Zendesk, Freshdesk)
 - [ ] SLA monitoring and reporting
@@ -393,23 +393,23 @@ func (l *License) HasFeature(feature string) bool {
 
 #### 4a. Public REST API
 
-**API Offerings:**
+##### API Offerings
 
-**Free Tier (Community):**
+#### Free Tier (Community)
 
 - 1,000 requests/day
 - Read-only endpoints
 - No SLA
 - Attribution required
 
-**Professional Tier ($50/month):**
+#### Professional Tier ($50/month)
 
 - 100,000 requests/day
 - Read + write endpoints
 - 99% uptime SLA
 - Webhook support
 
-**Enterprise Tier (Custom):**
+#### Enterprise Tier (Custom)
 
 - Unlimited requests
 - Dedicated API keys
@@ -417,9 +417,9 @@ func (l *License) HasFeature(feature string) bool {
 - Custom webhooks
 - GraphQL support
 
-**Example Endpoints:**
+#### Example Endpoints
 
-```
+```text
 # Hardware Compatibility API
 GET /api/v2/hardware/wifi?chipset=ax200
 GET /api/v2/hardware/ethernet?vendor=intel
@@ -434,9 +434,9 @@ GET  /api/v2/diagnostics/results/{id}
 POST /api/v2/webhooks/register
 POST /api/v2/integrations/servicenow/ticket
 POST /api/v2/integrations/slack/notify
-```
+```python
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] API versioning strategy (v2)
 - [ ] OpenAPI/Swagger documentation
@@ -448,33 +448,33 @@ POST /api/v2/integrations/slack/notify
 
 #### 4b. Third-Party Integrations
 
-**Target Platforms:**
+##### Target Platforms
 
-**Network Management:**
+#### Network Management
 
 - **SolarWinds** - Export diagnostics to NPM
 - **PRTG** - Custom sensors for The Seed metrics
 - **Zabbix** - Template for monitoring
 
-**Ticketing & ITSM:**
+#### Ticketing & ITSM
 
 - **ServiceNow** - Auto-create incidents from failed tests
 - **Jira Service Management** - Link diagnostics to tickets
 - **Freshservice** - Attach diagnostic reports
 
-**Collaboration:**
+#### Collaboration
 
 - **Slack** - Alert channels for critical failures
 - **Microsoft Teams** - Diagnostics bot
 - **PagerDuty** - Escalation integration
 
-**Cloud & Monitoring:**
+#### Cloud & Monitoring
 
 - **Datadog** - Metrics and dashboards
 - **Grafana** - Pre-built dashboards
 - **Prometheus** - Metrics exporter
 
-**Example Integration:**
+#### Example Integration
 
 ```yaml
 # config/integrations.yaml
@@ -499,9 +499,9 @@ integrations:
     priority_mapping:
       critical: "1 - Critical"
       warning: "3 - Moderate"
-```
+```python
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] 5+ integration plugins
 - [ ] Marketplace/plugin directory
@@ -516,26 +516,26 @@ integrations:
 
 #### 5a. AI/ML-Powered Diagnostics
 
-**Use Cases:**
+##### Use Cases
 
-**Anomaly Detection:**
+#### Anomaly Detection
 
 - Baseline "normal" network behavior over time
 - Alert when patterns deviate (e.g., unusual DHCP timing, DNS failures)
 - Predictive failure detection (cable degradation trends)
 
-**Automated Root Cause Analysis:**
+#### Automated Root Cause Analysis
 
 - Correlate multiple failed tests to identify root cause
 - "Your DHCP timeout is likely caused by switch port auto-negotiation"
 - Suggest remediation steps based on similar cases
 
-**Smart Recommendations:**
+#### Smart Recommendations
 
 - "Based on your WiFi survey, we recommend moving AP #3 by 5 meters"
 - "Cable pair B shows impedance mismatch, likely crushed at ~15m mark"
 
-**Implementation:**
+#### Implementation
 
 ```python
 # ML model for cable fault prediction
@@ -557,9 +557,9 @@ model.fit(X, y)
 prediction = model.predict(current_tdr_reading)
 if prediction == "degraded":
     alert("Cable degradation detected, recommend replacement within 30 days")
-```
+```python
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Data collection for ML training (telemetry)
 - [ ] Anomaly detection models (DHCP, DNS, WiFi)
@@ -570,32 +570,32 @@ if prediction == "degraded":
 
 #### 5b. Next-Gen Hardware Support
 
-**Emerging Technologies:**
+##### Emerging Technologies
 
-**WiFi 7 (802.11be):**
+#### WiFi 7 (802.11be)
 
 - 320 MHz channels on 6 GHz
 - Multi-Link Operation (MLO) diagnostics
 - Real-time testing of 4K QAM, preamble puncturing
 
-**10 Gigabit Ethernet:**
+#### 10 Gigabit Ethernet
 
 - 10GBASE-T TDR testing (different physics than 1GbE)
 - Multi-gig support (2.5/5/10 Gbps)
 
-**PoE++ (802.3bt):**
+#### PoE++ (802.3bt)
 
 - Power delivery diagnostics (watts, voltage, negotiation)
 - Cable resistance measurement
 - PoE fault detection (over-current, short)
 
-**TSN (Time-Sensitive Networking):**
+#### TSN (Time-Sensitive Networking)
 
 - IEEE 802.1Qbv scheduling diagnostics
 - Latency measurement (nanosecond precision)
 - Industrial Ethernet support
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] WiFi 7 adapter testing (Intel BE200)
 - [ ] 10GbE NIC support (Intel X550)
@@ -606,25 +606,25 @@ if prediction == "degraded":
 
 #### 5c. Advanced Test Methodologies
 
-**Passive Network Discovery:**
+##### Passive Network Discovery
 
 - SPAN/mirror port monitoring
 - Traffic pattern analysis without active scanning
 - Rogue device detection (MAC OUI analysis)
 
-**802.1X Troubleshooting:**
+#### 802.1X Troubleshooting
 
 - EAP handshake capture and analysis
 - Certificate validation diagnostics
 - RADIUS authentication testing
 
-**IPv6 Diagnostics:**
+#### IPv6 Diagnostics
 
 - SLAAC vs DHCPv6 comparison
 - Neighbor discovery testing
 - IPv6 DNS resolution (AAAA records)
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Passive monitoring mode
 - [ ] 802.1X diagnostic module
@@ -638,44 +638,44 @@ if prediction == "degraded":
 
 #### 6a. The Seed Foundation (Non-Profit)
 
-**Structure:**
+##### Structure
 
-**Board of Directors (5-7 members):**
+#### Board of Directors (5-7 members)
 
 - Project founder (1 seat)
 - Corporate sponsors (2 seats)
 - Community-elected (2-3 seats)
 - Independent advisors (1 seat)
 
-**Advisory Board:**
+#### Advisory Board
 
 - Hardware vendors (Intel, Qualcomm, etc.)
 - Industry experts (network architects, Fluke engineers)
 - Academic researchers (network protocols, diagnostics)
 
-**Membership Tiers:**
+#### Membership Tiers
 
-**Individual Contributor (Free):**
+#### Individual Contributor (Free)
 
 - Vote in community board elections
 - Access to developer resources
 - Recognition in contributors list
 
-**Corporate Sponsor ($10,000-50,000/year):**
+#### Corporate Sponsor ($10,000-50,000/year)
 
 - Board seat (Gold tier)
 - Logo on website and marketing
 - Co-marketing opportunities
 - Early access to roadmap
 
-**Strategic Partner ($50,000+/year):**
+#### Strategic Partner ($50,000+/year)
 
 - Dedicated board seat
 - Joint product development
 - Priority feature requests
 - Revenue sharing on co-developed features
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Non-profit incorporation (501(c)(3) or equivalent)
 - [ ] Governance charter and bylaws
@@ -687,7 +687,7 @@ if prediction == "degraded":
 
 #### 6b. Revenue Diversification
 
-**Revenue Streams (Year 2 Projection):**
+##### Revenue Streams (Year 2 Projection)
 
 | Stream                          | Annual Revenue | % of Total |
 | ------------------------------- | -------------- | ---------- |
@@ -701,7 +701,7 @@ if prediction == "degraded":
 | **Donations**                   | $5,000         | 2%         |
 | **Total**                       | **$297,500**   | 100%       |
 
-**Expense Allocation:**
+#### Expense Allocation
 
 | Category               | Annual Cost  | % of Revenue |
 | ---------------------- | ------------ | ------------ |
@@ -714,7 +714,7 @@ if prediction == "degraded":
 | **Reserves**           | $47,500      | 16%          |
 | **Total**              | **$297,500** | 100%         |
 
-**Path to Sustainability:**
+#### Path to Sustainability
 
 - **Break-even:** Month 18 (with consulting revenue)
 - **Cash reserves:** 6 months operating expenses by Month 24
@@ -728,7 +728,7 @@ if prediction == "degraded":
 
 #### 7a. The Seed Professional Appliance
 
-**Hardware:**
+##### Hardware
 
 - Raspberry Pi CM4 (8GB RAM, 32GB eMMC)
 - Custom carrier board with:
@@ -739,7 +739,7 @@ if prediction == "degraded":
   - Aluminum fanless enclosure
 - Power: 12V DC or PoE+ (802.3at)
 
-**Software:**
+#### Software
 
 - The Seed pre-installed and configured
 - Auto-discovery on boot
@@ -749,19 +749,19 @@ if prediction == "degraded":
 
 **Price:** $399 retail ($150 BOM + $100 assembly + $149 margin)
 
-**Target Market:**
+#### Target Market
 
 - Network technicians (field diagnostics)
 - MSPs (client networks)
 - Corporate IT (cable plant audits)
 
-**Sales Channels:**
+#### Sales Channels
 
 - Direct from seed.io
 - Amazon (fulfilled by Amazon)
 - VAR partnerships (CDW, Ingram Micro)
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Custom carrier board design (PCB layout)
 - [ ] Enclosure CAD and manufacturing
@@ -769,7 +769,7 @@ if prediction == "degraded":
 - [ ] FCC/CE certification
 - [ ] Warranty and RMA process
 
-**Revenue Potential:**
+#### Revenue Potential
 
 - 500 units/year × $149 margin = $74,500
 - Break-even: ~200 units (covers NRE costs)
@@ -780,15 +780,15 @@ if prediction == "degraded":
 
 **Offering:** Hosted The Seed with remote access to diagnostics.
 
-**Use Cases:**
+#### Use Cases
 
 - Remote sites without on-site IT
 - Distributed network monitoring
 - MSP managing 50+ client sites
 
-**Architecture:**
+#### Architecture
 
-```
+```text
 ┌─────────────────┐
 │ Client Site     │
 │ (Raspberry Pi)  │
@@ -816,15 +816,15 @@ if prediction == "degraded":
     │ User   │
     │ Portal │
     └────────┘
-```
+```yaml
 
-**Pricing:**
+#### Pricing
 
 - **Starter:** $29/month - 1 site, 30-day retention
 - **Professional:** $99/month - 5 sites, 90-day retention, API access
 - **Enterprise:** $299/month - Unlimited sites, 1-year retention, white-label
 
-**Deliverables:**
+#### Deliverables
 
 - [ ] Cloud platform development (Django/Rails)
 - [ ] Multi-tenancy architecture
@@ -832,7 +832,7 @@ if prediction == "degraded":
 - [ ] Billing integration (Stripe)
 - [ ] Compliance (SOC 2, GDPR)
 
-**Revenue Potential:**
+#### Revenue Potential
 
 - 50 Professional plans × $99/mo × 12 = $59,400
 - 10 Enterprise plans × $299/mo × 12 = $35,880
@@ -842,43 +842,43 @@ if prediction == "degraded":
 
 ## Success Metrics Summary
 
-**Global Expansion:**
+### Global Expansion
 
 - 30%+ non-English traffic
 - 5+ language communities
 - 2+ international vendor partnerships
 
-**Professional Services:**
+#### Professional Services
 
 - 150+ certifications issued
 - 10+ consulting projects
 - 5+ managed service clients
 
-**Commercial Offerings:**
+#### Commercial Offerings
 
 - 20+ Professional licenses sold
 - 5+ Enterprise customers
 - $150,000+ annual recurring revenue
 
-**Ecosystem:**
+#### Ecosystem
 
 - 5+ integrations launched
 - 10,000+ API calls/day
 - 3+ ecosystem partnerships
 
-**Innovation:**
+#### Innovation
 
 - 2+ AI/ML models deployed
 - WiFi 7 / 10GbE support
 - 1+ research paper published
 
-**Governance:**
+#### Governance
 
 - Non-profit incorporation
 - 3+ corporate sponsors
 - Community elections held
 
-**Hardware Appliances:**
+#### Hardware Appliances
 
 - 500+ appliances sold
 - 50+ cloud SaaS customers
@@ -886,7 +886,7 @@ if prediction == "degraded":
 
 ## Financial Projections
 
-**Year 2 Revenue:**
+### Year 2 Revenue
 
 - Certifications: $75,000
 - Consulting: $185,000
@@ -896,7 +896,7 @@ if prediction == "degraded":
 - Other: $40,000
 - **Total: $547,000**
 
-**Year 2 Expenses:**
+#### Year 2 Expenses
 
 - **Salaries (3 FTE):** $250,000
 - **Infrastructure:** $40,000
@@ -909,34 +909,34 @@ if prediction == "degraded":
 
 ## Risk Management
 
-**Market Risk:**
+### Market Risk
 
 - Mitigation: Diversified revenue streams (services + products + SaaS)
 - Escalation: Focus on highest-margin offerings
 
-**Technical Debt:**
+#### Technical Debt
 
 - Mitigation: 20% engineering time for refactoring/maintenance
 - Escalation: Slow feature development to pay down debt
 
-**Competition:**
+#### Competition
 
 - Mitigation: Community-driven moat, open-source advantages
 - Escalation: Differentiate on price (10x cheaper than Fluke)
 
-**Team Burnout:**
+#### Team Burnout
 
 - Mitigation: Sustainable pace, hire earlier than needed
 - Escalation: Reduce scope, extend timeline
 
-**Legal/Regulatory:**
+#### Legal/Regulatory
 
 - Mitigation: Legal review before international expansion
 - Escalation: Geo-restrict features if needed (e.g., regulatory WiFi)
 
 ## Go/No-Go Decision Points
 
-**Month 12 (End of Phase 4):**
+### Month 12 (End of Phase 4)
 
 - [ ] Revenue > $50,000 (annual run rate)
 - [ ] 5+ enterprise customers engaged
@@ -945,7 +945,7 @@ if prediction == "degraded":
 
 **If NO:** Extend Phase 4, focus on services revenue
 
-**Month 18 (Mid Phase 5):**
+#### Month 18 (Mid Phase 5)
 
 - [ ] Revenue > $200,000 (annual run rate)
 - [ ] 2+ FTE hired
@@ -956,43 +956,43 @@ if prediction == "degraded":
 
 ## Timeline
 
-**Months 1-6 (Global Expansion):**
+### Months 1-6 (Global Expansion)
 
 - i18n implementation
 - Regional vendor partnerships
 - Multi-language wiki
 
-**Months 3-9 (Professional Services):**
+#### Months 3-9 (Professional Services)
 
 - Certification curriculum development
 - LMS platform launch
 - First cohort of certified technicians
 
-**Months 6-12 (Commercial Offerings):**
+#### Months 6-12 (Commercial Offerings)
 
 - License tier implementation
 - Enterprise customer onboarding
 - Support infrastructure
 
-**Months 9-15 (Ecosystem):**
+#### Months 9-15 (Ecosystem)
 
 - API v2 launch
 - Integration marketplace
 - Partner co-marketing
 
-**Months 12-18 (Innovation):**
+#### Months 12-18 (Innovation)
 
 - AI/ML models deployed
 - WiFi 7 / 10GbE support
 - Research collaborations
 
-**Months 15-18 (Governance):**
+#### Months 15-18 (Governance)
 
 - Foundation incorporation
 - Board elections
 - Sponsorship packages
 
-**Months 12-24 (Appliances/SaaS):**
+#### Months 12-24 (Appliances/SaaS)
 
 - Appliance design and manufacturing
 - Cloud platform beta
@@ -1000,7 +1000,7 @@ if prediction == "degraded":
 
 ## Next Steps
 
-**Before Phase 5:**
+### Before Phase 5
 
 1. **Complete Phase 4:** Achieve revenue-positive status
 2. **Validate demand:** Survey enterprise customers on needs
@@ -1014,7 +1014,7 @@ if prediction == "degraded":
 
 ## Beyond Phase 5: The 5-Year Vision
 
-**Year 3-5 Goals:**
+### Year 3-5 Goals
 
 - **Industry Standard** - The Seed recognized as alternative to Fluke/NetAlly
 - **10,000+ Users** - Global community across 50+ countries
@@ -1023,15 +1023,16 @@ if prediction == "degraded":
 - **Acquisitions** - Integrate complementary tools (cable certifiers, spectrum analyzers)
 - **IPO/Exit** - Strategic acquisition by network vendor or independent public company
 
-**Ultimate Vision:**
+#### Ultimate Vision
 
 > _"Every network technician has The Seed in their toolkit - the open-source Swiss Army knife for network diagnostics."_
 
 ---
 
-**Related Documents:**
+#### Related Documents
 
 - [Phase 4 Plan](HARDWARE_PHASE4_PLAN.md)
 - [Business Plan](BUSINESS_PLAN.md) (to be created)
 - [Competitive Analysis](COMPETITIVE_ANALYSIS.md) (to be created)
 - [Market Research](MARKET_RESEARCH.md) (to be created)
+````

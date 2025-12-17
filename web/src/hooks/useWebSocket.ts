@@ -8,7 +8,7 @@
  * - Automatic reconnection with exponential backoff
  * - Type-safe message handling
  * - Connection status tracking
- * - Secure token transmission via Sec-WebSocket-Protocol header
+ * - Cookie-based authentication (httpOnly cookies)
  *
  * The hook automatically handles:
  * - Initial connection establishment
@@ -53,7 +53,7 @@ export interface CardUpdate {
 interface UseWebSocketOptions {
   /** WebSocket endpoint URL */
   url: string;
-  /** JWT authentication token */
+  /** JWT authentication token (deprecated - using cookie auth instead) */
   token?: string | null;
   /** Callback invoked for general messages */
   onMessage?: (message: Message) => void;
@@ -83,7 +83,6 @@ interface UseWebSocketReturn {
  */
 export function useWebSocket({
   url,
-  token,
   onMessage,
   onCardUpdate,
   reconnectInterval = 3000,
@@ -99,21 +98,14 @@ export function useWebSocket({
    * Establishes WebSocket connection with automatic reconnection logic.
    *
    * - Checks if already connected before attempting new connection
-   * - Requires valid authentication token
    * - Automatically determines wss:// vs ws:// based on page protocol
-   * - Transmits JWT via Sec-WebSocket-Protocol for security
+   * - Uses cookie-based authentication (httpOnly cookies sent automatically)
    * - Sets up event handlers for open, close, error, and message events
    * - Implements automatic reconnection with configurable attempts and interval
    */
   const connect = useCallback(() => {
     // Avoid duplicate connections
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      return;
-    }
-
-    // Authentication required for WebSocket connection
-    if (!token) {
-      setStatus("disconnected");
       return;
     }
 
@@ -124,9 +116,9 @@ export function useWebSocket({
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const baseUrl = url.startsWith("ws") ? url : `${protocol}//${window.location.host}${url}`;
 
-      // Use Sec-WebSocket-Protocol header for secure token transmission
-      // This prevents tokens from appearing in server logs, browser history, etc.
-      wsRef.current = new WebSocket(baseUrl, ["access_token", token]);
+      // Create WebSocket connection without token in protocol header
+      // Authentication is handled via httpOnly cookies sent automatically by the browser
+      wsRef.current = new WebSocket(baseUrl);
 
       // Connection established successfully
       wsRef.current.onopen = () => {
@@ -190,7 +182,7 @@ export function useWebSocket({
       setStatus("error");
       logger.error(LogComponents.WEBSOCKET, "Failed to create WebSocket", error);
     }
-  }, [url, token, onMessage, onCardUpdate, reconnectInterval, maxReconnectAttempts]);
+  }, [url, onMessage, onCardUpdate, reconnectInterval, maxReconnectAttempts]);
 
   // Keep connectRef updated with latest connect function to avoid stale closures
   useEffect(() => {
@@ -214,21 +206,17 @@ export function useWebSocket({
     setStatus("disconnected");
   }, []);
 
-  // (Re)connect whenever auth state changes
+  // Connect on mount (authentication handled via cookies)
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
     timer = setTimeout(() => {
-      if (token) {
-        connect();
-      } else {
-        disconnect();
-      }
+      connect();
     }, 0);
 
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [token, connect, disconnect]);
+  }, [connect]);
 
   const send = useCallback((message: Message) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {

@@ -36,8 +36,8 @@ type SessionExpiredCallback = () => void;
 /** Global session expired callback - set via setSessionExpiredCallback */
 let onSessionExpired: SessionExpiredCallback | null = null;
 
-/** Flag to prevent multiple simultaneous refresh attempts */
-let isRefreshing = false;
+/** Promise to track ongoing refresh attempts and prevent race conditions */
+let refreshPromise: Promise<boolean> | null = null;
 
 /**
  * Registers a callback to be invoked when the API returns a 401 Unauthorized response
@@ -52,26 +52,34 @@ export function setSessionExpiredCallback(callback: SessionExpiredCallback): voi
 /**
  * Attempts to refresh the access token using the refresh token cookie.
  * Returns true if refresh succeeded, false otherwise.
+ *
+ * Uses a mutex pattern to prevent multiple simultaneous refresh attempts.
+ * If a refresh is already in progress, waits for it to complete instead of
+ * making duplicate requests.
  */
 async function refreshAccessToken(): Promise<boolean> {
-  if (isRefreshing) {
-    // Wait for ongoing refresh attempt
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    return true; // Assume it succeeded
+  // If refresh is already in progress, wait for it to complete
+  if (refreshPromise) {
+    return refreshPromise;
   }
 
-  isRefreshing = true;
-  try {
-    const response = await fetch(`${API_BASE}/api/auth/refresh`, {
-      method: "POST",
-      credentials: "include", // Send refresh token cookie
-    });
-    return response.ok;
-  } catch {
-    return false;
-  } finally {
-    isRefreshing = false;
-  }
+  // Start new refresh attempt
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/refresh`, {
+        method: "POST",
+        credentials: "include", // Send refresh token cookie
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  })();
+
+  // Clear the promise when done (success or failure)
+  const result = await refreshPromise;
+  refreshPromise = null;
+  return result;
 }
 
 /**

@@ -29,13 +29,13 @@ standards.
 
 1. Remove `-no-fail` from gosec command:
 
-   ```yaml
-   # Before
-   args: "-no-fail -fmt sarif -out gosec-results.sarif ./..."
+````yaml
+# Before
+args: "-no-fail -fmt sarif -out gosec-results.sarif ./..."
 
-   # After
-   args: "-fmt sarif -out gosec-results.sarif -severity high -confidence medium ./..."
-   ```
+# After
+args: "-fmt sarif -out gosec-results.sarif -severity high -confidence medium ./..."
+```yaml
 
 2. Configure severity/confidence thresholds to fail on:
    - Severity: `high` or `critical`
@@ -60,3 +60,4 @@ standards.
 ## Other TODOs
 
 (Add future items here)
+````

@@ -25,6 +25,9 @@ type CreateSurveyRequest struct {
 }
 
 func (s *Server) createSurvey(w http.ResponseWriter, r *http.Request) {
+	// Limit request body size to prevent DoS attacks (fixes #682)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
+
 	var req CreateSurveyRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -137,6 +140,9 @@ func (s *Server) addSurveySample(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Limit request body size to prevent DoS attacks (fixes #682)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
+
 	var req AddSampleRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -209,6 +215,9 @@ func (s *Server) updateSurveyFloorPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Limit request body size for floor plan uploads (fixes #682)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeFloorPlan)
+
 	var req UpdateFloorPlanRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -256,6 +265,9 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Survey ID required", http.StatusBadRequest)
 		return
 	}
+
+	// Limit request body size to prevent DoS attacks (fixes #682)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
 	var req UpdateSurveySettingsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -336,6 +348,51 @@ func (s *Server) importAirMapper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJSONResponse(w, http.StatusOK, result)
+}
+
+// getSurveyDeadZones handles GET /api/survey/dead-zones?id=xxx&threshold=-75.
+// Analyzes the survey and detects areas with poor WiFi coverage.
+func (s *Server) getSurveyDeadZones(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "Survey ID required", http.StatusBadRequest)
+		return
+	}
+
+	// Parse optional threshold parameter (default: -75 dBm)
+	threshold := survey.DefaultThreshold
+	if thresholdStr := r.URL.Query().Get("threshold"); thresholdStr != "" {
+		var t int
+		if _, err := fmt.Sscanf(thresholdStr, "%d", &t); err == nil {
+			// Validate threshold range (-100 to -30 dBm is reasonable)
+			if t >= -100 && t <= -30 {
+				threshold = t
+			} else {
+				http.Error(w, "Threshold must be between -100 and -30 dBm", http.StatusBadRequest)
+				return
+			}
+		} else {
+			http.Error(w, "Invalid threshold value", http.StatusBadRequest)
+			return
+		}
+	}
+
+	analysis, err := s.surveyManager.DetectDeadZones(id, threshold)
+	if err != nil {
+		slog.Error("Failed to detect dead zones",
+			"survey_id", id,
+			"threshold", threshold,
+			"error", err)
+		http.Error(w, fmt.Sprintf("Failed to detect dead zones: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, http.StatusOK, analysis)
 }
 
 // parseHeatmapConfig parses heatmap configuration from query parameters.

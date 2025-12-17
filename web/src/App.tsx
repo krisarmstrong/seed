@@ -27,7 +27,7 @@
  * automatically detecting if the system needs configuration.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useWebSocket, Message, CardUpdate } from "./hooks/useWebSocket";
 import { useAuth, getAuthHeaders } from "./hooks/useAuth";
@@ -150,6 +150,10 @@ function App() {
   >([]);
   const [networkDiscovery, setNetworkDiscovery] = useState<NetworkDiscoveryData | null>(null);
   const [appVersion, setAppVersion] = useState("dev");
+
+  // Refs to track device scan polling interval and timeout for cleanup
+  const scanPollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMessage = useCallback((message: Message) => {
     if (message.type === "initial_state") {
@@ -557,6 +561,16 @@ function App() {
   // Trigger network device scan
   const triggerDeviceScan = useCallback(async () => {
     try {
+      // Clear any existing polling interval/timeout
+      if (scanPollIntervalRef.current) {
+        clearInterval(scanPollIntervalRef.current);
+        scanPollIntervalRef.current = null;
+      }
+      if (scanTimeoutRef.current) {
+        clearTimeout(scanTimeoutRef.current);
+        scanTimeoutRef.current = null;
+      }
+
       // Update status to show scanning
       setNetworkDiscovery((prev) =>
         prev
@@ -574,21 +588,29 @@ function App() {
 
       if (response.ok) {
         // Poll for completion
-        const pollInterval = setInterval(async () => {
+        scanPollIntervalRef.current = setInterval(async () => {
           const statusRes = await fetch(`${API_BASE}/api/devices/status`, {
             headers: getAuthHeaders(),
           });
           if (statusRes.ok) {
             const status = await statusRes.json();
             if (!status.scanning) {
-              clearInterval(pollInterval);
+              if (scanPollIntervalRef.current) {
+                clearInterval(scanPollIntervalRef.current);
+                scanPollIntervalRef.current = null;
+              }
               fetchNetworkDiscovery();
             }
           }
         }, 1000);
 
         // Safety timeout - stop polling after 60 seconds
-        setTimeout(() => clearInterval(pollInterval), 60000);
+        scanTimeoutRef.current = setTimeout(() => {
+          if (scanPollIntervalRef.current) {
+            clearInterval(scanPollIntervalRef.current);
+            scanPollIntervalRef.current = null;
+          }
+        }, 60000);
       }
     } catch (err) {
       logger.error(LogComponents.DEVICES, "Failed to trigger device scan", err);
@@ -871,6 +893,18 @@ function App() {
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated, triggerDeviceScan, cardSettings.networkDiscovery.autoRunOnLink]);
+
+  // Cleanup device scan polling on unmount
+  useEffect(() => {
+    return () => {
+      if (scanPollIntervalRef.current) {
+        clearInterval(scanPollIntervalRef.current);
+      }
+      if (scanTimeoutRef.current) {
+        clearTimeout(scanTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Login form
   const authError = sessionExpired ? "Session expired. Please log in again." : error;

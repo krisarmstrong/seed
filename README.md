@@ -5,9 +5,9 @@
 [![CI](https://github.com/krisarmstrong/seed/actions/workflows/ci.yml/badge.svg)](https://github.com/krisarmstrong/seed/actions/workflows/ci.yml)
 [![License: BSL 1.1](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 
-The Seed is a professional-grade network diagnostic appliance designed for network technicians and
-engineers. Plug it into any network jack and instantly see link status, switch information, DHCP
-details, DNS health, and gateway connectivity through a modern web interface.
+The Seed is a professional-grade network diagnostic appliance designed for network technicians and engineers. Plug it
+into any network jack and instantly see link status, switch information, DHCP details, DNS health, and gateway
+connectivity through a modern web interface.
 
 ## Features
 
@@ -25,7 +25,7 @@ details, DNS health, and gateway connectivity through a modern web interface.
 
 ## Screenshots
 
-_Coming soon_
+Screenshots coming soon.
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ _Coming soon_
 - Node.js 24+ (LTS)
 - libpcap-dev
 
-**Hardware Considerations:**
+#### Hardware Considerations
 
 - **Wi-Fi Diagnostics:** Requires nl80211-compatible adapter (Intel AX200/210 recommended)
 - **Cable Diagnostics (TDR):** Requires Intel I350/I210 or Broadcom BCM5719/5720
@@ -44,8 +44,7 @@ _Coming soon_
 
 See **[HARDWARE.md](HARDWARE.md)** for detailed compatibility guide and recommendations.
 
-**Note:** The Seed requires raw ICMP socket access for ping functionality. On Linux, this requires
-either:
+**Note:** The Seed requires raw ICMP socket access for ping functionality. On Linux, this requires either:
 
 - Running as root (`sudo ./seed`), or
 - Setting capabilities: `sudo setcap cap_net_raw=+ep ./seed`
@@ -65,7 +64,7 @@ cd web && npm ci && npm run build && cd ..
 
 # Run
 sudo ./seed
-```
+```text
 
 ### Access
 
@@ -76,7 +75,7 @@ Default credentials:
 - Username: `admin`
 - Password: `seed`
 
-**Change these on first login!**
+#### Change these on first login!
 
 ## Configuration
 
@@ -100,7 +99,7 @@ thresholds:
   ping:
     warning: 50ms
     critical: 200ms
-```
+```bash
 
 ## Development
 
@@ -115,7 +114,7 @@ sudo setcap cap_net_raw=+ep ./seed
 
 # Run frontend in development mode
 cd web && npm run dev
-```
+```text
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
 
@@ -128,7 +127,7 @@ The frontend uses a centralized design system with semantic tokens. See:
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │              Web Browser                │
 │         (React + WebSocket)             │
@@ -145,7 +144,7 @@ The frontend uses a centralized design system with semantic tokens. See:
 │  │  Mgmt   │ (pcap)  │ Client  │       │
 │  └─────────┴─────────┴─────────┘       │
 └─────────────────────────────────────────┘
-```
+```text
 
 ## Roadmap
 
@@ -183,3 +182,4 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 ## Security
 
 See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
+```

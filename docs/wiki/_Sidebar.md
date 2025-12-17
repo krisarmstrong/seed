@@ -1,24 +1,24 @@
-**The Seed Wiki**
+#### The Seed Wiki
 
-**Getting Started**
+#### Getting Started
 
 - [Home](Home)
 - [Installation (macOS)](Installation-macOS)
 - [Installation (Linux)](Installation-Linux)
 - [Quick Start](Quick-Start-Guide)
 
-**Features**
+#### Features
 
 - [Network Discovery](Network-Discovery)
 - [WiFi Survey](WiFi-Survey-Planning)
 - [Vulnerability Scanning](Vulnerability-Scanning)
 
-**Configuration**
+#### Configuration
 
 - [Network Interfaces](Configuration)
 - [SNMP Settings](SNMP-Settings)
 
-**Help**
+#### Help
 
 - [FAQ](FAQ)
 - [Troubleshooting](Troubleshooting)

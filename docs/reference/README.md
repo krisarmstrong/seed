@@ -62,7 +62,7 @@ AI integration documentation guide:
 
 ## Purpose of This Directory
 
-**Why separate "reference" from "internal"?**
+### Why separate "reference" from "internal"?
 
 - **internal/** = Business strategy, sales tactics, competitive intelligence (confidential)
 - **reference/** = Documentation guides, setup summaries, templates (helpful but not secret)
@@ -76,14 +76,14 @@ Think of it this way:
 
 ## Maintenance
 
-**When to update:**
+### When to update
 
 - When documentation structure changes
 - When adding new documentation types
 - After major documentation initiatives
 - When onboarding new documentation maintainers
 
-**Who updates:**
+#### Who updates
 
 - Kris Armstrong (founder)
 - Future documentation manager (when hired)

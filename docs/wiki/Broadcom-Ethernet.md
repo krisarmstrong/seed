@@ -9,7 +9,7 @@ vary. **Recommended for server environments**.
 
 ### Broadcom BCM5719 (Quad-Port Server NIC)
 
-**Server-Grade with Full TDR**
+#### Server-Grade with Full TDR
 
 - **Chipset:** Broadcom BCM5719
 - **Driver:** `tg3` (in-kernel)
@@ -18,7 +18,7 @@ vary. **Recommended for server environments**.
 - **Ports:** 4 (RJ45)
 - **Price Range:** $40-80 USD (used), $150-250 USD (new)
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ✅ Excellent
 - Cable Length Detection: ✅ Yes
@@ -26,14 +26,14 @@ vary. **Recommended for server environments**.
 - Distance to Fault: ✅ Yes
 - Link Speed Detection: ✅ Accurate
 
-**Why Choose BCM5719:**
+#### Why Choose BCM5719
 
 - **Comparable to Intel I350** - Similar TDR capabilities
 - **Widely available** - Common in Dell/HP servers
 - **4 ports** - Test multiple cables
 - **Proven reliability** - Enterprise-grade
 
-**Common in:**
+#### Common in
 
 - Dell PowerEdge servers
 - HP ProLiant servers
@@ -45,7 +45,7 @@ vary. **Recommended for server environments**.
 
 ### Broadcom BCM5720 (Dual-Port Server NIC)
 
-**Dual-Port Alternative**
+#### Dual-Port Alternative
 
 - **Chipset:** Broadcom BCM5720
 - **Driver:** `tg3`
@@ -54,14 +54,14 @@ vary. **Recommended for server environments**.
 - **Ports:** 2 (RJ45)
 - **Price Range:** $30-60 USD (used), $100-180 USD (new)
 
-**The Seed Compatibility:**
+#### The Seed Compatibility
 
 - TDR Cable Testing: ✅ Excellent
 - Cable Length Detection: ✅ Yes
 - Fault Detection: ✅ Yes
 - Distance to Fault: ✅ Yes
 
-**Notes:**
+#### Notes
 
 - Very similar to BCM5719 (same family)
 - 2 ports vs 4 ports
@@ -75,25 +75,25 @@ vary. **Recommended for server environments**.
 
 ### BCM57XX Series (Desktop/Laptop)
 
-**Basic NICs - Limited TDR Support**
+#### Basic NICs - Limited TDR Support
 
 - **Chipsets:** BCM5751, BCM5761, BCM5784
 - **Driver:** `tg3`
 - **TDR Support:** ⚠️ **Limited or None**
 
-**Status:**
+#### Status
 
 - May support basic cable status (OK/fault)
 - **No distance measurement**
 - **No fault location**
 - Not recommended for diagnostics
 
-**Testing:**
+#### Testing
 
-```bash
+````bash
 sudo ethtool --cable-test eth0
 # Often returns: Operation not supported
-```
+```yaml
 
 ---
 
@@ -109,7 +109,7 @@ lspci | grep -i broadcom
 # Check driver
 ethtool -i eth0 | grep driver
 # Should show: tg3
-```
+```text
 
 ### Test TDR Support
 
@@ -125,7 +125,7 @@ sudo ethtool --cable-test eth0
 
 # BCM57XX: May fail
 # netlink error: Operation not supported
-```
+```yaml
 
 ---
 
@@ -155,13 +155,13 @@ sudo ethtool --cable-test eth0
 
 ### Issue: Driver Module Not Loading
 
-**Symptoms:**
+#### Symptoms
 
-```
+```text
 tg3: module not found
-```
+```text
 
-**Solution:**
+#### Solution
 
 ```bash
 # Install driver
@@ -169,7 +169,7 @@ sudo modprobe tg3
 
 # Make permanent
 echo "tg3" | sudo tee -a /etc/modules
-```
+```python
 
 ---
 
@@ -177,18 +177,18 @@ echo "tg3" | sudo tee -a /etc/modules
 
 ### BCM5719/5720 (Server NICs)
 
-**Used/Surplus (Best Value):**
+#### Used/Surplus (Best Value)
 
 - **eBay:** $30-80 USD (pulled from servers)
 - **Server liquidators:** $40-70 USD
 
-**Common Cards:**
+#### Common Cards
 
 - Dell 1GbE 4-port (BCM5719)
 - HP Ethernet 1Gb 4-port (BCM5719)
 - Broadcom NetXtreme Quad Port (BCM5719)
 
-**Search Terms:**
+#### Search Terms
 
 - "BCM5719 quad port"
 - "BCM5720 dual port"
@@ -198,7 +198,7 @@ echo "tg3" | sudo tee -a /etc/modules
 
 ⚠️ **Important:** Not all Broadcom NICs support TDR
 
-**Questions to ask seller:**
+#### Questions to ask seller
 
 - Is this BCM5719 or BCM5720?
 - Pulled from server or desktop?
@@ -235,3 +235,4 @@ _(Community reports will be added here)_
 easier to find for consumer use.
 
 [← Back to Home](Home) | [← Previous: Intel Ethernet](Intel-Ethernet) | [Next: Realtek Ethernet →](Realtek-Ethernet)
+````

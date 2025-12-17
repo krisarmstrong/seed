@@ -17,7 +17,7 @@ Since the repository is **private and proprietary**, both are currently in the s
 
 ## Current Structure
 
-```
+````text
 seed/ (private repo)
 ├── docs/
 │   ├── wiki/                           # Hardware compatibility wiki
@@ -43,7 +43,7 @@ seed/ (private repo)
 │   └── setup-wiki.sh                   # Automated wiki population
 │
 └── README.md                            # Project overview
-```
+```yaml
 
 ---
 
@@ -51,7 +51,7 @@ seed/ (private repo)
 
 **Purpose:** Help users install, configure, and use The Seed
 
-**Audience:**
+#### Audience
 
 - Beta testers (with repo access)
 - Customers
@@ -59,7 +59,7 @@ seed/ (private repo)
 
 **Location:** https://github.com/krisarmstrong/seed/wiki
 
-**Content:**
+#### Content
 
 - Installation guides (macOS, Linux, Docker)
 - Quick start tutorial
@@ -71,7 +71,7 @@ seed/ (private repo)
 
 **Format:** Markdown (GitHub Wiki)
 
-**Update Frequency:**
+#### Update Frequency
 
 - With each release (new features, breaking changes)
 - As bugs/issues are discovered and fixed
@@ -83,7 +83,7 @@ seed/ (private repo)
 
 **Purpose:** Internal knowledge base for team planning and execution
 
-**Audience:**
+#### Audience
 
 - Kris Armstrong (founder)
 - Future employees (sales, support, engineering)
@@ -91,7 +91,7 @@ seed/ (private repo)
 
 **Location:** `docs/` folder in private repo
 
-**Content:**
+#### Content
 
 ### Business & Strategy
 
@@ -118,7 +118,7 @@ seed/ (private repo)
 
 **Format:** Markdown
 
-**Update Frequency:**
+#### Update Frequency
 
 - Quarterly review (business plan, competitive analysis)
 - As needed (when strategy changes)
@@ -132,7 +132,7 @@ The GitHub Wiki is currently **empty** and needs to be initialized.
 
 ### One-Time Setup
 
-**Step 1: Initialize Wiki (Manual)**
+#### Step 1: Initialize Wiki (Manual)
 
 1. Go to https://github.com/krisarmstrong/seed/wiki
 2. Click **"Create the first page"**
@@ -140,11 +140,11 @@ The GitHub Wiki is currently **empty** and needs to be initialized.
 4. Content: `Initializing wiki...`
 5. Click **"Save Page"**
 
-**Step 2: Run Setup Script (Automated)**
+#### Step 2: Run Setup Script (Automated)
 
 ```bash
 ./scripts/setup-wiki.sh
-```
+```python
 
 This will:
 
@@ -159,7 +159,7 @@ This will:
   - FAQ
 - Commit and push to GitHub
 
-**Step 3: Verify**
+#### Step 3: Verify
 
 Visit https://github.com/krisarmstrong/seed/wiki and confirm all pages are live.
 
@@ -171,7 +171,7 @@ When The Seed launches publicly, create a professional docs site:
 
 ### Recommended Tool: GitBook
 
-**Why GitBook:**
+#### Why GitBook
 
 - Beautiful UI (better than GitHub Wiki)
 - SEO-friendly (indexed by Google)
@@ -179,21 +179,21 @@ When The Seed launches publicly, create a professional docs site:
 - Search (better than GitHub's)
 - Analytics (see what users read)
 
-**Pricing:**
+#### Pricing
 
 - Free for open-source docs (if you make docs public)
 - $29/month for private docs (team access)
 
-**Setup:**
+#### Setup
 
 1. Create account at https://www.gitbook.com
 2. Connect to GitHub repo
 3. Auto-sync from `docs/user-guide/` folder
 4. Publish to `docs.mustardseednetworks.com`
 
-**Structure:**
+#### Structure
 
-```
+```text
 docs.mustardseednetworks.com/
 ├── Getting Started
 │   ├── Installation
@@ -213,13 +213,13 @@ docs.mustardseednetworks.com/
 └── Troubleshooting
     ├── Common Issues
     └── Error Messages
-```
+```bash
 
 ---
 
 ## Alternative: Docusaurus (Free, Open Source)
 
-**Why Docusaurus:**
+### Why Docusaurus
 
 - 100% free (Facebook's tool)
 - React-based (customizable)
@@ -227,13 +227,13 @@ docs.mustardseednetworks.com/
 - Search built-in
 - Markdown-based (easy to write)
 
-**Setup:**
+#### Setup
 
 ```bash
 npx create-docusaurus@latest seed-docs classic
 cd seed-docs
 npm start
-```
+```yaml
 
 **Deploy to:** GitHub Pages, Netlify, or Vercel (all free)
 
@@ -247,7 +247,7 @@ npm start
 
 Create `mustard-seed-networks/internal-docs` (private):
 
-```
+```text
 internal-docs/
 ├── engineering/
 │   ├── architecture-decisions.md
@@ -264,9 +264,9 @@ internal-docs/
 └── business/
     ├── financial-models.md
     └── partnerships.md
-```
+```text
 
-**Access Control:**
+#### Access Control
 
 - Employees: Full access
 - Contractors: Engineering only (no sales/business)
@@ -276,7 +276,7 @@ internal-docs/
 
 **When:** Team grows to 3+ people
 
-**Why Notion:**
+#### Why Notion
 
 - Non-technical team can contribute (sales, support)
 - Great search, templates, databases
@@ -285,9 +285,9 @@ internal-docs/
 
 **Pricing:** Free for <10 users, $8/user/month after
 
-**Structure:**
+#### Structure
 
-```
+```text
 Mustard Seed Networks Workspace
 ├── 📚 Engineering
 │   ├── Architecture
@@ -305,7 +305,7 @@ Mustard Seed Networks Workspace
     ├── Financial Models
     ├── OKRs
     └── Meeting Notes
-```
+```bash
 
 ---
 
@@ -313,38 +313,38 @@ Mustard Seed Networks Workspace
 
 ### User-Facing (GitHub Wiki)
 
-**When to Update:**
+#### When to Update
 
 - New release (document new features)
 - Bug fixes (update troubleshooting)
 - Hardware tested (add to compatibility matrix)
 
-**Who Updates:**
+#### Who Updates
 
 - Engineering team (feature docs)
 - Support team (FAQ, troubleshooting)
 - Community (via PRs to docs/ folder, then copied to wiki)
 
-**Review Process:**
+#### Review Process
 
 - Kris reviews all changes
 - Test docs before publishing (ensure accuracy)
 
 ### Team Documentation (docs/ folder)
 
-**When to Update:**
+#### When to Update
 
 - Quarterly reviews (business plan, competitive analysis)
 - Major milestones (funding, launch, hiring)
 - Strategy changes (pricing, positioning)
 
-**Who Updates:**
+#### Who Updates
 
 - Kris (business, strategy)
 - Sales (playbooks, battle cards when hired)
 - Engineering (technical docs)
 
-**Review Process:**
+#### Review Process
 
 - No formal review (private to team)
 - Version controlled (git history)
@@ -416,3 +416,4 @@ Mustard Seed Networks Workspace
 
 **Document Owner:** Kris Armstrong **Last Updated:** December 2025 **Next Review:** After wiki population, then
 quarterly
+````

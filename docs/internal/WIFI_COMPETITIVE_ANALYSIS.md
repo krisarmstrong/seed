@@ -11,7 +11,7 @@ and millions in R&D. We CANNOT match feature-for-feature initially.
 
 **Our Differentiator:** **PREDICTIVE survey simulation** - plan coverage BEFORE deploying APs. **NOBODY ELSE HAS THIS.**
 
-**Our Strategy:**
+#### Our Strategy
 
 1. **Don't compete head-to-head** on traditional site surveys (we'll lose)
 2. **Own predictive planning** (greenfield deployments, pre-construction)
@@ -42,7 +42,7 @@ and millions in R&D. We CANNOT match feature-for-feature initially.
 
 **Market Position:** Gold standard, industry leader since 2001
 
-**Strengths:**
+#### Strengths
 
 - ✅ **Mature platform**: 20+ years of development
 - ✅ **Comprehensive features**: Active/passive surveys, spectrum analysis, heat maps
@@ -55,7 +55,7 @@ and millions in R&D. We CANNOT match feature-for-feature initially.
 - ✅ **Industry certification**: CWNA, CWAP professionals use it as standard
 - ✅ **Vendor integrations**: Works with all AP vendors (Aruba, Cisco, Ruckus, etc.)
 
-**Weaknesses:**
+#### Weaknesses
 
 - ❌ **Expensive**: $2,000-5,000 per license (one-time or subscription)
 - ❌ **Windows-only**: No macOS or Linux support
@@ -72,7 +72,7 @@ survey | ✅ Full | ⚠️ Basic | Ekahau | | Passive survey | ✅ Full | ⚠️
 ✅ **HIPAA, CIS, NIST** | **The Seed** | | Price | $2,000-5,000 | $1,999/year | **The Seed** | | Platform | Windows only
 | **Linux, macOS, Docker** | **The Seed** | | Enterprise features | ✅ Mature | ⏳ In development | Ekahau |
 
-**Strategy vs Ekahau:**
+#### Strategy vs Ekahau
 
 - ❌ DON'T: Compete on traditional site surveys (we'll lose)
 - ✅ DO: Target predictive planning (greenfield deployments, pre-construction)
@@ -80,7 +80,7 @@ survey | ✅ Full | ⚠️ Basic | Ekahau | | Passive survey | ✅ Full | ⚠️
 - ✅ DO: Undercut on price ($1,999 vs $5,000 for AI Pro)
 - ✅ DO: Emphasize compliance (healthcare, education) - Ekahau doesn't do this
 
-**Messaging:**
+#### Messaging
 
 > "Ekahau is the gold standard for post-deployment surveys. The Seed is the gold standard for **pre-deployment
 > planning**. Plan your network before you build it, then validate with Ekahau if needed."
@@ -91,7 +91,7 @@ survey | ✅ Full | ⚠️ Basic | Ekahau | | Passive survey | ✅ Full | ⚠️
 
 **Market Position:** Enterprise, carrier-grade, mission-critical deployments
 
-**Strengths:**
+#### Strengths
 
 - ✅ **Enterprise focus**: Fortune 500, government, carriers
 - ✅ **Compliance built-in**: PCI DSS, HIPAA templates
@@ -101,7 +101,7 @@ survey | ✅ Full | ⚠️ Basic | Ekahau | | Passive survey | ✅ Full | ⚠️
 - ✅ **Automated troubleshooting**: AI-based problem detection
 - ✅ **Capacity planning**: Client density, throughput modeling
 
-**Weaknesses:**
+#### Weaknesses
 
 - ❌ **Very expensive**: $5,000-7,000 per license
 - ❌ **Complex**: Requires extensive training
@@ -116,7 +116,7 @@ AirMagnet | | **Predictive planning** | ⚠️ Limited | ✅ **Core feature** | 
 ❌ No | ✅ **Full** | **The Seed** | | Price | $5,000-7,000 | $1,999/year | **The Seed** | | SMB-friendly | ❌ No | ✅
 **Yes** | **The Seed** |
 
-**Strategy vs AirMagnet:**
+#### Strategy vs AirMagnet
 
 - ❌ DON'T: Target Fortune 500 (they need AirMagnet's capabilities)
 - ✅ DO: Target SMB who can't afford $7,000 tools
@@ -129,7 +129,7 @@ AirMagnet | | **Predictive planning** | ⚠️ Limited | ✅ **Core feature** | 
 
 **Market Position:** Modern, cloud-based, growing fast
 
-**Strengths:**
+#### Strengths
 
 - ✅ **Modern UI**: Beautiful, intuitive interface
 - ✅ **Cloud-based**: No installation, works anywhere
@@ -140,7 +140,7 @@ AirMagnet | | **Predictive planning** | ⚠️ Limited | ✅ **Core feature** | 
 - ✅ **Frequent updates**: Cloud means rapid feature releases
 - ✅ **Pricing**: Subscription model ($200-300/month or $2,000-3,000/year)
 
-**Weaknesses:**
+#### Weaknesses
 
 - ⚠️ **Cloud-only**: Requires internet, data privacy concerns
 - ⚠️ **No active/passive surveys**: Planning only, not validation
@@ -156,7 +156,7 @@ option** | ❌ No | ✅ **Yes** | **The Seed** |
 
 **⚠️ CRITICAL: Hamina is our closest competitor** on predictive planning.
 
-**Strategy vs Hamina:**
+#### Strategy vs Hamina
 
 - ✅ DO: Differentiate on security + compliance (we do both, they don't)
 - ✅ DO: Offer self-hosted option (data sovereignty, healthcare privacy)
@@ -164,7 +164,7 @@ option** | ❌ No | ✅ **Yes** | **The Seed** |
 - ✅ DO: Match on predictive planning quality (this is existential)
 - ⚠️ MUST: Invest in RF modeling to match Hamina's accuracy
 
-**Messaging:**
+#### Messaging
 
 > "Hamina does beautiful WiFi planning. The Seed does WiFi planning + network security + compliance - all in one
 > platform. Plus, self-host for data privacy (required for healthcare, government)."
@@ -175,7 +175,7 @@ option** | ❌ No | ✅ **Yes** | **The Seed** |
 
 **Market Position:** Bundled with NetAlly hardware (AirCheck, EtherScope, etc.)
 
-**Strengths:**
+#### Strengths
 
 - ✅ **Hardware integration**: Works seamlessly with NetAlly tools
 - ✅ **Site surveys**: Active/passive surveys with NetAlly hardware
@@ -183,7 +183,7 @@ option** | ❌ No | ✅ **Yes** | **The Seed** |
 - ✅ **Cloud platform**: Link-Live cloud for multi-site visibility
 - ✅ **Value**: Included with hardware purchase
 
-**Weaknesses:**
+#### Weaknesses
 
 - ❌ **Requires hardware**: Can't use standalone ($2,000-4,000 for hardware)
 - ❌ **Limited predictive**: Basic planning, not advanced modeling
@@ -197,7 +197,7 @@ NetAlly | | Standalone software | ❌ No | ✅ **Yes** | **The Seed** | | **Pred
 only) | N/A (hardware bundle) | $1,999/year | **The Seed** | | Cross-platform | ❌ Windows/cloud | ✅ **Linux, macOS** |
 **The Seed** |
 
-**Strategy vs NetAlly:**
+#### Strategy vs NetAlly
 
 - ✅ DO: Target software-only buyers (don't need $4,000 hardware)
 - ✅ DO: Emphasize predictive planning (NetAlly's is basic)
@@ -333,7 +333,7 @@ stadiums, convention centers (need more scale)
 
 ### **Development Priority:**
 
-**Phase 1 (Months 1-3): MUST HAVE**
+#### Phase 1 (Months 1-3): MUST HAVE
 
 1. RF path loss modeling (#591) - CRITICAL
 2. Heatmap generation (#588) - CRITICAL
@@ -341,7 +341,7 @@ stadiums, convention centers (need more scale)
 4. AP database - HIGH
 5. WiFi 6/6E support - HIGH
 
-**Phase 2 (Months 4-6): Competitive Parity**
+#### Phase 2 (Months 4-6): Competitive Parity
 
 1. Active survey mode
 2. Multi-floor support
@@ -349,7 +349,7 @@ stadiums, convention centers (need more scale)
 4. Roaming analysis (#593)
 5. Professional PDF reports (#595)
 
-**Phase 3 (Months 7-12): Advanced Features**
+#### Phase 3 (Months 7-12): Advanced Features
 
 1. Client density modeling
 2. Throughput prediction
@@ -455,20 +455,20 @@ stadiums, convention centers (need more scale)
 
 ### Our Pricing Justification
 
-**vs Ekahau AI Pro ($5,000/year):**
+#### vs Ekahau AI Pro ($5,000/year)
 
 - We're $3,001 cheaper (60% less)
 - We add security + compliance (they don't)
 - Subscription vs one-time, but yearly cost matters
 
-**vs Hamina ($2,000-3,000/year):**
+#### vs Hamina ($2,000-3,000/year)
 
 - Price parity ($1,999 vs $2,000-3,000)
 - We add active/passive surveys (they don't)
 - We add security + compliance (they don't)
 - Self-hosted option (they don't)
 
-**vs AirMagnet ($5,000-7,000):**
+#### vs AirMagnet ($5,000-7,000)
 
 - We're $3,001-5,001 cheaper (60-71% less)
 - We add predictive planning (they're limited)
@@ -532,7 +532,7 @@ stadiums, convention centers (need more scale)
 
 ### **Risk: We're not as good as Ekahau at traditional surveys**
 
-**Mitigation:**
+#### Mitigation
 
 - Don't compete there
 - Focus on predictive planning (greenfield)
@@ -541,7 +541,7 @@ stadiums, convention centers (need more scale)
 
 ### **Risk: Hamina is very good at predictive planning**
 
-**Mitigation:**
+#### Mitigation
 
 - Match their RF modeling quality (CRITICAL)
 - Differentiate on security + compliance (they can't do this)
@@ -550,7 +550,7 @@ stadiums, convention centers (need more scale)
 
 ### **Risk: We lack maturity and enterprise features**
 
-**Mitigation:**
+#### Mitigation
 
 - Target SMB initially, not enterprise
 - Build reference customers in healthcare, education
@@ -559,7 +559,7 @@ stadiums, convention centers (need more scale)
 
 ### **Risk: WiFi pros won't trust us without spectrum analysis**
 
-**Mitigation:**
+#### Mitigation
 
 - Don't target RF experts initially
 - Target IT generalists (healthcare IT, school IT)
@@ -610,7 +610,7 @@ We skimp on RF modeling (accuracy matters) ❌ We ignore security differentiatio
 
 ## Final Recommendation
 
-**Focus:**
+### Focus
 
 1. **Build predictive survey RIGHT** - accuracy, UX, speed
 2. **Own the security + WiFi combo** - nobody else does this
@@ -618,14 +618,14 @@ We skimp on RF modeling (accuracy matters) ❌ We ignore security differentiatio
 4. **Price to win** - $1,999/year, 60% cheaper than alternatives
 5. **Partner, don't compete** - "Use us for planning, Ekahau for validation"
 
-**Avoid:**
+#### Avoid
 
 1. ❌ Competing with Ekahau on traditional surveys
 2. ❌ Targeting enterprise initially (not ready)
 3. ❌ Trying to match spectrum analysis (requires hardware)
 4. ❌ Overpromising on RF accuracy (under-deliver = death)
 
-**Timeline:**
+#### Timeline
 
 - Q1 2026: Predictive survey foundation (competitive with Hamina)
 - Q2 2026: Active/passive surveys (differentiation)
