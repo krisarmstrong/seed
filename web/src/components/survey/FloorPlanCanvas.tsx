@@ -30,7 +30,7 @@
  * State: Canvas dimensions, rendering state
  */
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { radius } from "../../styles/theme";
 import type {
   FloorPlan,
@@ -89,6 +89,8 @@ export function FloorPlanCanvas({
   const containerRef = useRef<HTMLDivElement>(null);
   // Track canvas dimensions for responsive sizing
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  // Track mouse position for calibration line preview
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
   // Calculate canvas dimensions maintaining aspect ratio
   useEffect(() => {
@@ -103,6 +105,31 @@ export function FloorPlanCanvas({
 
     setDimensions({ width, height });
   }, [floorPlan]);
+
+  // Handle mouse move for calibration line preview
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      // Only track mouse when in calibration mode with exactly one point set
+      if (!calibrationMode || calibrationPoints.length !== 1) {
+        if (mousePos !== null) setMousePos(null);
+        return;
+      }
+
+      const canvas = canvasRef.current;
+      if (!canvas || !floorPlan) return;
+
+      const rect = canvas.getBoundingClientRect();
+      // Convert to floor plan coordinates
+      const scaleX = floorPlan.width / dimensions.width;
+      const scaleY = floorPlan.height / dimensions.height;
+
+      setMousePos({
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY,
+      });
+    },
+    [calibrationMode, calibrationPoints.length, floorPlan, dimensions, mousePos]
+  );
 
   // Draw floor plan and samples
   useEffect(() => {
@@ -247,6 +274,34 @@ export function FloorPlanCanvas({
           ctx.fillText(index === 0 ? "A" : "B", cx, cy);
         });
 
+        // Draw preview line from first point to mouse cursor
+        if (calibrationPoints.length === 1 && mousePos) {
+          const p1 = calibrationPoints[0];
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x * scaleX, p1.y * scaleY);
+          ctx.lineTo(mousePos.x * scaleX, mousePos.y * scaleY);
+          ctx.strokeStyle = "rgba(234, 88, 12, 0.6)"; // orange-600 with less opacity
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]); // Reset dash
+
+          // Draw preview pixel distance at cursor
+          const previewDist = Math.sqrt((mousePos.x - p1.x) ** 2 + (mousePos.y - p1.y) ** 2);
+          ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+          ctx.fillRect(mousePos.x * scaleX + 10, mousePos.y * scaleY - 10, 60, 20);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 10px sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(
+            `${previewDist.toFixed(0)} px`,
+            mousePos.x * scaleX + 15,
+            mousePos.y * scaleY
+          );
+        }
+
         // Draw line between points if we have two
         if (calibrationPoints.length === 2) {
           const p1 = calibrationPoints[0];
@@ -270,6 +325,7 @@ export function FloorPlanCanvas({
           ctx.fillRect(midX - 40, midY - 10, 80, 20);
           ctx.fillStyle = "#ffffff";
           ctx.font = "bold 11px sans-serif";
+          ctx.textAlign = "center";
           ctx.fillText(`${pixelDist.toFixed(0)} px`, midX, midY);
         }
       }
@@ -284,6 +340,7 @@ export function FloorPlanCanvas({
     heatmapFilter,
     calibrationMode,
     calibrationPoints,
+    mousePos,
     apLocations,
     showApLabels,
     selectedApId,
@@ -328,6 +385,7 @@ export function FloorPlanCanvas({
       <canvas
         ref={canvasRef}
         onClick={handleCanvasClick}
+        onMouseMove={handleMouseMove}
         className={`border border-surface-border ${radius.md} ${
           interactive || calibrationMode || apPlacementMode ? "cursor-crosshair" : ""
         }`}

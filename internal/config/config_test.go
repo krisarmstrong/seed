@@ -954,6 +954,9 @@ func TestDefaultDisplayOptions(t *testing.T) {
 	if !cfg.DisplayOptions.ShowPublicIP {
 		t.Error("expected ShowPublicIP enabled by default")
 	}
+	if cfg.DisplayOptions.UnitSystem != "sae" {
+		t.Errorf("expected UnitSystem to be 'sae' by default, got %q", cfg.DisplayOptions.UnitSystem)
+	}
 }
 
 // ========== Rogue Detection Tests ==========

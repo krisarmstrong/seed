@@ -25,7 +25,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { SurveyConfig, SurveyType, WiFiBand, AdapterConfig } from "../../hooks/useSurvey";
-import { Radio, Settings, Wifi, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { Radio, Settings, Wifi, ChevronDown, ChevronUp, Info } from "lucide-react";
 import {
   radius,
   spacing,
@@ -105,43 +105,58 @@ function updateCustomChannelsForBand(
   }
 }
 
-/** Survey goal presets */
+/** Survey goal presets with multi-radio support */
 interface SurveyGoal {
   id: string;
-  labelKey: string;
+  titleKey: string;
   descriptionKey: string;
+  surveyTypes: SurveyType[];
+  radiosRequired: 1 | 2;
   config: Partial<SurveyConfig>;
-  recommendedType: SurveyType;
+  recommended?: boolean;
 }
 
 const SURVEY_GOALS: SurveyGoal[] = [
   {
     id: "coverage",
-    labelKey: "config.goals.coverage",
+    titleKey: "config.goals.coverage",
     descriptionKey: "config.goals.coverageDesc",
+    surveyTypes: ["passive"],
+    radiosRequired: 1,
     config: { bands: ["2.4", "5"] },
-    recommendedType: "passive",
   },
   {
-    id: "performance",
-    labelKey: "config.goals.performance",
-    descriptionKey: "config.goals.performanceDesc",
+    id: "connection",
+    titleKey: "config.goals.connection",
+    descriptionKey: "config.goals.connectionDesc",
+    surveyTypes: ["active"],
+    radiosRequired: 1,
+    config: { bands: ["2.4", "5"] },
+  },
+  {
+    id: "throughput",
+    titleKey: "config.goals.throughput",
+    descriptionKey: "config.goals.throughputDesc",
+    surveyTypes: ["throughput"],
+    radiosRequired: 1,
     config: { bands: ["5"] },
-    recommendedType: "throughput",
   },
   {
-    id: "comprehensive",
-    labelKey: "config.goals.comprehensive",
-    descriptionKey: "config.goals.comprehensiveDesc",
+    id: "complete",
+    titleKey: "config.goals.complete",
+    descriptionKey: "config.goals.completeDesc",
+    surveyTypes: ["passive", "active"],
+    radiosRequired: 2,
     config: { bands: ["2.4", "5", "6"] },
-    recommendedType: "passive",
+    recommended: true,
   },
   {
-    id: "troubleshoot",
-    labelKey: "config.goals.troubleshoot",
-    descriptionKey: "config.goals.troubleshootDesc",
-    config: { bands: ["2.4", "5"], minRssi: -80 },
-    recommendedType: "active",
+    id: "validation",
+    titleKey: "config.goals.validation",
+    descriptionKey: "config.goals.validationDesc",
+    surveyTypes: ["passive", "throughput"],
+    radiosRequired: 2,
+    config: { bands: ["2.4", "5", "6"] },
   },
 ];
 
@@ -237,9 +252,46 @@ export function SurveyConfigPanel({
     setSelectedGoal(goal.id);
     setSelectedBands(goal.config.bands as WiFiBand[]);
     onUpdate(goal.config);
-    if (onSurveyTypeChange && goal.recommendedType !== surveyType) {
-      onSurveyTypeChange(goal.recommendedType);
+
+    // Set primary survey type to first in the array
+    const primaryType = goal.surveyTypes[0];
+    if (onSurveyTypeChange && primaryType !== surveyType) {
+      onSurveyTypeChange(primaryType);
     }
+
+    // If 2 radios required and we have multiple adapters, set up dual config
+    if (goal.radiosRequired === 2 && availableAdapters.length >= 2) {
+      const newConfigs: AdapterConfig[] = [
+        {
+          interface: availableAdapters[0],
+          mode: goal.surveyTypes[0],
+          bands: goal.config.bands as WiFiBand[],
+        },
+        {
+          interface: availableAdapters[1],
+          mode: goal.surveyTypes[1],
+          bands: goal.config.bands as WiFiBand[],
+        },
+      ];
+      setAdapterConfigs(newConfigs);
+      onUpdate({ ...goal.config, adapters: newConfigs });
+    }
+  };
+
+  // Helper to format survey type for display
+  const formatSurveyTypes = (types: SurveyType[]): string => {
+    return types
+      .map((type) => {
+        switch (type) {
+          case "passive":
+            return t("settings.types.passive");
+          case "active":
+            return t("settings.types.active");
+          case "throughput":
+            return t("settings.types.throughput");
+        }
+      })
+      .join(" + ");
   };
 
   // Handle adapter mode change
@@ -301,31 +353,70 @@ export function SurveyConfigPanel({
     >
       <h3 className={`heading-3 ${spacing.margin.bottom.content}`}>{t("config.title")}</h3>
 
-      {/* Survey Goal Selection */}
+      {/* Survey Goal Selection - Goal-First Approach */}
       <div className={`${spacing.margin.bottom.content}`}>
-        <div className={`${layout.inline.default} ${spacing.margin.bottom.inline}`}>
-          <Lightbulb className={iconTokens.size.sm} />
-          <span className="body-small font-medium">{t("config.whatGoal")}</span>
+        <h4 className={`body-small font-medium ${spacing.margin.bottom.content}`}>
+          {t("config.whatGoal")}
+        </h4>
+        <div className={`${layout.stack.default}`}>
+          {SURVEY_GOALS.map((goal) => {
+            const isSelected = selectedGoal === goal.id;
+            return (
+              <label
+                key={goal.id}
+                className={`flex items-start gap-3 ${spacing.pad.sm} ${radius.md} border cursor-pointer transition-colors ${
+                  isSelected
+                    ? "bg-brand-primary/5 border-brand-primary"
+                    : "border-surface-border hover:bg-surface-hover"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="surveyGoal"
+                  checked={isSelected}
+                  onChange={() => handleGoalSelect(goal)}
+                  className="w-4 h-4 mt-0.5 accent-brand-primary"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="body-small font-medium">{t(goal.titleKey as never)}</span>
+                    {goal.recommended && (
+                      <span className="caption px-1.5 py-0.5 bg-status-success/10 text-status-success rounded">
+                        {t("config.recommended")}
+                      </span>
+                    )}
+                  </div>
+                  <p className={`caption text-text-muted ${spacing.margin.top.tight}`}>
+                    {t(goal.descriptionKey as never)}
+                  </p>
+                  <div
+                    className={`caption text-text-muted ${spacing.margin.top.tight} flex items-center gap-3`}
+                  >
+                    <span>{formatSurveyTypes(goal.surveyTypes)}</span>
+                    <span className="text-surface-border">|</span>
+                    <span>
+                      {goal.radiosRequired === 1 ? t("config.oneRadio") : t("config.twoRadios")}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            );
+          })}
         </div>
-        <div className="flex flex-wrap gap-2">
-          {SURVEY_GOALS.map((goal) => (
-            <button
-              key={goal.id}
-              onClick={() => handleGoalSelect(goal)}
-              className={`${button.size.sm} ${radius.md} border ${
-                selectedGoal === goal.id
-                  ? "bg-brand-primary text-text-inverse border-brand-primary"
-                  : "border-surface-border hover:bg-surface-hover"
-              }`}
-            >
-              {t(goal.labelKey as never)}
-            </button>
-          ))}
-        </div>
-        {selectedGoal && (
-          <p className={`caption text-text-muted ${spacing.margin.top.tight}`}>
-            {t((SURVEY_GOALS.find((g) => g.id === selectedGoal)?.descriptionKey || "") as never)}
-          </p>
+
+        {/* Multi-Radio Notice */}
+        {selectedGoal && SURVEY_GOALS.find((g) => g.id === selectedGoal)?.radiosRequired === 2 && (
+          <div
+            className={`${layout.inline.default} bg-status-info/10 border border-status-info/20 ${radius.md} ${spacing.pad.sm} ${spacing.margin.top.content}`}
+          >
+            <Info className={`${iconTokens.size.sm} text-status-info flex-shrink-0`} />
+            <div>
+              <div className="body-small text-status-info font-medium">
+                {t("config.twoRadiosRequired")}
+              </div>
+              <p className="caption text-text-muted">{t("config.twoRadiosDesc")}</p>
+            </div>
+          </div>
         )}
       </div>
 

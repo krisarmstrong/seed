@@ -90,7 +90,7 @@
     "environmentType": "Tipo de Entorno",
     "propagationRadius": "Radio de Propagación",
     "recommendedSamples": "Recomendado: {{count}} puntos de muestra para cobertura completa",
-    "coveragePerSample": "Cada muestra cubre aproximadamente {{area}} m²"
+    "coveragePerSample": "Cada muestra cubre aproximadamente {{area}}"
   },
   "environments": {
     "denseOffice": "Oficina Densa",
@@ -119,15 +119,22 @@
     "title": "Configuración de Escaneo",
     "whatGoal": "¿Cuál es el objetivo de su encuesta?",
     "goals": {
-      "coverage": "Verificar Cobertura",
-      "coverageDesc": "Mapeo rápido de señal en bandas de 2.4 GHz y 5 GHz. Bueno para validación básica de cobertura.",
-      "performance": "Validar Rendimiento",
-      "performanceDesc": "Pruebas de rendimiento en banda de 5 GHz con iperf3 para medición de ancho de banda.",
-      "comprehensive": "Encuesta Completa",
-      "comprehensiveDesc": "Escaneo de espectro completo en todas las bandas (2.4/5/6 GHz). Recomendado para encuestas detalladas.",
-      "troubleshoot": "Solucionar Problemas",
-      "troubleshootDesc": "Monitoreo activo de su conexión con detección de roaming. Ayuda a identificar áreas problemáticas."
+      "coverage": "Cobertura e Intensidad de Señal",
+      "coverageDesc": "Ver dónde llega el WiFi y medir la calidad de señal. Ideal para evaluación inicial del sitio.",
+      "connection": "Calidad de Conexión",
+      "connectionDesc": "Probar velocidades reales de conexión y comportamiento de roaming. Requiere conectarse a la red.",
+      "throughput": "Rendimiento Real",
+      "throughputDesc": "Medir velocidades reales de transferencia de datos con iperf3. Requiere servidor iperf3.",
+      "complete": "Análisis Completo",
+      "completeDesc": "Cobertura más calidad de conexión en una sola encuesta. Ideal para nuevas implementaciones.",
+      "validation": "Validación de Rendimiento",
+      "validationDesc": "Cobertura más pruebas reales de rendimiento. Ideal para verificación de rendimiento."
     },
+    "recommended": "Recomendado",
+    "oneRadio": "1 radio",
+    "twoRadios": "2 radios",
+    "twoRadiosRequired": "Se requieren dos adaptadores WiFi",
+    "twoRadiosDesc": "Este tipo de encuesta usa dos radios simultáneamente - uno para escaneo pasivo y otro para pruebas activas. Asegúrese de tener dos adaptadores WiFi conectados.",
     "bandsToScan": "Bandas a Escanear",
     "channelSelection": "Selección de Canales",
     "allChannels": "Todos los Canales",
