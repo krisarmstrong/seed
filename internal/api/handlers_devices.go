@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // ============================================================================
@@ -19,6 +20,7 @@ import (
 
 // handleDevices returns discovered devices and status.
 func (s *Server) handleDevices(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -37,11 +39,12 @@ func (s *Server) handleDevices(w http.ResponseWriter, r *http.Request) {
 		"status":  status,
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // handleDevicesScan triggers a network device scan.
 func (s *Server) handleDevicesScan(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -54,7 +57,7 @@ func (s *Server) handleDevicesScan(w http.ResponseWriter, r *http.Request) {
 
 	// Check if scan is already in progress
 	if s.deviceDiscovery.IsScanning() {
-		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+		sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 			"message":  "Scan already in progress",
 			"scanning": true,
 		})
@@ -62,16 +65,23 @@ func (s *Server) handleDevicesScan(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Start scan in background
-	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	go func(reqCtx context.Context) {
+		logger := logging.FromContext(reqCtx)
+		ctx, cancel := context.WithTimeout(reqCtx, 2*time.Minute)
 		defer cancel()
 
+		logger.Info("Starting background device scan")
+		start := time.Now()
+		defer func() {
+			logger.Info("Background device scan finished", "duration_ms", time.Since(start).Milliseconds())
+		}()
+
 		if err := s.deviceDiscovery.Scan(ctx); err != nil {
-			slog.Error("Device scan error", "error", err)
+			logger.Error("Device scan error", "error", err)
 		}
 
 		// Auto-scan for vulnerabilities if enabled
-		s.postScanVulnerabilityCheck()
+		s.postScanVulnerabilityCheck(logger)
 
 		// Notify WebSocket clients when scan completes
 		s.wsHub.Broadcast(Message{
@@ -81,9 +91,9 @@ func (s *Server) handleDevicesScan(w http.ResponseWriter, r *http.Request) {
 				"timestamp":   time.Now().Format(time.RFC3339),
 			},
 		})
-	}()
+	}(r.Context())
 
-	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 		"message":  "Scan started",
 		"scanning": true,
 	})
@@ -91,13 +101,13 @@ func (s *Server) handleDevicesScan(w http.ResponseWriter, r *http.Request) {
 
 // postScanVulnerabilityCheck runs vulnerability scans after device discovery if auto-scan is enabled.
 // This method extracts business logic from the handler for better separation of concerns.
-func (s *Server) postScanVulnerabilityCheck() {
+func (s *Server) postScanVulnerabilityCheck(logger *slog.Logger) {
 	if s.vulnScanner == nil || !s.config.Security.VulnerabilityScanning.Enabled ||
 		!s.config.Security.VulnerabilityScanning.AutoScan {
 		return
 	}
 
-	slog.Info("Auto-scan: triggering vulnerability scan", "device_count", s.deviceDiscovery.Count())
+	logger.Info("Auto-scan: triggering vulnerability scan", "device_count", s.deviceDiscovery.Count())
 	devices := s.deviceDiscovery.GetDevices()
 
 	vulnCtx, vulnCancel := context.WithTimeout(context.Background(), 5*time.Minute)
@@ -105,7 +115,7 @@ func (s *Server) postScanVulnerabilityCheck() {
 
 	for _, device := range devices {
 		if _, err := s.vulnScanner.ScanDevice(vulnCtx, device); err != nil {
-			slog.Warn("Auto vulnerability scan failed", "device_ip", device.IP, "error", err)
+			logger.Warn("Auto vulnerability scan failed", "device_ip", device.IP, "error", err)
 		}
 	}
 
@@ -115,11 +125,12 @@ func (s *Server) postScanVulnerabilityCheck() {
 		"results": results,
 		"count":   len(results),
 	})
-	slog.Info("Auto-scan: completed vulnerability scan", "vulnerable_devices", len(results))
+	logger.Info("Auto-scan: completed vulnerability scan", "vulnerable_devices", len(results))
 }
 
 // handleDevicesStatus returns the current device discovery status.
 func (s *Server) handleDevicesStatus(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -131,7 +142,7 @@ func (s *Server) handleDevicesStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := s.deviceDiscovery.GetStatus()
-	sendJSONResponse(w, http.StatusOK, status)
+	sendJSONResponse(w, logger, http.StatusOK, status)
 }
 
 // NetworkDiscoverySettingsResponse represents network discovery settings.
@@ -157,7 +168,8 @@ func (s *Server) handleDevicesSettings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) getDevicesSettings(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) getDevicesSettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	resp := NetworkDiscoverySettingsResponse{
 		Enabled:        s.config.NetworkDiscovery.Enabled,
 		ARPScanWorkers: s.config.NetworkDiscovery.ARPScanWorkers,
@@ -168,10 +180,11 @@ func (s *Server) getDevicesSettings(w http.ResponseWriter, _ *http.Request) {
 		OUIFilePath:    s.config.NetworkDiscovery.OUIFilePath,
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 func (s *Server) updateDevicesSettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #693)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
@@ -200,10 +213,10 @@ func (s *Server) updateDevicesSettings(w http.ResponseWriter, r *http.Request) {
 
 	// Save config to file
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "Network discovery settings updated",
 	})
@@ -239,7 +252,8 @@ func (s *Server) handleDevicesSubnets(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) getDevicesSubnets(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) getDevicesSubnets(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	subnets := make([]SubnetResponse, 0, len(s.config.NetworkDiscovery.AdditionalSubnets))
 	for _, subnet := range s.config.NetworkDiscovery.AdditionalSubnets {
 		subnets = append(subnets, SubnetResponse{
@@ -249,10 +263,11 @@ func (s *Server) getDevicesSubnets(w http.ResponseWriter, _ *http.Request) {
 		})
 	}
 
-	sendJSONResponse(w, http.StatusOK, subnets)
+	sendJSONResponse(w, logger, http.StatusOK, subnets)
 }
 
 func (s *Server) addDevicesSubnet(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #693)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
@@ -289,20 +304,21 @@ func (s *Server) addDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Update the device discovery scanner
-	s.syncDeviceDiscoverySubnets()
+	s.syncDeviceDiscoverySubnets(logger)
 
 	// Save config to file
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "Subnet added",
 	})
 }
 
 func (s *Server) updateDevicesSubnet(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #693)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
@@ -335,20 +351,21 @@ func (s *Server) updateDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update the device discovery scanner
-	s.syncDeviceDiscoverySubnets()
+	s.syncDeviceDiscoverySubnets(logger)
 
 	// Save config to file
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "Subnet updated",
 	})
 }
 
 func (s *Server) deleteDevicesSubnet(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	cidr := r.URL.Query().Get("cidr")
 	if cidr == "" {
 		http.Error(w, "CIDR parameter required", http.StatusBadRequest)
@@ -374,14 +391,14 @@ func (s *Server) deleteDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 	s.config.NetworkDiscovery.AdditionalSubnets = newSubnets
 
 	// Update the device discovery scanner
-	s.syncDeviceDiscoverySubnets()
+	s.syncDeviceDiscoverySubnets(logger)
 
 	// Save config to file
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "Subnet deleted",
 	})
@@ -389,7 +406,7 @@ func (s *Server) deleteDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 
 // syncDeviceDiscoverySubnets synchronizes enabled subnets from config to the device discovery scanner.
 // This helper method eliminates DRY violation across add/update/delete subnet handlers.
-func (s *Server) syncDeviceDiscoverySubnets() {
+func (s *Server) syncDeviceDiscoverySubnets(logger *slog.Logger) {
 	if s.deviceDiscovery == nil {
 		return
 	}
@@ -402,12 +419,13 @@ func (s *Server) syncDeviceDiscoverySubnets() {
 	}
 
 	if err := s.deviceDiscovery.SetAdditionalSubnets(enabledCIDRs); err != nil {
-		slog.Warn("Failed to update scanner subnets", "error", err)
+		logger.Warn("Failed to update scanner subnets", "error", err)
 	}
 }
 
 // handlePublicIP returns the public IPv4 and IPv6 addresses.
 func (s *Server) handlePublicIP(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if s.publicipChecker == nil {
 		http.Error(w, "Public IP checker not available", http.StatusServiceUnavailable)
 		return
@@ -417,12 +435,12 @@ func (s *Server) handlePublicIP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		// Return cached result or fetch if cache expired
 		result := s.publicipChecker.GetPublicIP(r.Context())
-		sendJSONResponse(w, http.StatusOK, result)
+		sendJSONResponse(w, logger, http.StatusOK, result)
 
 	case http.MethodPost:
 		// Force refresh
 		result := s.publicipChecker.Refresh(r.Context())
-		sendJSONResponse(w, http.StatusOK, result)
+		sendJSONResponse(w, logger, http.StatusOK, result)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

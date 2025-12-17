@@ -214,7 +214,20 @@ export function useNetworkData(options: UseNetworkDataOptions = {}) {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch network data";
       setError(message);
-      logger.error(LogComponents.NETWORK, "Failed to refresh network data", err);
+      logger.error(LogComponents.NETWORK, "Failed to refresh network data", err, {
+        endpoints: [
+          "/api/link",
+          "/api/interfaces",
+          "/api/interface",
+          "/api/ipconfig",
+          "/api/gateway",
+          "/api/dns",
+          "/api/vlan",
+          "/api/publicip",
+          "/api/system/health",
+          "/api/discovery",
+        ],
+      });
     } finally {
       setIsLoading(false);
     }
@@ -229,7 +242,9 @@ export function useNetworkData(options: UseNetworkDataOptions = {}) {
       setNetworkData((prev) => ({ ...prev, linkStatus: data }));
       return data;
     } catch (err) {
-      logger.error(LogComponents.NETWORK, "Failed to refresh link status", err);
+      logger.error(LogComponents.NETWORK, "Failed to refresh link status", err, {
+        endpoint: "/api/link",
+      });
       return null;
     }
   }, []);
@@ -243,7 +258,9 @@ export function useNetworkData(options: UseNetworkDataOptions = {}) {
       setNetworkData((prev) => ({ ...prev, gateway: data }));
       return data;
     } catch (err) {
-      logger.error(LogComponents.GATEWAY, "Failed to refresh gateway", err);
+      logger.error(LogComponents.GATEWAY, "Failed to refresh gateway", err, {
+        endpoint: "/api/gateway",
+      });
       return null;
     }
   }, []);
@@ -257,7 +274,9 @@ export function useNetworkData(options: UseNetworkDataOptions = {}) {
       setNetworkData((prev) => ({ ...prev, publicIP: data }));
       return data;
     } catch (err) {
-      logger.error(LogComponents.PUBLICIP, "Failed to refresh public IP", err);
+      logger.error(LogComponents.PUBLICIP, "Failed to refresh public IP", err, {
+        endpoint: "/api/publicip",
+      });
       return null;
     }
   }, []);

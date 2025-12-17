@@ -10,6 +10,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/survey"
 )
 
@@ -43,6 +44,7 @@ func isValidSurveyID(id string) bool {
 }
 
 func (s *Server) createSurvey(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #682)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
@@ -65,20 +67,22 @@ func (s *Server) createSurvey(w http.ResponseWriter, r *http.Request) {
 
 	newSurvey, err := s.surveyManager.CreateSurvey(req.Name, req.Description, req.Interface, survey.Type(req.SurveyType))
 	if err != nil {
-		slog.Error("Failed to create survey", "error", err)
+		logger.Error("Failed to create survey", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, newSurvey)
+	sendJSONResponse(w, logger, http.StatusOK, newSurvey)
 }
 
-func (s *Server) listSurveys(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) listSurveys(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	surveys := s.surveyManager.ListSurveys()
-	sendJSONResponse(w, http.StatusOK, surveys)
+	sendJSONResponse(w, logger, http.StatusOK, surveys)
 }
 
 func (s *Server) getSurvey(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
 		http.Error(w, "Invalid survey ID", http.StatusBadRequest)
@@ -91,10 +95,11 @@ func (s *Server) getSurvey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, surveyData)
+	sendJSONResponse(w, logger, http.StatusOK, surveyData)
 }
 
 func (s *Server) deleteSurvey(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
 		http.Error(w, "Invalid survey ID", http.StatusBadRequest)
@@ -106,7 +111,7 @@ func (s *Server) deleteSurvey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{"status": "deleted"})
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{"status": "deleted"})
 }
 
 // surveyStateAction is a function type for survey state transitions.
@@ -114,7 +119,7 @@ type surveyStateAction func(id string) error
 
 // handleSurveyStateChange is a helper that handles survey state transitions (start/pause/complete).
 // It extracts common logic to avoid code duplication.
-func (s *Server) handleSurveyStateChange(w http.ResponseWriter, r *http.Request, action surveyStateAction) {
+func (s *Server) handleSurveyStateChange(w http.ResponseWriter, r *http.Request, logger *slog.Logger, action surveyStateAction) {
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
 		http.Error(w, "Invalid survey ID", http.StatusBadRequest)
@@ -132,19 +137,22 @@ func (s *Server) handleSurveyStateChange(w http.ResponseWriter, r *http.Request,
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	sendJSONResponse(w, http.StatusOK, updatedSurvey)
+	sendJSONResponse(w, logger, http.StatusOK, updatedSurvey)
 }
 
 func (s *Server) startSurvey(w http.ResponseWriter, r *http.Request) {
-	s.handleSurveyStateChange(w, r, s.surveyManager.StartSurvey)
+	logger := logging.FromContext(r.Context())
+	s.handleSurveyStateChange(w, r, logger, s.surveyManager.StartSurvey)
 }
 
 func (s *Server) pauseSurvey(w http.ResponseWriter, r *http.Request) {
-	s.handleSurveyStateChange(w, r, s.surveyManager.PauseSurvey)
+	logger := logging.FromContext(r.Context())
+	s.handleSurveyStateChange(w, r, logger, s.surveyManager.PauseSurvey)
 }
 
 func (s *Server) completeSurvey(w http.ResponseWriter, r *http.Request) {
-	s.handleSurveyStateChange(w, r, s.surveyManager.CompleteSurvey)
+	logger := logging.FromContext(r.Context())
+	s.handleSurveyStateChange(w, r, logger, s.surveyManager.CompleteSurvey)
 }
 
 // AddSampleRequest contains a WiFi signal sample measurement for a survey location.
@@ -155,6 +163,7 @@ type AddSampleRequest struct {
 }
 
 func (s *Server) addSurveySample(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
 		http.Error(w, "Invalid survey ID", http.StatusBadRequest)
@@ -178,13 +187,13 @@ func (s *Server) addSurveySample(w http.ResponseWriter, r *http.Request) {
 			// Re-marshal and unmarshal to get the typed PassiveSample
 			dataBytes, err := json.Marshal(dataMap)
 			if err != nil {
-				slog.Warn("Failed to marshal sample data for type detection",
+				logger.Warn("Failed to marshal sample data for type detection",
 					"survey_id", id,
 					"error", err)
 			} else {
 				var passiveSample survey.PassiveSample
 				if err := json.Unmarshal(dataBytes, &passiveSample); err != nil {
-					slog.Debug("Sample data is not PassiveSample type, using raw data",
+					logger.Debug("Sample data is not PassiveSample type, using raw data",
 						"survey_id", id,
 						"error", err)
 				} else {
@@ -197,13 +206,13 @@ func (s *Server) addSurveySample(w http.ResponseWriter, r *http.Request) {
 			// Check if this is an ActiveSample
 			dataBytes, err := json.Marshal(dataMap)
 			if err != nil {
-				slog.Warn("Failed to marshal active sample data",
+				logger.Warn("Failed to marshal active sample data",
 					"survey_id", id,
 					"error", err)
 			} else {
 				var activeSample survey.ActiveSample
 				if err := json.Unmarshal(dataBytes, &activeSample); err != nil {
-					slog.Debug("Sample data is not ActiveSample type, using raw data",
+					logger.Debug("Sample data is not ActiveSample type, using raw data",
 						"survey_id", id,
 						"error", err)
 				} else {
@@ -218,7 +227,7 @@ func (s *Server) addSurveySample(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{"status": "sample added"})
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{"status": "sample added"})
 }
 
 // UpdateFloorPlanRequest contains floor plan image and dimension parameters.
@@ -230,6 +239,7 @@ type UpdateFloorPlanRequest struct {
 }
 
 func (s *Server) updateSurveyFloorPlan(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
 		http.Error(w, "Invalid survey ID", http.StatusBadRequest)
@@ -264,7 +274,7 @@ func (s *Server) updateSurveyFloorPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, updatedSurvey)
+	sendJSONResponse(w, logger, http.StatusOK, updatedSurvey)
 }
 
 // UpdateSurveySettingsRequest is the request body for updating survey settings.
@@ -276,6 +286,7 @@ type UpdateSurveySettingsRequest struct {
 
 // updateSurveySettings handles PUT /api/survey/settings?id=xxx.
 func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPut {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -311,13 +322,14 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, settingsUpdatedSurvey)
+	sendJSONResponse(w, logger, http.StatusOK, settingsUpdatedSurvey)
 }
 
 // importAirMapper handles POST /api/survey/import/airmapper.
 // It accepts a multipart form with an .amp file and returns parsed calibration,
 // floor plan, and pass/fail criteria data.
 func (s *Server) importAirMapper(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -368,12 +380,13 @@ func (s *Server) importAirMapper(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, result)
+	sendJSONResponse(w, logger, http.StatusOK, result)
 }
 
 // getSurveyDeadZones handles GET /api/survey/dead-zones?id=xxx&threshold=-75.
 // Analyzes the survey and detects areas with poor WiFi coverage.
 func (s *Server) getSurveyDeadZones(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -405,7 +418,7 @@ func (s *Server) getSurveyDeadZones(w http.ResponseWriter, r *http.Request) {
 
 	analysis, err := s.surveyManager.DetectDeadZones(id, threshold)
 	if err != nil {
-		slog.Error("Failed to detect dead zones",
+		logger.Error("Failed to detect dead zones",
 			"survey_id", id,
 			"threshold", threshold,
 			"error", err)
@@ -413,7 +426,7 @@ func (s *Server) getSurveyDeadZones(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, analysis)
+	sendJSONResponse(w, logger, http.StatusOK, analysis)
 }
 
 // parseHeatmapConfig parses heatmap configuration from query parameters.
@@ -454,6 +467,7 @@ func parseHeatmapConfig(r *http.Request) survey.HeatmapConfig {
 // getSurveyHeatmap handles GET /api/survey/heatmap?id=xxx&type=rssi.
 // Generates a heatmap visualization from survey sample data.
 func (s *Server) getSurveyHeatmap(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -469,7 +483,7 @@ func (s *Server) getSurveyHeatmap(w http.ResponseWriter, r *http.Request) {
 
 	result, err := s.surveyManager.GenerateHeatmap(id, config)
 	if err != nil {
-		slog.Error("Failed to generate heatmap",
+		logger.Error("Failed to generate heatmap",
 			"survey_id", id,
 			"type", config.Type,
 			"error", err)
@@ -483,10 +497,10 @@ func (s *Server) getSurveyHeatmap(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"heatmap-%s-%s.png\"", id[:8], config.Type))
 		w.WriteHeader(http.StatusOK)
 		if _, err := w.Write(result.Image); err != nil {
-			slog.Error("Failed to write heatmap image", "error", err)
+			logger.Error("Failed to write heatmap image", "error", err)
 		}
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, result)
+	sendJSONResponse(w, logger, http.StatusOK, result)
 }

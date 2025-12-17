@@ -14,6 +14,7 @@ import (
 	"unicode"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/krisarmstrong/seed/internal/logging"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -304,8 +305,9 @@ func (m *Manager) Middleware(next http.Handler) http.Handler {
 		}
 
 		// Add claims to request context
-		r.Header.Set("X-Username", claims.Username)
-		next.ServeHTTP(w, r)
+		ctx := logging.WithUserID(r.Context(), claims.Username)
+		r.Header.Set("X-Username", claims.Username) // Keep this for other potential uses
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

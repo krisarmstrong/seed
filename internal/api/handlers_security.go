@@ -12,6 +12,7 @@ import (
 	"github.com/krisarmstrong/seed/internal/config"
 	"github.com/krisarmstrong/seed/internal/dhcp"
 	"github.com/krisarmstrong/seed/internal/gateway"
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // passwordPlaceholder is used to mask sensitive values in API responses.
@@ -46,6 +47,7 @@ type RogueDHCPConfigResponse struct {
 
 // handleRogueDHCP starts/stops rogue DHCP detection (POST) or gets status (GET).
 func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	switch r.Method {
 	case http.MethodGet:
 		// Get current status
@@ -53,7 +55,7 @@ func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
 			Enabled: s.config.DHCP.RogueDetection.Enabled,
 			Running: s.rogueDetector.IsRunning(),
 		}
-		sendJSONResponse(w, http.StatusOK, resp)
+		sendJSONResponse(w, logger, http.StatusOK, resp)
 
 	case http.MethodPost:
 		// Limit request body size to prevent DoS attacks (fixes #682)
@@ -76,40 +78,40 @@ func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
 		case "start":
 			if !s.config.DHCP.RogueDetection.Enabled {
 				resp.Error = "Rogue DHCP detection is disabled in configuration"
-				sendJSONResponse(w, http.StatusBadRequest, resp)
+				sendJSONResponse(w, logger, http.StatusBadRequest, resp)
 				return
 			}
 			if s.rogueDetector.IsRunning() {
 				resp.Running = true
 				resp.Message = "Rogue DHCP detector already running"
-				sendJSONResponse(w, http.StatusOK, resp)
+				sendJSONResponse(w, logger, http.StatusOK, resp)
 				return
 			}
 			if err := s.rogueDetector.Start(); err != nil {
-				slog.Error("Failed to start rogue DHCP detector", "error", err)
+				logger.Error("Failed to start rogue DHCP detector", "error", err)
 				resp.Error = "internal server error"
-				sendJSONResponse(w, http.StatusInternalServerError, resp)
+				sendJSONResponse(w, logger, http.StatusInternalServerError, resp)
 				return
 			}
 			resp.Running = true
 			resp.Message = "Rogue DHCP detector started"
-			sendJSONResponse(w, http.StatusOK, resp)
+			sendJSONResponse(w, logger, http.StatusOK, resp)
 
 		case "stop":
 			if !s.rogueDetector.IsRunning() {
 				resp.Running = false
 				resp.Message = "Rogue DHCP detector not running"
-				sendJSONResponse(w, http.StatusOK, resp)
+				sendJSONResponse(w, logger, http.StatusOK, resp)
 				return
 			}
 			if err := s.rogueDetector.Stop(); err != nil {
 				resp.Error = err.Error()
-				sendJSONResponse(w, http.StatusInternalServerError, resp)
+				sendJSONResponse(w, logger, http.StatusInternalServerError, resp)
 				return
 			}
 			resp.Running = false
 			resp.Message = "Rogue DHCP detector stopped"
-			sendJSONResponse(w, http.StatusOK, resp)
+			sendJSONResponse(w, logger, http.StatusOK, resp)
 
 		default:
 			http.Error(w, "Invalid action. Use 'start' or 'stop'", http.StatusBadRequest)
@@ -122,6 +124,7 @@ func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
 
 // handleRogueDHCPServers returns detected DHCP servers (GET) or clears the list (DELETE).
 func (s *Server) handleRogueDHCPServers(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	switch r.Method {
 	case http.MethodGet:
 		// Get all detected servers
@@ -133,12 +136,12 @@ func (s *Server) handleRogueDHCPServers(w http.ResponseWriter, r *http.Request) 
 			RogueCount:      len(rogues),
 			AuthorizedCount: len(servers) - len(rogues),
 		}
-		sendJSONResponse(w, http.StatusOK, resp)
+		sendJSONResponse(w, logger, http.StatusOK, resp)
 
 	case http.MethodDelete:
 		// Clear detected servers list
 		s.rogueDetector.ClearDetectedServers()
-		sendJSONResponse(w, http.StatusOK, map[string]string{
+		sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 			"message": "Detected servers list cleared",
 		})
 
@@ -149,6 +152,7 @@ func (s *Server) handleRogueDHCPServers(w http.ResponseWriter, r *http.Request) 
 
 // handleRogueDHCPConfig gets (GET) or updates (PUT) the rogue DHCP detector configuration.
 func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	switch r.Method {
 	case http.MethodGet:
 		// Get current configuration
@@ -159,7 +163,7 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 			AlertOnDetection: rogueConfig.AlertOnDetection,
 			Interface:        rogueConfig.Interface,
 		}
-		sendJSONResponse(w, http.StatusOK, resp)
+		sendJSONResponse(w, logger, http.StatusOK, resp)
 
 	case http.MethodPut:
 		// Limit request body size to prevent DoS attacks (fixes #682)
@@ -193,7 +197,7 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 
 		// Save config
 		if err := s.config.Save(s.configPath); err != nil {
-			slog.Warn("Failed to save config", "error", err)
+			logger.Warn("Failed to save config", "error", err)
 		}
 
 		// Return updated config
@@ -204,7 +208,7 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 			AlertOnDetection: rogueConfig.AlertOnDetection,
 			Interface:        rogueConfig.Interface,
 		}
-		sendJSONResponse(w, http.StatusOK, resp)
+		sendJSONResponse(w, logger, http.StatusOK, resp)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -228,6 +232,7 @@ type GatewayResponse struct {
 
 // handleGateway performs gateway ping testing and returns results.
 func (s *Server) handleGateway(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -276,7 +281,7 @@ func (s *Server) handleGateway(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // VLANResponse represents the VLAN information for the API.
@@ -314,7 +319,8 @@ func (s *Server) handleSNMPSettings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) getSNMPSettings(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) getSNMPSettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	s.config.RLock()
 	defer s.config.RUnlock()
 
@@ -353,10 +359,11 @@ func (s *Server) getSNMPSettings(w http.ResponseWriter, _ *http.Request) {
 		Port:          s.config.SNMP.Port,
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #682)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
 
@@ -423,10 +430,10 @@ func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
 
 	// Save config (passwords are now encrypted)
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "SNMP settings updated",
 	})

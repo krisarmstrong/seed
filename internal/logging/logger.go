@@ -20,7 +20,7 @@ import (
 //nolint:revive // stuttering: keeping name for backward compatibility.
 type LoggingConfig struct {
 	Level      string `yaml:"level"`       // DEBUG, INFO, WARN, ERROR (default: INFO)
-	Format     string `yaml:"format"`      // text or json (default: text)
+	Format     string `yaml:"format"`      // text or json (default: json)
 	AddSource  bool   `yaml:"add_source"`  // Include file:line in logs
 	File       string `yaml:"file"`        // Log file path (empty = stdout only)
 	MaxSize    int    `yaml:"max_size"`    // Max MB per log file before rotation
@@ -33,7 +33,7 @@ type LoggingConfig struct {
 func DefaultLoggingConfig() *LoggingConfig {
 	return &LoggingConfig{
 		Level:      "info",
-		Format:     "text",
+		Format:     "json",
 		AddSource:  false,
 		File:       "",
 		MaxSize:    100,
@@ -49,6 +49,8 @@ type contextKey string
 const (
 	// requestIDKey is the context key for request IDs.
 	requestIDKey contextKey = "request_id"
+	// userIDKey is the context key for user IDs.
+	userIDKey contextKey = "user_id"
 )
 
 var (
@@ -155,13 +157,28 @@ func RequestIDFromContext(ctx context.Context) string {
 	return ""
 }
 
-// FromContext returns a logger with the request ID from the context (if present).
+// WithUserID returns a new context with the given user ID.
+func WithUserID(ctx context.Context, userID string) context.Context {
+	return context.WithValue(ctx, userIDKey, userID)
+}
+
+// UserIDFromContext extracts the user ID from the context.
+func UserIDFromContext(ctx context.Context) string {
+	if id, ok := ctx.Value(userIDKey).(string); ok {
+		return id
+	}
+	return ""
+}
+
+// FromContext returns a logger with contextual information (request ID, user ID).
 // This is the preferred way to get a logger in HTTP handlers.
 func FromContext(ctx context.Context) *slog.Logger {
 	logger := GetLogger()
-
 	if requestID := RequestIDFromContext(ctx); requestID != "" {
-		return logger.With("request_id", requestID)
+		logger = logger.With("request_id", requestID)
+	}
+	if userID := UserIDFromContext(ctx); userID != "" {
+		logger = logger.With("user_id", userID)
 	}
 	return logger
 }

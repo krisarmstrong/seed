@@ -108,7 +108,9 @@ export function useDevices() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch devices";
       setError(message);
-      logger.error(LogComponents.DEVICES, "Failed to fetch devices", err);
+      logger.error(LogComponents.DEVICES, "Failed to fetch devices", err, {
+        endpoint: "/api/devices",
+      });
       return [];
     }
   }, []);
@@ -121,11 +123,15 @@ export function useDevices() {
       setError(null);
       setIsScanning(true);
       const data = await api.post<ScanResponse>("/api/devices/scan");
+      setIsScanning(Boolean(data.scanning));
       return data.scanning;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to start scan";
       setError(message);
-      logger.error(LogComponents.DEVICES, "Failed to trigger scan", err);
+      setIsScanning(false);
+      logger.error(LogComponents.DEVICES, "Failed to trigger scan", err, {
+        endpoint: "/api/devices/scan",
+      });
       return false;
     }
   }, []);
@@ -140,7 +146,9 @@ export function useDevices() {
       setIsScanning(data.scanning);
       return data;
     } catch (err) {
-      logger.error(LogComponents.DEVICES, "Failed to fetch status", err);
+      logger.error(LogComponents.DEVICES, "Failed to fetch status", err, {
+        endpoint: "/api/devices/status",
+      });
       return null;
     }
   }, []);
@@ -152,7 +160,9 @@ export function useDevices() {
     try {
       return await api.get<DeviceDiscoverySettings>("/api/devices/settings");
     } catch (err) {
-      logger.error(LogComponents.DEVICES, "Failed to fetch settings", err);
+      logger.error(LogComponents.DEVICES, "Failed to fetch settings", err, {
+        endpoint: "/api/devices/settings",
+      });
       return null;
     }
   }, []);
@@ -166,7 +176,10 @@ export function useDevices() {
         await api.put("/api/devices/settings", settings);
         return true;
       } catch (err) {
-        logger.error(LogComponents.DEVICES, "Failed to update settings", err);
+        logger.error(LogComponents.DEVICES, "Failed to update settings", err, {
+          endpoint: "/api/devices/settings",
+          updates: settings,
+        });
         return false;
       }
     },
@@ -180,7 +193,9 @@ export function useDevices() {
     try {
       return await api.get<SubnetConfig[]>("/api/devices/subnets");
     } catch (err) {
-      logger.error(LogComponents.DEVICES, "Failed to fetch subnets", err);
+      logger.error(LogComponents.DEVICES, "Failed to fetch subnets", err, {
+        endpoint: "/api/devices/subnets",
+      });
       return [];
     }
   }, []);
@@ -193,7 +208,10 @@ export function useDevices() {
       await api.post("/api/devices/subnets", subnet);
       return true;
     } catch (err) {
-      logger.error(LogComponents.DEVICES, "Failed to add subnet", err);
+      logger.error(LogComponents.DEVICES, "Failed to add subnet", err, {
+        endpoint: "/api/devices/subnets",
+        cidr: subnet.cidr,
+      });
       return false;
     }
   }, []);
@@ -206,7 +224,10 @@ export function useDevices() {
       await api.put("/api/devices/subnets", subnet);
       return true;
     } catch (err) {
-      logger.error(LogComponents.DEVICES, "Failed to update subnet", err);
+      logger.error(LogComponents.DEVICES, "Failed to update subnet", err, {
+        endpoint: "/api/devices/subnets",
+        cidr: subnet.cidr,
+      });
       return false;
     }
   }, []);
@@ -219,7 +240,10 @@ export function useDevices() {
       await api.delete(`/api/devices/subnets?cidr=${encodeURIComponent(cidr)}`);
       return true;
     } catch (err) {
-      logger.error(LogComponents.DEVICES, "Failed to delete subnet", err);
+      logger.error(LogComponents.DEVICES, "Failed to delete subnet", err, {
+        endpoint: "/api/devices/subnets",
+        cidr,
+      });
       return false;
     }
   }, []);
