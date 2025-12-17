@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/discovery"
+	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/validation"
 )
 
@@ -77,6 +78,7 @@ func validateTCPProbePorts(req *TCPProbeRequest) ([]int, error) {
 
 // handleTCPProbe handles TCP port probe requests.
 func (s *Server) handleTCPProbe(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -112,7 +114,7 @@ func (s *Server) handleTCPProbe(w http.ResponseWriter, r *http.Request) {
 	// Create prober
 	prober, err := discovery.NewTCPProber(timeout)
 	if err != nil {
-		slog.Error("Failed to create TCP prober", "error", err)
+		logger.Error("Failed to create TCP prober", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -129,7 +131,7 @@ func (s *Server) handleTCPProbe(w http.ResponseWriter, r *http.Request) {
 		Results: results,
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // TracerouteRequest represents a traceroute request.
@@ -143,6 +145,7 @@ type TracerouteRequest struct {
 
 // handleTraceroute handles traceroute requests.
 func (s *Server) handleTraceroute(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -182,7 +185,7 @@ func (s *Server) handleTraceroute(w http.ResponseWriter, r *http.Request) {
 		result = tracer.TraceTCP(ctx, req.Target, port)
 	}
 
-	sendJSONResponse(w, http.StatusOK, result)
+	sendJSONResponse(w, logger, http.StatusOK, result)
 }
 
 func validateTracerouteTarget(target string) string {
@@ -239,6 +242,7 @@ type PortScanRequest struct {
 
 // handlePortScan handles port scanning with service detection.
 func (s *Server) handlePortScan(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -249,20 +253,20 @@ func (s *Server) handlePortScan(w http.ResponseWriter, r *http.Request) {
 
 	var req PortScanRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		sendJSONResponse(w, http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		sendJSONResponse(w, logger, http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 		return
 	}
 
 	// Validate target
 	if err := validation.ValidateServerAddress(req.Target); err != nil {
-		sendJSONResponse(w, http.StatusBadRequest, map[string]string{"error": fmt.Sprintf("Invalid target: %v", err)})
+		sendJSONResponse(w, logger, http.StatusBadRequest, map[string]string{"error": fmt.Sprintf("Invalid target: %v", err)})
 		return
 	}
 
 	// Create scanner
 	scanner, err := discovery.NewPortScanner(3 * time.Second)
 	if err != nil {
-		sendJSONResponse(w, http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to create scanner: %v", err)})
+		sendJSONResponse(w, logger, http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to create scanner: %v", err)})
 		return
 	}
 	defer scanner.Close()
@@ -291,11 +295,12 @@ func (s *Server) handlePortScan(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sendJSONResponse(w, http.StatusOK, result)
+	sendJSONResponse(w, logger, http.StatusOK, result)
 }
 
 // POST /api/discovery/fingerprint with JSON body: {"ip": "192.168.1.1"}.
 func (s *Server) handleAdvancedFingerprint(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -336,5 +341,5 @@ func (s *Server) handleAdvancedFingerprint(w http.ResponseWriter, r *http.Reques
 
 	result := fingerprinter.ProbeDevice(ctx, req.IP, existingProfile)
 
-	sendJSONResponse(w, http.StatusOK, result)
+	sendJSONResponse(w, logger, http.StatusOK, result)
 }

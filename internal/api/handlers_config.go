@@ -9,6 +9,7 @@ import (
 	"regexp"
 
 	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // ============================================================================
@@ -34,6 +35,8 @@ type RestoreRequest struct {
 
 // handleConfigBackups handles GET /api/config/backups - list all backups.
 func (s *Server) handleConfigBackups(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
+
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -44,19 +47,17 @@ func (s *Server) handleConfigBackups(w http.ResponseWriter, r *http.Request) {
 
 	backups, err := backupMgr.ListBackups()
 	if err != nil {
-		slog.Error("Failed to list backups", "error", err)
+		logger.Error("Failed to list backups", "error", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(BackupListResponse{Backups: backups}); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+	sendJSONResponse(w, logger, http.StatusOK, BackupListResponse{Backups: backups})
 }
 
 // handleConfigBackupCreate handles POST /api/config/backup - create a new backup.
 func (s *Server) handleConfigBackupCreate(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -71,15 +72,12 @@ func (s *Server) handleConfigBackupCreate(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(backup); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+	sendJSONResponse(w, logger, http.StatusCreated, backup)
 }
 
 // handleConfigRestore handles POST /api/config/restore - restore from a backup.
 func (s *Server) handleConfigRestore(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -120,14 +118,12 @@ func (s *Server) handleConfigRestore(w http.ResponseWriter, r *http.Request) {
 	s.config.CopyFieldsFrom(newCfg)
 	s.config.Unlock()
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(map[string]string{"status": "restored", "backup": req.BackupName}); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{"status": "restored", "backup": req.BackupName})
 }
 
 // handleConfigBackupDelete handles DELETE /api/config/backup - delete a backup.
 func (s *Server) handleConfigBackupDelete(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -156,14 +152,12 @@ func (s *Server) handleConfigBackupDelete(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(map[string]string{"status": "deleted", "backup": backupName}); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{"status": "deleted", "backup": backupName})
 }
 
 // handleConfigVersion handles GET /api/config/version - get config version info.
 func (s *Server) handleConfigVersion(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -179,8 +173,5 @@ func (s *Server) handleConfigVersion(w http.ResponseWriter, r *http.Request) {
 		NeedsMigration: currentVersion < config.ConfigVersion,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }

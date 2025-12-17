@@ -16,10 +16,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/krisarmstrong/seed/internal/config"
 	"github.com/krisarmstrong/seed/internal/dns"
 	"github.com/krisarmstrong/seed/internal/iperf"
-
-	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/validation"
 )
 
@@ -69,6 +69,7 @@ type DNSResponse struct {
 
 // handleDNS performs DNS testing and returns results.
 func (s *Server) handleDNS(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -164,7 +165,7 @@ func (s *Server) handleDNS(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // SetMTURequest represents the request to set interface MTU.
@@ -245,7 +246,8 @@ func (s *Server) handleTestsSettings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) getTestsSettings(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) getTestsSettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	resp := TestsSettingsResponse{
 		DNSHostname:    s.config.DNS.TestHostname,
 		DNSServers:     make([]DNSServerResponse, 0, len(s.config.DNS.Servers)),
@@ -309,10 +311,11 @@ func (s *Server) getTestsSettings(w http.ResponseWriter, _ *http.Request) {
 		})
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 func (s *Server) updateTestsSettings(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #693)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
@@ -421,10 +424,10 @@ func (s *Server) updateTestsSettings(w http.ResponseWriter, r *http.Request) {
 
 	// Save config to file (no longer holding lock)
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "Tests settings updated",
 	})
@@ -475,6 +478,7 @@ type CustomTestsResult struct {
 
 // handleCustomTests runs all configured custom tests and returns results.
 func (s *Server) handleCustomTests(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -484,13 +488,13 @@ func (s *Server) handleCustomTests(w http.ResponseWriter, r *http.Request) {
 		PingResults: s.runPingTests(),
 		TCPResults:  s.runTCPTests(r.Context()),
 		UDPResults:  s.runUDPTests(),
-		HTTPResults: s.runHTTPTests(r.Context()),
+		HTTPResults: s.runHTTPTests(r.Context(), logger),
 	}
 
 	result.HasTests = len(s.config.Tests.PingTargets) > 0 || len(s.config.Tests.TCPPorts) > 0 ||
 		len(s.config.Tests.UDPPorts) > 0 || len(s.config.Tests.HTTPEndpoints) > 0
 
-	sendJSONResponse(w, http.StatusOK, result)
+	sendJSONResponse(w, logger, http.StatusOK, result)
 }
 
 // runPingTests runs all configured ping tests and returns results.
@@ -606,7 +610,7 @@ func (s *Server) runUDPTests() []CustomTestResult {
 }
 
 // runHTTPTests runs all configured HTTP endpoint tests and returns results.
-func (s *Server) runHTTPTests(ctx context.Context) []CustomTestResult {
+func (s *Server) runHTTPTests(ctx context.Context, logger *slog.Logger) []CustomTestResult {
 	results := make([]CustomTestResult, 0, len(s.config.Tests.HTTPEndpoints))
 
 	for _, endpoint := range s.config.Tests.HTTPEndpoints {
@@ -615,7 +619,7 @@ func (s *Server) runHTTPTests(ctx context.Context) []CustomTestResult {
 		}
 
 		if err := validation.ValidateURL(endpoint.URL); err != nil {
-			slog.Warn("Skipping invalid HTTP endpoint URL", "url", endpoint.URL, "error", err)
+			logger.Warn("Skipping invalid HTTP endpoint URL", "url", endpoint.URL, "error", err)
 			continue
 		}
 
@@ -1109,6 +1113,7 @@ type SpeedtestStatusResponse struct {
 // handleSpeedtest starts a speedtest in the background and returns immediately.
 // Use /api/speedtest/status to poll for results.
 func (s *Server) handleSpeedtest(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed - use POST to start a speedtest", http.StatusMethodNotAllowed)
 		return
@@ -1127,16 +1132,16 @@ func (s *Server) handleSpeedtest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Run the test in the background (takes 30-60 seconds)
-	go func() {
+	go func(logger *slog.Logger) {
 		ctx := context.Background()
 		_, err := s.speedtestTester.RunTest(ctx)
 		if err != nil {
-			slog.Error("Speedtest failed", "error", err)
+			logger.Error("Speedtest failed", "error", err)
 		}
-	}()
+	}(logger)
 
 	// Return immediately with "started" status
-	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 		"status":  "started",
 		"message": "Speedtest started. Poll /api/speedtest/status for results.",
 	})
@@ -1144,6 +1149,7 @@ func (s *Server) handleSpeedtest(w http.ResponseWriter, r *http.Request) {
 
 // handleSpeedtestStatus returns the current speedtest status.
 func (s *Server) handleSpeedtestStatus(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1176,7 +1182,7 @@ func (s *Server) handleSpeedtestStatus(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // iperf3 handlers.
@@ -1190,6 +1196,7 @@ type IperfInfoResponse struct {
 
 // handleIperfInfo returns iperf3 installation status and version.
 func (s *Server) handleIperfInfo(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1205,7 +1212,7 @@ func (s *Server) handleIperfInfo(w http.ResponseWriter, r *http.Request) {
 		resp.Version = iperfVersion
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // IperfClientRequest is the request body for running an iperf3 client test.
@@ -1279,6 +1286,7 @@ func validateIperfClientRequest(req *IperfClientRequest) error {
 
 // handleIperfClient runs an iperf3 client test.
 func (s *Server) handleIperfClient(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1309,15 +1317,15 @@ func (s *Server) handleIperfClient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Run test in background and return immediately
-	go func() {
+	go func(logger *slog.Logger) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(req.Duration+30)*time.Second)
 		defer cancel()
 		if _, err := s.iperfManager.RunClient(ctx, &iperfConfig); err != nil {
-			slog.Error("iperf client failed", "error", err)
+			logger.Error("iperf client failed", "error", err)
 		}
-	}()
+	}(logger)
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"message": "iperf3 test started. Poll /api/iperf/client/status for results.",
 	})
 }
@@ -1332,6 +1340,7 @@ type IperfClientStatusResponse struct {
 
 // handleIperfClientStatus returns the status of the iperf3 client test.
 func (s *Server) handleIperfClientStatus(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1365,7 +1374,7 @@ func (s *Server) handleIperfClientStatus(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // IperfServerRequest is the request body for starting/stopping the iperf3 server.
@@ -1376,6 +1385,7 @@ type IperfServerRequest struct {
 
 // handleIperfServer starts or stops the iperf3 server.
 func (s *Server) handleIperfServer(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1400,7 +1410,7 @@ func (s *Server) handleIperfServer(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+		sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 			"message": fmt.Sprintf("iperf3 server started on port %d", port),
 			"port":    port,
 		})
@@ -1409,7 +1419,7 @@ func (s *Server) handleIperfServer(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		sendJSONResponse(w, http.StatusOK, map[string]string{
+		sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 			"message": "iperf3 server stopped",
 		})
 	default:
@@ -1419,13 +1429,14 @@ func (s *Server) handleIperfServer(w http.ResponseWriter, r *http.Request) {
 
 // handleIperfServerStatus returns the iperf3 server status.
 func (s *Server) handleIperfServerStatus(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	status := s.iperfManager.GetServerStatus()
-	sendJSONResponse(w, http.StatusOK, status)
+	sendJSONResponse(w, logger, http.StatusOK, status)
 }
 
 // IperfSuggestion represents a discovered host that responds on the iperf port.
@@ -1438,6 +1449,7 @@ type IperfSuggestion struct {
 
 // handleIperfSuggestions returns discovered devices that respond on the iperf port.
 func (s *Server) handleIperfSuggestions(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -1493,7 +1505,7 @@ func (s *Server) handleIperfSuggestions(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
-	sendJSONResponse(w, http.StatusOK, suggestions)
+	sendJSONResponse(w, logger, http.StatusOK, suggestions)
 }
 
 // handleDevices returns all discovered network devices.

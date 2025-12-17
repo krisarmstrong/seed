@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // ============================================================================
@@ -67,6 +68,7 @@ type DiscoveryNeighborInfo struct {
 //
 // Response: 200 OK with DiscoveryResponse containing neighbors array.
 func (s *Server) handleDiscovery(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -97,7 +99,7 @@ func (s *Server) handleDiscovery(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // handleDiscoveryProfile handles GET/PUT for the discovery profile.
@@ -112,14 +114,16 @@ func (s *Server) handleDiscoveryProfile(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (s *Server) getDiscoveryProfile(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) getDiscoveryProfile(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	profile := s.discoveryService.GetProfile()
-	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 		"profile": profile,
 	})
 }
 
 func (s *Server) setDiscoveryProfile(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	// Limit request body size to prevent DoS attacks (fixes #693)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
@@ -148,17 +152,17 @@ func (s *Server) setDiscoveryProfile(w http.ResponseWriter, r *http.Request) {
 
 	// Apply the profile change to the running service
 	if err := s.discoveryService.SetProfile(profile); err != nil {
-		slog.Error("Failed to set discovery profile", "error", err)
+		logger.Error("Failed to set discovery profile", "error", err)
 		http.Error(w, "Failed to apply profile", http.StatusInternalServerError)
 		return
 	}
 
 	// Save config to file
 	if err := s.config.Save(s.configPath); err != nil {
-		slog.Warn("Failed to save config", "error", err)
+		logger.Warn("Failed to save config", "error", err)
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]string{
 		"status":  "success",
 		"message": "Profile updated to " + string(profile),
 	})
@@ -166,11 +170,12 @@ func (s *Server) setDiscoveryProfile(w http.ResponseWriter, r *http.Request) {
 
 // handleDiscoveryServiceStatus returns the current status of the discovery service.
 func (s *Server) handleDiscoveryServiceStatus(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	status := s.discoveryService.GetStatus()
-	sendJSONResponse(w, http.StatusOK, status)
+	sendJSONResponse(w, logger, http.StatusOK, status)
 }

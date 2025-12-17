@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/dhcp"
+	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/system"
 	"github.com/krisarmstrong/seed/internal/version"
 )
@@ -41,6 +42,7 @@ type ExportDeviceInfo struct {
 
 // handleStatus returns the system status (fixes #544 - split from handlers.go).
 func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -60,11 +62,12 @@ func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
 		ICMPAvailable: s.icmpAvailable,
 	}
 
-	sendJSONResponse(w, http.StatusOK, resp)
+	sendJSONResponse(w, logger, http.StatusOK, resp)
 }
 
 // handleExport exports current diagnostic data as JSON (fixes #544 - split from handlers.go).
 func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -108,7 +111,7 @@ func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(export); err != nil {
-		slog.Error("Error encoding export response", "error", err)
+		logger.Error("Error encoding export response", "error", err)
 	}
 }
 
@@ -254,6 +257,7 @@ func (s *Server) exportIperfCard(cards map[string]interface{}) {
 // Requires JWT authentication (enforced by middleware).
 // Security fix #301: Removed insecure LOG_ACCESS_TOKEN - JWT authentication is sufficient.
 func (s *Server) handleLogs(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -281,12 +285,12 @@ func (s *Server) handleLogs(w http.ResponseWriter, r *http.Request) {
 	const maxBytes int64 = 500 * 1024 // limit read size to 500KB
 	lines, err := readLastLines(s.logPath, maxBytes, maxLines)
 	if err != nil {
-		slog.Error("Failed to read log file", "error", err)
+		logger.Error("Failed to read log file", "error", err)
 		http.Error(w, "Failed to read log file", http.StatusInternalServerError)
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 		"path":  s.logPath,
 		"lines": lines,
 	})
@@ -295,6 +299,7 @@ func (s *Server) handleLogs(w http.ResponseWriter, r *http.Request) {
 // handleHealth handles GET /api/health - simple liveness check for load balancers (fixes #540, #544).
 // Returns 200 OK if server is running, minimal response for fast health checks.
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -302,7 +307,7 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 
 	// Simple health check - just return OK
 	// For detailed health, use /api/system/health
-	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+	sendJSONResponse(w, logger, http.StatusOK, map[string]interface{}{
 		"status": "ok",
 		"uptime": time.Since(s.startTime).Seconds(),
 	})
@@ -310,6 +315,7 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 
 // handleSystemHealth handles GET /api/system/health - returns comprehensive health metrics (fixes #540, #544).
 func (s *Server) handleSystemHealth(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -318,7 +324,7 @@ func (s *Server) handleSystemHealth(w http.ResponseWriter, r *http.Request) {
 	// Get system health metrics
 	health, err := system.GetHealth()
 	if err != nil {
-		sendJSONResponse(w, http.StatusInternalServerError, map[string]string{
+		sendJSONResponse(w, logger, http.StatusInternalServerError, map[string]string{
 			"error": "Failed to get system health: " + err.Error(),
 		})
 		return
@@ -340,5 +346,5 @@ func (s *Server) handleSystemHealth(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	sendJSONResponse(w, http.StatusOK, appHealth)
+	sendJSONResponse(w, logger, http.StatusOK, appHealth)
 }
