@@ -6,8 +6,8 @@
 
 ## Overview
 
-This document provides **validated, non-marketing mappings** between The Seed features and major
-compliance frameworks. Each mapping includes:
+This document provides **validated, non-marketing mappings** between The Seed features and major compliance frameworks.
+Each mapping includes:
 
 - **Control requirement** (what the framework mandates)
 - **The Seed capability** (how the product addresses it)
@@ -30,12 +30,12 @@ compliance frameworks. Each mapping includes:
 
 **Requirement:**
 
-> "Actively manage (inventory, track, and correct) all enterprise assets (end-user devices including
-> portable and mobile; network devices; non-computing/IoT devices; and servers) connected to the
-> infrastructure physically, virtually, remotely, and those within cloud environments, to accurately
-> know the totality of assets that need to be monitored and protected within the enterprise."
+> "Actively manage (inventory, track, and correct) all enterprise assets (end-user devices including portable and
+> mobile; network devices; non-computing/IoT devices; and servers) connected to the infrastructure physically,
+> virtually, remotely, and those within cloud environments, to accurately know the totality of assets that need to be
+> monitored and protected within the enterprise."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                                        | The Seed Feature                                                                                                     | Evidence/Audit Value                                                                                      |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -67,11 +67,11 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 **Requirement:**
 
-> "Actively manage (inventory, track, and correct) all software (operating systems and applications)
-> on the network so that only authorized software is installed and can execute, and that
-> unauthorized and unmanaged software is found and prevented from installation or execution."
+> "Actively manage (inventory, track, and correct) all software (operating systems and applications) on the network so
+> that only authorized software is installed and can execute, and that unauthorized and unmanaged software is found and
+> prevented from installation or execution."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                       | The Seed Feature                                                                                             | Evidence/Audit Value                                                                      |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
@@ -91,10 +91,9 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 **Requirement:**
 
-> "Develop processes and technical controls to identify, classify, securely handle, retain, and
-> dispose of data."
+> "Develop processes and technical controls to identify, classify, securely handle, retain, and dispose of data."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                 | The Seed Feature                                                                                   | Evidence/Audit Value                                                                        |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -119,11 +118,10 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 **Requirement:**
 
-> "Establish and maintain the secure configuration of enterprise assets (end-user devices, including
-> portable and mobile; network devices; non-computing/IoT devices; and servers) and software
-> (operating systems and applications)."
+> "Establish and maintain the secure configuration of enterprise assets (end-user devices, including portable and
+> mobile; network devices; non-computing/IoT devices; and servers) and software (operating systems and applications)."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                                 | The Seed Feature                                                                              | Evidence/Audit Value                                                                           |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -142,11 +140,10 @@ seed devices list --format csv --include "ip,mac,hostname,first_seen,device_type
 
 **Requirement:**
 
-> "Develop a plan to continuously assess and track vulnerabilities on all enterprise assets within
-> the enterprise's infrastructure, to remediate, and minimize the window of opportunity for
-> attackers."
+> "Develop a plan to continuously assess and track vulnerabilities on all enterprise assets within the enterprise's
+> infrastructure, to remediate, and minimize the window of opportunity for attackers."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                                     | The Seed Feature                                                                                                    | Evidence/Audit Value                                                                               |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -180,10 +177,10 @@ CVE-2024-1234 on 192.168.1.10 (IP Camera, DMZ):
 
 **Requirement:**
 
-> "Establish, implement, and actively manage (track, report, correct) network devices, in order to
-> prevent attackers from exploiting vulnerable network services and access points."
+> "Establish, implement, and actively manage (track, report, correct) network devices, in order to prevent attackers
+> from exploiting vulnerable network services and access points."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                                          | The Seed Feature                                                                                      | Evidence/Audit Value                                                                        |
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -212,10 +209,10 @@ CVE-2024-1234 on 192.168.1.10 (IP Camera, DMZ):
 
 **Requirement:**
 
-> "Operate processes and tooling to establish and maintain comprehensive network monitoring and
-> defense against security threats across the enterprise's network infrastructure and user base."
+> "Operate processes and tooling to establish and maintain comprehensive network monitoring and defense against security
+> threats across the enterprise's network infrastructure and user base."
 
-#### The Seed Capabilities:
+#### The Seed Capabilities
 
 | Sub-Control                                 | The Seed Feature                                                                                  | Evidence/Audit Value                                                                              |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -384,7 +381,7 @@ Anomaly Detection:
 
 ### HIPAA Implementation Guide for Healthcare Organizations
 
-#### Required Actions:
+#### Required Actions
 
 **1. Network Segmentation Verification (§164.312(a)(1)):**
 
@@ -563,8 +560,8 @@ seed devices export --format csv --include "ip,mac,hostname,device_type,os,servi
 - Configuration management (CM controls)
 - Audit logging and reporting
 
-**Note:** Federal deployment would require FedRAMP authorization for cloud features. For
-self-hosted/on-prem deployments, The Seed meets many NIST 800-53 controls directly.
+**Note:** Federal deployment would require FedRAMP authorization for cloud features. For self-hosted/on-prem
+deployments, The Seed meets many NIST 800-53 controls directly.
 
 ---
 

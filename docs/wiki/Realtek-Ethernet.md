@@ -1,7 +1,7 @@
 # Realtek Ethernet NICs
 
-❌ **No TDR Support** - Realtek consumer NICs do **NOT support cable diagnostics** via ethtool.
-**Not recommended for The Seed cable testing**.
+❌ **No TDR Support** - Realtek consumer NICs do **NOT support cable diagnostics** via ethtool. **Not recommended for
+The Seed cable testing**.
 
 [← Back to Home](Home)
 
@@ -28,8 +28,7 @@ sudo ethtool --cable-test eth0
 2. **Driver limitation** - Even if hardware supported it, Linux driver doesn't expose it
 3. **Windows only** - Some Realtek diagnostic tools exist for Windows, but not Linux-compatible
 
-**Bottom Line:** If you need cable diagnostics with The Seed, **you must use Intel or Broadcom
-server NICs**.
+**Bottom Line:** If you need cable diagnostics with The Seed, **you must use Intel or Broadcom server NICs**.
 
 ---
 
@@ -244,10 +243,13 @@ sudo ethtool -s eth0 speed 1000 duplex full autoneg off
 
 1. Update kernel (newer `r8169` driver versions)
 2. Disable power saving:
+
    ```bash
    sudo ethtool -s eth0 wol d
    ```
+
 3. Disable offloading:
+
    ```bash
    sudo ethtool -K eth0 tso off gso off
    ```
@@ -296,8 +298,8 @@ _(Community will share Realtek-specific tips)_
 
 ---
 
-**Last Updated:** 2025-12-14 **Recommendation:** Realtek works for 90% of diagnostics, but add Intel
-I210 ($20-35) if you need cable testing.
+**Last Updated:** 2025-12-14 **Recommendation:** Realtek works for 90% of diagnostics, but add Intel I210 ($20-35) if
+you need cable testing.
 
 [← Back to Home](Home) | [← Previous: Broadcom Ethernet](Broadcom-Ethernet) |
 [Next: Marvell Ethernet →](Marvell-Ethernet)

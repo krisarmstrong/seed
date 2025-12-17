@@ -138,8 +138,8 @@ ROI: 3.6x in labor savings alone
 
 ## 🚀 Flagship Feature: Predictive WiFi Survey
 
-**Issue:** [#591](https://github.com/krisarmstrong/seed/issues/591) **Milestone:** WiFi Intelligence
-(v0.130.0) **Priority:** CRITICAL
+**Issue:** [#591](https://github.com/krisarmstrong/seed/issues/591) **Milestone:** WiFi Intelligence (v0.130.0)
+**Priority:** CRITICAL
 
 ### What It Does
 
@@ -223,8 +223,7 @@ ROI: 3.6x in labor savings alone
 | **Fleet Management**   | ✅ YES        | ❌ No  | ❌ No   | ❌ No  |
 | **Hardware Required**  | ❌ No         | ❌ No  | ✅ YES  | ✅ YES |
 
-**You win on:** Features, price, flexibility, AI capabilities **They win on:** Brand recognition
-(for now)
+**You win on:** Features, price, flexibility, AI capabilities **They win on:** Brand recognition (for now)
 
 ---
 
@@ -362,25 +361,23 @@ ROI: 3.6x in labor savings alone
 
 **For WiFi Consultants:**
 
-> "Stop wasting time on trial-and-error WiFi deployments. Our AI predicts coverage BEFORE you hang a
-> single access point. Plan perfect WiFi in 2 hours, not 2 days. One deployment pays for your entire
-> year."
+> "Stop wasting time on trial-and-error WiFi deployments. Our AI predicts coverage BEFORE you hang a single access
+> point. Plan perfect WiFi in 2 hours, not 2 days. One deployment pays for your entire year."
 
 **For Network Technicians:**
 
-> "Stop guessing, start knowing. AI diagnoses problems in seconds. Ask 'Why is DHCP slow?' and get
-> instant root cause analysis with remediation steps. Reduce troubleshooting time by 60%."
+> "Stop guessing, start knowing. AI diagnoses problems in seconds. Ask 'Why is DHCP slow?' and get instant root cause
+> analysis with remediation steps. Reduce troubleshooting time by 60%."
 
 **For Security Analysts:**
 
-> "Not just CVE lists - actual risk scores with context. CVSS + exploitability + network exposure +
-> remediation plans. Prioritize what actually matters, fix vulnerabilities 40% faster."
+> "Not just CVE lists - actual risk scores with context. CVSS + exploitability + network exposure + remediation plans.
+> Prioritize what actually matters, fix vulnerabilities 40% faster."
 
 **For MSPs:**
 
-> "One tool for network diagnostics, WiFi planning, and security across all your client sites.
-> Fleet-wide visibility, comparative analytics, white-label reports. $4,999/year vs $50K+ for
-> separate tools."
+> "One tool for network diagnostics, WiFi planning, and security across all your client sites. Fleet-wide visibility,
+> comparative analytics, white-label reports. $4,999/year vs $50K+ for separate tools."
 
 ---
 
@@ -414,10 +411,10 @@ ROI: 3.6x in labor savings alone
 
 ## 📞 Questions?
 
-**Technical Questions:** See [AI_INTEGRATION_PLAN.md](./AI_INTEGRATION_PLAN.md) **Business
-Questions:** See [AI_ISSUES_SUMMARY.md](./AI_ISSUES_SUMMARY.md) **GitHub Issues:**
-https://github.com/krisarmstrong/seed/issues?q=is%3Aissue+label%3A%22component%3A+ai%22
-**Milestones:** https://github.com/krisarmstrong/seed/milestones
+**Technical Questions:** See [AI_INTEGRATION_PLAN.md](./AI_INTEGRATION_PLAN.md) **Business Questions:** See
+[AI_ISSUES_SUMMARY.md](./AI_ISSUES_SUMMARY.md) **GitHub Issues:**
+https://github.com/krisarmstrong/seed/issues?q=is%3Aissue+label%3A%22component%3A+ai%22 **Milestones:**
+https://github.com/krisarmstrong/seed/milestones
 
 ---
 

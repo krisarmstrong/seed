@@ -1,8 +1,7 @@
 # Qualcomm Atheros Wi-Fi Adapters
 
-Qualcomm Atheros chipsets using the `ath9k` and `ath10k` drivers are **recommended** for The Seed,
-especially for packet injection. The AR9271 is a popular choice for wireless diagnostics and
-penetration testing.
+Qualcomm Atheros chipsets using the `ath9k` and `ath10k` drivers are **recommended** for The Seed, especially for packet
+injection. The AR9271 is a popular choice for wireless diagnostics and penetration testing.
 
 [← Back to Home](Home)
 
@@ -115,6 +114,7 @@ penetration testing.
    ```
 
 3. **Check interface created:**
+
    ```bash
    ip link show
    # Should show new wlan interface (wlan0, wlan1, etc.)
@@ -136,6 +136,7 @@ penetration testing.
    ```
 
 3. **Install firmware if needed:**
+
    ```bash
    sudo apt install linux-firmware
    # Reboot may be required

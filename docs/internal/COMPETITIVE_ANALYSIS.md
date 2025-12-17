@@ -13,9 +13,8 @@ The Seed by Mustard Seed Networks competes across **four distinct market segment
 3. **Vulnerability Scanning & Compliance** ($3.8B market)
 4. **Unified Network Management** ($500M market)
 
-**Our Unique Position:** The Seed is the **only platform** that combines WiFi planning, network
-diagnostics, vulnerability scanning, and compliance reporting in **one affordable tool** starting at
-$299/year.
+**Our Unique Position:** The Seed is the **only platform** that combines WiFi planning, network diagnostics,
+vulnerability scanning, and compliance reporting in **one affordable tool** starting at $299/year.
 
 **Key Competitive Advantages:**
 
@@ -61,8 +60,7 @@ $299/year.
 
 ### Segment 1: WiFi Planning & Site Surveys
 
-**Market Size:** $1.2B (2025), growing 12% CAGR **Primary Competitors:** Ekahau, Hamina, NetAlly,
-AirMagnet
+**Market Size:** $1.2B (2025), growing 12% CAGR **Primary Competitors:** Ekahau, Hamina, NetAlly, AirMagnet
 
 **Customer Segments:**
 
@@ -89,8 +87,7 @@ AirMagnet
 
 ### Segment 2: Network Monitoring & Diagnostics
 
-**Market Size:** $2.5B (2025), growing 8% CAGR **Primary Competitors:** SolarWinds, PRTG, Datadog,
-Nagios, Zabbix
+**Market Size:** $2.5B (2025), growing 8% CAGR **Primary Competitors:** SolarWinds, PRTG, Datadog, Nagios, Zabbix
 
 **Customer Segments:**
 
@@ -117,8 +114,8 @@ Nagios, Zabbix
 
 ### Segment 3: Vulnerability Scanning & Compliance
 
-**Market Size:** $3.8B (2025), growing 15% CAGR (fastest growing!) **Primary Competitors:** Nessus,
-Qualys, Rapid7, OpenVAS
+**Market Size:** $3.8B (2025), growing 15% CAGR (fastest growing!) **Primary Competitors:** Nessus, Qualys, Rapid7,
+OpenVAS
 
 **Customer Segments:**
 
@@ -144,8 +141,7 @@ Qualys, Rapid7, OpenVAS
 
 ### Segment 4: Unified Network Management
 
-**Market Size:** $500M (2025), niche but growing 20% CAGR **Primary Competitors:** Path Solutions,
-Auvik, Domotz
+**Market Size:** $500M (2025), niche but growing 20% CAGR **Primary Competitors:** Path Solutions, Auvik, Domotz
 
 **Customer Segments:**
 
@@ -173,8 +169,8 @@ Auvik, Domotz
 
 ### 1. Ekahau (Market Leader - 60%+ Share)
 
-**Company:** Ekahau Inc. (founded 2001, acquired by NETSCOUT 2019) **Headquarters:** Saratoga, CA
-**Revenue:** ~$50M/year (estimated) **Customers:** 10,000+ (consultants, enterprises, government)
+**Company:** Ekahau Inc. (founded 2001, acquired by NETSCOUT 2019) **Headquarters:** Saratoga, CA **Revenue:**
+~$50M/year (estimated) **Customers:** 10,000+ (consultants, enterprises, government)
 
 **Products:**
 
@@ -201,11 +197,10 @@ Auvik, Domotz
 
 **Market Position:** Premium, consultant-focused
 
-**The Seed vs Ekahau:** | Feature | The Seed | Ekahau AI Pro |
-|---------|----------|---------------| | Price (Year 1) | $1,999 | $5,198 | | Platforms | macOS,
-Linux | Windows only | | Predictive Planning | ✅ Yes (unique!) | ❌ No (survey required) | |
-Network Diagnostics | ✅ Yes | ❌ No | | Compliance Reporting | ✅ Yes | ❌ No | | AI Insights | ✅
-Yes | ❌ No | | Ease of Use | Easy (1 hour to learn) | Complex (2-3 days training) |
+**The Seed vs Ekahau:** | Feature | The Seed | Ekahau AI Pro | |---------|----------|---------------| | Price (Year 1) |
+$1,999 | $5,198 | | Platforms | macOS, Linux | Windows only | | Predictive Planning | ✅ Yes (unique!) | ❌ No (survey
+required) | | Network Diagnostics | ✅ Yes | ❌ No | | Compliance Reporting | ✅ Yes | ❌ No | | AI Insights | ✅ Yes |
+❌ No | | Ease of Use | Easy (1 hour to learn) | Complex (2-3 days training) |
 
 **Win Against Ekahau:**
 
@@ -224,8 +219,8 @@ Yes | ❌ No | | Ease of Use | Easy (1 hour to learn) | Complex (2-3 days traini
 
 ### 2. Hamina (Modern Challenger)
 
-**Company:** Hamina Wireless (founded 2017) **Headquarters:** Helsinki, Finland **Revenue:**
-~$5M/year (estimated) **Customers:** 1,000+ (mostly Europe)
+**Company:** Hamina Wireless (founded 2017) **Headquarters:** Helsinki, Finland **Revenue:** ~$5M/year (estimated)
+**Customers:** 1,000+ (mostly Europe)
 
 **Products:**
 
@@ -252,19 +247,16 @@ Yes | ❌ No | | Ease of Use | Easy (1 hour to learn) | Complex (2-3 days traini
 
 **Market Position:** Modern alternative to Ekahau, cloud-first
 
-**The Seed vs Hamina:** | Feature | The Seed | Hamina | |---------|----------|--------| | Price
-(Year 1) | $1,999 | $1,999 | | Deployment | Self-hosted | SaaS (cloud) | | Data Privacy | ✅ All
-local | ⚠️ Uploaded to cloud | | Offline Use | ✅ Yes | ❌ No (internet required) | | Network
-Diagnostics | ✅ Yes | ❌ No | | Compliance Reporting | ✅ Yes | ❌ No | | Predictive Planning | ✅
-Yes | ⚠️ Limited |
+**The Seed vs Hamina:** | Feature | The Seed | Hamina | |---------|----------|--------| | Price (Year 1) | $1,999 |
+$1,999 | | Deployment | Self-hosted | SaaS (cloud) | | Data Privacy | ✅ All local | ⚠️ Uploaded to cloud | | Offline
+Use | ✅ Yes | ❌ No (internet required) | | Network Diagnostics | ✅ Yes | ❌ No | | Compliance Reporting | ✅ Yes | ❌
+No | | Predictive Planning | ✅ Yes | ⚠️ Limited |
 
 **Win Against Hamina:**
 
 - Data privacy: "Your floor plans never leave your network. Hamina uploads everything to the cloud."
-- Offline use: "Work anywhere, even in secure facilities with no internet. Hamina requires constant
-  connectivity."
-- All-in-one: "Hamina is WiFi-only. The Seed includes network diagnostics, compliance, vulnerability
-  scanning."
+- Offline use: "Work anywhere, even in secure facilities with no internet. Hamina requires constant connectivity."
+- All-in-one: "Hamina is WiFi-only. The Seed includes network diagnostics, compliance, vulnerability scanning."
 - No subscription fatigue: "One price, unlimited use. Hamina is $1,999/year forever."
 
 **When We Lose to Hamina:**
@@ -277,8 +269,8 @@ Yes | ⚠️ Limited |
 
 ### 3. NetAlly (Hardware-Focused)
 
-**Company:** NetAlly (formerly NetScout Handheld, spun out 2018) **Headquarters:** Colorado Springs,
-CO **Revenue:** ~$100M/year **Customers:** 50,000+ (mostly enterprise IT, government)
+**Company:** NetAlly (formerly NetScout Handheld, spun out 2018) **Headquarters:** Colorado Springs, CO **Revenue:**
+~$100M/year **Customers:** 50,000+ (mostly enterprise IT, government)
 
 **Products:**
 
@@ -305,19 +297,16 @@ CO **Revenue:** ~$100M/year **Customers:** 50,000+ (mostly enterprise IT, govern
 
 **Market Position:** Enterprise IT troubleshooting, not WiFi design
 
-**The Seed vs NetAlly:** | Feature | The Seed | NetAlly EtherScope |
-|---------|----------|---------------------| | Price | $1,999/year | $6,995 one-time | | Platform |
-Software (macOS, Linux) | Hardware (proprietary) | | WiFi Planning | ✅ Advanced (predictive) | ⚠️
-Basic (survey only) | | Network Diagnostics | ✅ Yes | ✅ Yes | | Portability | Laptop required |
-Handheld device | | Updates | Free (software updates) | Requires new hardware |
+**The Seed vs NetAlly:** | Feature | The Seed | NetAlly EtherScope | |---------|----------|---------------------| |
+Price | $1,999/year | $6,995 one-time | | Platform | Software (macOS, Linux) | Hardware (proprietary) | | WiFi Planning
+| ✅ Advanced (predictive) | ⚠️ Basic (survey only) | | Network Diagnostics | ✅ Yes | ✅ Yes | | Portability | Laptop
+required | Handheld device | | Updates | Free (software updates) | Requires new hardware |
 
 **Win Against NetAlly:**
 
 - Price: "EtherScope is $6,995. The Seed is $1,999 and does more."
-- Flexibility: "Software-based means it runs on your existing laptop. NetAlly locks you into
-  proprietary hardware."
-- Features: "NetAlly does basic surveys. The Seed does predictive planning, AI diagnostics, and
-  compliance."
+- Flexibility: "Software-based means it runs on your existing laptop. NetAlly locks you into proprietary hardware."
+- Features: "NetAlly does basic surveys. The Seed does predictive planning, AI diagnostics, and compliance."
 
 **When We Lose to NetAlly:**
 
@@ -329,8 +318,8 @@ Handheld device | | Updates | Free (software updates) | Requires new hardware |
 
 ### 4. AirMagnet (Legacy Player)
 
-**Company:** AirMagnet (acquired by NetScout 2009, now part of NETSCOUT) **Headquarters:** Westford,
-MA **Revenue:** Part of NETSCOUT ($800M+ total) **Customers:** Enterprise, government, education
+**Company:** AirMagnet (acquired by NetScout 2009, now part of NETSCOUT) **Headquarters:** Westford, MA **Revenue:**
+Part of NETSCOUT ($800M+ total) **Customers:** Enterprise, government, education
 
 **Products:**
 
@@ -356,10 +345,9 @@ MA **Revenue:** Part of NETSCOUT ($800M+ total) **Customers:** Enterprise, gover
 
 **Market Position:** Legacy, declining, mostly existing enterprise customers
 
-**The Seed vs AirMagnet:** | Feature | The Seed | AirMagnet Survey Pro |
-|---------|----------|----------------------| | Price (Year 1) | $1,999 | $6,498 | | UI/UX | Modern
-| Outdated (2000s-era) | | Platforms | macOS, Linux | Windows only | | Active Development | ✅ Yes |
-⚠️ Minimal | | Predictive Planning | ✅ Yes | ❌ No |
+**The Seed vs AirMagnet:** | Feature | The Seed | AirMagnet Survey Pro | |---------|----------|----------------------| |
+Price (Year 1) | $1,999 | $6,498 | | UI/UX | Modern | Outdated (2000s-era) | | Platforms | macOS, Linux | Windows only |
+| Active Development | ✅ Yes | ⚠️ Minimal | | Predictive Planning | ✅ Yes | ❌ No |
 
 **Win Against AirMagnet:**
 
@@ -379,8 +367,8 @@ MA **Revenue:** Part of NETSCOUT ($800M+ total) **Customers:** Enterprise, gover
 
 ### 5. SolarWinds (Enterprise Monitoring Leader)
 
-**Company:** SolarWinds (founded 1999, public NASDAQ:SWI) **Headquarters:** Austin, TX **Revenue:**
-$1B+/year **Customers:** 300,000+ (enterprise IT)
+**Company:** SolarWinds (founded 1999, public NASDAQ:SWI) **Headquarters:** Austin, TX **Revenue:** $1B+/year
+**Customers:** 300,000+ (enterprise IT)
 
 **Products:**
 
@@ -407,22 +395,18 @@ $1B+/year **Customers:** 300,000+ (enterprise IT)
 
 **Market Position:** Enterprise IT operations, large-scale monitoring
 
-**The Seed vs SolarWinds:** | Feature | The Seed | SolarWinds NPM |
-|---------|----------|----------------| | Price | $799/year (unlimited devices) | $10,000+ (100
-devices) | | Ease of Setup | 30 min | Weeks (professional services) | | Target Customer | SMB,
-healthcare | Enterprise IT | | AI Diagnostics | ✅ Yes (root cause) | ❌ No (just alerts) | |
-Compliance Reporting | ✅ Yes | ⚠️ Separate product | | WiFi Planning | ✅ Yes | ⚠️ Basic (no
-predictive) |
+**The Seed vs SolarWinds:** | Feature | The Seed | SolarWinds NPM | |---------|----------|----------------| | Price |
+$799/year (unlimited devices) | $10,000+ (100 devices) | | Ease of Setup | 30 min | Weeks (professional services) | |
+Target Customer | SMB, healthcare | Enterprise IT | | AI Diagnostics | ✅ Yes (root cause) | ❌ No (just alerts) | |
+Compliance Reporting | ✅ Yes | ⚠️ Separate product | | WiFi Planning | ✅ Yes | ⚠️ Basic (no predictive) |
 
 **Win Against SolarWinds:**
 
-- Price: "SolarWinds starts at $10K for 100 devices. The Seed is $799/year for unlimited devices -
-  93% cheaper."
-- Simplicity: "SolarWinds takes weeks to set up and requires a full-time admin. The Seed takes 30
-  minutes."
+- Price: "SolarWinds starts at $10K for 100 devices. The Seed is $799/year for unlimited devices - 93% cheaper."
+- Simplicity: "SolarWinds takes weeks to set up and requires a full-time admin. The Seed takes 30 minutes."
 - AI: "SolarWinds generates alerts. The Seed tells you WHY it's broken and HOW to fix it."
-- All-in-one: "SolarWinds requires separate products for WiFi, compliance, vulnerability scanning.
-  The Seed does it all."
+- All-in-one: "SolarWinds requires separate products for WiFi, compliance, vulnerability scanning. The Seed does it
+  all."
 
 **When We Lose to SolarWinds:**
 
@@ -434,8 +418,8 @@ predictive) |
 
 ### 6. PRTG (SMB Monitoring Leader)
 
-**Company:** Paessler AG (founded 1997, private) **Headquarters:** Nuremberg, Germany **Revenue:**
-~$50M/year (estimated) **Customers:** 500,000+ (mostly SMBs)
+**Company:** Paessler AG (founded 1997, private) **Headquarters:** Nuremberg, Germany **Revenue:** ~$50M/year
+(estimated) **Customers:** 500,000+ (mostly SMBs)
 
 **Products:**
 
@@ -461,20 +445,18 @@ predictive) |
 
 **Market Position:** SMB network monitoring, budget-conscious IT
 
-**The Seed vs PRTG:** | Feature | The Seed | PRTG | |---------|----------|------| | Price (500
-devices) | $799/year (unlimited) | $1,750 one-time + maintenance | | WiFi Planning | ✅ Yes
-(predictive) | ❌ No | | AI Diagnostics | ✅ Yes | ❌ No | | Compliance Reporting | ✅ Yes | ❌ No |
-| Vulnerability Scanning | ✅ Yes | ❌ No | | Pricing Model | Simple (per org) | Complex (per
-sensor) |
+**The Seed vs PRTG:** | Feature | The Seed | PRTG | |---------|----------|------| | Price (500 devices) | $799/year
+(unlimited) | $1,750 one-time + maintenance | | WiFi Planning | ✅ Yes (predictive) | ❌ No | | AI Diagnostics | ✅ Yes
+| ❌ No | | Compliance Reporting | ✅ Yes | ❌ No | | Vulnerability Scanning | ✅ Yes | ❌ No | | Pricing Model | Simple
+(per org) | Complex (per sensor) |
 
 **Win Against PRTG:**
 
-- All-in-one: "PRTG monitors your network. The Seed monitors, diagnoses, plans WiFi, and scans for
-  vulnerabilities - all in one."
+- All-in-one: "PRTG monitors your network. The Seed monitors, diagnoses, plans WiFi, and scans for vulnerabilities - all
+  in one."
 - AI: "PRTG shows you graphs. The Seed tells you what's wrong and how to fix it."
 - WiFi: "Need to plan WiFi coverage? PRTG can't help. The Seed can."
-- Compliance: "PRTG doesn't help with HIPAA or PCI audits. The Seed generates compliance reports
-  automatically."
+- Compliance: "PRTG doesn't help with HIPAA or PCI audits. The Seed generates compliance reports automatically."
 
 **When We Lose to PRTG:**
 
@@ -486,8 +468,8 @@ sensor) |
 
 ### 7. Datadog (Cloud/DevOps Monitoring)
 
-**Company:** Datadog (founded 2010, public NASDAQ:DDOG) **Headquarters:** New York, NY **Revenue:**
-$2B+/year (2024) **Customers:** 28,000+ (cloud-native, DevOps)
+**Company:** Datadog (founded 2010, public NASDAQ:DDOG) **Headquarters:** New York, NY **Revenue:** $2B+/year (2024)
+**Customers:** 28,000+ (cloud-native, DevOps)
 
 **Products:**
 
@@ -513,19 +495,15 @@ $2B+/year (2024) **Customers:** 28,000+ (cloud-native, DevOps)
 
 **Market Position:** Cloud-native, DevOps, modern infrastructure
 
-**The Seed vs Datadog:** | Feature | The Seed | Datadog | |---------|----------|---------| | Price
-(100 hosts) | $799/year | $18,000/year | | Deployment | Self-hosted | SaaS only | | WiFi Planning |
-✅ Yes | ❌ No | | Compliance | ✅ HIPAA, PCI | ❌ No | | Target Audience | Healthcare, SMB |
-Cloud-native, DevOps |
+**The Seed vs Datadog:** | Feature | The Seed | Datadog | |---------|----------|---------| | Price (100 hosts) |
+$799/year | $18,000/year | | Deployment | Self-hosted | SaaS only | | WiFi Planning | ✅ Yes | ❌ No | | Compliance | ✅
+HIPAA, PCI | ❌ No | | Target Audience | Healthcare, SMB | Cloud-native, DevOps |
 
 **Win Against Datadog:**
 
-- Price: "Datadog is $18K/year for 100 hosts. The Seed is $799/year for unlimited devices - 96%
-  cheaper."
-- Data privacy: "Datadog is SaaS - your data leaves your network. The Seed is self-hosted - data
-  never leaves."
-- Compliance: "Datadog isn't designed for healthcare or compliance. The Seed has HIPAA/PCI
-  built-in."
+- Price: "Datadog is $18K/year for 100 hosts. The Seed is $799/year for unlimited devices - 96% cheaper."
+- Data privacy: "Datadog is SaaS - your data leaves your network. The Seed is self-hosted - data never leaves."
+- Compliance: "Datadog isn't designed for healthcare or compliance. The Seed has HIPAA/PCI built-in."
 - WiFi: "Need WiFi planning? Datadog can't help. The Seed can."
 
 **When We Lose to Datadog:**
@@ -538,9 +516,9 @@ Cloud-native, DevOps |
 
 ### 8. Nagios / Zabbix (Open Source)
 
-**Company:** Nagios Enterprises (founded 1999) / Zabbix LLC (founded 2001) **Headquarters:** St.
-Paul, MN / Riga, Latvia **Revenue:** ~$5M/year (Nagios) / ~$10M/year (Zabbix) **Customers:**
-Millions (open source) + thousands (enterprise support)
+**Company:** Nagios Enterprises (founded 1999) / Zabbix LLC (founded 2001) **Headquarters:** St. Paul, MN / Riga, Latvia
+**Revenue:** ~$5M/year (Nagios) / ~$10M/year (Zabbix) **Customers:** Millions (open source) + thousands (enterprise
+support)
 
 **Products:**
 
@@ -567,17 +545,15 @@ Millions (open source) + thousands (enterprise support)
 
 **Market Position:** DIY, budget-conscious, tech-savvy teams
 
-**The Seed vs Nagios/Zabbix:** | Feature | The Seed | Nagios/Zabbix |
-|---------|----------|---------------| | Price | $799/year | Free (but high time cost) | | Ease of
-Setup | 30 min | Days/weeks | | WiFi Planning | ✅ Yes | ❌ No | | AI Diagnostics | ✅ Yes | ❌ No |
-| Compliance | ✅ Yes | ❌ No | | Time to Value | Immediate | Weeks/months |
+**The Seed vs Nagios/Zabbix:** | Feature | The Seed | Nagios/Zabbix | |---------|----------|---------------| | Price |
+$799/year | Free (but high time cost) | | Ease of Setup | 30 min | Days/weeks | | WiFi Planning | ✅ Yes | ❌ No | | AI
+Diagnostics | ✅ Yes | ❌ No | | Compliance | ✅ Yes | ❌ No | | Time to Value | Immediate | Weeks/months |
 
 **Win Against Nagios/Zabbix:**
 
-- Time: "Nagios is free, but it takes weeks to set up and requires constant maintenance. The Seed
-  takes 30 minutes and just works."
-- Ease of use: "Nagios requires Linux skills and editing config files. The Seed has a modern UI and
-  auto-discovery."
+- Time: "Nagios is free, but it takes weeks to set up and requires constant maintenance. The Seed takes 30 minutes and
+  just works."
+- Ease of use: "Nagios requires Linux skills and editing config files. The Seed has a modern UI and auto-discovery."
 - WiFi: "Nagios can't plan WiFi coverage. The Seed can."
 - AI: "Nagios shows you graphs. The Seed tells you what's wrong."
 
@@ -593,8 +569,8 @@ Setup | 30 min | Days/weeks | | WiFi Planning | ✅ Yes | ❌ No | | AI Diagnost
 
 ### 9. Nessus (Vulnerability Scanning Leader)
 
-**Company:** Tenable (founded 2002, public NASDAQ:TENB) **Headquarters:** Columbia, MD **Revenue:**
-$700M+/year **Customers:** 40,000+ (enterprise security teams)
+**Company:** Tenable (founded 2002, public NASDAQ:TENB) **Headquarters:** Columbia, MD **Revenue:** $700M+/year
+**Customers:** 40,000+ (enterprise security teams)
 
 **Products:**
 
@@ -620,20 +596,18 @@ $700M+/year **Customers:** 40,000+ (enterprise security teams)
 
 **Market Position:** Enterprise security, compliance-driven industries
 
-**The Seed vs Nessus:** | Feature | The Seed | Nessus Professional |
-|---------|----------|---------------------| | Price | $799/year (Pro) or $1,999 (Premium) |
-$4,620/year | | Vulnerability Scanning | ✅ Yes | ✅ Yes (more comprehensive) | | Network
-Diagnostics | ✅ Yes | ❌ No | | WiFi Planning | ✅ Yes | ❌ No | | AI Remediation | ✅ Yes (how to
-fix) | ❌ No | | Ease of Use | Easy (for non-experts) | Complex (security experts only) |
+**The Seed vs Nessus:** | Feature | The Seed | Nessus Professional | |---------|----------|---------------------| |
+Price | $799/year (Pro) or $1,999 (Premium) | $4,620/year | | Vulnerability Scanning | ✅ Yes | ✅ Yes (more
+comprehensive) | | Network Diagnostics | ✅ Yes | ❌ No | | WiFi Planning | ✅ Yes | ❌ No | | AI Remediation | ✅ Yes
+(how to fix) | ❌ No | | Ease of Use | Easy (for non-experts) | Complex (security experts only) |
 
 **Win Against Nessus:**
 
-- All-in-one: "Nessus only scans for vulnerabilities. The Seed also does network diagnostics, WiFi
-  planning, and compliance."
-- Price: "Nessus Professional is $4,620/year. The Seed Premium is $1,999 and does more - 57%
-  cheaper."
-- Usability: "Nessus requires security expertise. The Seed explains vulnerabilities in plain English
-  and tells you how to fix them."
+- All-in-one: "Nessus only scans for vulnerabilities. The Seed also does network diagnostics, WiFi planning, and
+  compliance."
+- Price: "Nessus Professional is $4,620/year. The Seed Premium is $1,999 and does more - 57% cheaper."
+- Usability: "Nessus requires security expertise. The Seed explains vulnerabilities in plain English and tells you how
+  to fix them."
 
 **When We Lose to Nessus:**
 
@@ -645,9 +619,8 @@ fix) | ❌ No | | Ease of Use | Easy (for non-experts) | Complex (security exper
 
 ### 10. Qualys / Rapid7 (Enterprise Vulnerability Management)
 
-**Company:** Qualys (founded 1999, NASDAQ:QLYS) / Rapid7 (founded 2000, NASDAQ:RPD)
-**Headquarters:** Foster City, CA / Boston, MA **Revenue:** $500M+/year (Qualys) / $700M+/year
-(Rapid7)
+**Company:** Qualys (founded 1999, NASDAQ:QLYS) / Rapid7 (founded 2000, NASDAQ:RPD) **Headquarters:** Foster City, CA /
+Boston, MA **Revenue:** $500M+/year (Qualys) / $700M+/year (Rapid7)
 
 **Products:**
 
@@ -672,17 +645,14 @@ fix) | ❌ No | | Ease of Use | Easy (for non-experts) | Complex (security exper
 
 **Market Position:** Enterprise security, continuous vulnerability management
 
-**The Seed vs Qualys/Rapid7:** | Feature | The Seed | Qualys/Rapid7 |
-|---------|----------|---------------| | Price (100 assets) | $1,999/year | $2,450-$2,495/year | |
-Deployment | Self-hosted | SaaS only | | Network Diagnostics | ✅ Yes | ❌ No | | WiFi Planning | ✅
-Yes | ❌ No | | Ease of Use | Easy | Complex (security experts) |
+**The Seed vs Qualys/Rapid7:** | Feature | The Seed | Qualys/Rapid7 | |---------|----------|---------------| | Price
+(100 assets) | $1,999/year | $2,450-$2,495/year | | Deployment | Self-hosted | SaaS only | | Network Diagnostics | ✅
+Yes | ❌ No | | WiFi Planning | ✅ Yes | ❌ No | | Ease of Use | Easy | Complex (security experts) |
 
 **Win Against Qualys/Rapid7:**
 
-- Privacy: "Qualys and Rapid7 are SaaS - your scan data leaves your network. The Seed is
-  self-hosted."
-- All-in-one: "They only scan for vulnerabilities. The Seed also does network diagnostics and WiFi
-  planning."
+- Privacy: "Qualys and Rapid7 are SaaS - your scan data leaves your network. The Seed is self-hosted."
+- All-in-one: "They only scan for vulnerabilities. The Seed also does network diagnostics and WiFi planning."
 - Usability: "Designed for security experts. The Seed is designed for IT generalists."
 
 **When We Lose to Qualys/Rapid7:**
@@ -695,8 +665,8 @@ Yes | ❌ No | | Ease of Use | Easy | Complex (security experts) |
 
 ### 11. OpenVAS (Open Source Security Scanner)
 
-**Company:** Greenbone Networks (founded 2008) **Headquarters:** Osnabrück, Germany **Revenue:**
-~$5M/year (support/appliances)
+**Company:** Greenbone Networks (founded 2008) **Headquarters:** Osnabrück, Germany **Revenue:** ~$5M/year
+(support/appliances)
 
 **Products:**
 
@@ -720,9 +690,9 @@ Yes | ❌ No | | Ease of Use | Easy | Complex (security experts) |
 
 **Market Position:** Budget-conscious, open-source advocates
 
-**The Seed vs OpenVAS:** | Feature | The Seed | OpenVAS | |---------|----------|---------| | Price |
-$799/year | Free (high time cost) | | Ease of Setup | 30 min | Days | | Network Diagnostics | ✅ Yes
-| ❌ No | | WiFi Planning | ✅ Yes | ❌ No | | Support | Included | Community-only |
+**The Seed vs OpenVAS:** | Feature | The Seed | OpenVAS | |---------|----------|---------| | Price | $799/year | Free
+(high time cost) | | Ease of Setup | 30 min | Days | | Network Diagnostics | ✅ Yes | ❌ No | | WiFi Planning | ✅ Yes |
+❌ No | | Support | Included | Community-only |
 
 **Win Against OpenVAS:**
 
@@ -741,8 +711,8 @@ $799/year | Free (high time cost) | | Ease of Setup | 30 min | Days | | Network 
 
 ### 12. Path Solutions (Unified Competitor - Closest to The Seed)
 
-**Company:** PathSolutions (founded 1999) **Headquarters:** Cypress, CA **Revenue:** ~$10M/year
-(estimated) **Customers:** 1,000+ (enterprise, healthcare)
+**Company:** PathSolutions (founded 1999) **Headquarters:** Cypress, CA **Revenue:** ~$10M/year (estimated)
+**Customers:** 1,000+ (enterprise, healthcare)
 
 **Products:**
 
@@ -768,18 +738,15 @@ $799/year | Free (high time cost) | | Ease of Setup | 30 min | Days | | Network 
 
 **Market Position:** Enterprise healthcare, unified monitoring
 
-**The Seed vs Path Solutions:** | Feature | The Seed | Path Solutions |
-|---------|----------|----------------| | Price | $1,999/year | $15,000+ (100 devices) | | Ease of
-Setup | 30 min | Weeks (pro services) | | WiFi Planning | ✅ Yes (predictive) | ❌ No (monitoring
-only) | | Platforms | macOS, Linux | Windows only | | Self-Service | ✅ Yes | ❌ No (requires sales
-demo) |
+**The Seed vs Path Solutions:** | Feature | The Seed | Path Solutions | |---------|----------|----------------| | Price
+| $1,999/year | $15,000+ (100 devices) | | Ease of Setup | 30 min | Weeks (pro services) | | WiFi Planning | ✅ Yes
+(predictive) | ❌ No (monitoring only) | | Platforms | macOS, Linux | Windows only | | Self-Service | ✅ Yes | ❌ No
+(requires sales demo) |
 
 **Win Against Path Solutions:**
 
-- Price: "Path Solutions starts at $15K for 100 devices. The Seed is $1,999 for unlimited - 87%
-  cheaper."
-- Ease: "Path Solutions takes weeks to deploy and requires professional services. The Seed takes 30
-  minutes."
+- Price: "Path Solutions starts at $15K for 100 devices. The Seed is $1,999 for unlimited - 87% cheaper."
+- Ease: "Path Solutions takes weeks to deploy and requires professional services. The Seed takes 30 minutes."
 - WiFi: "Path Solutions monitors WiFi. The Seed plans and optimizes WiFi BEFORE you deploy APs."
 - Modern: "Path Solutions is Windows-only legacy software. The Seed is modern, cross-platform."
 
@@ -789,15 +756,15 @@ demo) |
 - Deep packet inspection needs (Path has better DPI)
 - Customers with existing Path investment
 
-**IMPORTANT NOTE:** Path Solutions is our CLOSEST competitor (unified platform for healthcare). We
-must differentiate aggressively on price, ease of use, and WiFi planning.
+**IMPORTANT NOTE:** Path Solutions is our CLOSEST competitor (unified platform for healthcare). We must differentiate
+aggressively on price, ease of use, and WiFi planning.
 
 ---
 
 ### 13. Auvik (MSP-Focused Network Management)
 
-**Company:** Auvik Networks (founded 2011) **Headquarters:** Waterloo, Canada **Revenue:**
-~$50M/year (estimated) **Customers:** 5,000+ MSPs
+**Company:** Auvik Networks (founded 2011) **Headquarters:** Waterloo, Canada **Revenue:** ~$50M/year (estimated)
+**Customers:** 5,000+ MSPs
 
 **Products:**
 
@@ -822,15 +789,14 @@ must differentiate aggressively on price, ease of use, and WiFi planning.
 
 **Market Position:** MSP multi-tenant network management
 
-**The Seed vs Auvik:** | Feature | The Seed | Auvik | |---------|----------|-------| | Price (1
-site) | $4,999/year (Enterprise tier, multi-site) | $1,440/year (single site) | | Price (100 sites)
-| $4,999/year (all sites) | $144,000/year | | WiFi Planning | ✅ Yes | ❌ No | | Vulnerability
-Scanning | ✅ Yes | ❌ No | | Deployment | Self-hosted | SaaS only |
+**The Seed vs Auvik:** | Feature | The Seed | Auvik | |---------|----------|-------| | Price (1 site) | $4,999/year
+(Enterprise tier, multi-site) | $1,440/year (single site) | | Price (100 sites) | $4,999/year (all sites) |
+$144,000/year | | WiFi Planning | ✅ Yes | ❌ No | | Vulnerability Scanning | ✅ Yes | ❌ No | | Deployment |
+Self-hosted | SaaS only |
 
 **Win Against Auvik:**
 
-- Multi-site price: "Auvik charges per site. The Seed Enterprise tier is $4,999/year for UNLIMITED
-  sites."
+- Multi-site price: "Auvik charges per site. The Seed Enterprise tier is $4,999/year for UNLIMITED sites."
 - WiFi: "Auvik monitors WiFi. The Seed plans and optimizes WiFi."
 - Compliance: "Auvik doesn't help with HIPAA or PCI. The Seed has built-in compliance."
 - Privacy: "Auvik is SaaS - data leaves your network. The Seed is self-hosted."
@@ -845,8 +811,8 @@ Scanning | ✅ Yes | ❌ No | | Deployment | Self-hosted | SaaS only |
 
 ### 14. Domotz (Remote Monitoring & Management)
 
-**Company:** Domotz (founded 2015) **Headquarters:** Pisa, Italy **Revenue:** ~$5M/year (estimated)
-**Customers:** 10,000+ (MSPs, small businesses)
+**Company:** Domotz (founded 2015) **Headquarters:** Pisa, Italy **Revenue:** ~$5M/year (estimated) **Customers:**
+10,000+ (MSPs, small businesses)
 
 **Products:**
 
@@ -870,10 +836,9 @@ Scanning | ✅ Yes | ❌ No | | Deployment | Self-hosted | SaaS only |
 
 **Market Position:** MSP remote access, IoT monitoring
 
-**The Seed vs Domotz:** | Feature | The Seed | Domotz | |---------|----------|--------| | Price |
-$299/year (Starter) | $252/year | | WiFi Planning | ✅ Yes | ❌ No | | Vulnerability Scanning | ✅
-Yes | ❌ No | | Compliance | ✅ Yes | ❌ No | | Deployment | Software-only | Requires hardware agent
-|
+**The Seed vs Domotz:** | Feature | The Seed | Domotz | |---------|----------|--------| | Price | $299/year (Starter) |
+$252/year | | WiFi Planning | ✅ Yes | ❌ No | | Vulnerability Scanning | ✅ Yes | ❌ No | | Compliance | ✅ Yes | ❌ No
+| | Deployment | Software-only | Requires hardware agent |
 
 **Win Against Domotz:**
 
@@ -925,8 +890,8 @@ Yes | ❌ No | | Compliance | ✅ Yes | ❌ No | | Deployment | Software-only | 
 | **NetAlly EtherScope**   | $6,995      | $0           | Yes (hardware)                           | Hardware, limited features       |
 | **AirMagnet Survey Pro** | $6,498      | $1,499       | Yes ($4,999 perpetual + $1,499/yr)       | Legacy, outdated                 |
 
-**The Seed Advantage:** 62% cheaper than Ekahau, includes network diagnostics and compliance (saving
-$5K-$10K on additional tools).
+**The Seed Advantage:** 62% cheaper than Ekahau, includes network diagnostics and compliance (saving $5K-$10K on
+additional tools).
 
 ---
 
@@ -960,8 +925,7 @@ $5K-$10K on additional tools).
 
 ### Total Cost of Ownership (3 Years)
 
-**Scenario:** Hospital with 500 devices, needs WiFi planning + network monitoring + vulnerability
-scanning + compliance
+**Scenario:** Hospital with 500 devices, needs WiFi planning + network monitoring + vulnerability scanning + compliance
 
 | Solution                         | Year 1  | Year 2  | Year 3  | **3-Year Total** |
 | -------------------------------- | ------- | ------- | ------- | ---------------- |
@@ -977,11 +941,10 @@ scanning + compliance
 
 ### Positioning Statement
 
-> "For healthcare and SMB IT teams who waste hours troubleshooting network issues and thousands on
-> WiFi site surveys, The Seed is an AI-powered diagnostic platform that tells you exactly what's
-> wrong in seconds and lets you plan WiFi coverage before buying access points. Unlike SolarWinds or
-> Ekahau, The Seed combines network diagnostics, WiFi planning, and compliance automation in one
-> affordable platform starting at $299/year."
+> "For healthcare and SMB IT teams who waste hours troubleshooting network issues and thousands on WiFi site surveys,
+> The Seed is an AI-powered diagnostic platform that tells you exactly what's wrong in seconds and lets you plan WiFi
+> coverage before buying access points. Unlike SolarWinds or Ekahau, The Seed combines network diagnostics, WiFi
+> planning, and compliance automation in one affordable platform starting at $299/year."
 
 ---
 
@@ -1084,27 +1047,25 @@ Complex ----------------|--------------- Simple
 
 **"Ekahau is the industry standard."**
 
-- "That's true for large consultant firms. But for hospitals and SMBs, The Seed offers 80% of
-  Ekahau's accuracy at 40% of the cost, plus network diagnostics and compliance that Ekahau doesn't
-  do."
+- "That's true for large consultant firms. But for hospitals and SMBs, The Seed offers 80% of Ekahau's accuracy at 40%
+  of the cost, plus network diagnostics and compliance that Ekahau doesn't do."
 
 **"Our clients expect Ekahau reports."**
 
-- "The Seed generates professional PDF reports that look just as polished. We've had customers
-  switch from Ekahau and their clients didn't notice the difference."
+- "The Seed generates professional PDF reports that look just as polished. We've had customers switch from Ekahau and
+  their clients didn't notice the difference."
 
 **"Ekahau is more accurate."**
 
-- "For most environments (offices, clinics, schools), The Seed's accuracy is indistinguishable from
-  Ekahau. If you're designing for a stadium or warehouse, Ekahau might be better. But for 90% of
-  projects, The Seed is more than sufficient."
+- "For most environments (offices, clinics, schools), The Seed's accuracy is indistinguishable from Ekahau. If you're
+  designing for a stadium or warehouse, Ekahau might be better. But for 90% of projects, The Seed is more than
+  sufficient."
 
 **Talk Track:**
 
-> "I understand Ekahau is the standard. But let me ask: do you also need to troubleshoot wired
-> network issues? Do you need to scan for vulnerabilities for HIPAA compliance? If yes, you're
-> buying Ekahau ($5,200) + SolarWinds ($10K) + Nessus ($4,600) = $19,800 for Year 1. The Seed does
-> all three for $1,999. That's 90% savings."
+> "I understand Ekahau is the standard. But let me ask: do you also need to troubleshoot wired network issues? Do you
+> need to scan for vulnerabilities for HIPAA compliance? If yes, you're buying Ekahau ($5,200) + SolarWinds ($10K) +
+> Nessus ($4,600) = $19,800 for Year 1. The Seed does all three for $1,999. That's 90% savings."
 
 ---
 
@@ -1145,19 +1106,19 @@ Complex ----------------|--------------- Simple
 
 **"SolarWinds is enterprise-proven."**
 
-- "True for Fortune 500 with 10,000+ devices. But for a 200-device network, SolarWinds is overkill
-  and overpriced. The Seed gives you 90% of the value at 10% of the cost."
+- "True for Fortune 500 with 10,000+ devices. But for a 200-device network, SolarWinds is overkill and overpriced. The
+  Seed gives you 90% of the value at 10% of the cost."
 
 **"We need to monitor servers and applications too."**
 
-- "If you have complex app monitoring needs (APM, distributed tracing), SolarWinds or Datadog is
-  better. But if you primarily need network and WiFi diagnostics, The Seed is the right fit."
+- "If you have complex app monitoring needs (APM, distributed tracing), SolarWinds or Datadog is better. But if you
+  primarily need network and WiFi diagnostics, The Seed is the right fit."
 
 **Talk Track:**
 
-> "SolarWinds is a Mack truck - great if you need to haul 50 tons. But if you're delivering pizzas,
-> you don't need a Mack truck. The Seed is designed for networks like yours: 200-500 devices, need
-> WiFi planning, need compliance reporting, and don't want to spend $50K."
+> "SolarWinds is a Mack truck - great if you need to haul 50 tons. But if you're delivering pizzas, you don't need a
+> Mack truck. The Seed is designed for networks like yours: 200-500 devices, need WiFi planning, need compliance
+> reporting, and don't want to spend $50K."
 
 ---
 
@@ -1198,22 +1159,20 @@ Complex ----------------|--------------- Simple
 
 **"Path Solutions is healthcare-proven."**
 
-- "Path has been around since 1999, and they're used by large hospitals. But healthcare is changing.
-  You need modern tools that don't require weeks of professional services and $15K budgets. The Seed
-  gives you the same HIPAA compliance and diagnostics at 87% lower cost."
+- "Path has been around since 1999, and they're used by large hospitals. But healthcare is changing. You need modern
+  tools that don't require weeks of professional services and $15K budgets. The Seed gives you the same HIPAA compliance
+  and diagnostics at 87% lower cost."
 
 **"Path has deeper packet inspection."**
 
-- "True. If you need to analyze every packet for forensics, Path is better. But most hospitals just
-  need: 'Is my network working? Are we HIPAA compliant? Why is WiFi slow in the ER?' The Seed
-  answers those questions faster and cheaper."
+- "True. If you need to analyze every packet for forensics, Path is better. But most hospitals just need: 'Is my network
+  working? Are we HIPAA compliant? Why is WiFi slow in the ER?' The Seed answers those questions faster and cheaper."
 
 **Talk Track:**
 
-> "Path Solutions is like buying enterprise software from 2005. It works, but it's expensive,
-> complex, and designed for a world where you had unlimited IT budget and time. The Seed is designed
-> for 2025: affordable, self-service, and AI-powered. You'll get 90% of Path's value at 10% of the
-> cost."
+> "Path Solutions is like buying enterprise software from 2005. It works, but it's expensive, complex, and designed for
+> a world where you had unlimited IT budget and time. The Seed is designed for 2025: affordable, self-service, and
+> AI-powered. You'll get 90% of Path's value at 10% of the cost."
 
 ---
 
@@ -1349,8 +1308,7 @@ Complex ----------------|--------------- Simple
 
 ---
 
-**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** March
-2026 (quarterly)
+**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** March 2026 (quarterly)
 
 ---
 

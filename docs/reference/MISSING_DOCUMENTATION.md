@@ -380,8 +380,8 @@
 1. **DEPLOYMENT.md** - Critical for safe deployments
 2. **SECURITY_POLICIES.md** - Critical for HIPAA compliance
 
-**Create SOON (within 1 month):** 3. **API-Reference.md** - Enable integrations 4.
-**INCIDENT_RESPONSE.md** - Know what to do when things break
+**Create SOON (within 1 month):** 3. **API-Reference.md** - Enable integrations 4. **INCIDENT_RESPONSE.md** - Know what
+to do when things break
 
 **Create LATER (when needed):**
 

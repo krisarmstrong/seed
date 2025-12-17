@@ -1,13 +1,12 @@
 # Phase 4: Hardware Program Expansion and Partnerships
 
-**Status:** Planned (Month 6-12 after Phase 3 completion) **Prerequisites:** 10+ community test
-reports, proven testing model **Timeline:** 6 months **Budget:** $2,000-3,000 (offset by revenue
-potential)
+**Status:** Planned (Month 6-12 after Phase 3 completion) **Prerequisites:** 10+ community test reports, proven testing
+model **Timeline:** 6 months **Budget:** $2,000-3,000 (offset by revenue potential)
 
 ## Overview
 
-Phase 4 transitions the hardware compatibility program from community-driven documentation to a
-scalable, sustainable ecosystem with vendor partnerships, automation, and monetization.
+Phase 4 transitions the hardware compatibility program from community-driven documentation to a scalable, sustainable
+ecosystem with vendor partnerships, automation, and monetization.
 
 ## Strategic Objectives
 
@@ -22,8 +21,7 @@ scalable, sustainable ecosystem with vendor partnerships, automation, and moneti
 
 ### 1. Vendor Partnership Program
 
-**Goal:** Establish relationships with 2-3 hardware vendors for testing equipment and technical
-support.
+**Goal:** Establish relationships with 2-3 hardware vendors for testing equipment and technical support.
 
 **Target Vendors:**
 
@@ -323,8 +321,8 @@ Perfect for field diagnostics and troubleshooting.
 
 ---
 
-_Disclosure: The Seed participates in affiliate programs. Purchases through these links support the
-project at no extra cost to you. We only recommend hardware we've tested and documented._
+_Disclosure: The Seed participates in affiliate programs. Purchases through these links support the project at no extra
+cost to you. We only recommend hardware we've tested and documented._
 ```
 
 **Legal Requirements:**
@@ -391,32 +389,32 @@ project at no extra cost to you. We only recommend hardware we've tested and doc
 
 #### Series 2: The Seed Features (5 videos, 45-55 min total)
 
-5. **"Complete WiFi Site Survey Walkthrough"** (12 min)
+1. **"Complete WiFi Site Survey Walkthrough"** (12 min)
    - Setting up monitor mode
    - Creating floor plan
    - Collecting samples
    - Generating heatmap
    - Identifying coverage gaps
 
-6. **"Cable Diagnostics Deep Dive"** (10 min)
+2. **"Cable Diagnostics Deep Dive"** (10 min)
    - Good cable baseline
    - Testing faulty cables
    - Distance-to-fault accuracy
    - Common cable issues (shorts, opens, impedance)
 
-7. **"Network Discovery and Profiling"** (8 min)
+3. **"Network Discovery and Profiling"** (8 min)
    - ARP scanning
    - LLDP/CDP neighbor discovery
    - Device fingerprinting
    - Vulnerability scanning
 
-8. **"Advanced DHCP Troubleshooting"** (7 min)
+4. **"Advanced DHCP Troubleshooting"** (7 min)
    - Phase timing analysis
    - Identifying slow DHCP servers
    - VLAN issues
    - Rogue DHCP detection
 
-9. **"Custom Tests and Automation"** (8 min)
+5. **"Custom Tests and Automation"** (8 min)
    - Setting up custom ping tests
    - HTTP endpoint monitoring
    - TCP port checks
@@ -424,23 +422,23 @@ project at no extra cost to you. We only recommend hardware we've tested and doc
 
 #### Series 3: Troubleshooting (3 videos, 18-25 min total)
 
-10. **"Common Hardware Issues"** (8 min)
-    - Firmware loading failures
-    - Driver conflicts (NetworkManager)
-    - Monitor mode not working
-    - TDR "Operation not supported"
+1. **"Common Hardware Issues"** (8 min)
+   - Firmware loading failures
+   - Driver conflicts (NetworkManager)
+   - Monitor mode not working
+   - TDR "Operation not supported"
 
-11. **"WiFi Channel and Regulatory Domains"** (6 min)
-    - Understanding channel restrictions
-    - Setting regulatory domain
-    - 6GHz access (AFC/LPI)
-    - Legal considerations
+2. **"WiFi Channel and Regulatory Domains"** (6 min)
+   - Understanding channel restrictions
+   - Setting regulatory domain
+   - 6GHz access (AFC/LPI)
+   - Legal considerations
 
-12. **"Performance Optimization"** (6 min)
-    - Antenna placement
-    - USB 3.0 interference mitigation
-    - Reducing scan time
-    - Multi-interface setups
+3. **"Performance Optimization"** (6 min)
+   - Antenna placement
+   - USB 3.0 interference mitigation
+   - Reducing scan time
+   - Multi-interface setups
 
 **Production Specifications:**
 

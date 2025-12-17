@@ -752,15 +752,15 @@ fmt-check: ## Check all formatting (Go + frontend + markdown) without fixing
 
 # Lint markdown files with markdownlint
 lint-md: ## Lint markdown files with markdownlint
-	@echo "🔍 Linting markdown files..."
+	@printf "$(BOLD)🔍 Linting markdown files...$(RESET)\n"
 	@if command -v markdownlint-cli2 > /dev/null 2>&1; then \
-		markdownlint-cli2 "**/*.md" "#node_modules" "#web/node_modules" "#dist"; \
+		markdownlint-cli2 "**/*.md"; \
 	elif npx markdownlint-cli2 --help > /dev/null 2>&1; then \
-		npx markdownlint-cli2 "**/*.md" "#node_modules" "#web/node_modules" "#dist"; \
+		npx markdownlint-cli2 "**/*.md"; \
 	else \
-		echo "SKIP: markdownlint-cli2 not installed (npm install -g markdownlint-cli2)"; \
+		printf "$(YELLOW)SKIP: markdownlint-cli2 not installed (npm install -g markdownlint-cli2)$(RESET)\n"; \
 	fi
-	@echo "✅ Markdown lint complete"
+	@printf "$(GREEN)✓ Markdown lint complete$(RESET)\n"
 
 # =============================================================================
 # Auto-Fix Linting Issues

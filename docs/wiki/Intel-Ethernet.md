@@ -1,7 +1,7 @@
 # Intel Ethernet NICs
 
-Intel Ethernet NICs are **highly recommended** for The Seed cable diagnostics. The `igb` and
-`e1000e` drivers provide excellent TDR (Time Domain Reflectometry) support via `ethtool`.
+Intel Ethernet NICs are **highly recommended** for The Seed cable diagnostics. The `igb` and `e1000e` drivers provide
+excellent TDR (Time Domain Reflectometry) support via `ethtool`.
 
 [← Back to Home](Home)
 
@@ -181,6 +181,7 @@ Intel Ethernet NICs are **highly recommended** for The Seed cable diagnostics. T
    ```
 
 4. **Check interface name:**
+
    ```bash
    ip link show
    # Look for new interface (eth0, eno1, enp3s0, etc.)
@@ -509,8 +510,6 @@ _(Community will share real-world fault detection here)_
 
 ---
 
-**Last Updated:** 2025-12-14 **Recommendation:** **Intel I350 or I210 for professional cable
-diagnostics**
+**Last Updated:** 2025-12-14 **Recommendation:** **Intel I350 or I210 for professional cable diagnostics**
 
-[← Back to Home](Home) | [← Previous: MediaTek Wi-Fi](MediaTek-WiFi) |
-[Next: Broadcom Ethernet →](Broadcom-Ethernet)
+[← Back to Home](Home) | [← Previous: MediaTek Wi-Fi](MediaTek-WiFi) | [Next: Broadcom Ethernet →](Broadcom-Ethernet)

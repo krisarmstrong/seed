@@ -1,14 +1,12 @@
 # The Seed - Brand Guidelines
 
-**Version:** 1.0 (Pre-Launch) **Last Updated:** December 2025 **Status:** Foundation Document -
-Assets To Be Created
+**Version:** 1.0 (Pre-Launch) **Last Updated:** December 2025 **Status:** Foundation Document - Assets To Be Created
 
 ---
 
 ## Executive Summary
 
-This document defines the visual identity, voice, and brand standards for **The Seed** by **Mustard
-Seed Networks**.
+This document defines the visual identity, voice, and brand standards for **The Seed** by **Mustard Seed Networks**.
 
 **Brand Essence:**
 
@@ -16,8 +14,8 @@ Seed Networks**.
 - **Personality:** Approachable, intelligent, growth-oriented, trustworthy
 - **Promise:** Complex network diagnostics made simple through AI
 
-**Status:** Pre-launch. Many visual assets (logo, photography, illustrations) are yet to be created.
-This document establishes the foundation and direction for brand development.
+**Status:** Pre-launch. Many visual assets (logo, photography, illustrations) are yet to be created. This document
+establishes the foundation and direction for brand development.
 
 ---
 
@@ -44,26 +42,24 @@ This document establishes the foundation and direction for brand development.
 
 **The Parable of the Mustard Seed:**
 
-> "The kingdom of heaven is like a mustard seed, which a man took and planted in his field. Though
-> it is the smallest of all seeds, yet when it grows, it is the largest of garden plants and becomes
-> a tree, so that the birds come and perch in its branches." — Matthew 13:31-32
+> "The kingdom of heaven is like a mustard seed, which a man took and planted in his field. Though it is the smallest of
+> all seeds, yet when it grows, it is the largest of garden plants and becomes a tree, so that the birds come and perch
+> in its branches." — Matthew 13:31-32
 
 **Our Interpretation:**
 
-From the smallest diagnostic scan, comprehensive network insight grows. A single seed of data
-planted in the right soil (AI analysis) becomes a mighty tree of actionable intelligence.
+From the smallest diagnostic scan, comprehensive network insight grows. A single seed of data planted in the right soil
+(AI analysis) becomes a mighty tree of actionable intelligence.
 
 **Founder Story:**
 
-Kris Armstrong spent years working in healthcare IT, watching network admins waste hours
-troubleshooting mysterious network issues and thousands of dollars on WiFi site surveys. He saw
-expensive enterprise tools that were too complex for SMBs and healthcare teams, and
-consultant-focused tools that priced out smaller organizations.
+Kris Armstrong spent years working in healthcare IT, watching network admins waste hours troubleshooting mysterious
+network issues and thousands of dollars on WiFi site surveys. He saw expensive enterprise tools that were too complex
+for SMBs and healthcare teams, and consultant-focused tools that priced out smaller organizations.
 
-The Seed was born from a simple belief: network diagnostics should be **simple, affordable, and
-intelligent**. Not just data dumps, but actual answers. Not just for Fortune 500 enterprises, but
-for the hospitals, clinics, schools, and small businesses that make up the backbone of our
-communities.
+The Seed was born from a simple belief: network diagnostics should be **simple, affordable, and intelligent**. Not just
+data dumps, but actual answers. Not just for Fortune 500 enterprises, but for the hospitals, clinics, schools, and small
+businesses that make up the backbone of our communities.
 
 ---
 
@@ -73,11 +69,10 @@ communities.
 
 **Positioning Statement:**
 
-> "For healthcare and SMB IT teams who waste hours troubleshooting network issues and thousands on
-> WiFi site surveys, The Seed is an AI-powered diagnostic platform that tells you exactly what's
-> wrong in seconds and lets you plan WiFi coverage before buying access points. Unlike SolarWinds or
-> Ekahau, The Seed combines network diagnostics, WiFi planning, and compliance automation in one
-> affordable platform starting at $299/year."
+> "For healthcare and SMB IT teams who waste hours troubleshooting network issues and thousands on WiFi site surveys,
+> The Seed is an AI-powered diagnostic platform that tells you exactly what's wrong in seconds and lets you plan WiFi
+> coverage before buying access points. Unlike SolarWinds or Ekahau, The Seed combines network diagnostics, WiFi
+> planning, and compliance automation in one affordable platform starting at $299/year."
 
 **Target Audiences:**
 
@@ -157,8 +152,7 @@ If The Seed were a person, they would be:
 #### Concept 1: Sprouting Seed Icon
 
 - Simple line drawing of a seed with a small sprout emerging
-- Could evolve into different growth states (seed → sprout → sapling → tree) for different tiers or
-  product areas
+- Could evolve into different growth states (seed → sprout → sapling → tree) for different tiers or product areas
 - Minimalist, memorable, scalable
 
 #### Concept 2: Network + Seed Hybrid
@@ -170,8 +164,7 @@ If The Seed were a person, they would be:
 #### Concept 3: Wordmark with Subtle Seed Detail
 
 - Clean, modern wordmark "The Seed"
-- Subtle seed icon integrated (e.g., dot over "i" replaced with seed, or "o" in "Seed" becomes seed
-  shape)
+- Subtle seed icon integrated (e.g., dot over "i" replaced with seed, or "o" in "Seed" becomes seed shape)
 - Professional, versatile
 
 **Logo Requirements:**
@@ -202,13 +195,11 @@ If The Seed were a person, they would be:
 
 ### Logo Usage Do's and Don'ts
 
-**DO:** ✅ Use official logo files (never recreate from scratch) ✅ Maintain aspect ratio (never
-stretch or squash) ✅ Use on solid backgrounds with sufficient contrast ✅ Place on clean,
-uncluttered backgrounds
+**DO:** ✅ Use official logo files (never recreate from scratch) ✅ Maintain aspect ratio (never stretch or squash) ✅
+Use on solid backgrounds with sufficient contrast ✅ Place on clean, uncluttered backgrounds
 
-**DON'T:** ❌ Change logo colors (except approved variations) ❌ Add effects (shadows, glows,
-gradients) to logo ❌ Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use
-outdated logo versions (always use latest)
+**DON'T:** ❌ Change logo colors (except approved variations) ❌ Add effects (shadows, glows, gradients) to logo ❌
+Rotate or flip logo ❌ Place logo on busy or low-contrast backgrounds ❌ Use outdated logo versions (always use latest)
 
 ---
 
@@ -345,8 +336,7 @@ outdated logo versions (always use latest)
 - Use native system fonts for performance
 
 ```css
-font-family:
-  -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
 ```
 
 **Why:** Fast, familiar, no font loading delay
@@ -386,13 +376,13 @@ font-family:
 
 ### Typography Guidelines
 
-**DO:** ✅ Use a clear hierarchy (readers should know what's important) ✅ Limit to 3 weights
-(Regular, Medium, Bold - avoid too many) ✅ Use adequate line height (1.6+ for body text) ✅ Align
-text left for readability (centered for short headlines only)
+**DO:** ✅ Use a clear hierarchy (readers should know what's important) ✅ Limit to 3 weights (Regular, Medium, Bold -
+avoid too many) ✅ Use adequate line height (1.6+ for body text) ✅ Align text left for readability (centered for short
+headlines only)
 
-**DON'T:** ❌ Use more than 2 font families on one page ❌ Use fancy/decorative fonts (we're B2B,
-not a wedding invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smaller than
-14px for body text (accessibility)
+**DON'T:** ❌ Use more than 2 font families on one page ❌ Use fancy/decorative fonts (we're B2B, not a wedding
+invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use font sizes smaller than 14px for body text
+(accessibility)
 
 ---
 
@@ -634,8 +624,8 @@ not a wedding invitation) ❌ Set body text in ALL CAPS (hard to read) ❌ Use f
 
 **Headline:** "HIPAA Compliance Without the Headache"
 
-**Subheadline:** "Scan your network for vulnerabilities, plan WiFi coverage for new wings, and
-generate audit-ready reports in minutes - not weeks."
+**Subheadline:** "Scan your network for vulnerabilities, plan WiFi coverage for new wings, and generate audit-ready
+reports in minutes - not weeks."
 
 **Proof Points:**
 
@@ -649,8 +639,8 @@ generate audit-ready reports in minutes - not weeks."
 
 **Headline:** "Stop Guessing. Start Knowing."
 
-**Subheadline:** "AI tells you exactly what's wrong with your network and how to fix it - no more
-googling error messages at 2am."
+**Subheadline:** "AI tells you exactly what's wrong with your network and how to fix it - no more googling error
+messages at 2am."
 
 **Proof Points:**
 
@@ -664,8 +654,8 @@ googling error messages at 2am."
 
 **Headline:** "Plan WiFi Before You Survey"
 
-**Subheadline:** "Predictive WiFi planning lets you design coverage and estimate AP count BEFORE
-going on-site. Save time, impress clients, win more projects."
+**Subheadline:** "Predictive WiFi planning lets you design coverage and estimate AP count BEFORE going on-site. Save
+time, impress clients, win more projects."
 
 **Proof Points:**
 
@@ -677,11 +667,10 @@ going on-site. Save time, impress clients, win more projects."
 
 ### Elevator Pitch (30 seconds)
 
-> "The Seed is an AI-powered network diagnostic tool for healthcare and small businesses. It
-> combines WiFi planning, network monitoring, and vulnerability scanning in one affordable platform.
-> Instead of just showing you data, The Seed tells you what's wrong and how to fix it. It's 60-90%
-> cheaper than tools like Ekahau and SolarWinds, and takes 30 minutes to set up instead of weeks.
-> We're pre-launch, targeting hospitals and clinics first."
+> "The Seed is an AI-powered network diagnostic tool for healthcare and small businesses. It combines WiFi planning,
+> network monitoring, and vulnerability scanning in one affordable platform. Instead of just showing you data, The Seed
+> tells you what's wrong and how to fix it. It's 60-90% cheaper than tools like Ekahau and SolarWinds, and takes 30
+> minutes to set up instead of weeks. We're pre-launch, targeting hospitals and clinics first."
 
 ---
 
@@ -888,34 +877,32 @@ https://mustardseednetworks.com
 
 ### DO: ✅
 
-**Visual:** ✅ Use official brand colors and fonts ✅ Maintain consistent visual style across all
-materials ✅ Test designs for accessibility (color contrast, text size) ✅ Use high-quality images
-(no pixelated or blurry) ✅ Give content room to breathe (white space is good)
+**Visual:** ✅ Use official brand colors and fonts ✅ Maintain consistent visual style across all materials ✅ Test
+designs for accessibility (color contrast, text size) ✅ Use high-quality images (no pixelated or blurry) ✅ Give
+content room to breathe (white space is good)
 
-**Messaging:** ✅ Speak to customer pain points (empathy first) ✅ Be specific ("Save 10 hours/week"
-not "Save time") ✅ Back up claims with proof ("90% of users..." not "Many users...") ✅ Use active
-voice ("The Seed finds issues" not "Issues are found") ✅ Write for humans, not algorithms (SEO is
-secondary to clarity)
+**Messaging:** ✅ Speak to customer pain points (empathy first) ✅ Be specific ("Save 10 hours/week" not "Save time") ✅
+Back up claims with proof ("90% of users..." not "Many users...") ✅ Use active voice ("The Seed finds issues" not
+"Issues are found") ✅ Write for humans, not algorithms (SEO is secondary to clarity)
 
-**Tone:** ✅ Be confident but not arrogant ✅ Be helpful, not condescending ✅ Be professional, not
-stuffy ✅ Acknowledge when competitors do something well (builds trust)
+**Tone:** ✅ Be confident but not arrogant ✅ Be helpful, not condescending ✅ Be professional, not stuffy ✅
+Acknowledge when competitors do something well (builds trust)
 
 ---
 
 ### DON'T: ❌
 
-**Visual:** ❌ Use random fonts or colors (stick to brand guidelines) ❌ Stretch or distort logos or
-images ❌ Use clipart or cheesy stock photos ❌ Overuse effects (gradients, shadows, glows) ❌
-Ignore accessibility (we serve healthcare - inclusivity matters)
+**Visual:** ❌ Use random fonts or colors (stick to brand guidelines) ❌ Stretch or distort logos or images ❌ Use
+clipart or cheesy stock photos ❌ Overuse effects (gradients, shadows, glows) ❌ Ignore accessibility (we serve
+healthcare - inclusivity matters)
 
-**Messaging:** ❌ Use jargon or buzzwords to sound smart ("leverage our paradigm-shifting solution")
-❌ Make claims you can't back up ("The #1 network tool" - says who?) ❌ Be vague ("We help you
-succeed" - how?) ❌ Talk about features without benefits ("SNMP v3 support" - so what?) ❌ Be
-negative about competitors ("SolarWinds sucks" - unprofessional)
+**Messaging:** ❌ Use jargon or buzzwords to sound smart ("leverage our paradigm-shifting solution") ❌ Make claims you
+can't back up ("The #1 network tool" - says who?) ❌ Be vague ("We help you succeed" - how?) ❌ Talk about features
+without benefits ("SNMP v3 support" - so what?) ❌ Be negative about competitors ("SolarWinds sucks" - unprofessional)
 
-**Tone:** ❌ Be snarky or sarcastic (jokes don't translate well in text) ❌ Use fear tactics ("Your
-network is at risk!" - icky) ❌ Be overly casual ("Hey dude, check this out!" - we're B2B) ❌ Use
-exclamation points excessively!!! (one is enough!) ❌ ALL CAPS (feels like shouting)
+**Tone:** ❌ Be snarky or sarcastic (jokes don't translate well in text) ❌ Use fear tactics ("Your network is at
+risk!" - icky) ❌ Be overly casual ("Hey dude, check this out!" - we're B2B) ❌ Use exclamation points excessively!!!
+(one is enough!) ❌ ALL CAPS (feels like shouting)
 
 ---
 
@@ -1015,8 +1002,8 @@ As we grow, our brand will evolve. Expect updates:
 
 ---
 
-**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** After
-logo design complete (Q1 2026), then quarterly
+**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** After logo design complete
+(Q1 2026), then quarterly
 
 ---
 

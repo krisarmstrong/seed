@@ -1,7 +1,7 @@
 # Broadcom Wi-Fi Adapters
 
-⚠️ **Limited Support** - Broadcom adapters have varying levels of Linux support. Some models work
-well, others have significant limitations. **Not recommended** as a first choice for The Seed.
+⚠️ **Limited Support** - Broadcom adapters have varying levels of Linux support. Some models work well, others have
+significant limitations. **Not recommended** as a first choice for The Seed.
 
 [← Back to Home](Home)
 
@@ -26,8 +26,8 @@ well, others have significant limitations. **Not recommended** as a first choice
 - ❌ **Not supported** on most chipsets
 - Some community patches exist but unreliable
 
-**Recommendation:** If you already have Broadcom hardware, test it. If purchasing new hardware for
-diagnostics, **choose Intel or Atheros instead**.
+**Recommendation:** If you already have Broadcom hardware, test it. If purchasing new hardware for diagnostics, **choose
+Intel or Atheros instead**.
 
 ---
 
@@ -251,5 +251,4 @@ _(Community will add failed attempts here)_
 
 **Last Updated:** 2025-12-14 **Total Community Reports:** 0 _(submit yours!)_
 
-[← Back to Home](Home) | [← Previous: Qualcomm Atheros](Qualcomm-Atheros-WiFi) |
-[Next: Realtek →](Realtek-WiFi)
+[← Back to Home](Home) | [← Previous: Qualcomm Atheros](Qualcomm-Atheros-WiFi) | [Next: Realtek →](Realtek-WiFi)

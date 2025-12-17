@@ -6,9 +6,9 @@
 
 ## Executive Summary
 
-This document defines the customer support and Technical Account Management (TAC) strategy for The
-Seed by Mustard Seed Networks. The strategy is designed to scale from pre-launch through enterprise
-growth while maintaining high customer satisfaction with minimal overhead.
+This document defines the customer support and Technical Account Management (TAC) strategy for The Seed by Mustard Seed
+Networks. The strategy is designed to scale from pre-launch through enterprise growth while maintaining high customer
+satisfaction with minimal overhead.
 
 **Key Principles:**
 
@@ -146,8 +146,8 @@ growth while maintaining high customer satisfaction with minimal overhead.
 - **P3 (Medium):** First response within 8 business hours, resolution within 2 business days
 - **P4 (Low):** First response within 24 business hours, resolution within 3 business days
 
-**Business Hours:** Monday-Friday, 8am-8pm EST + Saturday-Sunday 10am-4pm EST **After-Hours:** P1
-emergencies only (on-call rotation)
+**Business Hours:** Monday-Friday, 8am-8pm EST + Saturday-Sunday 10am-4pm EST **After-Hours:** P1 emergencies only
+(on-call rotation)
 
 **Included:**
 
@@ -197,9 +197,8 @@ emergencies only (on-call rotation)
 
 ### Community Forum (All Tiers)
 
-**Platform:** Discord + GitHub Discussions **Purpose:** Peer-to-peer support, feature discussions,
-community engagement **Moderation:** Kris Armstrong + community moderators **Response Time:**
-Best-effort, typically <24 hours
+**Platform:** Discord + GitHub Discussions **Purpose:** Peer-to-peer support, feature discussions, community engagement
+**Moderation:** Kris Armstrong + community moderators **Response Time:** Best-effort, typically <24 hours
 
 **Benefits:**
 
@@ -212,9 +211,8 @@ Best-effort, typically <24 hours
 
 ### Email Support (Starter+)
 
-**Address:** support@mustardseednetworks.com **Platform:** Zendesk or HelpScout **Auto-Response:**
-Ticket created, expected response time based on tier **Routing:** Auto-assign based on customer tier
-and issue category
+**Address:** support@mustardseednetworks.com **Platform:** Zendesk or HelpScout **Auto-Response:** Ticket created,
+expected response time based on tier **Routing:** Auto-assign based on customer tier and issue category
 
 **Email Template Example:**
 
@@ -242,9 +240,8 @@ The Seed Support Team
 
 ### Chat Support (Professional+)
 
-**Platform:** Intercom or Crisp **Availability:** Business hours only (8am-6pm EST, Mon-Fri) **Use
-Cases:** Quick questions, configuration help, status checks **Escalation:** Complex issues
-transferred to email ticket
+**Platform:** Intercom or Crisp **Availability:** Business hours only (8am-6pm EST, Mon-Fri) **Use Cases:** Quick
+questions, configuration help, status checks **Escalation:** Complex issues transferred to email ticket
 
 ---
 
@@ -271,8 +268,8 @@ transferred to email ticket
 
 ### Screen Sharing (Premium+)
 
-**Platform:** Zoom or Google Meet **Scheduling:** On-demand (Premium), scheduled (Professional with
-approval) **Use Cases:** Troubleshooting, configuration walkthroughs, training
+**Platform:** Zoom or Google Meet **Scheduling:** On-demand (Premium), scheduled (Professional with approval) **Use
+Cases:** Troubleshooting, configuration walkthroughs, training
 
 ---
 
@@ -792,8 +789,7 @@ Mustard Seed Networks Community
 **Contextual Tooltips:**
 
 - Hover over setting → tooltip explains what it does
-- Example: "MTU (Maximum Transmission Unit): Largest packet size. Default 1500 is safe for most
-  networks."
+- Example: "MTU (Maximum Transmission Unit): Largest packet size. Default 1500 is safe for most networks."
 
 **Guided Tours (First-Time Users):**
 
@@ -1338,8 +1334,7 @@ The Seed Team
 - Data breach confirmed
 - Ransomware/malware infection
 
-**Response Time:** Immediate (within 15 minutes) **Team:** Founder, Engineering Lead, Support Lead,
-Legal (if breach)
+**Response Time:** Immediate (within 15 minutes) **Team:** Founder, Engineering Lead, Support Lead, Legal (if breach)
 
 ---
 
@@ -1382,17 +1377,17 @@ Legal (if breach)
 - How did attacker gain access?
 - What data was accessed/exfiltrated?
 
-7. **Develop fix:**
+1. **Develop fix:**
    - Patch vulnerability
    - Write tests to prevent regression
-8. **Test fix** (staging environment, multiple scenarios)
-9. **Deploy fix** (production hotfix)
+2. **Test fix** (staging environment, multiple scenarios)
+3. **Deploy fix** (production hotfix)
 
-**Phase 3: Recovery & Communication (8-24 hours)** 10. **Verify fix deployed and working** 11.
-**Monitor for reoccurrence** (24-48 hours intensive monitoring) 12. **Customer notification** (if
-PII/PHI affected): - Email all affected customers within 24 hours - Public blog post (if widely
-impacted) - Regulatory notification (HIPAA breach = 60 days, GDPR = 72 hours) 13. **Post-mortem:** -
-What happened, why, how we fixed it, how we'll prevent it - Share publicly (builds trust)
+**Phase 3: Recovery & Communication (8-24 hours)** 10. **Verify fix deployed and working** 11. **Monitor for
+reoccurrence** (24-48 hours intensive monitoring) 12. **Customer notification** (if PII/PHI affected): - Email all
+affected customers within 24 hours - Public blog post (if widely impacted) - Regulatory notification (HIPAA breach = 60
+days, GDPR = 72 hours) 13. **Post-mortem:** - What happened, why, how we fixed it, how we'll prevent it - Share publicly
+(builds trust)
 
 ---
 
@@ -1425,19 +1420,19 @@ What happened, why, how we fixed it, how we'll prevent it - Share publicly (buil
 **Common Questions:**
 
 - "Is The Seed HIPAA compliant?"
-  - **Answer:** The Seed is a diagnostic tool that runs on-premises. It does not store, transmit, or
-    process PHI by default. If you configure custom exports or integrations that include PHI, you
-    are responsible for ensuring those integrations are HIPAA compliant. The Seed provides
-    encryption in transit (HTTPS) and at rest (AES-256 for local storage).
+  - **Answer:** The Seed is a diagnostic tool that runs on-premises. It does not store, transmit, or process PHI by
+    default. If you configure custom exports or integrations that include PHI, you are responsible for ensuring those
+    integrations are HIPAA compliant. The Seed provides encryption in transit (HTTPS) and at rest (AES-256 for local
+    storage).
 
 - "Do we need a BAA with you?"
-  - **Answer:** No, because The Seed is self-hosted and does not transmit data to Mustard Seed
-    Networks. We never access your data.
+  - **Answer:** No, because The Seed is self-hosted and does not transmit data to Mustard Seed Networks. We never access
+    your data.
 
 - "How do we use The Seed for HIPAA compliance audits?"
-  - **Answer:** The Seed's vulnerability scanner and compliance reporting features help you identify
-    risks (open ports, weak SNMP, rogue DHCP) that could violate HIPAA security rules. Run scans
-    quarterly, export PDF reports, and attach to your compliance documentation.
+  - **Answer:** The Seed's vulnerability scanner and compliance reporting features help you identify risks (open ports,
+    weak SNMP, rogue DHCP) that could violate HIPAA security rules. Run scans quarterly, export PDF reports, and attach
+    to your compliance documentation.
 
 **Support Deliverables (Premium+ tiers):**
 
@@ -1452,8 +1447,8 @@ What happened, why, how we fixed it, how we'll prevent it - Share publicly (buil
 **Common Questions:**
 
 - "Can The Seed help with PCI compliance?"
-  - **Answer:** Yes. PCI-DSS requires network segmentation and vulnerability scanning. The Seed's
-    VLAN discovery and vulnerability scanner help you verify segmentation and identify risks.
+  - **Answer:** Yes. PCI-DSS requires network segmentation and vulnerability scanning. The Seed's VLAN discovery and
+    vulnerability scanner help you verify segmentation and identify risks.
 
 **Support Deliverables (Premium+ tiers):**
 
@@ -1469,9 +1464,8 @@ What happened, why, how we fixed it, how we'll prevent it - Share publicly (buil
 
 #### 1. On-Site Training
 
-**What:** Full-day training at customer site **Who:** Premium and Enterprise customers **Duration:**
-8 hours (9am-5pm) **Delivered By:** Kris Armstrong or certified trainer **Price:** $2,500/day +
-travel expenses
+**What:** Full-day training at customer site **Who:** Premium and Enterprise customers **Duration:** 8 hours (9am-5pm)
+**Delivered By:** Kris Armstrong or certified trainer **Price:** $2,500/day + travel expenses
 
 **Agenda:**
 
@@ -1490,8 +1484,7 @@ travel expenses
 - "Send alerts to PagerDuty when rogue DHCP detected"
 - "Auto-generate compliance reports and email to auditors weekly"
 
-**Price:** $150/hour, estimated 10-40 hours per project **Expected Demand:** 5 projects/year =
-$15,000 revenue
+**Price:** $150/hour, estimated 10-40 hours per project **Expected Demand:** 5 projects/year = $15,000 revenue
 
 ---
 
@@ -1516,8 +1509,7 @@ $15,000 revenue
 
 #### 4. Managed Services (Future - Year 3+)
 
-**What:** We monitor your network 24/7 and alert you to issues **Price:** $500/month per site
-**Included:**
+**What:** We monitor your network 24/7 and alert you to issues **Price:** $500/month per site **Included:**
 
 - Daily discovery scans
 - Continuous vulnerability monitoring
@@ -1700,8 +1692,8 @@ P.S. - Your subscription renews on [date]. Let me know if you have any questions
 
 ---
 
-**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** March
-2026 (or when first support engineer hired)
+**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** March 2026 (or when first
+support engineer hired)
 
 ---
 
