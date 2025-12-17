@@ -887,3 +887,146 @@ func TestSampleCount(t *testing.T) {
 		t.Errorf("Sample count = %d, want 5", len(result.Samples))
 	}
 }
+
+func TestPassiveSampleAggregations(t *testing.T) {
+	tests := []struct {
+		name     string
+		networks []*wifi.ScannedNetwork
+		want     PassiveSample
+	}{
+		{
+			name:     "empty networks",
+			networks: []*wifi.ScannedNetwork{},
+			want: PassiveSample{
+				Networks:      []*wifi.ScannedNetwork{},
+				UniqueSSIDs:   0,
+				UniqueBSSIDs:  0,
+				APCount2_4:    0,
+				APCount5:      0,
+				APCount6:      0,
+				CoChannelAPs:  0,
+				AdjChannelAPs: 0,
+			},
+		},
+		{
+			name:     "nil networks",
+			networks: nil,
+			want: PassiveSample{
+				Networks:      nil,
+				UniqueSSIDs:   0,
+				UniqueBSSIDs:  0,
+				APCount2_4:    0,
+				APCount5:      0,
+				APCount6:      0,
+				CoChannelAPs:  0,
+				AdjChannelAPs: 0,
+			},
+		},
+		{
+			name: "single 2.4GHz network",
+			networks: []*wifi.ScannedNetwork{
+				{SSID: "TestNet", BSSID: "00:11:22:33:44:55", Channel: 6, Frequency: 2437, Signal: -50},
+			},
+			want: PassiveSample{
+				UniqueSSIDs:   1,
+				UniqueBSSIDs:  1,
+				APCount2_4:    1,
+				APCount5:      0,
+				APCount6:      0,
+				CoChannelAPs:  1, // Same as strongest (itself)
+				AdjChannelAPs: 0,
+			},
+		},
+		{
+			name: "multiple bands and channels",
+			networks: []*wifi.ScannedNetwork{
+				// Strongest AP on channel 36 (5GHz)
+				{SSID: "Net5G", BSSID: "00:11:22:33:44:55", Channel: 36, Frequency: 5180, Signal: -40},
+				// Co-channel AP
+				{SSID: "Net5G-2", BSSID: "00:11:22:33:44:66", Channel: 36, Frequency: 5180, Signal: -50},
+				// Adjacent channel (±1)
+				{SSID: "Net5G-3", BSSID: "00:11:22:33:44:77", Channel: 37, Frequency: 5185, Signal: -55},
+				// Adjacent channel (±2)
+				{SSID: "Net5G-4", BSSID: "00:11:22:33:44:88", Channel: 38, Frequency: 5190, Signal: -60},
+				// 2.4GHz networks
+				{SSID: "Net2.4", BSSID: "AA:BB:CC:DD:EE:FF", Channel: 1, Frequency: 2412, Signal: -65},
+				{SSID: "Net2.4-2", BSSID: "AA:BB:CC:DD:EE:AA", Channel: 6, Frequency: 2437, Signal: -70},
+				// 6GHz network
+				{SSID: "Net6G", BSSID: "FF:EE:DD:CC:BB:AA", Channel: 1, Frequency: 5955, Signal: -45},
+			},
+			want: PassiveSample{
+				UniqueSSIDs:   7,
+				UniqueBSSIDs:  7,
+				APCount2_4:    2,
+				APCount5:      4,
+				APCount6:      1,
+				CoChannelAPs:  2, // Two APs on channel 36
+				AdjChannelAPs: 2, // Channels 37 and 38
+			},
+		},
+		{
+			name: "duplicate SSIDs different BSSIDs",
+			networks: []*wifi.ScannedNetwork{
+				{SSID: "SameNet", BSSID: "00:11:22:33:44:55", Channel: 1, Frequency: 2412, Signal: -50},
+				{SSID: "SameNet", BSSID: "00:11:22:33:44:66", Channel: 1, Frequency: 2412, Signal: -55},
+				{SSID: "SameNet", BSSID: "00:11:22:33:44:77", Channel: 1, Frequency: 2412, Signal: -60},
+			},
+			want: PassiveSample{
+				UniqueSSIDs:   1, // Only one unique SSID
+				UniqueBSSIDs:  3, // Three different APs
+				APCount2_4:    3,
+				APCount5:      0,
+				APCount6:      0,
+				CoChannelAPs:  3, // All on channel 1
+				AdjChannelAPs: 0,
+			},
+		},
+		{
+			name: "hidden SSID handling",
+			networks: []*wifi.ScannedNetwork{
+				{SSID: "", BSSID: "00:11:22:33:44:55", Channel: 6, Frequency: 2437, Signal: -50},
+				{SSID: "VisibleNet", BSSID: "00:11:22:33:44:66", Channel: 6, Frequency: 2437, Signal: -55},
+			},
+			want: PassiveSample{
+				UniqueSSIDs:   1, // Hidden SSID not counted
+				UniqueBSSIDs:  2, // Both BSSIDs counted
+				APCount2_4:    2,
+				APCount5:      0,
+				APCount6:      0,
+				CoChannelAPs:  2,
+				AdjChannelAPs: 0,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sample := PassiveSample{
+				Networks: tt.networks,
+			}
+			sample.CalculateAggregations()
+
+			if sample.UniqueSSIDs != tt.want.UniqueSSIDs {
+				t.Errorf("UniqueSSIDs = %d, want %d", sample.UniqueSSIDs, tt.want.UniqueSSIDs)
+			}
+			if sample.UniqueBSSIDs != tt.want.UniqueBSSIDs {
+				t.Errorf("UniqueBSSIDs = %d, want %d", sample.UniqueBSSIDs, tt.want.UniqueBSSIDs)
+			}
+			if sample.APCount2_4 != tt.want.APCount2_4 {
+				t.Errorf("APCount2_4 = %d, want %d", sample.APCount2_4, tt.want.APCount2_4)
+			}
+			if sample.APCount5 != tt.want.APCount5 {
+				t.Errorf("APCount5 = %d, want %d", sample.APCount5, tt.want.APCount5)
+			}
+			if sample.APCount6 != tt.want.APCount6 {
+				t.Errorf("APCount6 = %d, want %d", sample.APCount6, tt.want.APCount6)
+			}
+			if sample.CoChannelAPs != tt.want.CoChannelAPs {
+				t.Errorf("CoChannelAPs = %d, want %d", sample.CoChannelAPs, tt.want.CoChannelAPs)
+			}
+			if sample.AdjChannelAPs != tt.want.AdjChannelAPs {
+				t.Errorf("AdjChannelAPs = %d, want %d", sample.AdjChannelAPs, tt.want.AdjChannelAPs)
+			}
+		})
+	}
+}
