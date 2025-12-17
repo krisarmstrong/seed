@@ -1,6 +1,7 @@
 # testutil - Centralized Test Utilities
 
-The `testutil` package provides centralized test utilities for the Seed project, ensuring consistent test configuration across all test files.
+The `testutil` package provides centralized test utilities for the Seed project, ensuring consistent test configuration
+across all test files.
 
 ## Features
 

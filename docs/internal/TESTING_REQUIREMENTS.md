@@ -6,8 +6,8 @@
 
 ## Executive Summary
 
-This document defines the hardware, software, and network infrastructure required to comprehensively
-test **The Seed** across realistic environments before launch and throughout development.
+This document defines the hardware, software, and network infrastructure required to comprehensively test **The Seed**
+across realistic environments before launch and throughout development.
 
 **Testing Goals:**
 
@@ -448,8 +448,7 @@ test **The Seed** across realistic environments before launch and throughout dev
 - **Use:** Turn physical server into VM host
 - **Pros:** Enterprise-grade, web UI, supports VMs and containers
 
-**Recommendation:** VirtualBox (Year 1), VMware Fusion (if budget allows), Proxmox (Year 2+ on
-dedicated server)
+**Recommendation:** VirtualBox (Year 1), VMware Fusion (if budget allows), Proxmox (Year 2+ on dedicated server)
 
 ---
 
@@ -994,8 +993,8 @@ Internet (WAN)
 
 ---
 
-**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** After
-Phase 1 lab setup (Month 1), then quarterly
+**Document Owner:** Kris Armstrong, Founder **Last Reviewed:** December 2025 **Next Review:** After Phase 1 lab setup
+(Month 1), then quarterly
 
 ---
 

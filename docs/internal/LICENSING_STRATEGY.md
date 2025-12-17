@@ -6,14 +6,13 @@
 
 ## Overview
 
-This document defines The Seed's software licensing model, enforcement mechanisms, and monetization
-strategy.
+This document defines The Seed's software licensing model, enforcement mechanisms, and monetization strategy.
 
 ## Executive Summary
 
-**Licensing Model:** Subscription-based (annual/monthly) with feature-based tiers **Enforcement:**
-License key + device fingerprinting + cloud validation **Monetization:** Freemium → Paid tiers →
-Enterprise upsell **Philosophy:** Fair use, protect revenue, enable trials, prevent abuse
+**Licensing Model:** Subscription-based (annual/monthly) with feature-based tiers **Enforcement:** License key + device
+fingerprinting + cloud validation **Monetization:** Freemium → Paid tiers → Enterprise upsell **Philosophy:** Fair use,
+protect revenue, enable trials, prevent abuse
 
 ---
 
@@ -43,8 +42,8 @@ Enterprise upsell **Philosophy:** Fair use, protect revenue, enable trials, prev
 - The Seed branding in reports
 - No API access
 
-**License Type:** Perpetual, no expiration **Activation:** Email signup, no credit card **Use
-Case:** Individual users, hobbyists, small home networks
+**License Type:** Perpetual, no expiration **Activation:** Email signup, no credit card **Use Case:** Individual users,
+hobbyists, small home networks
 
 ---
 
@@ -69,8 +68,8 @@ Case:** Individual users, hobbyists, small home networks
 - No compliance automation
 - No API access
 
-**License Type:** Subscription (annual or monthly) **Activation:** Credit card required,
-auto-renewal **Use Case:** Small IT departments, individual consultants, clinics
+**License Type:** Subscription (annual or monthly) **Activation:** Credit card required, auto-renewal **Use Case:**
+Small IT departments, individual consultants, clinics
 
 ---
 
@@ -100,8 +99,8 @@ auto-renewal **Use Case:** Small IT departments, individual consultants, clinics
 - No white-label reports
 - No SSO/SAML
 
-**License Type:** Subscription (annual or monthly) **Activation:** Credit card, 30-day free trial
-**Use Case:** Community hospitals, MSPs, network consultants, IT departments
+**License Type:** Subscription (annual or monthly) **Activation:** Credit card, 30-day free trial **Use Case:**
+Community hospitals, MSPs, network consultants, IT departments
 
 ---
 
@@ -130,8 +129,8 @@ auto-renewal **Use Case:** Small IT departments, individual consultants, clinics
 - No SSO/SAML
 - No dedicated account manager
 
-**License Type:** Subscription (annual or monthly) **Activation:** Credit card, 30-day free trial
-**Use Case:** WiFi consultants, hospitals with complex WiFi, professional deployments
+**License Type:** Subscription (annual or monthly) **Activation:** Credit card, 30-day free trial **Use Case:** WiFi
+consultants, hospitals with complex WiFi, professional deployments
 
 ---
 
@@ -155,8 +154,8 @@ auto-renewal **Use Case:** Small IT departments, individual consultants, clinics
 - ✅ **Custom SLA agreements**
 - ✅ **Volume licensing** (negotiable for 10+ sites)
 
-**License Type:** Subscription (annual preferred) **Activation:** Sales-assisted, custom contract
-**Use Case:** MSPs with 5+ healthcare clients, large health systems, enterprise IT
+**License Type:** Subscription (annual preferred) **Activation:** Sales-assisted, custom contract **Use Case:** MSPs
+with 5+ healthcare clients, large health systems, enterprise IT
 
 ---
 

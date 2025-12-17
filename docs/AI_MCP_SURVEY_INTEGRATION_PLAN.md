@@ -1,7 +1,7 @@
 # AI, MCP, and Survey Integration Plan
 
-> Generated: December 2024 Updated: December 17, 2024 Purpose: Strategic roadmap for integrating AI
-> capabilities with MCP tools and WiFi survey/planner features
+> Generated: December 2024 Updated: December 17, 2024 Purpose: Strategic roadmap for integrating AI capabilities with
+> MCP tools and WiFi survey/planner features
 
 ## Executive Summary
 
@@ -11,8 +11,7 @@ This document outlines the integration strategy for combining:
 - **AI Features** (24 planned issues #575-598)
 - **Survey/Planning** (existing + competitor-inspired features)
 
-The goal: Create an AI-powered network diagnostic and WiFi planning platform that rivals Ekahau,
-Hamina, and NetAlly.
+The goal: Create an AI-powered network diagnostic and WiFi planning platform that rivals Ekahau, Hamina, and NetAlly.
 
 ---
 
@@ -43,8 +42,8 @@ Hamina, and NetAlly.
 
 ### What's Missing (vs. Competitors)
 
-Based on [Ekahau AI Pro](https://www.peerspot.com/products/ekahau-ai-pro-reviews),
-[Hamina](https://hamina.com), and [NetAlly AirMapper](https://netally.com):
+Based on [Ekahau AI Pro](https://www.peerspot.com/products/ekahau-ai-pro-reviews), [Hamina](https://hamina.com), and
+[NetAlly AirMapper](https://netally.com):
 
 | Feature                   | Ekahau | Hamina | NetAlly | We Have | Priority |
 | ------------------------- | ------ | ------ | ------- | ------- | -------- |
@@ -260,17 +259,17 @@ AI generates:
 
 ### Still To Create
 
-6. **`feat(planner): Multi-floor building support`**
+1. **`feat(planner): Multi-floor building support`**
    - Link floors in a building
    - Inter-floor signal propagation
    - Stairwell/elevator shaft modeling
 
-7. **`feat(planner): Survey report generator`**
+2. **`feat(planner): Survey report generator`**
    - PDF export with heatmaps
    - Executive summary
    - Recommendations section
 
-8. **`epic: Survey/Planning Phase 1`**
+3. **`epic: Survey/Planning Phase 1`**
    - Group foundational survey issues
    - Define dependencies
    - Track progress
@@ -338,7 +337,7 @@ AI generates:
 
 ## Part 8: Success Metrics
 
-### Phase 1 Complete When:
+### Phase 1 Complete When
 
 - [ ] Heatmap renders from survey data
 - [ ] Walls can be drawn on floor plans
@@ -346,21 +345,21 @@ AI generates:
 - [ ] 100+ APs in vendor database
 - [ ] Survey MCP tools functional
 
-### Phase 2 Complete When:
+### Phase 2 Complete When
 
 - [ ] AI agent can analyze survey data
 - [ ] AI can recommend AP placements
 - [ ] Dead zones automatically detected
 - [ ] Channel plan auto-generated
 
-### Phase 3 Complete When:
+### Phase 3 Complete When
 
 - [ ] Predictive survey matches real survey within 5dB
 - [ ] Multi-floor designs supported
 - [ ] Reports exportable to PDF
 - [ ] Feature parity with Hamina free tier
 
-### Phase 4 Complete When:
+### Phase 4 Complete When
 
 - [ ] NLP interface for WiFi design
 - [ ] Real-time anomaly detection active

@@ -1,7 +1,7 @@
 # Realtek Wi-Fi Adapters
 
-❌ **Not Recommended** - Realtek Wi-Fi adapters have poor Linux support for monitor mode and
-advanced diagnostics. **Strongly recommend Intel or Atheros instead**.
+❌ **Not Recommended** - Realtek Wi-Fi adapters have poor Linux support for monitor mode and advanced diagnostics.
+**Strongly recommend Intel or Atheros instead**.
 
 [← Back to Home](Home)
 
@@ -23,8 +23,8 @@ advanced diagnostics. **Strongly recommend Intel or Atheros instead**.
 
 ### Recommendation
 
-**If you own Realtek hardware:** It may work for basic managed mode (normal Wi-Fi), but expect **no
-monitor mode, no site surveys, no packet injection**.
+**If you own Realtek hardware:** It may work for basic managed mode (normal Wi-Fi), but expect **no monitor mode, no
+site surveys, no packet injection**.
 
 **If purchasing new hardware:** **Choose Intel AX200/210 or Atheros AR9271 instead**.
 

@@ -1,7 +1,7 @@
 # Marvell Ethernet NICs
 
-⚠️ **Limited TDR Support** - Marvell server NICs may support cable diagnostics, but consumer
-chipsets typically do not. **Intel preferred for reliability**.
+⚠️ **Limited TDR Support** - Marvell server NICs may support cable diagnostics, but consumer chipsets typically do not.
+**Intel preferred for reliability**.
 
 [← Back to Home](Home)
 
@@ -244,7 +244,6 @@ _(Community will report confirmed no-TDR models)_
 
 ---
 
-**Last Updated:** 2025-12-14 **Recommendation:** Test if you have it, but buy Intel I210/I350 for
-new hardware.
+**Last Updated:** 2025-12-14 **Recommendation:** Test if you have it, but buy Intel I210/I350 for new hardware.
 
 [← Back to Home](Home) | [← Previous: Realtek Ethernet](Realtek-Ethernet)

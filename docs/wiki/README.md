@@ -1,7 +1,7 @@
 # User-Facing Documentation (External)
 
-**Status:** Ready to publish **Audience:** Customers, beta testers, community **Visibility:** Will
-be public when wiki enabled or docs site launched
+**Status:** Ready to publish **Audience:** Customers, beta testers, community **Visibility:** Will be public when wiki
+enabled or docs site launched
 
 ---
 

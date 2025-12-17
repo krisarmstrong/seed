@@ -1,13 +1,11 @@
 # Rogue DHCP Server Test Environment
 
-This guide explains how to set up a test environment to validate The Seed's Rogue DHCP detection
-feature.
+This guide explains how to set up a test environment to validate The Seed's Rogue DHCP detection feature.
 
 ## Overview
 
-The Rogue DHCP detection feature monitors DHCP OFFER packets on the network and alerts when
-unauthorized DHCP servers are detected. This test environment allows you to simulate both legitimate
-and rogue DHCP servers.
+The Rogue DHCP detection feature monitors DHCP OFFER packets on the network and alerts when unauthorized DHCP servers
+are detected. This test environment allows you to simulate both legitimate and rogue DHCP servers.
 
 ## Prerequisites
 
@@ -109,6 +107,7 @@ and rogue DHCP servers.
    ```
 
 8. Stop rogue server:
+
    ```bash
    # Press Ctrl+C in dnsmasq terminal
    sudo systemctl start NetworkManager  # Restore network
@@ -154,6 +153,7 @@ and rogue DHCP servers.
 5. Verify and test same as Option A steps 5-7
 
 6. Stop server:
+
    ```bash
    sudo systemctl stop isc-dhcp-server
    ```
@@ -368,8 +368,8 @@ PUT /api/dhcp/rogue/config
 
 ## Security Considerations
 
-⚠️ **WARNING**: Running rogue DHCP servers can disrupt network connectivity for all devices on the
-network. Only perform these tests on:
+⚠️ **WARNING**: Running rogue DHCP servers can disrupt network connectivity for all devices on the network. Only perform
+these tests on:
 
 - Isolated test networks
 - Networks you control

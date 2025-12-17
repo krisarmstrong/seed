@@ -1,7 +1,6 @@
 # The Seed (Mustard Seed Networks) - # The Seed Sales Playbook
 
-**Document Version:** 1.0 **Last Updated:** 2025-12-15 **Target Audience:** Sales Team, Channel
-Partners
+**Document Version:** 1.0 **Last Updated:** 2025-12-15 **Target Audience:** Sales Team, Channel Partners
 
 ---
 
@@ -36,16 +35,15 @@ Partners
 
 ### One-Sentence Pitch
 
-> "The Seed is like having a senior network engineer with AI superpowers on your team 24/7, catching
-> problems before users complain and saving thousands on WiFi deployments."
+> "The Seed is like having a senior network engineer with AI superpowers on your team 24/7, catching problems before
+> users complain and saving thousands on WiFi deployments."
 
 ### Elevator Pitch (30 seconds)
 
-> "Most IT teams waste hours troubleshooting network issues and thousands on WiFi site surveys. The
-> Seed uses AI to tell you EXACTLY what's wrong—'DHCP is slow because your server takes 800ms to
-> respond'—and lets you plan WiFi coverage BEFORE you buy access points. We help healthcare and SMB
-> IT teams save 10+ hours per week on troubleshooting and $2,000-5,000 per WiFi deployment. Our
-> customers say it's like having a senior network engineer who never sleeps."
+> "Most IT teams waste hours troubleshooting network issues and thousands on WiFi site surveys. The Seed uses AI to tell
+> you EXACTLY what's wrong—'DHCP is slow because your server takes 800ms to respond'—and lets you plan WiFi coverage
+> BEFORE you buy access points. We help healthcare and SMB IT teams save 10+ hours per week on troubleshooting and
+> $2,000-5,000 per WiFi deployment. Our customers say it's like having a senior network engineer who never sleeps."
 
 ---
 
@@ -253,8 +251,8 @@ Partners
 
 **1. Introduction (5 minutes)**
 
-- Quick recap of discovery call: "You mentioned you spend 15 hours per week troubleshooting and just
-  had a WiFi outage last week, right?"
+- Quick recap of discovery call: "You mentioned you spend 15 hours per week troubleshooting and just had a WiFi outage
+  last week, right?"
 - Agenda overview: "I'll show you exactly how The Seed solves those problems in about 30 minutes"
 
 **2. The "Wow Moment" (10 minutes)**
@@ -263,25 +261,24 @@ Partners
 
 **If their pain is troubleshooting:**
 
-- Show AI Root Cause Analysis: "Here's a real issue—DHCP is slow. Most tools stop there. Watch
-  this..."
-- Click into insight: "The Seed tells you EXACTLY why: the DHCP server took 850ms to respond, which
-  is 3x your baseline. That's where you start."
-- **Wow moment:** "Instead of spending 2 hours checking switches, cables, and configs, you know in
-  10 seconds it's the DHCP server."
+- Show AI Root Cause Analysis: "Here's a real issue—DHCP is slow. Most tools stop there. Watch this..."
+- Click into insight: "The Seed tells you EXACTLY why: the DHCP server took 850ms to respond, which is 3x your baseline.
+  That's where you start."
+- **Wow moment:** "Instead of spending 2 hours checking switches, cables, and configs, you know in 10 seconds it's the
+  DHCP server."
 
 **If their pain is WiFi:**
 
-- Show Predictive WiFi Survey: "Here's a floor plan. You're thinking about adding WiFi. Most people
-  buy 3 APs and hope. Watch this..."
+- Show Predictive WiFi Survey: "Here's a floor plan. You're thinking about adding WiFi. Most people buy 3 APs and hope.
+  Watch this..."
 - Draw walls, place virtual APs, generate heatmap
-- **Wow moment:** "Before you spend $3,000 on APs, you see exactly where coverage will be. No
-  surprises, no site survey fees."
+- **Wow moment:** "Before you spend $3,000 on APs, you see exactly where coverage will be. No surprises, no site survey
+  fees."
 
 **If their pain is compliance:**
 
-- Show HIPAA Compliance Report: "Click one button, get an auditor-ready PDF showing how you meet
-  HIPAA §164.312(e)(1)..."
+- Show HIPAA Compliance Report: "Click one button, get an auditor-ready PDF showing how you meet HIPAA
+  §164.312(e)(1)..."
 - **Wow moment:** "Instead of 40 hours of manual documentation, it's done in 30 seconds."
 
 **3. Feature Walkthrough (15 minutes)**
@@ -298,14 +295,14 @@ Walk through the dashboard showing:
 Address common objections BEFORE they ask:
 
 - "You might be wondering: 'How is this different from [competitor]?'"
-- "Great question—we're the only tool with predictive WiFi planning. No one else lets you plan
-  coverage before buying APs."
+- "Great question—we're the only tool with predictive WiFi planning. No one else lets you plan coverage before buying
+  APs."
 
 **5. Next Steps & Call to Action (5 minutes)**
 
 - "Based on what you've seen, does this solve your [pain point]?"
-- **If yes:** "Great! Let's get you started with a 30-day trial of the Premium tier so you can see
-  the WiFi planner in action."
+- **If yes:** "Great! Let's get you started with a 30-day trial of the Premium tier so you can see the WiFi planner in
+  action."
 - **If hesitant:** "What questions do you have? What would you need to see to move forward?"
 
 ### Demo Do's and Don'ts
@@ -361,27 +358,27 @@ Address common objections BEFORE they ask:
 
 **"That's too expensive"**
 
-- **Probe:** "Too expensive compared to what? What are you spending now on site surveys, consultant
-  hours, or network downtime?"
-- **Reframe:** "Let's look at ROI. If you do 2 WiFi surveys per year at $3,000 each, that's $6,000.
-  The Seed is $1,999 and you can do unlimited surveys. You save $4,000 in year one alone."
+- **Probe:** "Too expensive compared to what? What are you spending now on site surveys, consultant hours, or network
+  downtime?"
+- **Reframe:** "Let's look at ROI. If you do 2 WiFi surveys per year at $3,000 each, that's $6,000. The Seed is $1,999
+  and you can do unlimited surveys. You save $4,000 in year one alone."
 
 **"We don't have budget right now"**
 
 - **Probe:** "When does your next budget cycle start?"
-- **Reframe:** "What's the cost of NOT fixing this? If your team wastes 10 hours per week at
-  $50/hour, that's $26,000 per year. The Seed costs $799. Even a 10% time savings pays for itself."
+- **Reframe:** "What's the cost of NOT fixing this? If your team wastes 10 hours per week at $50/hour, that's $26,000
+  per year. The Seed costs $799. Even a 10% time savings pays for itself."
 
 **"Can we get a discount?"**
 
-- **Deflect:** "Our pricing is already 60% below competitors like Ekahau. That said, we do offer
-  discounts for annual pre-payment [already included], multi-year commitments [10-15% off], and
-  non-profit/education [25% off]. Which applies to you?"
+- **Deflect:** "Our pricing is already 60% below competitors like Ekahau. That said, we do offer discounts for annual
+  pre-payment [already included], multi-year commitments [10-15% off], and non-profit/education [25% off]. Which applies
+  to you?"
 
 **"We need to try it first"**
 
-- **Agree:** "Absolutely! That's why we offer a 30-day trial of the Premium tier. You'll see the
-  value before you commit."
+- **Agree:** "Absolutely! That's why we offer a 30-day trial of the Premium tier. You'll see the value before you
+  commit."
 
 ---
 
@@ -393,12 +390,10 @@ Address common objections BEFORE they ask:
 
 **Response:**
 
-- "Great tools for monitoring! What we hear from customers is those tools tell you WHAT is broken,
-  but not WHY or HOW to fix it. Do you find yourself spending hours correlating data to find root
-  causes?"
-- **Differentiation:** "The Seed's AI tells you exactly why DHCP is slow (server response time) or
-  why WiFi is weak (interference on channel 6). It's the difference between a symptom and a
-  diagnosis."
+- "Great tools for monitoring! What we hear from customers is those tools tell you WHAT is broken, but not WHY or HOW to
+  fix it. Do you find yourself spending hours correlating data to find root causes?"
+- **Differentiation:** "The Seed's AI tells you exactly why DHCP is slow (server response time) or why WiFi is weak
+  (interference on channel 6). It's the difference between a symptom and a diagnosis."
 
 **2. "We can't justify the cost"**
 
@@ -408,56 +403,53 @@ Address common objections BEFORE they ask:
   - WiFi site survey: $3,000-5,000 per deployment
   - Network consultant: $150-250/hour
   - IT team troubleshooting: 10-20 hours/week @ $50/hour = $26K-52K/year
-- "If The Seed saves just 2 hours per week or eliminates one site survey, it pays for itself. Does
-  that math work for you?"
+- "If The Seed saves just 2 hours per week or eliminates one site survey, it pays for itself. Does that math work for
+  you?"
 
 **3. "We're not ready to buy right now"**
 
 **Response:**
 
-- **Probe urgency:** "I totally understand. What would need to change for this to become a
-  priority?"
-- **Nurture:** "No problem. How about I send you a case study from [similar customer] and we
-  reconnect in 3 months?"
-- **Trial offer:** "Or, would a no-risk 30-day trial make sense so you can see the value when you're
-  ready?"
+- **Probe urgency:** "I totally understand. What would need to change for this to become a priority?"
+- **Nurture:** "No problem. How about I send you a case study from [similar customer] and we reconnect in 3 months?"
+- **Trial offer:** "Or, would a no-risk 30-day trial make sense so you can see the value when you're ready?"
 
 **4. "We need to evaluate other options"**
 
 **Response:**
 
 - "Smart approach—you should compare. Which other tools are you looking at?"
-- **If they say Ekahau:** "Ekahau is the gold standard for WiFi surveys, no question. The difference
-  is Ekahau requires on-site surveys with expensive hardware ($5K+). The Seed lets you PLAN coverage
-  before you ever buy an AP. It's predictive vs reactive."
+- **If they say Ekahau:** "Ekahau is the gold standard for WiFi surveys, no question. The difference is Ekahau requires
+  on-site surveys with expensive hardware ($5K+). The Seed lets you PLAN coverage before you ever buy an AP. It's
+  predictive vs reactive."
 - **Battle card:** [See Competitive Battle Cards section]
 
 **5. "Our IT team can build this in-house"**
 
 **Response:**
 
-- "You've got talented people—I believe it! Question: how long would it take to build AI root cause
-  analysis, WiFi RF propagation modeling, and compliance reporting?"
-- **Reality check:** "Our team spent 18 months building this. Even if your team could do it in 6
-  months, that's $100K+ in engineering time. Plus ongoing maintenance. Is that the best use of your
-  team's time, or would you rather focus on strategic projects?"
+- "You've got talented people—I believe it! Question: how long would it take to build AI root cause analysis, WiFi RF
+  propagation modeling, and compliance reporting?"
+- **Reality check:** "Our team spent 18 months building this. Even if your team could do it in 6 months, that's $100K+
+  in engineering time. Plus ongoing maintenance. Is that the best use of your team's time, or would you rather focus on
+  strategic projects?"
 
 **6. "We don't need AI, we have experienced engineers"**
 
 **Response:**
 
-- "Your engineers are your biggest asset! The Seed doesn't replace them—it makes them 10x more
-  productive. Instead of spending 2 hours troubleshooting, they get answers in 10 seconds and can
-  focus on projects that drive the business forward."
-- "Think of it like spell-check for writers. Good writers don't need spell-check, but it makes them
-  faster and catches mistakes."
+- "Your engineers are your biggest asset! The Seed doesn't replace them—it makes them 10x more productive. Instead of
+  spending 2 hours troubleshooting, they get answers in 10 seconds and can focus on projects that drive the business
+  forward."
+- "Think of it like spell-check for writers. Good writers don't need spell-check, but it makes them faster and catches
+  mistakes."
 
 **7. "What if it doesn't work for our environment?"**
 
 **Response:**
 
-- "Great question. That's exactly why we offer a 30-day trial. You'll test it in YOUR environment
-  with YOUR network. If it doesn't deliver value, you don't pay. Fair?"
+- "Great question. That's exactly why we offer a 30-day trial. You'll test it in YOUR environment with YOUR network. If
+  it doesn't deliver value, you don't pay. Fair?"
 
 **8. "We need more features before we can commit"**
 
@@ -498,9 +490,8 @@ Address common objections BEFORE they ask:
 
 **Positioning:**
 
-> "Ekahau is the Cadillac of WiFi surveys—if you have $5K per deployment and need spectrum analysis,
-> go with them. But if you want to PLAN coverage before you buy APs and save thousands, The Seed's
-> predictive survey is the only option."
+> "Ekahau is the Cadillac of WiFi surveys—if you have $5K per deployment and need spectrum analysis, go with them. But
+> if you want to PLAN coverage before you buy APs and save thousands, The Seed's predictive survey is the only option."
 
 **Sales Trap to Avoid:**
 
@@ -536,9 +527,9 @@ Address common objections BEFORE they ask:
 
 **Positioning:**
 
-> "AirMagnet is built for Fortune 500 enterprise. If you have complex requirements and enterprise
-> budget, it's a solid choice. But if you want predictive planning and a tool your whole team can
-> use without a PhD, The Seed is built for you."
+> "AirMagnet is built for Fortune 500 enterprise. If you have complex requirements and enterprise budget, it's a solid
+> choice. But if you want predictive planning and a tool your whole team can use without a PhD, The Seed is built for
+> you."
 
 ---
 
@@ -569,8 +560,8 @@ Address common objections BEFORE they ask:
 
 **Positioning:**
 
-> "Hamina is great if you ONLY need WiFi planning. But if you want WiFi planning AND network
-> troubleshooting AND compliance reporting in one platform, The Seed is the only option."
+> "Hamina is great if you ONLY need WiFi planning. But if you want WiFi planning AND network troubleshooting AND
+> compliance reporting in one platform, The Seed is the only option."
 
 **This is Our Toughest Competitor:**
 
@@ -607,9 +598,8 @@ Address common objections BEFORE they ask:
 
 **Positioning:**
 
-> "NetAlly is perfect for field techs doing hands-on surveys with hardware. But if you want to PLAN
-> WiFi coverage from your desk without buying $2,500 hardware, The Seed's predictive survey is the
-> way to go."
+> "NetAlly is perfect for field techs doing hands-on surveys with hardware. But if you want to PLAN WiFi coverage from
+> your desk without buying $2,500 hardware, The Seed's predictive survey is the way to go."
 
 ---
 
@@ -640,9 +630,8 @@ Address common objections BEFORE they ask:
 
 **Positioning:**
 
-> "Free tools are great if you have a senior network engineer with 40 hours per week to analyze
-> data. But if you want AI to tell you exactly what's wrong in 10 seconds, The Seed pays for itself
-> in time savings alone."
+> "Free tools are great if you have a senior network engineer with 40 hours per week to analyze data. But if you want AI
+> to tell you exactly what's wrong in 10 seconds, The Seed pays for itself in time savings alone."
 
 **Sales Trap to Avoid:**
 
@@ -1169,15 +1158,12 @@ If yes, I'll send over a proposal this week so we can get you up and running wit
 **TL;DR for Sales Reps:**
 
 1. **Ideal Customer:** Healthcare (100-500 employees), SMB IT teams, WiFi consultants
-2. **Primary Pain Points:** Troubleshooting takes too long, WiFi site surveys cost $3K-5K,
-   compliance audits are manual
-3. **Value Prop:** AI tells you exactly what's wrong in seconds + predictive WiFi planning saves
-   thousands
+2. **Primary Pain Points:** Troubleshooting takes too long, WiFi site surveys cost $3K-5K, compliance audits are manual
+3. **Value Prop:** AI tells you exactly what's wrong in seconds + predictive WiFi planning saves thousands
 4. **Pricing:** Lead with Premium tier ($1,999) for best commission ($500)
-5. **Demo:** Start with their pain point (troubleshooting OR WiFi OR compliance), show the "wow
-   moment"
-6. **Objections:** ROI calculator beats "too expensive," trial beats "not ready," battle cards beat
-   "evaluating competitors"
+5. **Demo:** Start with their pain point (troubleshooting OR WiFi OR compliance), show the "wow moment"
+6. **Objections:** ROI calculator beats "too expensive," trial beats "not ready," battle cards beat "evaluating
+   competitors"
 7. **Commission:** 25% of ACV (focus on Premium tier for best commission per effort)
 8. **Close Rate:** 40% of trials should close (if lower, improve qualification or demo)
 

@@ -1,0 +1,20 @@
+{
+  // Globs to lint
+  "globs": ["**/*.md"],
+
+  // Globs to ignore
+  "ignores": [
+    "node_modules/**",
+    "web/node_modules/**",
+    "build/**",
+    "dist/**",
+    "coverage/**",
+    "storybook-static/**",
+    "playwright-report/**",
+    ".claude/**",
+    "**/CHANGELOG.md"
+  ],
+
+  // Use the .markdownlint.json config
+  "config": ".markdownlint.json"
+}

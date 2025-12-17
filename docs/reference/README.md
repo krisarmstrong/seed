@@ -1,7 +1,7 @@
 # Reference Documentation (Meta)
 
-**Status:** Internal use **Audience:** Team members, documentation maintainers **Purpose:**
-Documentation about documentation
+**Status:** Internal use **Audience:** Team members, documentation maintainers **Purpose:** Documentation about
+documentation
 
 ---
 

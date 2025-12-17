@@ -1,12 +1,11 @@
 # Artifact Verification Guide
 
-The Seed releases include Software Bills of Materials (SBOMs) and cryptographic signatures for all
-binary artifacts to ensure supply chain security and integrity verification.
+The Seed releases include Software Bills of Materials (SBOMs) and cryptographic signatures for all binary artifacts to
+ensure supply chain security and integrity verification.
 
 ## What's Included
 
-Each release contains the following files for each platform (linux-amd64, linux-arm64, darwin-amd64,
-darwin-arm64):
+Each release contains the following files for each platform (linux-amd64, linux-arm64, darwin-amd64, darwin-arm64):
 
 - `seed-{platform}` - The binary executable
 - `seed-{platform}.sbom.json` - Software Bill of Materials (CycloneDX format)
@@ -37,8 +36,8 @@ curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -
 
 ## Verifying Binary Signatures
 
-All binaries are signed using [Sigstore](https://www.sigstore.dev/) with keyless OIDC signing during
-the GitHub Actions build process.
+All binaries are signed using [Sigstore](https://www.sigstore.dev/) with keyless OIDC signing during the GitHub Actions
+build process.
 
 ### Step 1: Download Release Assets
 
@@ -53,8 +52,7 @@ gh release download $VERSION \
   -R krisarmstrong/seed
 ```
 
-Or download manually from the [GitHub Releases](https://github.com/krisarmstrong/seed/releases)
-page.
+Or download manually from the [GitHub Releases](https://github.com/krisarmstrong/seed/releases) page.
 
 ### Step 2: Verify the Binary Signature
 
@@ -167,18 +165,18 @@ To automate verification in your CI/CD pipeline:
 
 ### "certificate identity does not match"
 
-This error means the binary wasn't signed by the official repository. **Do not use the binary** - it
-may be tampered with.
+This error means the binary wasn't signed by the official repository. **Do not use the binary** - it may be tampered
+with.
 
 ### "signature verification failed"
 
-This means the file has been modified after signing. **Do not use the binary** - download a fresh
-copy from GitHub Releases.
+This means the file has been modified after signing. **Do not use the binary** - download a fresh copy from GitHub
+Releases.
 
 ### "certificate has expired"
 
-Sigstore certificates are short-lived (hours). However, the signature includes a timestamp from
-Rekor proving when it was signed. This is normal and doesn't affect verification.
+Sigstore certificates are short-lived (hours). However, the signature includes a timestamp from Rekor proving when it
+was signed. This is normal and doesn't affect verification.
 
 ### COSIGN_EXPERIMENTAL=1
 
@@ -188,13 +186,13 @@ For keyless verification, you may need to set:
 export COSIGN_EXPERIMENTAL=1
 ```
 
-This enables experimental keyless verification mode in older cosign versions. Newer versions (>=
-2.0) don't require this.
+This enables experimental keyless verification mode in older cosign versions. Newer versions (>= 2.0) don't require
+this.
 
 ## Security Policy
 
-If you discover a security vulnerability in The Seed, please report it privately to the maintainers.
-See [SECURITY.md](../SECURITY.md) for details.
+If you discover a security vulnerability in The Seed, please report it privately to the maintainers. See
+[SECURITY.md](../SECURITY.md) for details.
 
 ## Additional Resources
 

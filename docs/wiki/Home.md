@@ -1,7 +1,7 @@
 # Welcome to The Seed Wiki
 
-**The Seed** is an AI-powered network diagnostic platform that combines WiFi planning, network
-monitoring, vulnerability scanning, and compliance reporting in one affordable tool.
+**The Seed** is an AI-powered network diagnostic platform that combines WiFi planning, network monitoring, vulnerability
+scanning, and compliance reporting in one affordable tool.
 
 ## Quick Links
 

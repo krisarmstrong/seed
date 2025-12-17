@@ -1,7 +1,6 @@
 # Technical Debt & Future Improvements
 
-This document tracks planned improvements and technical debt that requires preparation before
-implementation.
+This document tracks planned improvements and technical debt that requires preparation before implementation.
 
 ## Security
 
@@ -15,8 +14,8 @@ implementation.
 - Security findings are reported but don't block builds
 - Results are uploaded to GitHub Security tab via SARIF
 
-**Goal**: Enable `gosec` to fail CI builds on high-confidence security findings, aligning with
-enterprise security standards.
+**Goal**: Enable `gosec` to fail CI builds on high-confidence security findings, aligning with enterprise security
+standards.
 
 **Prerequisites** (must complete first):
 
