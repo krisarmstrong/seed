@@ -47,15 +47,105 @@ type FloorPlan struct {
 // PassiveSample contains data from a passive WiFi scan.
 type PassiveSample struct {
 	Networks []*wifi.ScannedNetwork `json:"networks"` // All visible APs
+
+	// Aggregated statistics for heatmap visualization
+	UniqueSSIDs   int `json:"uniqueSSIDs"`   // Number of unique network names
+	UniqueBSSIDs  int `json:"uniqueBSSIDs"`  // Number of unique access points
+	APCount2_4    int `json:"apCount2_4"`    // Number of APs on 2.4 GHz band (2400-2500 MHz)
+	APCount5      int `json:"apCount5"`      // Number of APs on 5 GHz band (5000-5900 MHz)
+	APCount6      int `json:"apCount6"`      // Number of APs on 6 GHz band (5900+ MHz)
+	CoChannelAPs  int `json:"coChannelAPs"`  // Number of APs on same channel as strongest AP
+	AdjChannelAPs int `json:"adjChannelAPs"` // Number of APs on adjacent channels (±1-2 from strongest)
+}
+
+// CalculateAggregations computes aggregated statistics from the networks array.
+// This should be called after populating the Networks field to generate heatmap data.
+//
+// The function calculates:
+//   - Unique SSIDs and BSSIDs for network density metrics
+//   - AP counts per frequency band (2.4 GHz, 5 GHz, 6 GHz) for band utilization
+//   - Co-channel interference: APs on the same channel as the strongest AP
+//   - Adjacent channel interference: APs on channels ±1 or ±2 from the strongest AP
+//
+// Handles nil or empty networks array gracefully.
+func (p *PassiveSample) CalculateAggregations() {
+	// Reset all aggregated fields
+	p.UniqueSSIDs = 0
+	p.UniqueBSSIDs = 0
+	p.APCount2_4 = 0
+	p.APCount5 = 0
+	p.APCount6 = 0
+	p.CoChannelAPs = 0
+	p.AdjChannelAPs = 0
+
+	// Handle nil or empty networks
+	if len(p.Networks) == 0 {
+		return
+	}
+
+	// Track unique SSIDs and BSSIDs using maps
+	uniqueSSIDs := make(map[string]bool)
+	uniqueBSSIDs := make(map[string]bool)
+
+	// Find the strongest AP (first in the array, as they're sorted by signal strength)
+	strongestChannel := p.Networks[0].Channel
+
+	// Process each network
+	for _, network := range p.Networks {
+		// Count unique SSIDs (skip empty/hidden SSIDs)
+		if network.SSID != "" {
+			uniqueSSIDs[network.SSID] = true
+		}
+
+		// Count unique BSSIDs
+		if network.BSSID != "" {
+			uniqueBSSIDs[network.BSSID] = true
+		}
+
+		// Count APs by frequency band
+		// 2.4 GHz: 2400-2500 MHz (channels 1-14)
+		// 5 GHz: 5000-5900 MHz (channels 36-165)
+		// 6 GHz: 5900+ MHz (channels 1-233 in 6GHz band)
+		switch {
+		case network.Frequency >= 2400 && network.Frequency < 2500:
+			p.APCount2_4++
+		case network.Frequency >= 5000 && network.Frequency < 5900:
+			p.APCount5++
+		case network.Frequency >= 5900:
+			p.APCount6++
+		}
+
+		// Count co-channel interference (same channel as strongest)
+		if network.Channel == strongestChannel {
+			p.CoChannelAPs++
+		}
+
+		// Count adjacent channel interference (±1 or ±2 channels from strongest)
+		// For 2.4 GHz, channels 1-11 are commonly used with ±2 overlap
+		// For 5 GHz, channels are typically spaced further apart
+		channelDiff := network.Channel - strongestChannel
+		if channelDiff < 0 {
+			channelDiff = -channelDiff
+		}
+		if channelDiff >= 1 && channelDiff <= 2 {
+			p.AdjChannelAPs++
+		}
+	}
+
+	// Set the counts
+	p.UniqueSSIDs = len(uniqueSSIDs)
+	p.UniqueBSSIDs = len(uniqueBSSIDs)
 }
 
 // ActiveSample contains data from active connection monitoring.
 type ActiveSample struct {
-	SSID         string  `json:"ssid"`
-	BSSID        string  `json:"bssid"`
-	RSSI         int     `json:"rssi"`         // Signal strength in dBm
-	DataRate     float64 `json:"dataRate"`     // Mbps
-	RoamingEvent bool    `json:"roamingEvent"` // true if BSSID changed since last sample
+	SSID          string  `json:"ssid"`
+	BSSID         string  `json:"bssid"`
+	RSSI          int     `json:"rssi"`                    // Signal strength in dBm
+	DataRate      float64 `json:"dataRate"`                // Mbps
+	RoamingEvent  bool    `json:"roamingEvent"`            // true if BSSID changed since last sample
+	PreviousBSSID string  `json:"previousBssid,omitempty"` // BSSID before roaming event
+	RoamCount     int     `json:"roamCount,omitempty"`     // Total number of roaming events during survey
 }
 
 // ThroughputSample contains data from iperf3 throughput testing.

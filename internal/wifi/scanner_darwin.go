@@ -63,12 +63,13 @@ func scanPlatform(_ string) ([]*ScannedNetwork, error) {
 
 // parseAirportLine parses a single line from airport -s output.
 func parseAirportLine(line string) *ScannedNetwork {
-	// Use regex to extract fields
+	// Use regex to extract fields including HT flag
 	// Example: "           MyNetwork      aa:bb:cc:dd:ee:ff -45  6       Y  -- WPA2(PSK/AES/AES)"
-	re := regexp.MustCompile(`^\s*(\S.*?)\s+([0-9a-f:]{17})\s+(-?\d+)\s+(\d+)\s+.*?(Open|WEP|WPA|WPA2|WPA3)`)
+	// Fields: SSID, BSSID, RSSI, CHANNEL, HT, CC, SECURITY
+	re := regexp.MustCompile(`^\s*(\S.*?)\s+([0-9a-f:]{17})\s+(-?\d+)\s+(\d+)\s+([YN-])\s+.*?(Open|WEP|WPA|WPA2|WPA3)`)
 	matches := re.FindStringSubmatch(line)
 
-	if len(matches) < 6 {
+	if len(matches) < 7 {
 		return nil
 	}
 
@@ -76,7 +77,8 @@ func parseAirportLine(line string) *ScannedNetwork {
 	bssid := matches[2]
 	signal, _ := strconv.Atoi(matches[3])  //nolint:errcheck // Parse failure defaults to 0
 	channel, _ := strconv.Atoi(matches[4]) //nolint:errcheck // Parse failure defaults to 0
-	security := matches[5]
+	htFlag := matches[5]
+	security := matches[6]
 
 	// Extract just the main security type
 	//nolint:gocritic // ifElseChain: order matters for security type detection (WPA3 before WPA2 before WPA)
@@ -88,14 +90,46 @@ func parseAirportLine(line string) *ScannedNetwork {
 		security = "WPA"
 	}
 
+	// Determine channel width and HT mode from HT flag
+	// Y = 802.11n capable (40MHz), N = legacy (20MHz)
+	channelWidth := 20
+	htMode := "HT20"
+	if htFlag == "Y" {
+		channelWidth = 40
+		htMode = "HT40"
+	}
+
+	// Estimate noise floor (typical range: -90 to -100 dBm)
+	// In practice, this should be obtained from 'airport -I' but we'll use a conservative estimate
+	noiseFloor := -95
+
+	// Calculate SNR (Signal-to-Noise Ratio)
+	snr := signal - noiseFloor
+
+	// Determine if this is a DFS channel
+	isDFS := isDFSChannel(channel)
+
 	network := &ScannedNetwork{
-		SSID:      ssid,
-		BSSID:     bssid,
-		Signal:    signal,
-		Channel:   channel,
-		Frequency: channelToFrequency(channel),
-		Security:  mapSecurityType(security),
+		SSID:         ssid,
+		BSSID:        bssid,
+		Signal:       signal,
+		Channel:      channel,
+		Frequency:    channelToFrequency(channel),
+		Security:     mapSecurityType(security),
+		ChannelWidth: channelWidth,
+		NoiseFloor:   noiseFloor,
+		SNR:          snr,
+		HTMode:       htMode,
+		IsDFS:        isDFS,
 	}
 
 	return network
+}
+
+// isDFSChannel checks if a given channel is a DFS (Dynamic Frequency Selection) channel.
+// DFS channels are in the 5GHz band and require radar detection:
+// - 52-64 (UNII-2).
+// - 100-144 (UNII-2 Extended).
+func isDFSChannel(channel int) bool {
+	return (channel >= 52 && channel <= 64) || (channel >= 100 && channel <= 144)
 }

@@ -43,23 +43,106 @@ export type SurveyType = "passive" | "active" | "throughput";
 /** Survey lifecycle status */
 export type SurveyStatus = "created" | "in_progress" | "paused" | "completed";
 
+/** How the floor plan scale was determined */
+export type ScaleSource = "auto" | "dimensions" | "calibration" | "imported" | "default";
+
+/** AP location marker for manual or imported AP placements */
+export interface APLocation {
+  id: string; // Unique identifier
+  x: number; // X coordinate on floor plan (pixels)
+  y: number; // Y coordinate on floor plan (pixels)
+  label: string; // Display name (e.g., "AP-101")
+  bssid?: string; // MAC address if known
+  ssids?: string[]; // Advertised SSIDs
+  band?: WiFiBand; // Primary band
+  channel?: number; // Primary channel
+  model?: string; // AP model (e.g., "Cisco 9130")
+  source?: "manual" | "imported" | "detected"; // How this AP was added
+}
+
+/** Heatmap visualization metric types */
+export type HeatmapMetric =
+  | "rssi"
+  | "throughput"
+  | "latency"
+  | "snr"
+  | "noise"
+  | "cochannel"
+  | "adjacent"
+  | "channelUtil"
+  | "apDensity"
+  | "ssidCount"
+  | null;
+
+/** Survey view mode */
+export type SurveyViewMode = "passive" | "active" | "client" | "probingClient" | "all";
+
+/** Heatmap filter configuration */
+export interface HeatmapFilter {
+  ssid?: string; // Filter to specific SSID
+  bssid?: string; // Filter to specific BSSID/AP
+  band?: WiFiBand; // Filter to specific band
+  channel?: number; // Filter to specific channel
+  apId?: string; // Filter to specific AP location
+  minRssi?: number; // Minimum RSSI threshold
+  channelWidth?: ChannelWidth; // Filter by channel width
+  phyType?: PhyType; // Filter by 802.11 standard
+  security?: SecurityType; // Filter by security type
+  vendor?: string; // Filter by AP vendor
+  viewMode?: SurveyViewMode; // Which survey data to show
+}
+
 /** Floor plan image and scale information for coordinate mapping */
 export interface FloorPlan {
   imageData: string; // Base64-encoded image data
   width: number; // Image width in pixels
   height: number; // Image height in pixels
   scaleM: number; // Scale factor: meters per pixel
+  scaleSource?: ScaleSource; // How scale was determined
+  propagationM?: number; // Signal propagation radius in meters (for survey planning)
+  originalFile?: string; // Original filename for reference
+}
+
+/** 802.11 PHY type identifier */
+export type PhyType = "a" | "b" | "g" | "n" | "ac" | "ax" | "be" | "unknown";
+
+/** WiFi security type */
+export type SecurityType =
+  | "open"
+  | "wep"
+  | "wpa"
+  | "wpa2"
+  | "wpa3"
+  | "wpa2-enterprise"
+  | "wpa3-enterprise"
+  | "unknown";
+
+/** Channel width in MHz */
+export type ChannelWidth = 20 | 40 | 80 | 160 | 320;
+
+/** Network information from passive scan */
+export interface ScannedNetwork {
+  ssid: string; // Network name
+  bssid: string; // Access point MAC address
+  rssi: number; // Received signal strength indicator (dBm)
+  channel: number; // Primary WiFi channel number
+  frequency: number; // Frequency in MHz
+  channelWidth?: ChannelWidth; // Channel width (20/40/80/160/320 MHz)
+  phyType?: PhyType; // 802.11 standard (a/b/g/n/ac/ax/be)
+  security?: SecurityType; // Security type
+  noiseFloor?: number; // Noise floor in dBm (if available)
+  snr?: number; // Signal-to-noise ratio (if available)
+  txRate?: number; // Transmit rate in Mbps
+  rxRate?: number; // Receive rate in Mbps
+  vendor?: string; // AP vendor (from OUI lookup)
+  isHidden?: boolean; // Hidden SSID
 }
 
 /** Passive survey sample data (multiple networks scanned) */
 export interface PassiveSample {
-  networks: Array<{
-    ssid: string; // Network name
-    bssid: string; // Access point MAC address
-    rssi: number; // Received signal strength indicator (dBm)
-    channel: number; // WiFi channel number
-    frequency: number; // Frequency in MHz
-  }>;
+  networks: ScannedNetwork[];
+  noiseFloor?: number; // Ambient noise floor at this location
+  timestamp?: string; // Sample timestamp
 }
 
 /** Active survey sample data (connected network only) */
@@ -91,6 +174,49 @@ export interface SamplePoint {
   sampleData: PassiveSample | ActiveSample | ThroughputSample; // Measurement data
 }
 
+/** WiFi band identifier */
+export type WiFiBand = "2.4" | "5" | "6";
+
+/** Configuration for a single WiFi adapter in a survey */
+export interface AdapterConfig {
+  interface: string; // Interface name (e.g., "wlan0", "en0")
+  mode: SurveyType; // Survey mode for this adapter
+  bands: WiFiBand[]; // Which bands this adapter scans
+  dwellTimeMs?: number; // Per-channel dwell time (optional)
+}
+
+/** Survey scan configuration for bands, channels, and adapters */
+export interface SurveyConfig {
+  // Band configuration
+  bands: WiFiBand[]; // Enabled bands ["2.4", "5", "6"]
+  channels2_4?: number[]; // Specific 2.4GHz channels or empty for all
+  channels5?: number[]; // Specific 5GHz channels or empty for all
+  channels6?: number[]; // Specific 6GHz channels or empty for all
+
+  // Multi-adapter configuration (optional)
+  adapters?: AdapterConfig[]; // Per-adapter settings
+
+  // Passive survey filters
+  ssidFilter?: string; // SSID filter pattern (include/exclude)
+  minRssi?: number; // Minimum RSSI threshold to record
+
+  // Active survey settings
+  targetSsid?: string; // Target SSID for active survey
+  roamingSensitivity?: "low" | "medium" | "high";
+}
+
+/** Default channels for each band */
+export const DEFAULT_CHANNELS = {
+  "2.4": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  "5": [
+    36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 149,
+    153, 157, 161, 165,
+  ],
+  "6": [
+    1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53, 57, 61, 65, 69, 73, 77, 81, 85, 89, 93,
+  ],
+};
+
 /** Complete survey object */
 export interface Survey {
   id: string; // Unique survey identifier
@@ -105,6 +231,230 @@ export interface Survey {
   interface: string; // WiFi interface used for survey
   iperfServer?: string; // iperf3 server for throughput tests
   testDuration?: number; // Duration of throughput tests (seconds)
+  config?: SurveyConfig; // Advanced scan configuration (bands, channels, adapters)
+  apLocations?: APLocation[]; // AP markers placed on floor plan
+  passFailCriteria?: PassFailCriterion[]; // Custom pass/fail criteria
+  lastValidation?: SurveyValidation; // Most recent validation results
+}
+
+// ============================================================================
+// Pass/Fail Criteria System Types
+// ============================================================================
+
+/** Comparison operator for pass/fail threshold */
+export type ComparisonOperator = "gte" | "lte";
+
+/** A single pass/fail criterion with configurable threshold */
+export interface PassFailCriterion {
+  id: string; // Unique identifier
+  name: string; // Internal name (e.g., "primarySignal")
+  displayKey: string; // i18n translation key for display
+  metric: HeatmapMetric; // Which metric this criterion tests
+  comparison: ComparisonOperator; // >= or <= threshold
+  threshold: number; // Threshold value
+  suffix: string; // Unit suffix (dBm, dB, %, Mbps, APs, ms)
+  enabled: boolean; // Whether this criterion is active
+  mode: "passive" | "active" | "throughput" | "all"; // Survey type this applies to
+  apIndex?: number; // For "nth strongest AP" tests (0=strongest, 1=second, etc.)
+  description?: string; // Optional description of what this criterion measures
+}
+
+/** Result of validating a single criterion against survey data */
+export interface PassFailResult {
+  criterionId: string; // ID of the criterion tested
+  criterionName: string; // Name for display
+  passed: boolean; // Overall pass/fail status
+  averageValue: number; // Average measured value across all samples
+  worstValue: number; // Worst measured value
+  bestValue: number; // Best measured value
+  threshold: number; // Threshold it was tested against
+  comparison: ComparisonOperator; // Comparison operator used
+  suffix: string; // Unit suffix
+  failedSampleCount: number; // How many samples failed this criterion
+  totalSampleCount: number; // Total samples tested
+  failedLocations: Array<{ x: number; y: number; value: number }>; // Failed sample locations
+  percentage: number; // Pass percentage (0-100)
+}
+
+/** Complete validation results for a survey */
+export interface SurveyValidation {
+  overallPass: boolean; // True if all enabled criteria pass
+  overallPercentage: number; // Overall pass percentage
+  results: PassFailResult[]; // Individual criterion results
+  timestamp: string; // When validation was performed
+  criteria: PassFailCriterion[]; // Criteria used for this validation
+  passedCount: number; // Number of criteria that passed
+  failedCount: number; // Number of criteria that failed
+  surveyId: string; // Survey that was validated
+}
+
+/** Default pass/fail criteria for passive surveys */
+export const DEFAULT_PASSIVE_CRITERIA: PassFailCriterion[] = [
+  {
+    id: "primary-signal",
+    name: "primarySignal",
+    displayKey: "criteria.primarySignal",
+    metric: "rssi",
+    comparison: "gte",
+    threshold: -65,
+    suffix: "dBm",
+    enabled: true,
+    mode: "passive",
+    apIndex: 0,
+    description: "Strongest AP signal at each location",
+  },
+  {
+    id: "secondary-signal",
+    name: "secondarySignal",
+    displayKey: "criteria.secondarySignal",
+    metric: "rssi",
+    comparison: "gte",
+    threshold: -70,
+    suffix: "dBm",
+    enabled: true,
+    mode: "passive",
+    apIndex: 1,
+    description: "Second strongest AP for roaming redundancy",
+  },
+  {
+    id: "snr",
+    name: "snr",
+    displayKey: "criteria.snr",
+    metric: "snr",
+    comparison: "gte",
+    threshold: 25,
+    suffix: "dB",
+    enabled: true,
+    mode: "passive",
+    description: "Signal-to-noise ratio for reliable connections",
+  },
+  {
+    id: "cochannel",
+    name: "coChannel",
+    displayKey: "criteria.coChannel",
+    metric: "cochannel",
+    comparison: "lte",
+    threshold: 4,
+    suffix: "APs",
+    enabled: true,
+    mode: "passive",
+    description: "Co-channel interference from APs on same channel",
+  },
+  {
+    id: "adjacent",
+    name: "adjChannel",
+    displayKey: "criteria.adjChannel",
+    metric: "adjacent",
+    comparison: "lte",
+    threshold: 1,
+    suffix: "APs",
+    enabled: true,
+    mode: "passive",
+    description: "Adjacent channel interference",
+  },
+];
+
+/** Default pass/fail criteria for active surveys */
+export const DEFAULT_ACTIVE_CRITERIA: PassFailCriterion[] = [
+  {
+    id: "active-signal",
+    name: "activeSignal",
+    displayKey: "criteria.activeSignal",
+    metric: "rssi",
+    comparison: "gte",
+    threshold: -65,
+    suffix: "dBm",
+    enabled: true,
+    mode: "active",
+    description: "Connected AP signal strength",
+  },
+  {
+    id: "active-snr",
+    name: "activeSnr",
+    displayKey: "criteria.activeSnr",
+    metric: "snr",
+    comparison: "gte",
+    threshold: 25,
+    suffix: "dB",
+    enabled: true,
+    mode: "active",
+    description: "Signal-to-noise ratio while connected",
+  },
+  {
+    id: "active-link-rate",
+    name: "activeLinkRate",
+    displayKey: "criteria.linkRate",
+    metric: "throughput",
+    comparison: "gte",
+    threshold: 200,
+    suffix: "Mbps",
+    enabled: true,
+    mode: "active",
+    description: "Minimum PHY data rate",
+  },
+];
+
+/** Default pass/fail criteria for throughput surveys */
+export const DEFAULT_THROUGHPUT_CRITERIA: PassFailCriterion[] = [
+  {
+    id: "bandwidth",
+    name: "bandwidth",
+    displayKey: "criteria.bandwidth",
+    metric: "throughput",
+    comparison: "gte",
+    threshold: 100,
+    suffix: "Mbps",
+    enabled: true,
+    mode: "throughput",
+    description: "Minimum measured bandwidth (iperf3)",
+  },
+  {
+    id: "latency",
+    name: "latency",
+    displayKey: "criteria.latency",
+    metric: "latency",
+    comparison: "lte",
+    threshold: 50,
+    suffix: "ms",
+    enabled: true,
+    mode: "throughput",
+    description: "Maximum acceptable latency",
+  },
+  {
+    id: "jitter",
+    name: "jitter",
+    displayKey: "criteria.jitter",
+    metric: "latency",
+    comparison: "lte",
+    threshold: 10,
+    suffix: "ms",
+    enabled: true,
+    mode: "throughput",
+    description: "Maximum acceptable jitter",
+  },
+];
+
+/**
+ * Get default criteria for a survey type
+ */
+export function getDefaultCriteria(surveyType: SurveyType): PassFailCriterion[] {
+  switch (surveyType) {
+    case "passive":
+      return [...DEFAULT_PASSIVE_CRITERIA];
+    case "active":
+      return [...DEFAULT_ACTIVE_CRITERIA];
+    case "throughput":
+      return [...DEFAULT_THROUGHPUT_CRITERIA];
+    default:
+      return [...DEFAULT_PASSIVE_CRITERIA];
+  }
+}
+
+/**
+ * Get all criteria (combined) for comprehensive surveys
+ */
+export function getAllCriteria(): PassFailCriterion[] {
+  return [...DEFAULT_PASSIVE_CRITERIA, ...DEFAULT_ACTIVE_CRITERIA, ...DEFAULT_THROUGHPUT_CRITERIA];
 }
 
 /** Request payload for creating a new survey */

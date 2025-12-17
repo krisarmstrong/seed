@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/config"
@@ -731,7 +733,34 @@ func (s *Server) addSurveySample(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.surveyManager.AddSample(id, req.X, req.Y, req.SampleData); err != nil {
+	// Process the sample data to calculate aggregations for PassiveSample
+	sampleData := req.SampleData
+	if dataMap, ok := req.SampleData.(map[string]interface{}); ok {
+		// Check if this is a PassiveSample by looking for the "networks" field
+		if _, hasNetworks := dataMap["networks"]; hasNetworks {
+			// Re-marshal and unmarshal to get the typed PassiveSample
+			dataBytes, err := json.Marshal(dataMap)
+			if err == nil {
+				var passiveSample survey.PassiveSample
+				if err := json.Unmarshal(dataBytes, &passiveSample); err == nil {
+					// Calculate aggregations
+					passiveSample.CalculateAggregations()
+					sampleData = passiveSample
+				}
+			}
+		} else if _, hasBSSID := dataMap["bssid"]; hasBSSID {
+			// Check if this is an ActiveSample
+			dataBytes, err := json.Marshal(dataMap)
+			if err == nil {
+				var activeSample survey.ActiveSample
+				if err := json.Unmarshal(dataBytes, &activeSample); err == nil {
+					sampleData = activeSample
+				}
+			}
+		}
+	}
+
+	if err := s.surveyManager.AddSample(id, req.X, req.Y, sampleData); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -824,4 +853,61 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJSONResponse(w, http.StatusOK, settingsUpdatedSurvey)
+}
+
+// importAirMapper handles POST /api/survey/import/airmapper.
+// It accepts a multipart form with an .amp file and returns parsed calibration,
+// floor plan, and pass/fail criteria data.
+func (s *Server) importAirMapper(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Limit file size to 50MB
+	const maxFileSize = 50 << 20 // 50 MB
+	r.Body = http.MaxBytesReader(w, r.Body, maxFileSize)
+
+	// Parse multipart form
+	if err := r.ParseMultipartForm(maxFileSize); err != nil {
+		http.Error(w, "File too large or invalid form data", http.StatusBadRequest)
+		return
+	}
+
+	// Get the uploaded file
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "No file provided", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Validate file extension
+	if !strings.HasSuffix(strings.ToLower(handler.Filename), ".amp") {
+		http.Error(w, "Invalid file type. Please upload an .amp file", http.StatusBadRequest)
+		return
+	}
+
+	// Read the file contents
+	data, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(w, "Failed to read file", http.StatusInternalServerError)
+		return
+	}
+
+	// Parse the AirMapper file
+	ampFile, err := survey.ParseAirMapperFile(data)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to parse AirMapper file: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	// Convert to import result
+	result, err := ampFile.ToImportResult()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to process AirMapper data: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, http.StatusOK, result)
 }

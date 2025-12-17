@@ -32,11 +32,26 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { FloorPlanCanvas, type CalibrationPoint } from "./FloorPlanCanvas";
+import { ScaleCalibrationPanel } from "./ScaleCalibrationPanel";
+import { SurveyConfigPanel } from "./SurveyConfigPanel";
+import { AirMapperImport, type ImportOptions } from "./AirMapperImport";
+import { HeatmapLegend } from "./HeatmapLegend";
+import type { AirMapperData } from "../../utils/airmapper";
 import { getAuthHeaders } from "../../hooks/useAuth";
-import type { Survey, PassiveSample, ActiveSample, ThroughputSample } from "../../hooks/useSurvey";
+import type {
+  Survey,
+  PassiveSample,
+  ActiveSample,
+  ThroughputSample,
+  FloorPlan,
+  SurveyConfig,
+  SurveyType,
+  HeatmapMetric,
+  SamplePoint,
+} from "../../hooks/useSurvey";
 import { X, Upload, Play, Pause, CheckCircle, Loader } from "../ui/Icons";
-// Import Ruler directly from lucide-react since it's not in our Icons module yet
-import { Ruler } from "lucide-react";
+// Import Ruler and FileArchive directly from lucide-react
+import { Ruler, FileArchive, Wifi, Activity, Radio, Gauge, Clock, Waves, Hash } from "lucide-react";
 import { radius, layout, spacing, button, icon as iconTokens } from "../../styles/theme";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "";
@@ -62,7 +77,9 @@ interface WiFiStatus {
 }
 
 /**
+ * SurveyView Component
  *
+ * Main survey interface with floor plan, sampling controls, heatmap visualization, and legend.
  */
 export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyViewProps) {
   const { t } = useTranslation("survey");
@@ -72,10 +89,8 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
   const [sampling, setSampling] = useState(false);
   // Indicates if floor plan upload is in progress
   const [uploadingFloorPlan, setUploadingFloorPlan] = useState(false);
-  // Selected metric for heatmap visualization (rssi, throughput, latency)
-  const [heatmapMetric, setHeatmapMetric] = useState<"rssi" | "throughput" | "latency" | null>(
-    null
-  );
+  // Selected metric for heatmap visualization
+  const [heatmapMetric, setHeatmapMetric] = useState<HeatmapMetric>(null);
   const [error, setError] = useState<string | null>(null);
   // WiFi adapter status
   const [wifiStatus, setWifiStatus] = useState<WiFiStatus | null>(null);
@@ -88,6 +103,8 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
   const [editIperfServer, setEditIperfServer] = useState(initialSurvey.iperfServer || "");
   const [editTestDuration, setEditTestDuration] = useState(initialSurvey.testDuration || 3);
   const [savingSettings, setSavingSettings] = useState(false);
+  // AirMapper import state
+  const [showImport, setShowImport] = useState(false);
 
   // Check WiFi adapter status on mount
   useEffect(() => {
@@ -417,6 +434,134 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
     setCalibrationDistance("");
   };
 
+  // Handle floor plan scale/propagation updates from ScaleCalibrationPanel
+  const handleFloorPlanUpdate = async (updates: Partial<FloorPlan>) => {
+    if (!survey.floorPlan) return;
+
+    try {
+      const updatedFloorPlan = {
+        ...survey.floorPlan,
+        ...updates,
+      };
+
+      const res = await fetch(`${API_BASE}/api/survey/floorplan?id=${survey.id}`, {
+        method: "POST",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFloorPlan),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update floor plan settings");
+      }
+
+      const updated = await res.json();
+      setSurvey(updated);
+      onUpdate();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update settings");
+    }
+  };
+
+  // Handle survey config updates from SurveyConfigPanel
+  const handleConfigUpdate = async (configUpdates: Partial<SurveyConfig>) => {
+    try {
+      const updatedConfig = {
+        ...(survey.config || {}),
+        ...configUpdates,
+      };
+
+      const res = await fetch(`${API_BASE}/api/survey/config?id=${survey.id}`, {
+        method: "PUT",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedConfig),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update survey config");
+      }
+
+      const updated = await res.json();
+      setSurvey(updated);
+      onUpdate();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update config");
+    }
+  };
+
+  // Handle survey type change from SurveyConfigPanel
+  const handleSurveyTypeChange = (newType: SurveyType) => {
+    setEditSurveyType(newType);
+    // Also update via settings endpoint
+    handleSaveSettings();
+  };
+
+  // Handle iperf settings change from SurveyConfigPanel
+  const handleIperfSettingsChange = (server: string, duration: number) => {
+    setEditIperfServer(server);
+    setEditTestDuration(duration);
+  };
+
+  // Handle AirMapper import
+  const handleAirMapperImport = async (data: AirMapperData, options: ImportOptions) => {
+    try {
+      // Build floor plan from imported data
+      if (options.importFloorPlan && data.floorPlanImage) {
+        // Get image dimensions from the data URL
+        const img = new Image();
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error("Failed to load imported image"));
+          img.src = data.floorPlanImage;
+        });
+
+        const floorPlan: FloorPlan = {
+          imageData: data.floorPlanImage,
+          width: img.width,
+          height: img.height,
+          scaleM: options.importCalibration ? data.calibration.scaleM : 0.1,
+          scaleSource: options.importCalibration ? "imported" : "default",
+          propagationM: options.importCalibration ? data.calibration.propagationM : 10,
+          originalFile: data.floorPlanFilename,
+        };
+
+        // Upload floor plan to server
+        const res = await fetch(`${API_BASE}/api/survey/floorplan?id=${survey.id}`, {
+          method: "POST",
+          headers: {
+            ...getAuthHeaders(),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(floorPlan),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to import floor plan");
+        }
+
+        const updated = await res.json();
+        setSurvey(updated);
+        onUpdate();
+      } else if (options.importCalibration && survey.floorPlan) {
+        // Just import calibration settings
+        await handleFloorPlanUpdate({
+          scaleM: data.calibration.scaleM,
+          scaleSource: "imported",
+          propagationM: data.calibration.propagationM,
+        });
+      }
+
+      setShowImport(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to import AirMapper data");
+    }
+  };
+
   // Save survey settings
   const handleSaveSettings = async () => {
     setSavingSettings(true);
@@ -489,7 +634,9 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
             {survey.status === "created" && (
               <button
                 onClick={() => handleStatusChange("start")}
-                className={`${button.size.md} bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 ${layout.inline.default}`}
+                disabled={!wifiStatus?.canScan}
+                title={!wifiStatus?.canScan ? t("wifi.requiredToStart") : undefined}
+                className={`${button.size.md} bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 ${layout.inline.default} disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <Play className={iconTokens.size.sm} />
                 {t("buttons.startSurvey")}
@@ -519,7 +666,9 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
               <>
                 <button
                   onClick={() => handleStatusChange("start")}
-                  className={`${button.size.md} bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 ${layout.inline.default}`}
+                  disabled={!wifiStatus?.canScan}
+                  title={!wifiStatus?.canScan ? t("wifi.requiredToStart") : undefined}
+                  className={`${button.size.md} bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 ${layout.inline.default} disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   <Play className={iconTokens.size.sm} />
                   {t("buttons.resume")}
@@ -555,19 +704,28 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
           </div>
         )}
 
+        {/* AirMapper Import Modal */}
+        {showImport && (
+          <div className={`${spacing.margin.bottom.content}`}>
+            <AirMapperImport
+              onImport={handleAirMapperImport}
+              onCancel={() => setShowImport(false)}
+            />
+          </div>
+        )}
+
         {/* WiFi adapter status banner */}
         {wifiStatus && wifiStatus.status !== "ready" && (
           <div
             className={`${
               wifiStatus.status === "unavailable"
-                ? "bg-status-warning/10 border-status-warning/20 text-status-warning"
+                ? "bg-status-info/10 border-status-info/20 text-status-info"
                 : "bg-status-info/10 border-status-info/20 text-status-info"
             } border ${spacing.pad.sm} ${radius.md} ${spacing.margin.bottom.content}`}
           >
             <div className="font-medium">
-              {wifiStatus.status === "unavailable" ? "⚠️ " : "ℹ️ "}
               {wifiStatus.status === "unavailable"
-                ? t("wifi.noAdapter")
+                ? t("wifi.noAdapterSetup")
                 : t("wifi.adapterAvailable")}
             </div>
             {wifiStatus.availableAdapters.length > 0 && (
@@ -575,7 +733,9 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                 {t("wifi.availableAdapters")}: {wifiStatus.availableAdapters.join(", ")}
               </div>
             )}
-            <div className={`caption ${spacing.margin.top.tight}`}>{t("wifi.canStillUpload")}</div>
+            <div className={`caption ${spacing.margin.top.tight}`}>
+              {t("wifi.setupWithoutAdapter")}
+            </div>
           </div>
         )}
 
@@ -594,32 +754,6 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
             <div className={`bg-surface-raised ${radius.md} border border-surface-border pad`}>
               <div className={`${layout.flex.between} ${spacing.margin.bottom.content}`}>
                 <h2 className="heading-3">{t("floorPlan.title")}</h2>
-                {heatmapMetric === null && (survey.samples ?? []).length > 0 && (
-                  <div className={layout.inline.default}>
-                    <button
-                      onClick={() => setHeatmapMetric("rssi")}
-                      className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover`}
-                    >
-                      {t("buttons.rssiHeatmap")}
-                    </button>
-                    {survey.surveyType === "throughput" && (
-                      <>
-                        <button
-                          onClick={() => setHeatmapMetric("throughput")}
-                          className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover`}
-                        >
-                          {t("buttons.throughput")}
-                        </button>
-                        <button
-                          onClick={() => setHeatmapMetric("latency")}
-                          className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover`}
-                        >
-                          {t("buttons.latency")}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
                 {heatmapMetric !== null && (
                   <button
                     onClick={() => setHeatmapMetric(null)}
@@ -629,6 +763,103 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                   </button>
                 )}
               </div>
+
+              {/* Heatmap metric selector - categorized */}
+              {heatmapMetric === null && (survey.samples ?? []).length > 0 && (
+                <div className={`${spacing.margin.bottom.content} ${spacing.stack.sm}`}>
+                  {/* Signal Category */}
+                  <div>
+                    <div className={`body-small text-text-muted ${spacing.margin.bottom.tight}`}>
+                      {t("heatmaps.categories.signal")}
+                    </div>
+                    <div className={layout.inline.default}>
+                      <button
+                        onClick={() => setHeatmapMetric("rssi")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Wifi className={iconTokens.size.sm} />
+                        {t("heatmaps.rssi")}
+                      </button>
+                      <button
+                        onClick={() => setHeatmapMetric("snr")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Activity className={iconTokens.size.sm} />
+                        {t("heatmaps.snr")}
+                      </button>
+                      <button
+                        onClick={() => setHeatmapMetric("noise")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Radio className={iconTokens.size.sm} />
+                        {t("heatmaps.noise")}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Interference Category */}
+                  <div>
+                    <div className={`body-small text-text-muted ${spacing.margin.bottom.tight}`}>
+                      {t("heatmaps.categories.interference")}
+                    </div>
+                    <div className={layout.inline.default}>
+                      <button
+                        onClick={() => setHeatmapMetric("cochannel")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Waves className={iconTokens.size.sm} />
+                        {t("heatmaps.cochannel")}
+                      </button>
+                      <button
+                        onClick={() => setHeatmapMetric("adjacent")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Waves className={iconTokens.size.sm} />
+                        {t("heatmaps.adjacent")}
+                      </button>
+                      <button
+                        onClick={() => setHeatmapMetric("apDensity")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Hash className={iconTokens.size.sm} />
+                        {t("heatmaps.apDensity")}
+                      </button>
+                      <button
+                        onClick={() => setHeatmapMetric("ssidCount")}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Hash className={iconTokens.size.sm} />
+                        {t("heatmaps.ssidCount")}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Performance Category - only for throughput surveys */}
+                  {survey.surveyType === "throughput" && (
+                    <div>
+                      <div className={`body-small text-text-muted ${spacing.margin.bottom.tight}`}>
+                        {t("heatmaps.categories.performance")}
+                      </div>
+                      <div className={layout.inline.default}>
+                        <button
+                          onClick={() => setHeatmapMetric("throughput")}
+                          className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                        >
+                          <Gauge className={iconTokens.size.sm} />
+                          {t("heatmaps.throughput")}
+                        </button>
+                        <button
+                          onClick={() => setHeatmapMetric("latency")}
+                          className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                        >
+                          <Clock className={iconTokens.size.sm} />
+                          {t("heatmaps.latency")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {!survey.floorPlan ? (
                 <div
@@ -662,6 +893,20 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                   <p className={`caption text-text-muted ${spacing.margin.top.inline}`}>
                     {t("floorPlan.supportedFormats")}
                   </p>
+                  <div
+                    className={`${spacing.margin.top.content} border-t border-surface-border ${spacing.padding.top}`}
+                  >
+                    <p className={`caption text-text-muted ${spacing.margin.bottom.inline}`}>
+                      {t("import.description")}
+                    </p>
+                    <button
+                      onClick={() => setShowImport(true)}
+                      className={`${button.size.sm} border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.default}`}
+                    >
+                      <FileArchive className={iconTokens.size.sm} />
+                      {t("import.button")}
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div>
@@ -786,12 +1031,28 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                     floorPlan={survey.floorPlan}
                     samples={survey.samples ?? []}
                     onPointClick={handlePointClick}
-                    interactive={survey.status === "in_progress" && !sampling && !calibrationMode}
+                    interactive={
+                      survey.status === "in_progress" &&
+                      !sampling &&
+                      !calibrationMode &&
+                      wifiStatus?.canScan === true
+                    }
                     heatmapMetric={heatmapMetric}
                     calibrationMode={calibrationMode}
                     calibrationPoints={calibrationPoints}
                     onCalibrationClick={handleCalibrationClick}
                   />
+
+                  {/* Heatmap Legend - show when heatmap is active */}
+                  {heatmapMetric !== null && (survey.samples ?? []).length > 0 && (
+                    <div className={spacing.margin.top.content}>
+                      <HeatmapLegend
+                        metric={heatmapMetric}
+                        minValue={calculateMetricRange(survey.samples ?? [], heatmapMetric).min}
+                        maxValue={calculateMetricRange(survey.samples ?? [], heatmapMetric).max}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -897,6 +1158,31 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
               </div>
             )}
 
+            {/* Scale Calibration Panel - show when floor plan exists */}
+            {survey.floorPlan && (
+              <ScaleCalibrationPanel
+                floorPlan={survey.floorPlan}
+                onUpdate={handleFloorPlanUpdate}
+                onStartCalibration={() => setCalibrationMode(true)}
+                isCalibrating={calibrationMode}
+              />
+            )}
+
+            {/* Survey Configuration Panel - show when floor plan exists */}
+            {survey.floorPlan && wifiStatus && (
+              <SurveyConfigPanel
+                config={survey.config}
+                surveyType={editSurveyType}
+                availableAdapters={wifiStatus.availableAdapters || []}
+                currentInterface={wifiStatus.currentInterface || survey.interface}
+                iperfServer={editIperfServer}
+                testDuration={editTestDuration}
+                onUpdate={handleConfigUpdate}
+                onSurveyTypeChange={handleSurveyTypeChange}
+                onIperfSettingsChange={handleIperfSettingsChange}
+              />
+            )}
+
             {/* Sample list */}
             <div className={`bg-surface-raised ${radius.md} border border-surface-border pad`}>
               <h2 className={`heading-3 ${spacing.margin.bottom.content}`}>
@@ -989,4 +1275,111 @@ function renderSampleData(
   }
 
   return null;
+}
+
+// Helper to calculate min/max values for a heatmap metric
+function calculateMetricRange(
+  samples: SamplePoint[],
+  metric: HeatmapMetric
+): { min: number; max: number } {
+  if (!metric || samples.length === 0) {
+    return { min: 0, max: 0 };
+  }
+
+  const values: number[] = [];
+
+  samples.forEach((sample) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Polymorphic sample data
+    const data = sample.sampleData as any;
+
+    switch (metric) {
+      case "rssi":
+        if (data.networks && Array.isArray(data.networks)) {
+          const rssiValues = data.networks.map((n: { rssi: number }) => n.rssi);
+          if (rssiValues.length > 0) {
+            values.push(Math.max(...rssiValues));
+          }
+        } else if (data.rssi !== undefined) {
+          values.push(data.rssi);
+        }
+        break;
+      case "snr":
+        if (data.networks && Array.isArray(data.networks)) {
+          const rssiValues = data.networks.map((n: { rssi: number }) => n.rssi);
+          if (rssiValues.length > 0) {
+            const rssi = Math.max(...rssiValues);
+            const noise = data.noiseFloor || -95;
+            values.push(rssi - noise);
+          }
+        } else if (data.rssi !== undefined) {
+          const noise = data.noiseFloor || -95;
+          values.push(data.rssi - noise);
+        }
+        break;
+      case "noise":
+        values.push(data.noiseFloor || -95);
+        break;
+      case "cochannel":
+        if (data.networks && Array.isArray(data.networks) && data.networks.length > 0) {
+          const primaryChannel = data.networks[0].channel;
+          const count =
+            data.networks.filter((n: { channel: number }) => n.channel === primaryChannel).length -
+            1;
+          values.push(count);
+        }
+        break;
+      case "adjacent":
+        if (data.networks && Array.isArray(data.networks) && data.networks.length > 0) {
+          const primaryChannel = data.networks[0].channel;
+          const count = data.networks.filter(
+            (n: { channel: number }) =>
+              Math.abs(n.channel - primaryChannel) > 0 && Math.abs(n.channel - primaryChannel) <= 2
+          ).length;
+          values.push(count);
+        }
+        break;
+      case "throughput":
+        if (data.downloadMbps !== undefined) {
+          values.push(data.downloadMbps);
+        }
+        break;
+      case "latency":
+        if (data.latency !== undefined) {
+          values.push(data.latency);
+        }
+        break;
+      case "channelUtil":
+        if (data.channelUtilization !== undefined) {
+          values.push(data.channelUtilization);
+        }
+        break;
+      case "apDensity":
+        if (data.networks && Array.isArray(data.networks)) {
+          const uniqueBSSIDs = new Set(data.networks.map((n: { bssid: string }) => n.bssid));
+          values.push(uniqueBSSIDs.size);
+        } else if (data.uniqueBSSIDs !== undefined) {
+          values.push(data.uniqueBSSIDs);
+        }
+        break;
+      case "ssidCount":
+        if (data.networks && Array.isArray(data.networks)) {
+          const uniqueSSIDs = new Set(
+            data.networks.map((n: { ssid: string }) => n.ssid).filter(Boolean)
+          );
+          values.push(uniqueSSIDs.size);
+        } else if (data.uniqueSSIDs !== undefined) {
+          values.push(data.uniqueSSIDs);
+        }
+        break;
+    }
+  });
+
+  if (values.length === 0) {
+    return { min: 0, max: 0 };
+  }
+
+  return {
+    min: Math.min(...values),
+    max: Math.max(...values),
+  };
 }

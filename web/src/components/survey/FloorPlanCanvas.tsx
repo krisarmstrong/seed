@@ -32,7 +32,14 @@
 
 import { useRef, useEffect, useState } from "react";
 import { radius } from "../../styles/theme";
-import type { FloorPlan, SamplePoint } from "../../hooks/useSurvey";
+import type {
+  FloorPlan,
+  SamplePoint,
+  APLocation,
+  HeatmapMetric,
+  HeatmapFilter,
+  ScannedNetwork,
+} from "../../hooks/useSurvey";
 
 export interface CalibrationPoint {
   x: number;
@@ -44,10 +51,16 @@ interface FloorPlanCanvasProps {
   samples: SamplePoint[];
   onPointClick?: (x: number, y: number) => void;
   interactive?: boolean;
-  heatmapMetric?: "rssi" | "throughput" | "latency" | null;
+  heatmapMetric?: HeatmapMetric;
+  heatmapFilter?: HeatmapFilter;
   calibrationMode?: boolean;
   calibrationPoints?: CalibrationPoint[];
   onCalibrationClick?: (x: number, y: number) => void;
+  apLocations?: APLocation[];
+  showApLabels?: boolean;
+  apPlacementMode?: boolean;
+  onApPlacementClick?: (x: number, y: number) => void;
+  selectedApId?: string;
 }
 
 /**
@@ -60,9 +73,15 @@ export function FloorPlanCanvas({
   onPointClick,
   interactive = false,
   heatmapMetric = null,
+  heatmapFilter,
   calibrationMode = false,
   calibrationPoints = [],
   onCalibrationClick,
+  apLocations = [],
+  showApLabels = true,
+  apPlacementMode = false,
+  onApPlacementClick,
+  selectedApId,
 }: FloorPlanCanvasProps) {
   // Canvas DOM reference for drawing
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -108,8 +127,72 @@ export function FloorPlanCanvas({
 
       // Draw heatmap if requested
       if (heatmapMetric && samples.length > 0) {
-        drawHeatmap(ctx, samples, heatmapMetric, scaleX, scaleY);
+        drawHeatmap(ctx, samples, heatmapMetric, scaleX, scaleY, heatmapFilter);
       }
+
+      // Draw AP location markers
+      apLocations.forEach((ap) => {
+        const ax = ap.x * scaleX;
+        const ay = ap.y * scaleY;
+        const isSelected = ap.id === selectedApId;
+
+        // Draw AP icon (antenna shape)
+        ctx.save();
+        ctx.translate(ax, ay);
+
+        // Draw signal rings for selected AP
+        if (isSelected) {
+          ctx.strokeStyle = "rgba(34, 197, 94, 0.3)"; // green-500 with opacity
+          ctx.lineWidth = 2;
+          [20, 35, 50].forEach((r) => {
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, 2 * Math.PI);
+            ctx.stroke();
+          });
+        }
+
+        // Draw AP marker (triangle/antenna icon)
+        ctx.beginPath();
+        ctx.moveTo(0, -12);
+        ctx.lineTo(-8, 6);
+        ctx.lineTo(8, 6);
+        ctx.closePath();
+        ctx.fillStyle = isSelected
+          ? "rgba(34, 197, 94, 0.9)" // green-500
+          : "rgba(168, 85, 247, 0.9)"; // purple-500
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw antenna line
+        ctx.beginPath();
+        ctx.moveTo(0, -12);
+        ctx.lineTo(0, -18);
+        ctx.strokeStyle = isSelected ? "#22c55e" : "#a855f7";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw antenna top
+        ctx.beginPath();
+        ctx.arc(0, -18, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = isSelected ? "#22c55e" : "#a855f7";
+        ctx.fill();
+
+        ctx.restore();
+
+        // Draw label if enabled
+        if (showApLabels && ap.label) {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+          const labelWidth = ctx.measureText(ap.label).width + 8;
+          ctx.fillRect(ax - labelWidth / 2, ay + 10, labelWidth, 16);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 10px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(ap.label, ax, ay + 12);
+        }
+      });
 
       // Draw sample points
       samples.forEach((sample) => {
@@ -193,7 +276,18 @@ export function FloorPlanCanvas({
     };
 
     img.src = floorPlan.imageData;
-  }, [floorPlan, samples, dimensions, heatmapMetric, calibrationMode, calibrationPoints]);
+  }, [
+    floorPlan,
+    samples,
+    dimensions,
+    heatmapMetric,
+    heatmapFilter,
+    calibrationMode,
+    calibrationPoints,
+    apLocations,
+    showApLabels,
+    selectedApId,
+  ]);
 
   // Handle canvas click
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -210,6 +304,12 @@ export function FloorPlanCanvas({
 
     const floorPlanX = Math.round(x * scaleX);
     const floorPlanY = Math.round(y * scaleY);
+
+    // Handle AP placement click if in AP placement mode
+    if (apPlacementMode && onApPlacementClick) {
+      onApPlacementClick(floorPlanX, floorPlanY);
+      return;
+    }
 
     // Handle calibration click if in calibration mode
     if (calibrationMode && onCalibrationClick) {
@@ -229,7 +329,7 @@ export function FloorPlanCanvas({
         ref={canvasRef}
         onClick={handleCanvasClick}
         className={`border border-surface-border ${radius.md} ${
-          interactive || calibrationMode ? "cursor-crosshair" : ""
+          interactive || calibrationMode || apPlacementMode ? "cursor-crosshair" : ""
         }`}
         width={dimensions.width}
         height={dimensions.height}
@@ -238,34 +338,188 @@ export function FloorPlanCanvas({
   );
 }
 
+/** Apply filter to sample data and extract matching networks */
+function filterSampleData(sample: SamplePoint, filter?: HeatmapFilter): ScannedNetwork[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Polymorphic sample data
+  const data = sample.sampleData as any;
+
+  // For passive surveys, filter networks array
+  if (data.networks && Array.isArray(data.networks)) {
+    let networks = data.networks as ScannedNetwork[];
+
+    if (filter) {
+      if (filter.ssid) {
+        networks = networks.filter((n) => n.ssid === filter.ssid || n.ssid.includes(filter.ssid));
+      }
+      if (filter.bssid) {
+        networks = networks.filter((n) =>
+          n.bssid.toLowerCase().includes(filter.bssid.toLowerCase())
+        );
+      }
+      if (filter.channel) {
+        networks = networks.filter((n) => n.channel === filter.channel);
+      }
+      if (filter.band) {
+        networks = networks.filter((n) => {
+          if (filter.band === "2.4") return n.frequency >= 2400 && n.frequency < 2500;
+          if (filter.band === "5") return n.frequency >= 5000 && n.frequency < 6000;
+          if (filter.band === "6") return n.frequency >= 5925 && n.frequency < 7125;
+          return true;
+        });
+      }
+      if (filter.minRssi !== undefined) {
+        networks = networks.filter((n) => n.rssi >= filter.minRssi!);
+      }
+      // New filters
+      if (filter.channelWidth) {
+        networks = networks.filter((n) => n.channelWidth === filter.channelWidth);
+      }
+      if (filter.phyType) {
+        networks = networks.filter((n) => n.phyType === filter.phyType);
+      }
+      if (filter.security) {
+        networks = networks.filter((n) => n.security === filter.security);
+      }
+      if (filter.vendor) {
+        networks = networks.filter((n) => n.vendor === filter.vendor);
+      }
+    }
+
+    return networks;
+  }
+
+  // For active/throughput surveys, return single network
+  if (data.ssid && data.bssid) {
+    const network: ScannedNetwork = {
+      ssid: data.ssid,
+      bssid: data.bssid,
+      rssi: data.rssi || -100,
+      channel: data.channel || 0,
+      frequency: data.frequency || 0,
+      channelWidth: data.channelWidth,
+      phyType: data.phyType,
+      security: data.security,
+      vendor: data.vendor,
+    };
+
+    // Apply filter for active surveys
+    if (filter) {
+      if (filter.ssid && !network.ssid.includes(filter.ssid)) return [];
+      if (filter.bssid && !network.bssid.toLowerCase().includes(filter.bssid.toLowerCase()))
+        return [];
+      if (filter.minRssi !== undefined && network.rssi < filter.minRssi) return [];
+      if (filter.channelWidth && network.channelWidth !== filter.channelWidth) return [];
+      if (filter.phyType && network.phyType !== filter.phyType) return [];
+      if (filter.security && network.security !== filter.security) return [];
+      if (filter.vendor && network.vendor !== filter.vendor) return [];
+    }
+
+    return [network];
+  }
+
+  return [];
+}
+
+/** Extract metric value from sample data */
+function extractMetricValue(
+  sample: SamplePoint,
+  metric: HeatmapMetric,
+  filter?: HeatmapFilter
+): number {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Polymorphic sample data
+  const data = sample.sampleData as any;
+  const filteredNetworks = filterSampleData(sample, filter);
+
+  switch (metric) {
+    case "rssi": {
+      if (filteredNetworks.length > 0) {
+        // Return best RSSI among filtered networks
+        return Math.max(...filteredNetworks.map((n) => n.rssi));
+      }
+      return data.rssi || -100;
+    }
+    case "throughput":
+      return data.downloadMbps || 0;
+    case "latency":
+      return data.latency || 0;
+    case "snr": {
+      // SNR = RSSI - Noise Floor (assume -95 dBm noise floor if not available)
+      const rssi =
+        filteredNetworks.length > 0
+          ? Math.max(...filteredNetworks.map((n) => n.rssi))
+          : data.rssi || -100;
+      const noiseFloor = data.noiseFloor || -95;
+      return rssi - noiseFloor;
+    }
+    case "noise":
+      return data.noiseFloor || -95;
+    case "cochannel": {
+      // Count networks on same channel (co-channel interference)
+      if (filteredNetworks.length === 0) return 0;
+      const primaryChannel = filteredNetworks[0].channel;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Access all networks
+      const allNetworks = (data.networks || []) as any[];
+      return (
+        allNetworks.filter((n: { channel: number }) => n.channel === primaryChannel).length - 1
+      );
+    }
+    case "adjacent": {
+      // Count networks on adjacent channels
+      if (filteredNetworks.length === 0) return 0;
+      const primaryChannel = filteredNetworks[0].channel;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Access all networks
+      const allNetworks = (data.networks || []) as any[];
+      return allNetworks.filter(
+        (n: { channel: number }) =>
+          Math.abs(n.channel - primaryChannel) > 0 && Math.abs(n.channel - primaryChannel) <= 2
+      ).length;
+    }
+    case "channelUtil":
+      // Channel utilization (if available)
+      return data.channelUtilization || 0;
+    case "apDensity": {
+      // Count unique BSSIDs (APs) at this location
+      if (data.networks && Array.isArray(data.networks)) {
+        const uniqueBSSIDs = new Set(data.networks.map((n: ScannedNetwork) => n.bssid));
+        return uniqueBSSIDs.size;
+      }
+      return data.uniqueBSSIDs || 0;
+    }
+    case "ssidCount": {
+      // Count unique SSIDs at this location
+      if (data.networks && Array.isArray(data.networks)) {
+        const uniqueSSIDs = new Set(
+          data.networks.map((n: ScannedNetwork) => n.ssid).filter(Boolean)
+        );
+        return uniqueSSIDs.size;
+      }
+      return data.uniqueSSIDs || 0;
+    }
+    default:
+      return 0;
+  }
+}
+
 // Helper function to draw heatmap
 function drawHeatmap(
   ctx: CanvasRenderingContext2D,
   samples: SamplePoint[],
-  metric: "rssi" | "throughput" | "latency",
+  metric: HeatmapMetric,
   scaleX: number,
-  scaleY: number
+  scaleY: number,
+  filter?: HeatmapFilter
 ) {
-  if (samples.length === 0) return;
+  if (samples.length === 0 || !metric) return;
 
-  // Extract metric values
-  const values = samples.map((s) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Polymorphic sample data with dynamic property access
-    const data = s.sampleData as any;
-    switch (metric) {
-      case "rssi":
-        return data.rssi || data.networks?.[0]?.rssi || -100;
-      case "throughput":
-        return data.downloadMbps || 0;
-      case "latency":
-        return data.latency || 0;
-      default:
-        return 0;
-    }
-  });
+  // Extract metric values with filter applied
+  const values = samples.map((s) => extractMetricValue(s, metric, filter));
 
-  const minValue = Math.min(...values);
-  const maxValue = Math.max(...values);
+  // Filter out invalid values
+  const validValues = values.filter((v) => v !== null && !isNaN(v));
+  if (validValues.length === 0) return;
+
+  const minValue = Math.min(...validValues);
+  const maxValue = Math.max(...validValues);
 
   // Create gradient overlay
   const canvas = ctx.canvas;
@@ -319,29 +573,49 @@ function drawHeatmap(
 // Get heatmap color based on normalized value (0-1)
 function getHeatmapColor(
   value: number,
-  metric: "rssi" | "throughput" | "latency"
+  metric: HeatmapMetric
 ): { r: number; g: number; b: number; a: number } {
-  // For RSSI, lower is worse (invert)
-  if (metric === "rssi") {
-    value = 1 - value;
-  }
-  // For latency, lower is better (invert)
-  if (metric === "latency") {
+  // Determine if higher is better for this metric
+  // Higher is better: RSSI, SNR, throughput
+  // Lower is better: latency, noise, cochannel, adjacent, channelUtil
+  const higherIsBetter = metric === "rssi" || metric === "snr" || metric === "throughput";
+
+  // For metrics where higher is better, invert the normalization
+  // so that high values appear green and low values appear red
+  if (higherIsBetter) {
     value = 1 - value;
   }
 
-  // Color gradient: red (0) -> yellow (0.5) -> green (1)
+  // Color gradient: red (0/bad) -> yellow (0.5/medium) -> green (1/good)
   let r, g, b;
 
+  // For interference metrics, use different color scheme (purple to blue)
+  if (metric === "cochannel" || metric === "adjacent") {
+    // Blue (low interference) to purple (high interference)
+    if (value < 0.5) {
+      // Blue to cyan
+      r = Math.round(100 * (value * 2));
+      g = Math.round(150 + 50 * (value * 2));
+      b = 255;
+    } else {
+      // Cyan to purple/magenta
+      r = Math.round(100 + 155 * ((value - 0.5) * 2));
+      g = Math.round(200 - 150 * ((value - 0.5) * 2));
+      b = 255;
+    }
+    return { r, g, b, a: 180 };
+  }
+
+  // Standard red -> yellow -> green gradient
   if (value < 0.5) {
-    // Red to yellow
-    r = 255;
-    g = Math.round(255 * (value * 2));
+    // Green to yellow (good to medium)
+    r = Math.round(255 * (value * 2));
+    g = 255;
     b = 0;
   } else {
-    // Yellow to green
-    r = Math.round(255 * (1 - (value - 0.5) * 2));
-    g = 255;
+    // Yellow to red (medium to bad)
+    r = 255;
+    g = Math.round(255 * (1 - (value - 0.5) * 2));
     b = 0;
   }
 
