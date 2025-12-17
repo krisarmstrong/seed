@@ -887,6 +887,12 @@
           "type": "boolean",
           "description": "Show public IP address in UI",
           "default": true
+        },
+        "unit_system": {
+          "type": "string",
+          "description": "Measurement system for distances (sae = feet, metric = meters)",
+          "enum": ["sae", "metric"],
+          "default": "sae"
         }
       }
     },

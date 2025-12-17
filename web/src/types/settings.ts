@@ -78,8 +78,13 @@ export interface CardSettings {
 // Display Options
 // ============================================================================
 
+/** Unit system for measurements - SAE (feet) or Metric (meters) */
+export type UnitSystem = "sae" | "metric";
+
 export interface DisplayOptions {
   showPublicIP: boolean;
+  /** Unit system for distances and measurements (default: SAE/feet) */
+  unitSystem: UnitSystem;
 }
 
 // ============================================================================
@@ -293,6 +298,7 @@ export const DEFAULT_CARD_SETTINGS: CardSettings = {
 
 export const DEFAULT_DISPLAY_OPTIONS: DisplayOptions = {
   showPublicIP: true,
+  unitSystem: "sae", // Default to SAE (feet) for US users
 };
 
 export const DEFAULT_THRESHOLDS: SettingsThresholds = {

@@ -122,6 +122,7 @@ func (s *Server) getSettings(w http.ResponseWriter, _ *http.Request) {
 		},
 		"displayOptions": map[string]interface{}{
 			"showPublicIP": s.config.DisplayOptions.ShowPublicIP,
+			"unitSystem":   s.config.DisplayOptions.UnitSystem,
 		},
 	}
 
@@ -416,5 +417,11 @@ func applyDisplayOptionsUpdates(updates map[string]interface{}, cfg *config.Conf
 	}
 	if showPublicIP, ok := displayOptions["showPublicIP"].(bool); ok {
 		cfg.DisplayOptions.ShowPublicIP = showPublicIP
+	}
+	if unitSystem, ok := displayOptions["unitSystem"].(string); ok {
+		// Validate unit system (only "sae" or "metric" allowed)
+		if unitSystem == "sae" || unitSystem == "metric" {
+			cfg.DisplayOptions.UnitSystem = unitSystem
+		}
 	}
 }
