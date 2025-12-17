@@ -26,7 +26,7 @@
 #
 # =============================================================================
 
-.PHONY: all build build-frontend frontend-deps build-backend build-backend-dev \
+.PHONY: all build build-frontend frontend-deps generate-types build-backend build-backend-dev \
         build-iperf3 build-iperf3-linux build-iperf3-linux-amd64 build-iperf3-linux-arm64 build-iperf3-all \
         build-linux-amd64 build-linux-arm64 build-linux-docker \
         docker docker-build docker-test docker-push \
@@ -144,6 +144,13 @@ frontend-deps: ## Install frontend dependencies (cached)
 	else \
 		echo "Frontend dependencies up to date"; \
 	fi
+
+# Generate TypeScript types from JSON Schema
+# Ensures frontend types match backend config structure
+generate-types: frontend-deps ## Generate TypeScript types from JSON Schema
+	@echo "🔧 Generating TypeScript types from schema..."
+	@./scripts/generate-types.sh
+	@echo "✅ TypeScript types generated"
 
 # Build React/TypeScript frontend
 # Output goes to web/dist/ which is embedded in the Go binary
