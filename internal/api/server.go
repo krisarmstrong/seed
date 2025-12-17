@@ -267,6 +267,8 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/vlan/traffic", s.handleVLANTraffic)
 	s.mux.HandleFunc("/api/vlan/interface", s.handleVLANInterface)
 	s.mux.HandleFunc("/api/wifi", s.handleWiFi)
+	s.mux.HandleFunc("/api/wifi/scan", s.handleWiFiScan)
+	s.mux.HandleFunc("/api/wifi/status", s.handleWiFiStatus)
 	s.mux.HandleFunc("/api/wifi/settings", s.handleWiFiSettings)
 	s.mux.HandleFunc("/api/snmp/settings", s.handleSNMPSettings)
 	s.mux.HandleFunc("/api/cable", s.handleCable)
@@ -311,6 +313,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/vulnerabilities/device", s.handleDeviceVulnerabilities)
 	s.mux.HandleFunc("/api/vulnerabilities/settings", s.handleVulnerabilitySettings)
 	s.mux.HandleFunc("/api/survey/floorplan", s.updateSurveyFloorPlan)
+	s.mux.HandleFunc("/api/survey/settings", s.updateSurveySettings)
 
 	// Config backup/restore routes (implements #494)
 	s.mux.HandleFunc("/api/config/backups", s.handleConfigBackups)

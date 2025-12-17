@@ -34,12 +34,20 @@ import { useRef, useEffect, useState } from "react";
 import { radius } from "../../styles/theme";
 import type { FloorPlan, SamplePoint } from "../../hooks/useSurvey";
 
+export interface CalibrationPoint {
+  x: number;
+  y: number;
+}
+
 interface FloorPlanCanvasProps {
   floorPlan: FloorPlan;
   samples: SamplePoint[];
   onPointClick?: (x: number, y: number) => void;
   interactive?: boolean;
   heatmapMetric?: "rssi" | "throughput" | "latency" | null;
+  calibrationMode?: boolean;
+  calibrationPoints?: CalibrationPoint[];
+  onCalibrationClick?: (x: number, y: number) => void;
 }
 
 /**
@@ -52,6 +60,9 @@ export function FloorPlanCanvas({
   onPointClick,
   interactive = false,
   heatmapMetric = null,
+  calibrationMode = false,
+  calibrationPoints = [],
+  onCalibrationClick,
 }: FloorPlanCanvasProps) {
   // Canvas DOM reference for drawing
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -128,14 +139,65 @@ export function FloorPlanCanvas({
         const pointNum = samples.indexOf(sample) + 1;
         ctx.fillText(pointNum.toString(), x, y);
       });
+
+      // Draw calibration points and line if in calibration mode
+      if (calibrationMode && calibrationPoints.length > 0) {
+        // Draw calibration points
+        calibrationPoints.forEach((point, index) => {
+          const cx = point.x * scaleX;
+          const cy = point.y * scaleY;
+
+          // Draw point
+          ctx.beginPath();
+          ctx.arc(cx, cy, 10, 0, 2 * Math.PI);
+          ctx.fillStyle = "rgba(234, 88, 12, 0.9)"; // orange-600
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255, 255, 255, 1)";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Draw label (A or B)
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 12px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(index === 0 ? "A" : "B", cx, cy);
+        });
+
+        // Draw line between points if we have two
+        if (calibrationPoints.length === 2) {
+          const p1 = calibrationPoints[0];
+          const p2 = calibrationPoints[1];
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x * scaleX, p1.y * scaleY);
+          ctx.lineTo(p2.x * scaleX, p2.y * scaleY);
+          ctx.strokeStyle = "rgba(234, 88, 12, 0.9)"; // orange-600
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]); // Reset dash
+
+          // Draw pixel distance label at midpoint
+          const midX = (p1.x * scaleX + p2.x * scaleX) / 2;
+          const midY = (p1.y * scaleY + p2.y * scaleY) / 2;
+          const pixelDist = Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+
+          ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+          ctx.fillRect(midX - 40, midY - 10, 80, 20);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 11px sans-serif";
+          ctx.fillText(`${pixelDist.toFixed(0)} px`, midX, midY);
+        }
+      }
     };
 
     img.src = floorPlan.imageData;
-  }, [floorPlan, samples, dimensions, heatmapMetric]);
+  }, [floorPlan, samples, dimensions, heatmapMetric, calibrationMode, calibrationPoints]);
 
   // Handle canvas click
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!interactive || !onPointClick || !canvasRef.current || !floorPlan) return;
+    if (!canvasRef.current || !floorPlan) return;
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
@@ -149,7 +211,16 @@ export function FloorPlanCanvas({
     const floorPlanX = Math.round(x * scaleX);
     const floorPlanY = Math.round(y * scaleY);
 
-    onPointClick(floorPlanX, floorPlanY);
+    // Handle calibration click if in calibration mode
+    if (calibrationMode && onCalibrationClick) {
+      onCalibrationClick(floorPlanX, floorPlanY);
+      return;
+    }
+
+    // Handle regular point click if interactive
+    if (interactive && onPointClick) {
+      onPointClick(floorPlanX, floorPlanY);
+    }
   };
 
   return (
@@ -158,7 +229,7 @@ export function FloorPlanCanvas({
         ref={canvasRef}
         onClick={handleCanvasClick}
         className={`border border-surface-border ${radius.md} ${
-          interactive ? "cursor-crosshair" : ""
+          interactive || calibrationMode ? "cursor-crosshair" : ""
         }`}
         width={dimensions.width}
         height={dimensions.height}

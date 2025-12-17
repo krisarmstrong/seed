@@ -658,6 +658,101 @@ func (s *Server) handleWiFi(w http.ResponseWriter, r *http.Request) {
 	sendJSONResponse(w, http.StatusOK, resp)
 }
 
+// handleWiFiScan performs a WiFi network scan and returns discovered networks.
+func (s *Server) handleWiFiScan(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if s.wifiScanner == nil {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"available": false,
+			"error":     "WiFi scanner not initialized",
+			"networks":  []interface{}{},
+		})
+		return
+	}
+
+	// Check if interface is wireless
+	if s.wifiManager == nil || !s.wifiManager.IsWireless() {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"available": false,
+			"error":     "No wireless adapter available. Connect a WiFi adapter to scan networks.",
+			"networks":  []interface{}{},
+		})
+		return
+	}
+
+	// Perform scan
+	networks, err := s.wifiScanner.Scan()
+	if err != nil {
+		sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+			"available": true,
+			"error":     err.Error(),
+			"networks":  []interface{}{},
+		})
+		return
+	}
+
+	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+		"available": true,
+		"networks":  networks,
+	})
+}
+
+// handleWiFiStatus returns the WiFi adapter status without performing a scan.
+func (s *Server) handleWiFiStatus(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Get list of available wireless interfaces
+	availableAdapters := []string{}
+	if s.netManager != nil {
+		for _, iface := range s.netManager.GetInterfaces() {
+			if s.netManager.IsWireless(iface.Name) {
+				availableAdapters = append(availableAdapters, iface.Name)
+			}
+		}
+	}
+
+	// Check current interface
+	currentInterface := ""
+	isWireless := false
+	if s.wifiManager != nil {
+		isWireless = s.wifiManager.IsWireless()
+		currentInterface = s.config.Interface.WiFi
+		if currentInterface == "" {
+			currentInterface = s.config.Interface.Default
+		}
+	}
+
+	// Determine status message
+	var status, message string
+	switch {
+	case len(availableAdapters) == 0:
+		status = "unavailable"
+		message = "No wireless adapter detected. Connect a WiFi adapter to perform surveys."
+	case !isWireless:
+		status = "available"
+		message = "Wireless adapter available but not selected as current interface."
+	default:
+		status = "ready"
+		message = "Wireless adapter ready for scanning."
+	}
+
+	sendJSONResponse(w, http.StatusOK, map[string]interface{}{
+		"status":            status,
+		"message":           message,
+		"currentInterface":  currentInterface,
+		"isWireless":        isWireless,
+		"availableAdapters": availableAdapters,
+		"canScan":           isWireless && len(availableAdapters) > 0,
+	})
+}
+
 // handleIPSettings handles GET/PUT for IP configuration settings.
 func (s *Server) handleIPSettings(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
