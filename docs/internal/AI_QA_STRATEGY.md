@@ -1,7 +1,7 @@
 # The Seed (Mustard Seed Networks) - # AI-Powered QA Testing Strategy for The Seed
 
-**Document Version:** 1.0 **Last Updated:** 2025-12-15 **Purpose:** Leverage AI to achieve QA
-excellence without dedicated QA team
+**Document Version:** 1.0 **Last Updated:** 2025-12-15 **Purpose:** Leverage AI to achieve QA excellence without
+dedicated QA team
 
 ---
 
@@ -533,7 +533,7 @@ RECOMMENDATIONS:
 
 Expected: 450ms → 50ms p95
 
-2. ENABLE WAL MODE (immediate, allow concurrent reads):
+1. ENABLE WAL MODE (immediate, allow concurrent reads):
 
    ```sql
    PRAGMA journal_mode = WAL;
@@ -541,11 +541,11 @@ Expected: 450ms → 50ms p95
 
    Expected: 380 req/sec → 600 req/sec
 
-3. ADD CACHING (short-term, 5x speedup):
+2. ADD CACHING (short-term, 5x speedup):
    - Cache /api/devices response for 30 seconds
    - Use Redis or in-memory cache (go-cache) Expected: 50ms → 10ms for cached requests
 
-4. MIGRATE TO TIMESCALEDB (long-term, 100x speedup at scale):
+3. MIGRATE TO TIMESCALEDB (long-term, 100x speedup at scale):
    - SQLite struggles with 10K+ concurrent writes
    - TimescaleDB handles 100K+ inserts/sec Expected: Handle 10x more load
 
@@ -606,8 +606,8 @@ Vulnerability types to test:
 - XXE (XML external entity)
 - SSRF (server-side request forgery)
 
-Output format: [ {"subnet": "'; DROP TABLE devices; --", "timeout": 30}, {"subnet": "| whoami",
-"timeout": 30}, {"subnet": "../../../etc/passwd", "timeout": 30}, ... ]
+Output format: [ {"subnet": "'; DROP TABLE devices; --", "timeout": 30}, {"subnet": "| whoami", "timeout": 30},
+{"subnet": "../../../etc/passwd", "timeout": 30}, ... ]
 
 ````
 
@@ -761,7 +761,7 @@ ROOT CAUSE:
 - GetDevices() returns empty slice + nil error if no devices found
 - BUT frontend expects error to be non-nil if devices is empty
 
-2. FRONTEND (DeviceList.tsx line 45):
+1. FRONTEND (DeviceList.tsx line 45):
 
    ```typescript
    const { data, error } = useSWR('/api/devices');
@@ -805,6 +805,7 @@ FIX:
    ```
 
 3. FIX RACE CONDITION: Wait for DB commit before responding:
+
    ```go
    // In ScanHandler
    tx.Commit() // Ensure devices are committed
@@ -1060,8 +1061,7 @@ AI (Claude Opus):
 
 **Key Takeaways:**
 
-1. **AI can replace 80% of manual QA work** (unit tests, E2E tests, performance tests, security
-   fuzzing)
+1. **AI can replace 80% of manual QA work** (unit tests, E2E tests, performance tests, security fuzzing)
 2. **Cost: $300/month vs $60K/year** for human QA (25x ROI)
 3. **Quality improvement: 60% → 90% test coverage**, 70% → 85% bug detection
 4. **Time savings: 40 hours/week → 5 hours/week** on testing
@@ -1089,11 +1089,10 @@ AI (Claude Opus):
 - <1% production bug rate by Month 6
 - Save $91K/year vs hiring QA engineer
 
-**Bottom Line:** AI-powered QA is **not just cheaper—it's better**. AI never gets tired, never
-misses edge cases, and scales infinitely. For a small team like The Seed, it's the only way to
-achieve enterprise-grade quality without enterprise-grade budget.
+**Bottom Line:** AI-powered QA is **not just cheaper—it's better**. AI never gets tired, never misses edge cases, and
+scales infinitely. For a small team like The Seed, it's the only way to achieve enterprise-grade quality without
+enterprise-grade budget.
 
 ---
 
-**Document Owner:** Engineering Team **Next Review:** Quarterly (evaluate AI QA effectiveness,
-adjust tools/budget)
+**Document Owner:** Engineering Team **Next Review:** Quarterly (evaluate AI QA effectiveness, adjust tools/budget)

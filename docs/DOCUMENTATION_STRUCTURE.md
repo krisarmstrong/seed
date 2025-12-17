@@ -1,7 +1,6 @@
 # The Seed - Documentation Structure
 
-**Version:** 1.0 **Last Updated:** December 2025 **Purpose:** Complete guide to documentation
-organization
+**Version:** 1.0 **Last Updated:** December 2025 **Purpose:** Complete guide to documentation organization
 
 ---
 
@@ -12,8 +11,7 @@ The Seed maintains **two types of documentation**:
 1. **User-Facing:** Installation, features, troubleshooting (GitHub Wiki)
 2. **Team/Internal:** Strategy, sales, engineering (docs/ folder in repo)
 
-Since the repository is **private and proprietary**, both are currently in the same repo but serve
-different purposes.
+Since the repository is **private and proprietary**, both are currently in the same repo but serve different purposes.
 
 ---
 
@@ -416,5 +414,5 @@ Mustard Seed Networks Workspace
 
 ---
 
-**Document Owner:** Kris Armstrong **Last Updated:** December 2025 **Next Review:** After wiki
-population, then quarterly
+**Document Owner:** Kris Armstrong **Last Updated:** December 2025 **Next Review:** After wiki population, then
+quarterly

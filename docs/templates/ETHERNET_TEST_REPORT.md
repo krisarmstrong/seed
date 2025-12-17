@@ -1,13 +1,12 @@
 # Ethernet NIC Test Report Template
 
 Use this template to document Ethernet NIC testing results. Submit via the
-[Hardware Report](https://github.com/krisarmstrong/seed/issues/new?template=hardware-report.yml)
-issue template.
+[Hardware Report](https://github.com/krisarmstrong/seed/issues/new?template=hardware-report.yml) issue template.
 
 ## Hardware Information
 
-**NIC**: [Make and Model] **Chipset**: [e.g., Intel I350, Realtek RTL8111] **Form Factor**: [PCIe /
-USB / Onboard] **Ports**: [Number of ports and speeds, e.g., 4x 1GbE, 2x 10GbE]
+**NIC**: [Make and Model] **Chipset**: [e.g., Intel I350, Realtek RTL8111] **Form Factor**: [PCIe / USB / Onboard]
+**Ports**: [Number of ports and speeds, e.g., 4x 1GbE, 2x 10GbE]
 
 **Vendor ID/Product ID**: [lspci or lsusb output]
 
@@ -21,9 +20,8 @@ lsusb | grep -i ethernet
 
 ## System Information
 
-**Operating System**: [e.g., Ubuntu 22.04 LTS] **Kernel**: [uname -r] **Architecture**: [x86_64 /
-arm64] **Driver**: [e.g., igb, r8169, e1000e] **Driver Version**: [from ethtool -i or modinfo]
-**Firmware Version**: [from ethtool -i]
+**Operating System**: [e.g., Ubuntu 22.04 LTS] **Kernel**: [uname -r] **Architecture**: [x86_64 / arm64] **Driver**:
+[e.g., igb, r8169, e1000e] **Driver Version**: [from ethtool -i or modinfo] **Firmware Version**: [from ethtool -i]
 
 ## Test Results
 
@@ -184,5 +182,5 @@ Document any problems:
 
 ---
 
-**Tested By**: [Your GitHub username] **Test Date**: [YYYY-MM-DD] **Script Version**: [Git commit
-hash or script version] **Cable Used**: [Cat5e/Cat6/Cat6a, length]
+**Tested By**: [Your GitHub username] **Test Date**: [YYYY-MM-DD] **Script Version**: [Git commit hash or script
+version] **Cable Used**: [Cat5e/Cat6/Cat6a, length]

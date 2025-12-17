@@ -1,7 +1,7 @@
 # Survey Feature Completion Plan
 
-> Created: December 17, 2024 Epic: #401 - Implement a comprehensive WiFi Site Survey suite Goal:
-> Complete professional-grade WiFi survey capabilities
+> Created: December 17, 2024 Epic: #401 - Implement a comprehensive WiFi Site Survey suite Goal: Complete
+> professional-grade WiFi survey capabilities
 
 ---
 

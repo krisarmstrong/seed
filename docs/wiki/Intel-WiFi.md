@@ -1,7 +1,7 @@
 # Intel Wi-Fi Adapters
 
-Intel Wi-Fi adapters using the `iwlwifi` driver are **highly recommended** for The Seed. They offer
-excellent nl80211 support, stable monitor mode, and accurate signal quality reporting.
+Intel Wi-Fi adapters using the `iwlwifi` driver are **highly recommended** for The Seed. They offer excellent nl80211
+support, stable monitor mode, and accurate signal quality reporting.
 
 [← Back to Home](Home)
 

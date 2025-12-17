@@ -1,18 +1,18 @@
 # The Seed (Mustard Seed Networks) - # The Seed Formal Business Plan (2026-2028)
 
-**Company Name:** The Seed (formerly The Seed) **Document Version:** 1.0 **Last Updated:**
-2025-12-15 **Planning Horizon:** 3 years (2026-2028)
+**Company Name:** The Seed (formerly The Seed) **Document Version:** 1.0 **Last Updated:** 2025-12-15 **Planning
+Horizon:** 3 years (2026-2028)
 
 ---
 
 ## Executive Summary
 
-**Company Overview:** The Seed is an AI-powered network diagnostic and WiFi planning platform that
-helps IT teams troubleshoot faster, plan WiFi deployments without expensive site surveys, and meet
-compliance requirements (HIPAA, CIS, NIST).
+**Company Overview:** The Seed is an AI-powered network diagnostic and WiFi planning platform that helps IT teams
+troubleshoot faster, plan WiFi deployments without expensive site surveys, and meet compliance requirements (HIPAA, CIS,
+NIST).
 
-**Mission:** Make professional-grade network diagnostics and WiFi planning accessible to every IT
-team, from small clinics to large enterprises.
+**Mission:** Make professional-grade network diagnostics and WiFi planning accessible to every IT team, from small
+clinics to large enterprises.
 
 **Problem:**
 
@@ -23,8 +23,8 @@ team, from small clinics to large enterprises.
 
 **Solution:**
 
-- **AI Root Cause Analysis:** Tells you exactly what's wrong in seconds ("DHCP slow because server
-  response time is 850ms")
+- **AI Root Cause Analysis:** Tells you exactly what's wrong in seconds ("DHCP slow because server response time is
+  850ms")
 - **Predictive WiFi Survey:** Plan coverage BEFORE buying access points (NO competitor has this)
 - **Automated Compliance:** One-click HIPAA, CIS, NIST reports
 - **Predictive Maintenance:** Detect failures 24-48 hours before they occur
@@ -114,8 +114,7 @@ team, from small clinics to large enterprises.
 
 ### 1.4 Mission, Vision, Values
 
-**Mission:** Make professional network diagnostics and WiFi planning accessible to everyone through
-AI-powered insights.
+**Mission:** Make professional network diagnostics and WiFi planning accessible to everyone through AI-powered insights.
 
 **Vision:** Become the #1 network diagnostic platform for healthcare and SMB IT teams by 2028.
 
@@ -226,8 +225,7 @@ AI-powered insights.
 
 - **Strengths:** Market leader (60%+ share), professional-grade, trusted brand
 - **Weaknesses:** Expensive ($5K-20K), requires hardware, reactive surveys only
-- **Differentiation:** The Seed offers predictive survey (plan before buying APs) at 60-75% lower
-  cost
+- **Differentiation:** The Seed offers predictive survey (plan before buying APs) at 60-75% lower cost
 
 **Hamina (Cloud WiFi Planning)**
 
@@ -420,8 +418,7 @@ CEO/Founder
 **WiFi Features:**
 
 - WiFi scanning (SSID, BSSID, signal strength, channel, encryption)
-- **Predictive WiFi survey (FLAGSHIP):** RF path loss modeling, heatmap generation, AP placement
-  optimization
+- **Predictive WiFi survey (FLAGSHIP):** RF path loss modeling, heatmap generation, AP placement optimization
 - Coverage heatmap generation (IDW/Kriging interpolation)
 - Dead zone detection with remediation
 - Channel interference analysis
@@ -487,8 +484,7 @@ CEO/Founder
 
 1. **Land:** Starter tier ($299) for small IT teams
 2. **Expand:** Upsell to Professional ($799) after 3-6 months
-3. **Premium Upsell:** WiFi consultants and hospitals upgrade to Premium ($1,999) for predictive
-   survey
+3. **Premium Upsell:** WiFi consultants and hospitals upgrade to Premium ($1,999) for predictive survey
 4. **Enterprise:** MSPs expand to multi-site Enterprise ($4,999)
 
 **Marketing Channels:**
@@ -509,26 +505,22 @@ CEO/Founder
 **IT Director (Hospital):**
 
 - **Pain:** "We spend 20 hours/week troubleshooting and can't afford consultants"
-- **Message:** "The Seed's AI tells you exactly what's wrong in seconds, saving 10+ hours/week and
-  $3K+ per WiFi survey"
+- **Message:** "The Seed's AI tells you exactly what's wrong in seconds, saving 10+ hours/week and $3K+ per WiFi survey"
 
 **BioMed Engineer:**
 
 - **Pain:** "Medical devices are vulnerable and we can't keep up with patches"
-- **Message:** "The Seed scans all devices, prioritizes vulnerabilities by risk, and generates HIPAA
-  audit reports"
+- **Message:** "The Seed scans all devices, prioritizes vulnerabilities by risk, and generates HIPAA audit reports"
 
 **WiFi Consultant:**
 
 - **Pain:** "Site surveys cost $3K-5K and take weeks to schedule"
-- **Message:** "The Seed's predictive survey lets you plan coverage from your desk—no on-site visit
-  needed"
+- **Message:** "The Seed's predictive survey lets you plan coverage from your desk—no on-site visit needed"
 
 **MSP:**
 
 - **Pain:** "We can't afford to send techs on-site for every network issue"
-- **Message:** "The Seed's remote diagnostics and multi-site dashboard let you troubleshoot 20+
-  clients from one screen"
+- **Message:** "The Seed's remote diagnostics and multi-site dashboard let you troubleshoot 20+ clients from one screen"
 
 ### 6.2 Sales Strategy
 
@@ -683,8 +675,7 @@ CEO/Founder
 
 **Total Costs Year 1:** $142K (fixed) + $171K (variable) = **$313K**
 
-Wait, that doesn't match the $650K in the projection above. Let me recalculate with salaries for
-hires:
+Wait, that doesn't match the $650K in the projection above. Let me recalculate with salaries for hires:
 
 **Revised Year 1 Costs (with hires):**
 
@@ -747,8 +738,8 @@ Let me stick with a more conservative "Year 1 investment mode" where we spend ah
 
 ### 7.4 Break-Even Analysis
 
-**Fixed Costs (Monthly):** $12K (conservative) **Variable Costs:** 30% of revenue (commission,
-support, payment processing) **Gross Margin:** 70%
+**Fixed Costs (Monthly):** $12K (conservative) **Variable Costs:** 30% of revenue (commission, support, payment
+processing) **Gross Margin:** 70%
 
 **Break-Even Revenue:**
 
@@ -1211,8 +1202,8 @@ $205K / $900 ASP = 228 customers
 
 ## 13. Conclusion
 
-**Summary:** The Seed is positioned to capture a significant share of the $850M serviceable market
-by solving real pain points for healthcare and SMB IT teams:
+**Summary:** The Seed is positioned to capture a significant share of the $850M serviceable market by solving real pain
+points for healthcare and SMB IT teams:
 
 - Troubleshooting time savings (10+ hours/week)
 - WiFi planning cost savings ($3K-5K per deployment)
@@ -1257,8 +1248,7 @@ by solving real pain points for healthcare and SMB IT teams:
 
 ---
 
-**Document Prepared By:** Kris Armstrong, Founder & CEO **Date:** 2025-12-15 **Contact:** [contact
-info to be added]
+**Document Prepared By:** Kris Armstrong, Founder & CEO **Date:** 2025-12-15 **Contact:** [contact info to be added]
 
-**Confidential:** This business plan contains proprietary and confidential information. Do not
-distribute without written permission.
+**Confidential:** This business plan contains proprietary and confidential information. Do not distribute without
+written permission.

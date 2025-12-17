@@ -1,0 +1,13 @@
+# Third-party code
+node_modules/
+web/node_modules/
+build/
+dist/
+
+# Generated files
+coverage/
+storybook-static/
+playwright-report/
+
+# Claude config (external)
+.claude/

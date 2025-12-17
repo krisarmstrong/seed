@@ -2,15 +2,14 @@
 
 ## Vision
 
-Transform The Seed from a network data collection tool into an **AI-powered network intelligence
-platform** that provides automated diagnostics, predictive insights, and actionable recommendations
-to network engineers, technicians, and security analysts.
+Transform The Seed from a network data collection tool into an **AI-powered network intelligence platform** that
+provides automated diagnostics, predictive insights, and actionable recommendations to network engineers, technicians,
+and security analysts.
 
 ## Executive Summary
 
-The Seed currently excels at collecting comprehensive network data across 8+ diagnostic domains in
-real-time. However, it lacks intelligent analysis, pattern recognition, and actionable insights. By
-integrating AI capabilities, we can:
+The Seed currently excels at collecting comprehensive network data across 8+ diagnostic domains in real-time. However,
+it lacks intelligent analysis, pattern recognition, and actionable insights. By integrating AI capabilities, we can:
 
 - **Reduce troubleshooting time by 60-80%** through automated root cause analysis
 - **Prevent network failures** through predictive maintenance and anomaly detection
@@ -265,8 +264,8 @@ CREATE INDEX idx_metrics_type ON metrics(metric_type, metric_name);
 
 ### 1. Coverage Heatmap Generation
 
-**Current State:** Survey collects point samples with RSSI values **AI Enhancement:** Interpolate
-signal strength across entire floor plan
+**Current State:** Survey collects point samples with RSSI values **AI Enhancement:** Interpolate signal strength across
+entire floor plan
 
 **Algorithm:**
 
@@ -372,8 +371,7 @@ Response:
 
 ### 4. Channel Interference Analysis
 
-**Current State:** See which channels are in use **AI Enhancement:** Recommend optimal channel
-assignments
+**Current State:** See which channels are in use **AI Enhancement:** Recommend optimal channel assignments
 
 **Algorithm:**
 
@@ -823,13 +821,13 @@ ai:
 
 ## Conclusion
 
-This AI integration will transform The Seed from a diagnostic tool into an intelligent network
-assistant. By combining comprehensive data collection with AI-powered analysis, we'll deliver
-unprecedented value to network professionals while establishing a strong competitive moat.
+This AI integration will transform The Seed from a diagnostic tool into an intelligent network assistant. By combining
+comprehensive data collection with AI-powered analysis, we'll deliver unprecedented value to network professionals while
+establishing a strong competitive moat.
 
-The phased approach allows for iterative development, early user feedback, and risk mitigation.
-Starting with WiFi intelligence and device classification provides immediate, tangible value while
-building the foundation for more advanced features.
+The phased approach allows for iterative development, early user feedback, and risk mitigation. Starting with WiFi
+intelligence and device classification provides immediate, tangible value while building the foundation for more
+advanced features.
 
 **Next Steps:**
 
@@ -841,5 +839,5 @@ building the foundation for more advanced features.
 
 ---
 
-**Document Version:** 1.0 **Last Updated:** 2025-12-15 **Author:** AI Integration Team **Status:**
-Approved for Implementation
+**Document Version:** 1.0 **Last Updated:** 2025-12-15 **Author:** AI Integration Team **Status:** Approved for
+Implementation

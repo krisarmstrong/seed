@@ -1,13 +1,12 @@
 # WiFi Adapter Test Report Template
 
 Use this template to document WiFi adapter testing results. Submit via the
-[Hardware Report](https://github.com/krisarmstrong/seed/issues/new?template=hardware-report.yml)
-issue template.
+[Hardware Report](https://github.com/krisarmstrong/seed/issues/new?template=hardware-report.yml) issue template.
 
 ## Hardware Information
 
-**Adapter**: [Make and Model] **Chipset**: [e.g., Intel AX200, Atheros AR9271] **Form Factor**:
-[PCIe / USB / M.2] **Bus**: [PCI/PCIe / USB 2.0 / USB 3.0]
+**Adapter**: [Make and Model] **Chipset**: [e.g., Intel AX200, Atheros AR9271] **Form Factor**: [PCIe / USB / M.2]
+**Bus**: [PCI/PCIe / USB 2.0 / USB 3.0]
 
 **Vendor ID/Product ID**: [lspci or lsusb output]
 
@@ -21,8 +20,8 @@ lsusb | grep -i wireless
 
 ## System Information
 
-**Operating System**: [e.g., Ubuntu 22.04 LTS] **Kernel**: [uname -r] **Architecture**: [x86_64 /
-arm64] **Driver**: [e.g., iwlwifi, ath9k_htc] **Driver Version**: [from ethtool -i or modinfo]
+**Operating System**: [e.g., Ubuntu 22.04 LTS] **Kernel**: [uname -r] **Architecture**: [x86_64 / arm64] **Driver**:
+[e.g., iwlwifi, ath9k_htc] **Driver Version**: [from ethtool -i or modinfo]
 
 ## Test Results
 
@@ -138,5 +137,5 @@ Document any problems:
 
 ---
 
-**Tested By**: [Your GitHub username] **Test Date**: [YYYY-MM-DD] **Script Version**: [Git commit
-hash or script version]
+**Tested By**: [Your GitHub username] **Test Date**: [YYYY-MM-DD] **Script Version**: [Git commit hash or script
+version]

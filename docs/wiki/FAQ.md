@@ -4,8 +4,8 @@
 
 ### What is The Seed?
 
-The Seed is an AI-powered network diagnostic platform that combines WiFi planning, network
-monitoring, vulnerability scanning, and compliance reporting in one affordable tool.
+The Seed is an AI-powered network diagnostic platform that combines WiFi planning, network monitoring, vulnerability
+scanning, and compliance reporting in one affordable tool.
 
 It tells you **what's wrong** with your network and **how to fix it** - not just data dumps.
 
@@ -55,8 +55,7 @@ Yes! The Seed is open source under the AGPL-3.0 license.
 
 ### Do I need to be root/admin to run The Seed?
 
-**macOS:** Yes, packet capture requires elevated privileges. Run with `sudo seed` or grant network
-access permissions.
+**macOS:** Yes, packet capture requires elevated privileges. Run with `sudo seed` or grant network access permissions.
 
 **Linux:** Use `setcap` to grant network capabilities without full sudo:
 
@@ -115,8 +114,8 @@ Example: Run on Ubuntu server, access UI from laptop browser.
 - Performance metrics
 - WiFi monitoring
 
-**For large enterprises (10,000+ devices):** No. SolarWinds, Datadog, etc. are designed for massive
-scale and deep integrations. The Seed targets SMBs, not Fortune 500.
+**For large enterprises (10,000+ devices):** No. SolarWinds, Datadog, etc. are designed for massive scale and deep
+integrations. The Seed targets SMBs, not Fortune 500.
 
 ### Does The Seed replace Ekahau?
 
@@ -155,8 +154,8 @@ Yes! The Seed is designed for healthcare:
 - **Audit logs:** Track all user actions (who did what, when)
 - **Compliance reports:** Generate HIPAA security risk assessments
 
-**Note:** You are responsible for your overall HIPAA compliance. The Seed is a tool to _help_ you
-comply, not a complete solution.
+**Note:** You are responsible for your overall HIPAA compliance. The Seed is a tool to _help_ you comply, not a complete
+solution.
 
 ### What data does The Seed collect?
 
@@ -359,8 +358,7 @@ sudo systemctl start seed
 
 1. **Check existing issues:** <https://github.com/krisarmstrong/seed/issues>
 2. **Create new issue** (if not already reported):
-   - Use
-     [Bug Report template](https://github.com/krisarmstrong/seed/issues/new?template=bug_report.md)
+   - Use [Bug Report template](https://github.com/krisarmstrong/seed/issues/new?template=bug_report.md)
    - Include: The Seed version, OS, steps to reproduce, logs
 3. **Expected response time:**
    - Free tier: Best-effort (community)
@@ -428,8 +426,7 @@ sudo systemctl start seed
 
 **When to choose The Seed:** Predictive planning, budget-conscious, need network diagnostics too
 
-**When to choose Ekahau:** Large consultant firm, need extreme accuracy, clients expect Ekahau
-branding
+**When to choose Ekahau:** Large consultant firm, need extreme accuracy, clients expect Ekahau branding
 
 ### The Seed vs SolarWinds
 

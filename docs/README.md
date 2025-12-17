@@ -1,7 +1,6 @@
 # The Seed - Documentation
 
-**Organization:** Mustard Seed Networks **Product:** The Seed **Repository:** Private (proprietary
-commercial software)
+**Organization:** Mustard Seed Networks **Product:** The Seed **Repository:** Private (proprietary commercial software)
 
 ---
 

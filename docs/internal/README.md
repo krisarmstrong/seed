@@ -1,7 +1,7 @@
 # Team Documentation (Internal Only)
 
-**Status:** Confidential - Never Published **Audience:** Team members only **Visibility:** Private
-(repo collaborators with access)
+**Status:** Confidential - Never Published **Audience:** Team members only **Visibility:** Private (repo collaborators
+with access)
 
 ---
 

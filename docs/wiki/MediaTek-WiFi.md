@@ -1,7 +1,7 @@
 # MediaTek Wi-Fi Adapters
 
-⚠️ **Mixed Support** - MediaTek chipsets have improving Linux support but still lag behind Intel.
-Some work well, others have limitations. **Intel or Atheros preferred for reliability**.
+⚠️ **Mixed Support** - MediaTek chipsets have improving Linux support but still lag behind Intel. Some work well, others
+have limitations. **Intel or Atheros preferred for reliability**.
 
 [← Back to Home](Home)
 
@@ -23,8 +23,8 @@ Some work well, others have limitations. **Intel or Atheros preferred for reliab
 - Signal quality accuracy inconsistent
 - Some chipsets require firmware
 
-**Recommendation:** If you already have MediaTek hardware, test it. For new purchases, **Intel
-AX200/210 still preferred** for reliability.
+**Recommendation:** If you already have MediaTek hardware, test it. For new purchases, **Intel AX200/210 still
+preferred** for reliability.
 
 ---
 
@@ -365,8 +365,7 @@ _(Community will report problems here)_
 
 ---
 
-**Last Updated:** 2025-12-14 **Recommendation:** Intel AX200/210 preferred, but MediaTek acceptable
-for budget builds on recent kernels.
+**Last Updated:** 2025-12-14 **Recommendation:** Intel AX200/210 preferred, but MediaTek acceptable for budget builds on
+recent kernels.
 
-[← Back to Home](Home) | [← Previous: Realtek](Realtek-WiFi) |
-[Next: Intel Ethernet →](Intel-Ethernet)
+[← Back to Home](Home) | [← Previous: Realtek](Realtek-WiFi) | [Next: Intel Ethernet →](Intel-Ethernet)

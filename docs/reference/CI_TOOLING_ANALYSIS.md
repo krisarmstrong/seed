@@ -1,7 +1,6 @@
 # CI/Build Tooling Gap Analysis
 
-**Last Updated:** December 2025 **Purpose:** Identify professional-grade CI/build tools missing from
-the pipeline
+**Last Updated:** December 2025 **Purpose:** Identify professional-grade CI/build tools missing from the pipeline
 
 ---
 
@@ -544,8 +543,8 @@ docs-api: ## Generate API documentation
 
 ## Summary
 
-**Current State:** Your CI pipeline is already **A+ quality** with comprehensive linting, testing,
-and security scanning.
+**Current State:** Your CI pipeline is already **A+ quality** with comprehensive linting, testing, and security
+scanning.
 
 **Top 3 Missing Tools:**
 

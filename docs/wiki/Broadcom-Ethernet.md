@@ -1,7 +1,7 @@
 # Broadcom Ethernet NICs
 
-Broadcom server-grade NICs provide **excellent TDR support** comparable to Intel. Consumer/desktop
-Broadcom chipsets vary. **Recommended for server environments**.
+Broadcom server-grade NICs provide **excellent TDR support** comparable to Intel. Consumer/desktop Broadcom chipsets
+vary. **Recommended for server environments**.
 
 [← Back to Home](Home)
 
@@ -231,8 +231,7 @@ _(Community reports will be added here)_
 
 ---
 
-**Last Updated:** 2025-12-14 **Recommendation:** BCM5719/5720 excellent for server environments, but
-Intel I350/I210 easier to find for consumer use.
+**Last Updated:** 2025-12-14 **Recommendation:** BCM5719/5720 excellent for server environments, but Intel I350/I210
+easier to find for consumer use.
 
-[← Back to Home](Home) | [← Previous: Intel Ethernet](Intel-Ethernet) |
-[Next: Realtek Ethernet →](Realtek-Ethernet)
+[← Back to Home](Home) | [← Previous: Intel Ethernet](Intel-Ethernet) | [Next: Realtek Ethernet →](Realtek-Ethernet)

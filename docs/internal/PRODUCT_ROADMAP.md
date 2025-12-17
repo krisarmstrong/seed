@@ -6,8 +6,8 @@
 
 ## Vision & Strategy
 
-**Mission:** Make professional network diagnostics accessible to everyone through AI-powered
-insights and predictive planning.
+**Mission:** Make professional network diagnostics accessible to everyone through AI-powered insights and predictive
+planning.
 
 **Product Pillars:**
 
