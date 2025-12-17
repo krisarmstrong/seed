@@ -754,5 +754,12 @@ func (s *Server) updateSurveyFloorPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{"status": "floor plan updated"})
+	// Return the updated survey so the frontend can update its state
+	updatedSurvey, err := s.surveyManager.GetSurvey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, http.StatusOK, updatedSurvey)
 }
