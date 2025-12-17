@@ -31,10 +31,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { FloorPlanCanvas } from "./FloorPlanCanvas";
+import { FloorPlanCanvas, type CalibrationPoint } from "./FloorPlanCanvas";
 import { getAuthHeaders } from "../../hooks/useAuth";
 import type { Survey, PassiveSample, ActiveSample, ThroughputSample } from "../../hooks/useSurvey";
 import { X, Upload, Play, Pause, CheckCircle, Loader } from "../ui/Icons";
+// Import Ruler directly from lucide-react since it's not in our Icons module yet
+import { Ruler } from "lucide-react";
 import { radius, layout, spacing, button, icon as iconTokens } from "../../styles/theme";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "";
@@ -49,6 +51,19 @@ interface SurveyViewProps {
  * SurveyView Component
  * Main survey interface with floor plan, sampling controls, and heatmap visualization
  */
+// WiFi adapter status from /api/wifi/status
+interface WiFiStatus {
+  status: "unavailable" | "available" | "ready";
+  message: string;
+  currentInterface: string;
+  isWireless: boolean;
+  availableAdapters: string[];
+  canScan: boolean;
+}
+
+/**
+ *
+ */
 export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyViewProps) {
   const { t } = useTranslation("survey");
   // Current survey being edited
@@ -62,6 +77,35 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
     null
   );
   const [error, setError] = useState<string | null>(null);
+  // WiFi adapter status
+  const [wifiStatus, setWifiStatus] = useState<WiFiStatus | null>(null);
+  // Calibration mode state
+  const [calibrationMode, setCalibrationMode] = useState(false);
+  const [calibrationPoints, setCalibrationPoints] = useState<CalibrationPoint[]>([]);
+  const [calibrationDistance, setCalibrationDistance] = useState<string>("");
+  // Survey settings edit state
+  const [editSurveyType, setEditSurveyType] = useState(initialSurvey.surveyType);
+  const [editIperfServer, setEditIperfServer] = useState(initialSurvey.iperfServer || "");
+  const [editTestDuration, setEditTestDuration] = useState(initialSurvey.testDuration || 3);
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  // Check WiFi adapter status on mount
+  useEffect(() => {
+    const checkWifiStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/wifi/status`, {
+          headers: getAuthHeaders(),
+        });
+        if (res.ok) {
+          const status = await res.json();
+          setWifiStatus(status);
+        }
+      } catch (err) {
+        console.error("Failed to check WiFi status:", err);
+      }
+    };
+    checkWifiStatus();
+  }, []);
 
   // Poll for survey updates when in progress
   useEffect(() => {
@@ -87,43 +131,35 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
   // Handle floor plan upload
   const handleFloorPlanUpload = useCallback(
     async (file: File) => {
-      console.log("[FloorPlan] Starting upload for:", file.name, file.type, file.size);
       setUploadingFloorPlan(true);
       setError(null);
 
       try {
         // Read file as base64 using Promise wrapper
-        console.log("[FloorPlan] Reading file as base64...");
         const imageData = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = (e) => {
             const result = e.target?.result;
-            console.log("[FloorPlan] FileReader onload, result type:", typeof result);
             if (typeof result === "string") {
               resolve(result);
             } else {
               reject(new Error("Failed to read file as base64"));
             }
           };
-          reader.onerror = (e) => {
-            console.error("[FloorPlan] FileReader error:", e);
+          reader.onerror = () => {
             reject(new Error("Failed to read file"));
           };
           reader.readAsDataURL(file);
         });
-        console.log("[FloorPlan] Base64 read complete, length:", imageData.length);
 
         // Get image dimensions using Promise wrapper
-        console.log("[FloorPlan] Loading image to get dimensions...");
         const { width, height } = await new Promise<{ width: number; height: number }>(
           (resolve, reject) => {
             const img = new Image();
             img.onload = () => {
-              console.log("[FloorPlan] Image loaded:", img.width, "x", img.height);
               resolve({ width: img.width, height: img.height });
             };
-            img.onerror = (e) => {
-              console.error("[FloorPlan] Image load error:", e);
+            img.onerror = () => {
               reject(new Error("Failed to load image - file may be corrupted"));
             };
             img.src = imageData;
@@ -138,7 +174,6 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
         };
 
         // Upload to server
-        console.log("[FloorPlan] Uploading to server, survey ID:", survey.id);
         const res = await fetch(`${API_BASE}/api/survey/floorplan?id=${survey.id}`, {
           method: "POST",
           headers: {
@@ -148,23 +183,18 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
           body: JSON.stringify(floorPlan),
         });
 
-        console.log("[FloorPlan] Server response status:", res.status);
         if (!res.ok) {
           const errorText = await res.text();
-          console.error("[FloorPlan] Server error:", errorText);
           throw new Error(errorText || "Failed to upload floor plan");
         }
 
         // Refresh survey
         const updated = await res.json();
-        console.log("[FloorPlan] Upload successful, survey updated");
         setSurvey(updated);
         onUpdate();
       } catch (err) {
-        console.error("[FloorPlan] Upload failed:", err);
         setError(err instanceof Error ? err.message : "Failed to upload floor plan");
       } finally {
-        console.log("[FloorPlan] Upload process complete");
         setUploadingFloorPlan(false);
       }
     },
@@ -175,6 +205,12 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
   const handlePointClick = useCallback(
     async (x: number, y: number) => {
       if (survey.status !== "in_progress") return;
+
+      // Check WiFi availability before sampling
+      if (!wifiStatus?.canScan) {
+        setError(wifiStatus?.message || "No WiFi adapter available for scanning");
+        return;
+      }
 
       setSampling(true);
       setError(null);
@@ -191,6 +227,10 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
             });
             if (!scanRes.ok) throw new Error("WiFi scan failed");
             const scanData = await scanRes.json();
+            // Check if scan was successful
+            if (!scanData.available) {
+              throw new Error(scanData.error || "WiFi scan not available");
+            }
             sampleData = { networks: scanData.networks || [] };
             break;
           }
@@ -298,8 +338,118 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
         setSampling(false);
       }
     },
-    [survey, onUpdate]
+    [survey, onUpdate, wifiStatus]
   );
+
+  // Handle calibration click - collect two points
+  const handleCalibrationClick = useCallback((x: number, y: number) => {
+    setCalibrationPoints((prev) => {
+      if (prev.length >= 2) {
+        // Reset if we already have 2 points
+        return [{ x, y }];
+      }
+      return [...prev, { x, y }];
+    });
+  }, []);
+
+  // Calculate and save scale from calibration
+  const handleSaveCalibration = async () => {
+    if (calibrationPoints.length !== 2 || !calibrationDistance) {
+      setError("Please select two points and enter the distance");
+      return;
+    }
+
+    const distance = parseFloat(calibrationDistance);
+    if (isNaN(distance) || distance <= 0) {
+      setError("Please enter a valid positive distance");
+      return;
+    }
+
+    // Calculate pixel distance
+    const p1 = calibrationPoints[0];
+    const p2 = calibrationPoints[1];
+    const pixelDist = Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+
+    if (pixelDist === 0) {
+      setError("Please select two different points");
+      return;
+    }
+
+    // Calculate scale (meters per pixel)
+    const scaleM = distance / pixelDist;
+
+    try {
+      // Update floor plan scale on server
+      const res = await fetch(`${API_BASE}/api/survey/floorplan?id=${survey.id}`, {
+        method: "POST",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...survey.floorPlan,
+          scaleM,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update floor plan scale");
+      }
+
+      const updated = await res.json();
+      setSurvey(updated);
+      onUpdate();
+
+      // Exit calibration mode
+      setCalibrationMode(false);
+      setCalibrationPoints([]);
+      setCalibrationDistance("");
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save scale");
+    }
+  };
+
+  // Cancel calibration
+  const handleCancelCalibration = () => {
+    setCalibrationMode(false);
+    setCalibrationPoints([]);
+    setCalibrationDistance("");
+  };
+
+  // Save survey settings
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/survey/settings?id=${survey.id}`, {
+        method: "PUT",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          surveyType: editSurveyType,
+          iperfServer: editIperfServer,
+          testDuration: editTestDuration,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Failed to save settings");
+      }
+
+      const updated = await res.json();
+      setSurvey(updated);
+      onUpdate();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save settings");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   // Handle status changes
   const handleStatusChange = async (action: "start" | "pause" | "complete") => {
@@ -405,6 +555,30 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
           </div>
         )}
 
+        {/* WiFi adapter status banner */}
+        {wifiStatus && wifiStatus.status !== "ready" && (
+          <div
+            className={`${
+              wifiStatus.status === "unavailable"
+                ? "bg-status-warning/10 border-status-warning/20 text-status-warning"
+                : "bg-status-info/10 border-status-info/20 text-status-info"
+            } border ${spacing.pad.sm} ${radius.md} ${spacing.margin.bottom.content}`}
+          >
+            <div className="font-medium">
+              {wifiStatus.status === "unavailable" ? "⚠️ " : "ℹ️ "}
+              {wifiStatus.status === "unavailable"
+                ? t("wifi.noAdapter")
+                : t("wifi.adapterAvailable")}
+            </div>
+            {wifiStatus.availableAdapters.length > 0 && (
+              <div className={`caption ${spacing.margin.top.tight}`}>
+                {t("wifi.availableAdapters")}: {wifiStatus.availableAdapters.join(", ")}
+              </div>
+            )}
+            <div className={`caption ${spacing.margin.top.tight}`}>{t("wifi.canStillUpload")}</div>
+          </div>
+        )}
+
         {sampling && (
           <div
             className={`bg-status-info/10 border border-status-info/20 text-status-info ${spacing.pad.sm} ${radius.md} ${spacing.margin.bottom.content} ${layout.inline.default}`}
@@ -476,11 +650,8 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        console.log("[FloorPlan] File selected:", file?.name, file?.type, file?.size);
                         if (file) {
                           handleFloorPlanUpload(file);
-                        } else {
-                          console.log("[FloorPlan] No file in selection");
                         }
                         // Reset input so same file can be selected again if needed
                         e.target.value = "";
@@ -494,25 +665,239 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                 </div>
               ) : (
                 <div>
-                  {survey.status === "in_progress" && (
-                    <p className={`body-small text-text-muted ${spacing.margin.bottom.inline}`}>
-                      {t("floorPlan.clickToMeasure")}
-                    </p>
+                  {/* Calibration panel */}
+                  {calibrationMode && (
+                    <div
+                      className={`bg-status-warning/10 border border-status-warning/20 ${spacing.pad.sm} ${radius.md} ${spacing.margin.bottom.content}`}
+                    >
+                      <div
+                        className={`font-medium text-status-warning ${spacing.margin.bottom.inline}`}
+                      >
+                        📐 {t("calibration.title")}
+                      </div>
+                      <p
+                        className={`body-small text-text-secondary ${spacing.margin.bottom.content}`}
+                      >
+                        {t("calibration.instructions")}
+                      </p>
+                      <div className="stack-sm">
+                        <div className={`${layout.inline.default}`}>
+                          <span className="body-small text-text-muted w-20">
+                            {t("calibration.pointA")}:
+                          </span>
+                          {calibrationPoints[0] ? (
+                            <span className="body-small font-medium">
+                              ({calibrationPoints[0].x}, {calibrationPoints[0].y})
+                            </span>
+                          ) : (
+                            <span className="body-small text-text-muted italic">
+                              {t("calibration.clickFloorPlan")}
+                            </span>
+                          )}
+                        </div>
+                        <div className={`${layout.inline.default}`}>
+                          <span className="body-small text-text-muted w-20">
+                            {t("calibration.pointB")}:
+                          </span>
+                          {calibrationPoints[1] ? (
+                            <span className="body-small font-medium">
+                              ({calibrationPoints[1].x}, {calibrationPoints[1].y})
+                            </span>
+                          ) : (
+                            <span className="body-small text-text-muted italic">
+                              {t("calibration.clickFloorPlan")}
+                            </span>
+                          )}
+                        </div>
+                        {calibrationPoints.length === 2 && (
+                          <div className={`${layout.inline.default}`}>
+                            <span className="body-small text-text-muted w-20">
+                              {t("calibration.pixelDistance")}:
+                            </span>
+                            <span className="body-small font-medium">
+                              {Math.sqrt(
+                                (calibrationPoints[1].x - calibrationPoints[0].x) ** 2 +
+                                  (calibrationPoints[1].y - calibrationPoints[0].y) ** 2
+                              ).toFixed(0)}{" "}
+                              px
+                            </span>
+                          </div>
+                        )}
+                        <div className={`${layout.inline.default} ${spacing.margin.top.inline}`}>
+                          <label className="body-small text-text-muted w-20">
+                            {t("calibration.distance")}:
+                          </label>
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            value={calibrationDistance}
+                            onChange={(e) => setCalibrationDistance(e.target.value)}
+                            placeholder={t("calibration.enterMeters")}
+                            className={`flex-1 ${button.size.sm} border border-surface-border ${radius.md} bg-surface-base text-text-primary`}
+                          />
+                          <span className="body-small text-text-muted">
+                            {t("calibration.meters")}
+                          </span>
+                        </div>
+                        <div className={`${layout.inline.default} ${spacing.margin.top.inline}`}>
+                          <button
+                            onClick={handleSaveCalibration}
+                            disabled={calibrationPoints.length !== 2 || !calibrationDistance}
+                            className={`${button.size.sm} bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            {t("buttons.saveScale")}
+                          </button>
+                          <button
+                            onClick={handleCancelCalibration}
+                            className={`${button.size.sm} border border-surface-border ${radius.md} hover:bg-surface-hover`}
+                          >
+                            {t("buttons.cancel")}
+                          </button>
+                          <button
+                            onClick={() => setCalibrationPoints([])}
+                            className={`${button.size.sm} border border-surface-border ${radius.md} hover:bg-surface-hover`}
+                          >
+                            {t("buttons.resetPoints")}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   )}
+
+                  {/* Calibrate button and current scale info */}
+                  {!calibrationMode && survey.floorPlan && (
+                    <div className={`${layout.flex.between} ${spacing.margin.bottom.inline}`}>
+                      <div className="body-small text-text-muted">
+                        {t("floorPlan.scale")}: {survey.floorPlan.scaleM.toFixed(3)} m/px
+                        {survey.status === "in_progress" && ` • ${t("floorPlan.clickToMeasure")}`}
+                      </div>
+                      <button
+                        onClick={() => setCalibrationMode(true)}
+                        className={`${button.size.sm} body-small border border-surface-border ${radius.md} hover:bg-surface-hover ${layout.inline.tight}`}
+                      >
+                        <Ruler className={iconTokens.size.sm} />
+                        {t("buttons.calibrateScale")}
+                      </button>
+                    </div>
+                  )}
+
                   <FloorPlanCanvas
                     floorPlan={survey.floorPlan}
-                    samples={survey.samples}
+                    samples={survey.samples ?? []}
                     onPointClick={handlePointClick}
-                    interactive={survey.status === "in_progress" && !sampling}
+                    interactive={survey.status === "in_progress" && !sampling && !calibrationMode}
                     heatmapMetric={heatmapMetric}
+                    calibrationMode={calibrationMode}
+                    calibrationPoints={calibrationPoints}
+                    onCalibrationClick={handleCalibrationClick}
                   />
                 </div>
               )}
             </div>
           </div>
 
-          {/* Sample list */}
-          <div className="lg:col-span-1">
+          {/* Settings panel (shown when survey is in created status) and Sample list */}
+          <div className={`lg:col-span-1 ${spacing.stack.default}`}>
+            {/* Survey Settings Panel - only show when survey hasn't started */}
+            {survey.status === "created" && (
+              <div className={`bg-surface-raised ${radius.md} border border-surface-border pad`}>
+                <h2 className={`heading-3 ${spacing.margin.bottom.content}`}>
+                  {t("settings.title")}
+                </h2>
+                <div className="stack">
+                  {/* Survey Type */}
+                  <div>
+                    <label
+                      className={`body-small text-text-muted block ${spacing.margin.bottom.tight}`}
+                    >
+                      {t("settings.surveyType")}
+                    </label>
+                    <select
+                      value={editSurveyType}
+                      onChange={(e) =>
+                        setEditSurveyType(e.target.value as "passive" | "active" | "throughput")
+                      }
+                      className={`w-full ${button.size.md} border border-surface-border ${radius.md} bg-surface-base text-text-primary`}
+                    >
+                      <option value="passive">{t("settings.types.passive")}</option>
+                      <option value="active">{t("settings.types.active")}</option>
+                      <option value="throughput">{t("settings.types.throughput")}</option>
+                    </select>
+                  </div>
+
+                  {/* iperf Server - only show for throughput surveys */}
+                  {editSurveyType === "throughput" && (
+                    <>
+                      <div>
+                        <label
+                          className={`body-small text-text-muted block ${spacing.margin.bottom.tight}`}
+                        >
+                          {t("settings.iperfServer")}
+                        </label>
+                        <input
+                          type="text"
+                          value={editIperfServer}
+                          onChange={(e) => setEditIperfServer(e.target.value)}
+                          placeholder="hostname:5201"
+                          className={`w-full ${button.size.md} border border-surface-border ${radius.md} bg-surface-base text-text-primary`}
+                        />
+                        <p className={`caption text-text-muted ${spacing.margin.top.tight}`}>
+                          {t("settings.iperfServerHint")}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label
+                          className={`body-small text-text-muted block ${spacing.margin.bottom.tight}`}
+                        >
+                          {t("settings.testDuration")}
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          max="60"
+                          value={editTestDuration}
+                          onChange={(e) => setEditTestDuration(parseInt(e.target.value) || 3)}
+                          className={`w-full ${button.size.md} border border-surface-border ${radius.md} bg-surface-base text-text-primary`}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Save button */}
+                  <button
+                    onClick={handleSaveSettings}
+                    disabled={savingSettings}
+                    className={`w-full ${button.size.md} bg-brand-primary text-text-inverse ${radius.md} hover:bg-brand-primary/90 disabled:opacity-50`}
+                  >
+                    {savingSettings ? t("buttons.saving") : t("buttons.saveSettings")}
+                  </button>
+
+                  {/* Survey type descriptions */}
+                  <div
+                    className={`caption text-text-muted border-t border-surface-border ${spacing.padding.top.section} ${spacing.margin.top.inline}`}
+                  >
+                    <p className={`font-medium ${spacing.margin.bottom.inline}`}>
+                      {t("settings.typesDescription")}
+                    </p>
+                    <ul className={`list-disc list-inside ${spacing.stack.xs}`}>
+                      <li>
+                        <strong>Passive:</strong> {t("settings.passiveDesc")}
+                      </li>
+                      <li>
+                        <strong>Active:</strong> {t("settings.activeDesc")}
+                      </li>
+                      <li>
+                        <strong>Throughput:</strong> {t("settings.throughputDesc")}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sample list */}
             <div className={`bg-surface-raised ${radius.md} border border-surface-border pad`}>
               <h2 className={`heading-3 ${spacing.margin.bottom.content}`}>
                 {t("samples.title")} ({(survey.samples ?? []).length})

@@ -12,7 +12,13 @@
     "hideHeatmap": "Ocultar Mapa de Calor",
     "rssiHeatmap": "Mapa de Calor RSSI",
     "throughput": "Rendimiento",
-    "latency": "Latencia"
+    "latency": "Latencia",
+    "calibrateScale": "Calibrar Escala",
+    "saveScale": "Guardar Escala",
+    "cancel": "Cancelar",
+    "resetPoints": "Reiniciar Puntos",
+    "saveSettings": "Guardar Configuración",
+    "saving": "Guardando..."
   },
   "floorPlan": {
     "title": "Plano de Planta",
@@ -20,7 +26,8 @@
     "chooseFile": "Elegir Archivo",
     "uploading": "Subiendo...",
     "supportedFormats": "PNG, JPG, GIF, WEBP o SVG (máx 10MB)",
-    "clickToMeasure": "Haga clic en el plano de planta para tomar una medición en esa ubicación"
+    "clickToMeasure": "Haga clic en el plano de planta para tomar una medición en esa ubicación",
+    "scale": "Escala"
   },
   "samples": {
     "title": "Muestras",
@@ -30,5 +37,38 @@
   },
   "progress": {
     "takingMeasurement": "Tomando medición..."
+  },
+  "calibration": {
+    "title": "Modo de Calibración de Escala",
+    "instructions": "Haga clic en dos puntos del plano que representen una distancia conocida (ej. una pared, puerta o dimensión de habitación), luego ingrese la distancia real.",
+    "pointA": "Punto A",
+    "pointB": "Punto B",
+    "clickFloorPlan": "Haga clic en el plano",
+    "pixelDistance": "Dist. píxeles",
+    "distance": "Distancia",
+    "meters": "metros",
+    "enterMeters": "Ingrese metros"
+  },
+  "settings": {
+    "title": "Configuración de Encuesta",
+    "surveyType": "Tipo de Encuesta",
+    "types": {
+      "passive": "Pasivo (Escanear todas las redes)",
+      "active": "Activo (Monitorear conexión)",
+      "throughput": "Rendimiento (pruebas iperf3)"
+    },
+    "iperfServer": "Dirección del Servidor iperf3",
+    "iperfServerHint": "Formato: hostname:puerto (puerto predeterminado es 5201)",
+    "testDuration": "Duración de Prueba (segundos)",
+    "typesDescription": "Tipos de Encuesta:",
+    "passiveDesc": "Escanea todas las redes WiFi visibles en cada punto",
+    "activeDesc": "Monitorea tu conexión WiFi actual (RSSI, velocidad, roaming)",
+    "throughputDesc": "Ejecuta pruebas iperf3 para medir ancho de banda, latencia y jitter"
+  },
+  "wifi": {
+    "noAdapter": "No se detectó adaptador inalámbrico. Conecte un adaptador WiFi para realizar encuestas.",
+    "adapterAvailable": "Adaptador inalámbrico disponible pero no seleccionado como interfaz actual.",
+    "availableAdapters": "Adaptadores disponibles",
+    "canStillUpload": "Aún puede subir un plano y configurar su encuesta. El adaptador WiFi solo es necesario al tomar muestras."
   }
 }

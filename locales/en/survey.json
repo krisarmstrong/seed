@@ -12,7 +12,13 @@
     "hideHeatmap": "Hide Heatmap",
     "rssiHeatmap": "RSSI Heatmap",
     "throughput": "Throughput",
-    "latency": "Latency"
+    "latency": "Latency",
+    "calibrateScale": "Calibrate Scale",
+    "saveScale": "Save Scale",
+    "cancel": "Cancel",
+    "resetPoints": "Reset Points",
+    "saveSettings": "Save Settings",
+    "saving": "Saving..."
   },
   "floorPlan": {
     "title": "Floor Plan",
@@ -20,7 +26,8 @@
     "chooseFile": "Choose File",
     "uploading": "Uploading...",
     "supportedFormats": "PNG, JPG, GIF, WEBP, or SVG (max 10MB)",
-    "clickToMeasure": "Click on the floor plan to take a measurement at that location"
+    "clickToMeasure": "Click on the floor plan to take a measurement at that location",
+    "scale": "Scale"
   },
   "samples": {
     "title": "Samples",
@@ -30,5 +37,38 @@
   },
   "progress": {
     "takingMeasurement": "Taking measurement..."
+  },
+  "calibration": {
+    "title": "Scale Calibration Mode",
+    "instructions": "Click two points on the floor plan that represent a known distance (e.g., a wall, doorway, or room dimension), then enter the real-world distance.",
+    "pointA": "Point A",
+    "pointB": "Point B",
+    "clickFloorPlan": "Click on floor plan",
+    "pixelDistance": "Pixel dist",
+    "distance": "Distance",
+    "meters": "meters",
+    "enterMeters": "Enter meters"
+  },
+  "settings": {
+    "title": "Survey Settings",
+    "surveyType": "Survey Type",
+    "types": {
+      "passive": "Passive (Scan all networks)",
+      "active": "Active (Monitor connection)",
+      "throughput": "Throughput (iperf3 testing)"
+    },
+    "iperfServer": "iperf3 Server Address",
+    "iperfServerHint": "Format: hostname:port (default port is 5201)",
+    "testDuration": "Test Duration (seconds)",
+    "typesDescription": "Survey Types:",
+    "passiveDesc": "Scans all visible WiFi networks at each point",
+    "activeDesc": "Monitors your current WiFi connection (RSSI, data rate, roaming)",
+    "throughputDesc": "Runs iperf3 tests for bandwidth, latency, and jitter measurements"
+  },
+  "wifi": {
+    "noAdapter": "No wireless adapter detected. Connect a WiFi adapter to perform surveys.",
+    "adapterAvailable": "Wireless adapter available but not selected as current interface.",
+    "availableAdapters": "Available adapters",
+    "canStillUpload": "You can still upload a floor plan and configure your survey. WiFi adapter is only required when taking samples."
   }
 }

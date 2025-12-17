@@ -56,6 +56,7 @@ export function AppearanceSettings({ theme, setTheme, isDark }: AppearanceSettin
           <span>{t("sections.appearance")}</span>
         </div>
       }
+      defaultOpen={true}
     >
       <div className="stack-sm">
         <label
