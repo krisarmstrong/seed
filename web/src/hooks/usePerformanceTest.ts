@@ -126,7 +126,9 @@ export function usePerformanceTest() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Speedtest failed";
       setSpeedtestError(message);
-      logger.error(LogComponents.SPEEDTEST, "Speedtest failed", err);
+      logger.error(LogComponents.SPEEDTEST, "Speedtest failed", err, {
+        endpoint: "/api/speedtest",
+      });
       return null;
     } finally {
       setSpeedtestRunning(false);
@@ -140,7 +142,9 @@ export function usePerformanceTest() {
     try {
       return await api.get<SpeedtestStatus>("/api/speedtest/status");
     } catch (err) {
-      logger.error(LogComponents.SPEEDTEST, "Failed to fetch speedtest status", err);
+      logger.error(LogComponents.SPEEDTEST, "Failed to fetch speedtest status", err, {
+        endpoint: "/api/speedtest/status",
+      });
       return null;
     }
   }, []);
@@ -161,7 +165,15 @@ export function usePerformanceTest() {
       } catch (err) {
         const message = err instanceof Error ? err.message : "iPerf test failed";
         setIperfError(message);
-        logger.error(LogComponents.IPERF, "iPerf client test failed", err);
+        logger.error(LogComponents.IPERF, "iPerf client test failed", err, {
+          endpoint: "/api/iperf/client",
+          server: config.server,
+          port: config.port,
+          protocol: config.protocol,
+          duration: config.duration,
+          parallel: config.parallel,
+          reverse: config.reverse,
+        });
         return null;
       } finally {
         setIperfRunning(false);
@@ -177,7 +189,9 @@ export function usePerformanceTest() {
     try {
       return await api.get<IperfClientStatus>("/api/iperf/client/status");
     } catch (err) {
-      logger.error(LogComponents.IPERF, "Failed to fetch iPerf client status", err);
+      logger.error(LogComponents.IPERF, "Failed to fetch iPerf client status", err, {
+        endpoint: "/api/iperf/client/status",
+      });
       return null;
     }
   }, []);
@@ -190,7 +204,10 @@ export function usePerformanceTest() {
       await api.post("/api/iperf/server", { port });
       return true;
     } catch (err) {
-      logger.error(LogComponents.IPERF, "Failed to start iPerf server", err);
+      logger.error(LogComponents.IPERF, "Failed to start iPerf server", err, {
+        endpoint: "/api/iperf/server",
+        port,
+      });
       return false;
     }
   }, []);
@@ -202,7 +219,9 @@ export function usePerformanceTest() {
     try {
       return await api.get<IperfServerStatus>("/api/iperf/server/status");
     } catch (err) {
-      logger.error(LogComponents.IPERF, "Failed to fetch iPerf server status", err);
+      logger.error(LogComponents.IPERF, "Failed to fetch iPerf server status", err, {
+        endpoint: "/api/iperf/server/status",
+      });
       return null;
     }
   }, []);
@@ -217,7 +236,9 @@ export function usePerformanceTest() {
       );
       return data.suggestions || [];
     } catch (err) {
-      logger.error(LogComponents.IPERF, "Failed to fetch iPerf suggestions", err);
+      logger.error(LogComponents.IPERF, "Failed to fetch iPerf suggestions", err, {
+        endpoint: "/api/iperf/suggestions",
+      });
       return [];
     }
   }, []);
@@ -229,7 +250,9 @@ export function usePerformanceTest() {
     try {
       return await api.get<Record<string, unknown>>("/api/iperf/info");
     } catch (err) {
-      logger.error(LogComponents.IPERF, "Failed to fetch iPerf info", err);
+      logger.error(LogComponents.IPERF, "Failed to fetch iPerf info", err, {
+        endpoint: "/api/iperf/info",
+      });
       return null;
     }
   }, []);

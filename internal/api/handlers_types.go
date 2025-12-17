@@ -8,6 +8,8 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // ============================================================================
@@ -42,14 +44,14 @@ const (
 //
 //nolint:unused // Reserved for future migration of error responses
 func sendErrorResponse(w http.ResponseWriter, status int, code, message string) {
-	sendErrorResponseWithDetails(w, status, code, message, "")
+	sendErrorResponseWithDetails(w, nil, status, code, message, "") // Pass nil logger if no context is available
 }
 
 // sendErrorResponseWithDetails sends a standardized JSON error response with additional details.
 // TODO: Migrate existing http.Error calls to use this function.
 //
 //nolint:unused // Reserved for future migration of error responses
-func sendErrorResponseWithDetails(w http.ResponseWriter, status int, code, message, details string) {
+func sendErrorResponseWithDetails(w http.ResponseWriter, logger *slog.Logger, status int, code, message, details string) {
 	resp := ErrorResponse{
 		Error:   message,
 		Code:    code,
@@ -58,17 +60,25 @@ func sendErrorResponseWithDetails(w http.ResponseWriter, status int, code, messa
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		slog.Error("Error encoding error response", "error", err)
+		if logger != nil {
+			logger.Error("Error encoding error response", "error", err)
+		} else {
+			slog.Error("Error encoding error response (no logger context)", "error", err)
+		}
 	}
 }
 
 // sendJSONResponse is a helper to send JSON responses and handle encoding errors.
 // Used across all handler files (fixes #544 - shared utilities).
-func sendJSONResponse(w http.ResponseWriter, status int, data interface{}) {
+func sendJSONResponse(w http.ResponseWriter, logger *slog.Logger, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(data); err != nil {
-		slog.Error("Error encoding JSON response", "error", err)
+		if logger != nil {
+			logger.Error("Error encoding JSON response", "error", err)
+		} else {
+			slog.Error("Error encoding JSON response (no logger context)", "error", err)
+		}
 	}
 }
 

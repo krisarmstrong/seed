@@ -161,7 +161,9 @@ export function useVulnerabilities() {
     try {
       return await api.get<VulnerabilityScannerStatus>("/api/vulnerabilities/status");
     } catch (error) {
-      logger.error(LogComponents.VULN, "Failed to fetch vulnerability status", error);
+      logger.error(LogComponents.VULN, "Failed to fetch vulnerability status", error, {
+        endpoint: "/api/vulnerabilities/status",
+      });
       return null;
     }
   }, []);
@@ -183,7 +185,10 @@ export function useVulnerabilities() {
       const data = await api.get<ResultsResponse>(endpoint);
       return data.results || [];
     } catch (error) {
-      logger.error(LogComponents.VULN, "Failed to fetch vulnerability results", error);
+      logger.error(LogComponents.VULN, "Failed to fetch vulnerability results", error, {
+        endpoint: "/api/vulnerabilities/results",
+        severity,
+      });
       return [];
     }
   }, []);
@@ -214,7 +219,9 @@ export function useVulnerabilities() {
     try {
       return await api.get<VulnerabilityScannerConfig>("/api/vulnerabilities/settings");
     } catch (error) {
-      logger.error(LogComponents.VULN, "Failed to fetch vulnerability settings", error);
+      logger.error(LogComponents.VULN, "Failed to fetch vulnerability settings", error, {
+        endpoint: "/api/vulnerabilities/settings",
+      });
       return null;
     }
   }, []);
@@ -225,7 +232,10 @@ export function useVulnerabilities() {
         await api.put<{ status: string }>("/api/vulnerabilities/settings", settings);
         return true;
       } catch (error) {
-        logger.error(LogComponents.VULN, "Failed to update vulnerability settings", error);
+        logger.error(LogComponents.VULN, "Failed to update vulnerability settings", error, {
+          endpoint: "/api/vulnerabilities/settings",
+          updates: settings,
+        });
         return false;
       }
     },

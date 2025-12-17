@@ -183,7 +183,9 @@ export function useWebSocket({
       ws.onerror = (error) => {
         if (connectionId !== connectionIdRef.current) return;
         setStatus("error");
-        logger.error(LogComponents.WEBSOCKET, "WebSocket error", error);
+        logger.error(LogComponents.WEBSOCKET, "WebSocket error", error, {
+          url: baseUrl,
+        });
       };
 
       // Message received from server
@@ -215,7 +217,9 @@ export function useWebSocket({
       };
     } catch (error) {
       setStatus("error");
-      logger.error(LogComponents.WEBSOCKET, "Failed to create WebSocket", error);
+      logger.error(LogComponents.WEBSOCKET, "Failed to create WebSocket", error, {
+        url,
+      });
     }
   }, [url, onMessage, onCardUpdate, reconnectInterval, maxReconnectAttempts, clearReconnectTimer]);
 

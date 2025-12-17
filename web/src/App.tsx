@@ -37,6 +37,7 @@ import { SettingsDrawer } from "./components/settings/SettingsDrawer";
 import { ImprovedHelpModal } from "./components/help/ImprovedHelpModal";
 import { SetupWizard } from "./components/setup/SetupWizard";
 import { checkSetupStatus } from "./components/setup/setupApi";
+import { ErrorBoundary as CardErrorBoundary } from "./components/ui/ErrorBoundary";
 import { logger, LogComponents } from "./lib/logger";
 import { setSessionExpiredCallback } from "./lib/api";
 
@@ -112,6 +113,25 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 function isCardId(value: unknown): value is CardId {
   return typeof value === "string" && (CARD_IDS as readonly string[]).includes(value);
+}
+
+function parseCardUpdate(
+  update: unknown
+): { cardId: CardId; data: Record<string, unknown> | null } | null {
+  if (!isPlainObject(update)) return null;
+
+  const { cardId, data } = update as { cardId?: unknown; data?: unknown };
+
+  if (!isCardId(cardId)) return null;
+  if (data === undefined) return null;
+
+  if (data === null) {
+    return { cardId, data: null };
+  }
+
+  if (!isPlainObject(data)) return null;
+
+  return { cardId, data };
 }
 
 /**
