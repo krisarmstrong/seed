@@ -660,7 +660,13 @@ func (s *Server) startSurvey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{"status": "started"})
+	// Return the updated survey so frontend can update its state
+	updatedSurvey, err := s.surveyManager.GetSurvey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	sendJSONResponse(w, http.StatusOK, updatedSurvey)
 }
 
 func (s *Server) pauseSurvey(w http.ResponseWriter, r *http.Request) {
@@ -675,7 +681,13 @@ func (s *Server) pauseSurvey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{"status": "paused"})
+	// Return the updated survey so frontend can update its state
+	updatedSurvey, err := s.surveyManager.GetSurvey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	sendJSONResponse(w, http.StatusOK, updatedSurvey)
 }
 
 func (s *Server) completeSurvey(w http.ResponseWriter, r *http.Request) {
@@ -690,7 +702,13 @@ func (s *Server) completeSurvey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSONResponse(w, http.StatusOK, map[string]string{"status": "completed"})
+	// Return the updated survey so frontend can update its state
+	updatedSurvey, err := s.surveyManager.GetSurvey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	sendJSONResponse(w, http.StatusOK, updatedSurvey)
 }
 
 // AddSampleRequest contains a WiFi signal sample measurement for a survey location.
