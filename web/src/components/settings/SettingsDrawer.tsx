@@ -1214,27 +1214,55 @@ export const SettingsDrawer = memo(function SettingsDrawer({
               <p className={`caption font-medium ${spacing.margin.bottom.inline}`}>
                 {t("network.displayOptions")} <AutoSaveIndicator status={displayStatus} />
               </p>
-              <label
-                className={`flex items-center justify-between ${spacing.pad.xs} bg-surface-base ${radius.md} border border-surface-border`}
-              >
-                <div>
-                  <span className="body-small text-text-primary font-medium">
-                    {t("network.showPublicIP")}
-                  </span>
-                  <p className="caption text-text-muted">{t("network.displayInNetworkCard")}</p>
+              <div className="stack-sm">
+                {/* Measurement Units */}
+                <div
+                  className={`flex items-center justify-between ${spacing.pad.xs} bg-surface-base ${radius.md} border border-surface-border`}
+                >
+                  <div>
+                    <span className="body-small text-text-primary font-medium">
+                      {t("network.measurementSystem")}
+                    </span>
+                    <p className="caption text-text-muted">{t("network.measurementDescription")}</p>
+                  </div>
+                  <select
+                    value={displayOptions.unitSystem || "sae"}
+                    onChange={(e) =>
+                      setDisplayOptions((prev) => ({
+                        ...prev,
+                        unitSystem: e.target.value as "sae" | "metric",
+                      }))
+                    }
+                    className={`${input.size.sm} bg-surface-base border border-surface-border ${radius.md} body-small text-text-primary`}
+                  >
+                    <option value="sae">SAE (feet)</option>
+                    <option value="metric">Metric (meters)</option>
+                  </select>
                 </div>
-                <input
-                  type="checkbox"
-                  checked={displayOptions.showPublicIP}
-                  onChange={(e) =>
-                    setDisplayOptions((prev) => ({
-                      ...prev,
-                      showPublicIP: e.target.checked,
-                    }))
-                  }
-                  className={iconTokens.size.sm}
-                />
-              </label>
+
+                {/* Show Public IP */}
+                <label
+                  className={`flex items-center justify-between ${spacing.pad.xs} bg-surface-base ${radius.md} border border-surface-border`}
+                >
+                  <div>
+                    <span className="body-small text-text-primary font-medium">
+                      {t("network.showPublicIP")}
+                    </span>
+                    <p className="caption text-text-muted">{t("network.displayInNetworkCard")}</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={displayOptions.showPublicIP}
+                    onChange={(e) =>
+                      setDisplayOptions((prev) => ({
+                        ...prev,
+                        showPublicIP: e.target.checked,
+                      }))
+                    }
+                    className={iconTokens.size.sm}
+                  />
+                </label>
+              </div>
             </div>
 
             {/* VLAN Configuration */}

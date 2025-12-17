@@ -90,7 +90,7 @@
     "environmentType": "Environment Type",
     "propagationRadius": "Propagation Radius",
     "recommendedSamples": "Recommended: {{count}} sample points for full coverage",
-    "coveragePerSample": "Each sample covers approximately {{area}} m²"
+    "coveragePerSample": "Each sample covers approximately {{area}}"
   },
   "environments": {
     "denseOffice": "Dense Office",
@@ -119,15 +119,22 @@
     "title": "Scan Configuration",
     "whatGoal": "What's your survey goal?",
     "goals": {
-      "coverage": "Check Coverage",
-      "coverageDesc": "Quick signal mapping across 2.4 GHz and 5 GHz bands. Good for basic coverage validation.",
-      "performance": "Validate Performance",
-      "performanceDesc": "Throughput testing on 5 GHz band with iperf3 for bandwidth measurement.",
-      "comprehensive": "Comprehensive Survey",
-      "comprehensiveDesc": "Full spectrum scan across all bands (2.4/5/6 GHz). Recommended for detailed site surveys.",
-      "troubleshoot": "Troubleshoot Issues",
-      "troubleshootDesc": "Active monitoring of your connection with roaming detection. Helps identify problem areas."
+      "coverage": "Coverage & Signal Strength",
+      "coverageDesc": "See where WiFi reaches and measure signal quality. Best for initial site assessment.",
+      "connection": "Connection Quality",
+      "connectionDesc": "Test actual connection speeds and roaming behavior. Requires connecting to network.",
+      "throughput": "Real Throughput",
+      "throughputDesc": "Measure actual data transfer speeds with iperf3. Requires iperf3 server.",
+      "complete": "Complete Analysis",
+      "completeDesc": "Coverage plus connection quality in one survey. Best for new deployments.",
+      "validation": "Performance Validation",
+      "validationDesc": "Coverage plus real throughput testing. Best for performance verification."
     },
+    "recommended": "Recommended",
+    "oneRadio": "1 radio",
+    "twoRadios": "2 radios",
+    "twoRadiosRequired": "Two WiFi adapters required",
+    "twoRadiosDesc": "This survey type uses two radios simultaneously - one for passive scanning and one for active testing. Ensure you have two WiFi adapters connected.",
     "bandsToScan": "Bands to Scan",
     "channelSelection": "Channel Selection",
     "allChannels": "All Channels",

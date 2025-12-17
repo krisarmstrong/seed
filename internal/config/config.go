@@ -376,7 +376,8 @@ type FABOptionsConfig struct {
 
 // DisplayOptionsConfig contains display/UI settings.
 type DisplayOptionsConfig struct {
-	ShowPublicIP bool `yaml:"show_public_ip"`
+	ShowPublicIP bool   `yaml:"show_public_ip"`
+	UnitSystem   string `yaml:"unit_system"` // "sae" (feet) or "metric" (meters)
 }
 
 // ThresholdsConfig contains all threshold settings.
@@ -732,6 +733,7 @@ func DefaultConfig() *Config {
 		},
 		DisplayOptions: DisplayOptionsConfig{
 			ShowPublicIP: true,
+			UnitSystem:   "sae", // Default to SAE (feet) for US users
 		},
 		Logging: LoggingConfig{
 			Level:      "info",

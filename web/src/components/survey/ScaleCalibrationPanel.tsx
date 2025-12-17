@@ -25,6 +25,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { FloorPlan, ScaleSource } from "../../hooks/useSurvey";
 import { Ruler, Building, Sliders } from "lucide-react";
+import { useSettings } from "../../contexts/useSettings";
 import {
   radius,
   spacing,
@@ -114,15 +115,28 @@ export function ScaleCalibrationPanel({
   isCalibrating = false,
 }: ScaleCalibrationPanelProps) {
   const { t } = useTranslation("survey");
+  const { displayOptions } = useSettings();
+
+  // Use global unit system setting - SAE = feet, Metric = meters
+  const isMetric = displayOptions.unitSystem === "metric";
 
   // Dimension entry state
   const [dimensionMode, setDimensionMode] = useState<"length" | "width">("length");
   const [dimensionValue, setDimensionValue] = useState("");
-  const [dimensionUnit, setDimensionUnit] = useState<"m" | "ft">("m");
 
   // Propagation state - initialize from floorPlan prop
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [propagation, setPropagation] = useState(floorPlan.propagationM || 10);
+
+  // Unit conversion helpers
+  const metersToDisplay = (meters: number): number => (isMetric ? meters : meters * 3.281);
+  const displayToMeters = (display: number): number => (isMetric ? display : display * 0.3048);
+  const formatDistance = (meters: number, decimals = 1): string =>
+    `${metersToDisplay(meters).toFixed(decimals)} ${isMetric ? "m" : "ft"}`;
+  const formatArea = (sqMeters: number): string => {
+    if (isMetric) return `${sqMeters.toFixed(0)} m²`;
+    return `${(sqMeters * 10.764).toFixed(0)} ft²`;
+  };
 
   // Calculate facility dimensions from current scale
   const facilityWidthM = floorPlan.width * floorPlan.scaleM;
@@ -140,8 +154,8 @@ export function ScaleCalibrationPanel({
     const value = parseFloat(dimensionValue);
     if (isNaN(value) || value <= 0) return;
 
-    // Convert to meters if in feet
-    const valueM = dimensionUnit === "ft" ? value * 0.3048 : value;
+    // Convert to meters using global unit setting
+    const valueM = displayToMeters(value);
 
     // Calculate scale based on which dimension was entered
     const pixelDimension = dimensionMode === "length" ? floorPlan.width : floorPlan.height;
@@ -205,8 +219,8 @@ export function ScaleCalibrationPanel({
         <div className={`${layout.flex.between} body-small ${spacing.margin.top.tight}`}>
           <span className="text-text-muted">{t("scalePanel.facilitySize")}:</span>
           <span className="font-medium">
-            {facilityWidthM.toFixed(1)} × {facilityHeightM.toFixed(1)} m (
-            {facilityAreaM2.toFixed(0)} m²)
+            {formatDistance(facilityWidthM)} × {formatDistance(facilityHeightM)} (
+            {formatArea(facilityAreaM2)})
           </span>
         </div>
       </div>
@@ -237,14 +251,7 @@ export function ScaleCalibrationPanel({
               placeholder={t("scalePanel.enterValue")}
               className={`flex-1 ${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm}`}
             />
-            <select
-              value={dimensionUnit}
-              onChange={(e) => setDimensionUnit(e.target.value as "m" | "ft")}
-              className={`${inputTokens.base} ${inputTokens.state.default} ${inputTokens.size.sm}`}
-            >
-              <option value="m">{t("scalePanel.meters")}</option>
-              <option value="ft">{t("scalePanel.feet")}</option>
-            </select>
+            <span className="body-small text-text-muted min-w-8">{isMetric ? "m" : "ft"}</span>
             <button
               onClick={handleDimensionSubmit}
               disabled={!dimensionValue}
@@ -307,7 +314,7 @@ export function ScaleCalibrationPanel({
         <div>
           <div className={`${layout.flex.between} ${spacing.margin.bottom.tight}`}>
             <label className="caption text-text-muted">{t("scalePanel.propagationRadius")}</label>
-            <span className="body-small font-medium">{propagation} m</span>
+            <span className="body-small font-medium">{formatDistance(propagation)}</span>
           </div>
           <input
             type="range"
@@ -321,8 +328,8 @@ export function ScaleCalibrationPanel({
           <div
             className={`${layout.flex.between} caption text-text-muted ${spacing.margin.top.tight}`}
           >
-            <span>3m</span>
-            <span>30m</span>
+            <span>{formatDistance(3, 0)}</span>
+            <span>{formatDistance(30, 0)}</span>
           </div>
         </div>
 
@@ -334,7 +341,7 @@ export function ScaleCalibrationPanel({
             {t("scalePanel.recommendedSamples", { count: recommendedSamples })}
           </div>
           <div className={`caption text-text-muted ${spacing.margin.top.tight}`}>
-            {t("scalePanel.coveragePerSample", { area: coverageAreaPerSample.toFixed(0) })}
+            {t("scalePanel.coveragePerSample", { area: formatArea(coverageAreaPerSample) })}
           </div>
         </div>
       </div>

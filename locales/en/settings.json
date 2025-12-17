@@ -44,6 +44,8 @@
     "dnsServers": "DNS Servers",
     "mtu": "MTU",
     "displayOptions": "Display Options",
+    "measurementSystem": "Measurement System",
+    "measurementDescription": "Units for distances (surveys, cable runs)",
     "showPublicIP": "Show Public IP",
     "displayInNetworkCard": "Display in Network card",
     "vlanTag": "VLAN Tag (802.1Q)",
