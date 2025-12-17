@@ -170,7 +170,8 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
             const wifiData = await wifiRes.json();
 
             // Check if BSSID changed (roaming)
-            const lastSample = survey.samples[survey.samples.length - 1];
+            const samples = survey.samples ?? [];
+            const lastSample = samples[samples.length - 1];
             const lastBssid = lastSample ? (lastSample.sampleData as ActiveSample).bssid : null;
             const roamingEvent = lastBssid !== null && lastBssid !== wifiData.bssid;
 
@@ -294,7 +295,7 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
             <p className={`body-small ${spacing.margin.top.tight}`}>
               {(survey.surveyType ?? "wifi").charAt(0).toUpperCase() +
                 (survey.surveyType ?? "wifi").slice(1)}{" "}
-              {t("status.survey")} • {survey.samples.length} {t("status.samples")} • {survey.status}
+              {t("status.survey")} • {(survey.samples ?? []).length} {t("status.samples")} • {survey.status ?? "unknown"}
             </p>
           </div>
 
@@ -384,7 +385,7 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
             <div className={`bg-surface-raised ${radius.md} border border-surface-border pad`}>
               <div className={`${layout.flex.between} ${spacing.margin.bottom.content}`}>
                 <h2 className="heading-3">{t("floorPlan.title")}</h2>
-                {heatmapMetric === null && survey.samples.length > 0 && (
+                {heatmapMetric === null && (survey.samples ?? []).length > 0 && (
                   <div className={layout.inline.default}>
                     <button
                       onClick={() => setHeatmapMetric("rssi")}
@@ -472,10 +473,10 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
           <div className="lg:col-span-1">
             <div className={`bg-surface-raised ${radius.md} border border-surface-border pad`}>
               <h2 className={`heading-3 ${spacing.margin.bottom.content}`}>
-                {t("samples.title")} ({survey.samples.length})
+                {t("samples.title")} ({(survey.samples ?? []).length})
               </h2>
               <div className="stack-sm max-h-[70vh] overflow-y-auto">
-                {survey.samples.length === 0 ? (
+                {(survey.samples ?? []).length === 0 ? (
                   <p className={`body-small text-center ${spacing.pad.lg}`}>
                     {t("samples.noSamples")}{" "}
                     {survey.status === "in_progress"
@@ -483,7 +484,7 @@ export function SurveyView({ survey: initialSurvey, onClose, onUpdate }: SurveyV
                       : t("samples.startToBegin")}
                   </p>
                 ) : (
-                  survey.samples.map((sample, idx) => (
+                  (survey.samples ?? []).map((sample, idx) => (
                     <div
                       key={idx}
                       className={`border border-surface-border ${radius.md} pad-sm body-small`}
