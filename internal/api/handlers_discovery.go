@@ -781,3 +781,47 @@ func (s *Server) updateSurveyFloorPlan(w http.ResponseWriter, r *http.Request) {
 
 	sendJSONResponse(w, http.StatusOK, updatedSurvey)
 }
+
+// UpdateSurveySettingsRequest is the request body for updating survey settings.
+type UpdateSurveySettingsRequest struct {
+	SurveyType   string `json:"surveyType"`
+	IperfServer  string `json:"iperfServer,omitempty"`
+	TestDuration int    `json:"testDuration,omitempty"`
+}
+
+// updateSurveySettings handles PUT /api/survey/settings?id=xxx.
+func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "Survey ID required", http.StatusBadRequest)
+		return
+	}
+
+	var req UpdateSurveySettingsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Convert string to survey.Type
+	surveyType := survey.Type(req.SurveyType)
+
+	if err := s.surveyManager.UpdateSurveySettings(id, surveyType, req.IperfServer, req.TestDuration); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Return the updated survey so the frontend can update its state
+	settingsUpdatedSurvey, err := s.surveyManager.GetSurvey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, http.StatusOK, settingsUpdatedSurvey)
+}

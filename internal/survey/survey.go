@@ -258,6 +258,42 @@ func (m *Manager) CompleteSurvey(id string) error {
 	return m.saveSurvey(survey)
 }
 
+// UpdateSurveySettings updates survey settings (only when survey is in created state).
+func (m *Manager) UpdateSurveySettings(id string, surveyType Type, iperfServer string, testDuration int) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	survey, exists := m.surveys[id]
+	if !exists {
+		return fmt.Errorf("survey not found: %s", id)
+	}
+
+	if survey.Status != StatusCreated {
+		return fmt.Errorf("cannot update settings after survey has started")
+	}
+
+	// Validate survey type
+	switch surveyType {
+	case TypePassive, TypeActive, TypeThroughput:
+		survey.SurveyType = surveyType
+	default:
+		return fmt.Errorf("invalid survey type: %s", surveyType)
+	}
+
+	// Validate test duration
+	if testDuration < 1 {
+		testDuration = 3 // Default
+	}
+	if testDuration > 60 {
+		testDuration = 60 // Max
+	}
+	survey.TestDuration = testDuration
+	survey.IperfServer = iperfServer
+	survey.UpdatedAt = time.Now()
+
+	return m.saveSurvey(survey)
+}
+
 // AddSample adds a measurement sample to a survey.
 func (m *Manager) AddSample(id string, x, y int, sampleData interface{}) error {
 	m.mu.Lock()
