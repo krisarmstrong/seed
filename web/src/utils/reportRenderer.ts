@@ -643,13 +643,22 @@ export function renderReportToHTML(report: SurveyReport, t: TranslateFunction): 
 
 /**
  * Open report in a new window for print/save
+ * Uses Blob URL instead of document.write() to prevent potential XSS risks
  */
 export function openReportForPrint(report: SurveyReport, t: TranslateFunction): void {
   const html = renderReportToHTML(report, t);
-  const printWindow = window.open("", "_blank");
+  // Create a Blob URL for the HTML content - safer than document.write()
+  const blob = new Blob([html], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const printWindow = window.open(url, "_blank");
+  // Clean up the Blob URL after window loads
   if (printWindow) {
-    printWindow.document.write(html);
-    printWindow.document.close();
+    printWindow.onload = () => {
+      URL.revokeObjectURL(url);
+    };
+  } else {
+    // If popup was blocked, clean up immediately
+    URL.revokeObjectURL(url);
   }
 }
 
