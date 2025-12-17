@@ -215,17 +215,28 @@ export const DEFAULT_CHANNELS = {
   ],
 };
 
+/** Floor in a multi-floor survey */
+export interface Floor {
+  id: string; // Unique floor identifier
+  name: string; // Floor display name (e.g., "Floor 1", "Basement")
+  level: number; // Numeric level (-1, 0, 1, 2...)
+  floorPlan?: FloorPlan; // Optional floor plan image for this floor
+  samples: SamplePoint[]; // Samples collected on this floor
+  createdAt: string; // Creation timestamp (ISO 8601)
+  updatedAt: string; // Last update timestamp (ISO 8601)
+}
+
 /** Complete survey object */
 export interface Survey {
   id: string; // Unique survey identifier
   name: string; // Survey name
   description?: string; // Optional description
-  floorPlan?: FloorPlan; // Optional floor plan image
+  floorPlan?: FloorPlan; // Legacy: floor plan (deprecated, use floors)
   surveyType: SurveyType; // Type of survey (passive/active/throughput)
   status: SurveyStatus; // Current lifecycle status
   createdAt: string; // Creation timestamp (ISO 8601)
   updatedAt: string; // Last update timestamp (ISO 8601)
-  samples: SamplePoint[]; // Collected sample points
+  samples?: SamplePoint[]; // Legacy: samples (deprecated, use floors)
   interface: string; // WiFi interface used for survey
   iperfServer?: string; // iperf3 server for throughput tests
   testDuration?: number; // Duration of throughput tests (seconds)
@@ -233,6 +244,9 @@ export interface Survey {
   apLocations?: APLocation[]; // AP markers placed on floor plan
   passFailCriteria?: PassFailCriterion[]; // Custom pass/fail criteria
   lastValidation?: SurveyValidation; // Most recent validation results
+  // Multi-floor support (#654)
+  floors?: Floor[]; // Multiple floors in the building
+  activeFloorId?: string; // Currently active floor for data collection
 }
 
 // ============================================================================
