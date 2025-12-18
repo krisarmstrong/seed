@@ -3,6 +3,10 @@
 # =============================================================================
 # Builds and publishes multi-arch Docker images to GitHub Container Registry.
 # Triggered on version tags (v*).
+#
+# NOTE: Full CI validation happens in ci.yml on every push to main.
+# This workflow only verifies the build compiles before publishing.
+# Tags should only be created after CI passes on main.
 # =============================================================================
 
 name: Docker Publish
@@ -14,49 +18,10 @@ on:
 
 jobs:
   # ===========================================================================
-  # CI Gate - Ensure tests pass before publishing
-  # ===========================================================================
-  ci-gate:
-    name: CI Gate
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: true
-
-      - name: Install libpcap-dev
-        run: sudo apt-get update && sudo apt-get install -y libpcap-dev
-
-      - name: Run go vet
-        run: go vet ./...
-
-      - name: Run tests
-        run: go test -race ./...
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "25.2.1"
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - name: Build frontend
-        working-directory: web
-        run: |
-          npm ci
-          npm run build
-
-  # ===========================================================================
   # Docker Build and Push
   # ===========================================================================
   docker:
     name: Docker Build
-    needs: ci-gate
     runs-on: ubuntu-latest
     permissions:
       contents: read
