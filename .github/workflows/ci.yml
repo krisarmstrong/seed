@@ -1,14 +1,20 @@
 # =============================================================================
 # CI Pipeline - The Seed
 # =============================================================================
-# A+++++++ quality CI with:
-# - Pinned action versions for reproducibility
-# - Go 1.25.5 via toolchain enforcement
-# - Node.js 25.2.1 pinned
-# - staticcheck for advanced Go analysis
+# Main CI pipeline running on every push/PR to main.
+#
+# Features:
+# - Pinned action versions (@v6) for reproducibility
+# - Go version from go.mod, Node.js 25.2.1
+# - Full staticcheck analysis (dead-code.yml handles weekly U* reports)
 # - Deterministic builds with -trimpath -buildvcs=false
 # - Multi-arch verification (amd64 + arm64)
-# - Package-lock integrity check
+# - Frontend build artifact sharing between jobs
+#
+# Related workflows:
+# - license-check.yml: License compliance (not duplicated here)
+# - dead-code.yml: Weekly unused code reports
+# - codeql.yml: Security analysis
 # =============================================================================
 
 name: CI
@@ -151,6 +157,13 @@ jobs:
       - name: Check bundle size
         run: npm run size
 
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/dist/
+          retention-days: 1
+
   # ===========================================================================
   # Security Scanning
   # ===========================================================================
@@ -220,20 +233,8 @@ jobs:
         with:
           sarif_file: trivy-results.sarif
 
-      - name: Check Go license compliance
-        run: |
-          go install github.com/google/go-licenses@latest
-          go-licenses check ./... \
-            --disallowed_types=forbidden,restricted \
-            --allowed_licenses=MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MPL-2.0,CC0-1.0 \
-            || echo "Warning: Some licenses may need review"
-
-      - name: Check npm license compliance
-        working-directory: web
-        run: |
-          npx license-checker --production \
-            --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC0-1.0;0BSD;BlueOak-1.0.0;Unlicense" \
-            --summary
+      # License compliance is handled by the dedicated license-check.yml workflow
+      # to avoid duplication. See .github/workflows/license-check.yml
 
   # ===========================================================================
   # Code Quality Checks
@@ -460,18 +461,11 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
         with:
-          node-version: "25.2.1"
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - name: Build frontend
-        working-directory: web
-        run: |
-          npm ci
-          npm run build
+          name: frontend-dist
+          path: web/dist/
 
       - name: Install libpcap-dev
         run: sudo apt-get update && sudo apt-get install -y libpcap-dev
@@ -530,11 +524,15 @@ jobs:
       - name: Install libpcap-dev
         run: sudo apt-get update && sudo apt-get install -y libpcap-dev
 
-      - name: Build frontend
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/dist/
+
+      - name: Install frontend dependencies (for Playwright)
         working-directory: web
-        run: |
-          npm ci
-          npm run build
+        run: npm ci
 
       - name: Build backend
         run: |
@@ -592,21 +590,14 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "25.2.1"
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
       - name: Install libpcap-dev
         run: sudo apt-get update && sudo apt-get install -y libpcap-dev
 
-      - name: Build frontend
-        working-directory: web
-        run: |
-          npm ci
-          npm run build
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: web/dist/
 
       - name: Build backend
         run: |

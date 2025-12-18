@@ -1,12 +1,17 @@
 # =============================================================================
 # Dead Code Detection Workflow
 # =============================================================================
-# Detects unused code, dead files, and orphaned exports.
-# Runs weekly to keep the codebase clean.
+# Weekly audit for unused code, dead files, and orphaned exports.
+# Generates summary reports to help keep the codebase clean.
+#
+# NOTE: This complements (does not duplicate) ci.yml:
+# - ci.yml runs full staticcheck on every PR (blocks merge if issues found)
+# - This workflow runs ONLY unused code checks (U*) weekly for reporting
 #
 # Checks:
-# - Go: unused functions, variables, types (via staticcheck, deadcode)
-# - TypeScript: unused exports (via ts-prune)
+# - Go: unused functions, variables, types (staticcheck -checks="U*")
+# - Go: unused dependencies (go mod tidy)
+# - TypeScript: unused exports (ts-prune)
 # - Files: orphaned files not imported anywhere
 # =============================================================================
 
