@@ -143,6 +143,7 @@ function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
   const [needsSetup, setNeedsSetup] = useState<boolean | null>(null);
   const [suggestedPassword, setSuggestedPassword] = useState<string | undefined>(undefined);
+  const [setupUsername, setSetupUsername] = useState<string | undefined>(undefined);
 
   // Check if setup is needed on mount
   useEffect(() => {
@@ -150,6 +151,9 @@ function App() {
       setNeedsSetup(status.needsSetup);
       if (status.suggestedPassword) {
         setSuggestedPassword(status.suggestedPassword);
+      }
+      if (status.username) {
+        setSetupUsername(status.username); // Fixes #768 - use username from config
       }
     });
   }, []);
@@ -1079,6 +1083,7 @@ function App() {
         onComplete={() => setNeedsSetup(false)}
         onLogin={login}
         suggestedPassword={suggestedPassword}
+        username={setupUsername}
       />
     );
   }
