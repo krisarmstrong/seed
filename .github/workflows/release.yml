@@ -4,6 +4,10 @@
 # Manual release workflow for creating versioned releases.
 # Builds multi-arch packages (.tar.gz, .deb, .rpm) with bundled iperf3.
 # Triggered on version tags (v*) or manual dispatch.
+#
+# NOTE: Full CI validation happens in ci.yml on every push to main.
+# Tags should only be created after CI passes on main.
+# This workflow focuses on building release artifacts.
 # =============================================================================
 
 name: Release
@@ -19,50 +23,11 @@ permissions:
 
 jobs:
   # ===========================================================================
-  # CI Gate - Verify before building release
-  # ===========================================================================
-  ci-gate:
-    name: CI Gate
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-          cache: true
-
-      - name: Install libpcap-dev
-        run: sudo apt-get update && sudo apt-get install -y libpcap-dev
-
-      - name: Run go vet
-        run: go vet ./...
-
-      - name: Run tests
-        run: go test -race ./...
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "25.2.1"
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - name: Build frontend
-        working-directory: web
-        run: |
-          npm ci
-          npm run build
-
-  # ===========================================================================
   # Build iperf3
   # ===========================================================================
   build-iperf3:
     name: Build iperf3
     runs-on: ubuntu-latest
-    needs: ci-gate
 
     strategy:
       matrix:
@@ -332,7 +297,6 @@ jobs:
   # ===========================================================================
   release-macos:
     name: Create macOS Release
-    needs: ci-gate
     permissions:
       contents: write
 
