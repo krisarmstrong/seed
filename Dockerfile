@@ -1,5 +1,12 @@
+# =============================================================================
+# Dockerfile - The Seed
+# =============================================================================
+# Multi-stage build for The Seed network diagnostic tool.
+# Produces a minimal Ubuntu-based runtime image.
+# =============================================================================
+
 # Stage 1: Build frontend
-FROM node:20-noble AS builder-frontend
+FROM node:25-noble AS builder-frontend
 WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
