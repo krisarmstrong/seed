@@ -655,18 +655,24 @@ func DefaultConfig() *Config {
 			Timeout:      5 * time.Second,
 		},
 		HealthChecks: HealthChecksConfig{
-			PingTargets:    []PingTarget{},
-			TCPPorts:       []TCPPortTest{},
-			UDPPorts:       []UDPPortTest{},
-			HTTPEndpoints:  []HTTPEndpoint{},
+			// Fixes #730: Add default health check tests so card appears by default
+			PingTargets: []PingTarget{
+				{Name: "Google DNS", Host: "8.8.8.8", Enabled: true},
+				{Name: "Cloudflare", Host: "1.1.1.1", Enabled: true},
+			},
+			TCPPorts: []TCPPortTest{},
+			UDPPorts: []UDPPortTest{},
+			HTTPEndpoints: []HTTPEndpoint{
+				{Name: "Google", URL: "https://www.google.com", ExpectedStatus: 200, Enabled: true},
+			},
 			RunPerformance: true,
 			RunSpeedtest:   true,
 			RunIperf:       true,
 			RunDiscovery:   true,
 		},
 		Speedtest: SpeedtestConfig{
-			ServerID:      "",    // Auto-select closest
-			AutoRunOnLink: false, // Disabled by default
+			ServerID:      "",   // Auto-select closest
+			AutoRunOnLink: true, // Fixes #728: Enable by default
 		},
 		Thresholds: ThresholdsConfig{
 			DHCP: DHCPThresholds{
