@@ -234,6 +234,7 @@ func (s *Server) handleRefreshToken(w http.ResponseWriter, r *http.Request) {
 type SetupStatusResponse struct {
 	NeedsSetup        bool   `json:"needsSetup"`
 	SuggestedPassword string `json:"suggestedPassword,omitempty"`
+	Username          string `json:"username"` // Fixes #768 - provide username from config
 }
 
 // handleSetupStatus checks if initial setup is required (fixes #544 - split from handlers.go).
@@ -251,6 +252,7 @@ func (s *Server) handleSetupStatus(w http.ResponseWriter, r *http.Request) {
 
 	resp := SetupStatusResponse{
 		NeedsSetup: needsSetup,
+		Username:   s.config.Auth.DefaultUsername, // Fixes #768 - provide username from config
 	}
 
 	// If setup is needed, suggest a secure password

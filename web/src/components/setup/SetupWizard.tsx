@@ -41,6 +41,8 @@ interface SetupWizardProps {
   onLogin: (username: string, password: string) => Promise<boolean>;
   /** Optional pre-generated password suggestion to offer user */
   suggestedPassword?: string;
+  /** Username from config (fixes #768 - no hardcoded 'admin') */
+  username?: string;
 }
 
 /**
@@ -49,7 +51,21 @@ interface SetupWizardProps {
  * Modal-like component that requires user to set admin password before
  * accessing the main application.
  */
-export function SetupWizard({ onComplete, onLogin, suggestedPassword }: SetupWizardProps) {
+// SSO provider info from backend
+interface SSOProvider {
+  name: string;
+  enabled: boolean;
+}
+
+/**
+ *
+ */
+export function SetupWizard({
+  onComplete,
+  onLogin,
+  suggestedPassword,
+  username = "admin",
+}: SetupWizardProps) {
   const { t } = useTranslation("setup");
   // Default to custom password entry - more secure UX
   const [passwordMode, setPasswordMode] = useState<"generated" | "custom">("custom");
@@ -58,6 +74,15 @@ export function SetupWizard({ onComplete, onLogin, suggestedPassword }: SetupWiz
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ssoProviders, setSsoProviders] = useState<SSOProvider[]>([]);
+
+  // Fetch enabled SSO providers (fixes #769)
+  useEffect(() => {
+    fetch(`${API_BASE}/api/sso/providers`)
+      .then((res) => (res.ok ? res.json() : { providers: [] }))
+      .then((data) => setSsoProviders(data.providers || []))
+      .catch(() => setSsoProviders([]));
+  }, []);
 
   // Update password fields when switching to generated mode
   useEffect(() => {
@@ -66,6 +91,13 @@ export function SetupWizard({ onComplete, onLogin, suggestedPassword }: SetupWiz
       setConfirmPassword(suggestedPassword);
     }
   }, [passwordMode, suggestedPassword]);
+
+  // Helper to check if a provider is enabled
+  const isProviderEnabled = (name: string) =>
+    ssoProviders.some((p) => p.name.toLowerCase() === name.toLowerCase() && p.enabled);
+
+  // Check if any SSO provider is enabled
+  const hasEnabledSSO = ssoProviders.some((p) => p.enabled);
 
   const handlePasswordModeChange = (mode: "generated" | "custom") => {
     setPasswordMode(mode);
@@ -119,9 +151,8 @@ export function SetupWizard({ onComplete, onLogin, suggestedPassword }: SetupWiz
         return;
       }
 
-      // Step 2: Automatically log in with the new password
-      const defaultUsername = "admin"; // Default username from config
-      const loginSuccess = await onLogin(defaultUsername, password);
+      // Step 2: Automatically log in with the new password (fixes #768 - use username from config)
+      const loginSuccess = await onLogin(username, password);
 
       if (!loginSuccess) {
         setError(t("errors.loginFailed"));
@@ -197,8 +228,7 @@ export function SetupWizard({ onComplete, onLogin, suggestedPassword }: SetupWiz
         <form onSubmit={handleSubmit} className={cardClass("default", "lg")}>
           <div className={spacing.margin.bottom.content}>
             <p className={`body-small ${spacing.margin.bottom.content}`}>
-              {t("username.label")} <strong>{t("username.admin")}</strong>{" "}
-              {t("username.cannotChange")}
+              {t("username.label")} <strong>{username}</strong> {t("username.cannotChange")}
             </p>
           </div>
 
@@ -383,44 +413,58 @@ export function SetupWizard({ onComplete, onLogin, suggestedPassword }: SetupWiz
             {isSubmitting ? t("buttons.settingUp") : t("buttons.completeSetup")}
           </button>
 
-          {/* Separator */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-surface-border" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="px-2 bg-surface-raised text-sm text-text-muted">
-                {t("common:or")}
-              </span>
-            </div>
-          </div>
+          {/* SSO Options - only show if any provider is enabled (fixes #769) */}
+          {hasEnabledSSO && (
+            <>
+              {/* Separator */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                  <div className="w-full border-t border-surface-border" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="px-2 bg-surface-raised text-sm text-text-muted">
+                    {t("common:or")}
+                  </span>
+                </div>
+              </div>
 
-          {/* SSO Options */}
-          <div className="flex flex-col stack-sm">
-            <button
-              type="button"
-              onClick={() => (window.location.href = `${API_BASE}/api/sso/login?provider=google`)}
-              className={`w-full ${button.size.md} bg-status-info text-text-inverse ${radius.md} font-medium hover:bg-status-info-dark focus:outline-none focus:ring-2 focus:ring-status-info focus:ring-offset-2 focus:ring-offset-surface-base disabled:opacity-50`}
-            >
-              {t("common:buttons.signInWithGoogle")}
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                (window.location.href = `${API_BASE}/api/sso/login?provider=microsoft`)
-              }
-              className={`w-full ${button.size.md} bg-brand-secondary text-text-inverse ${radius.md} font-medium hover:bg-brand-secondary-dark focus:outline-none focus:ring-2 focus:ring-brand-secondary focus:ring-offset-2 focus:ring-offset-surface-base disabled:opacity-50`}
-            >
-              {t("common:buttons.signInWithMicrosoft")}
-            </button>
-            <button
-              type="button"
-              onClick={() => (window.location.href = `${API_BASE}/api/sso/login?provider=github`)}
-              className={`w-full ${button.size.md} bg-surface-sunken text-text-primary ${radius.md} font-medium hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-surface-border focus:ring-offset-2 focus:ring-offset-surface-base border border-surface-border disabled:opacity-50`}
-            >
-              {t("common:buttons.signInWithGitHub")}
-            </button>
-          </div>
+              <div className="flex flex-col stack-sm">
+                {isProviderEnabled("google") && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      (window.location.href = `${API_BASE}/api/sso/login?provider=google`)
+                    }
+                    className={`w-full ${button.size.md} bg-status-info text-text-inverse ${radius.md} font-medium hover:bg-status-info-dark focus:outline-none focus:ring-2 focus:ring-status-info focus:ring-offset-2 focus:ring-offset-surface-base disabled:opacity-50`}
+                  >
+                    {t("common:buttons.signInWithGoogle")}
+                  </button>
+                )}
+                {isProviderEnabled("microsoft") && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      (window.location.href = `${API_BASE}/api/sso/login?provider=microsoft`)
+                    }
+                    className={`w-full ${button.size.md} bg-brand-secondary text-text-inverse ${radius.md} font-medium hover:bg-brand-secondary-dark focus:outline-none focus:ring-2 focus:ring-brand-secondary focus:ring-offset-2 focus:ring-offset-surface-base disabled:opacity-50`}
+                  >
+                    {t("common:buttons.signInWithMicrosoft")}
+                  </button>
+                )}
+                {isProviderEnabled("github") && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      (window.location.href = `${API_BASE}/api/sso/login?provider=github`)
+                    }
+                    className={`w-full ${button.size.md} bg-surface-sunken text-text-primary ${radius.md} font-medium hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-surface-border focus:ring-offset-2 focus:ring-offset-surface-base border border-surface-border disabled:opacity-50`}
+                  >
+                    {t("common:buttons.signInWithGitHub")}
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </form>
       </div>
     </div>
