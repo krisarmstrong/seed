@@ -99,7 +99,7 @@ else
     # Create service file inline if not found
     cat > /etc/systemd/system/seed.service << 'EOF'
 [Unit]
-Description=The Seed Network Diagnostics
+Description=The Seed - Mustard Seed Networks
 Documentation=https://github.com/krisarmstrong/seed
 After=network-online.target
 Wants=network-online.target
@@ -109,7 +109,6 @@ Type=simple
 User=seed
 Group=seed
 WorkingDirectory=/usr/local/seed
-ExecStartPre=/sbin/setcap cap_net_raw=+ep /usr/local/seed/seed
 ExecStart=/usr/local/seed/seed
 Restart=on-failure
 RestartSec=5
@@ -117,7 +116,8 @@ StandardOutput=journal
 StandardError=journal
 
 # Security hardening
-NoNewPrivileges=no
+# Note: Capabilities are set at install time via install.sh
+NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/usr/local/seed/configs /usr/local/seed/logs

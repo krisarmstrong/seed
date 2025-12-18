@@ -1,17 +1,30 @@
 [Unit]
 Description=The Seed - Mustard Seed Networks
-After=network.target
+Documentation=https://github.com/krisarmstrong/seed
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
-User=root
-Group=root
-Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-ExecStart=/usr/local/bin/seed --config /etc/seed/seed.yaml
+User=seed
+Group=seed
+WorkingDirectory=/usr/local/seed
+ExecStart=/usr/local/bin/seed --config /usr/local/seed/configs/seed.yaml
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
+
+# Security hardening
+# Note: Capabilities are set at install time via postinst script
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/usr/local/seed/configs /usr/local/seed/logs
+PrivateTmp=true
+
+# Environment
+Environment=HOME=/usr/local/seed
 
 [Install]
 WantedBy=multi-user.target
