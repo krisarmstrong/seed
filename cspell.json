@@ -1,0 +1,39 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "commitlint",
+    "gopacket",
+    "gofumpt",
+    "golangci",
+    "gocyclo",
+    "maintidx",
+    "prealloc",
+    "predeclared",
+    "testify",
+    "DHCP",
+    "VLAN",
+    "Vite",
+    "Vitest",
+    "Playwright",
+    "Storybook",
+    "Prettier",
+    "ESLint",
+    "i18next",
+    "lucide",
+    "gitleaks",
+    "cspell",
+    "trufflehog"
+  ],
+  "ignorePaths": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "*.lock",
+    "storybook-static/",
+    "web/dist/",
+    "web/coverage/",
+    "web/node_modules/"
+  ]
+}

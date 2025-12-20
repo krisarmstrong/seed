@@ -697,7 +697,7 @@ test-backend: ## Run Go tests with progress
 	fi
 	@if [ -f coverage.out ]; then \
 		COV=$$(go tool cover -func=coverage.out | grep total | awk '{print $$3}'); \
-		printf "\n   📊 Coverage: $$COV\n"; \
+		printf "\n   📊 Coverage: %s\n" "$$COV"; \
 	fi
 	@printf "\n$(GREEN)✓ Backend tests complete$(RESET)\n"
 
@@ -708,7 +708,7 @@ test-backend-quiet:
 	@go test -race -coverprofile=coverage.out ./... 2>&1 | grep -E "^(ok|FAIL|---)" || true
 	@if [ -f coverage.out ]; then \
 		COV=$$(go tool cover -func=coverage.out | grep total | awk '{print $$3}'); \
-		printf "   📊 Coverage: $$COV\n"; \
+		printf "   📊 Coverage: %s\n" "$$COV"; \
 	fi
 
 # Frontend unit tests via Vitest (verbose output)
