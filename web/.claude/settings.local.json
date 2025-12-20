@@ -14,7 +14,11 @@
       "Bash(git commit:*)",
       "Bash(npm run format:md:*)",
       "Bash(npm run test:unit:*)",
-      "Bash(npm run test:*)"
+      "Bash(npm run test:*)",
+      "Bash(gofumpt:*)",
+      "Bash(goimports:*)",
+      "Bash(go run:*)",
+      "Bash(grep:*)"
     ]
   }
 }

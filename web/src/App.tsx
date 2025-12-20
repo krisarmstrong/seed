@@ -883,7 +883,14 @@ function App() {
   const switchToInterfaceType = useCallback(
     (type: "ethernet" | "wifi") => {
       const candidates = interfaces.filter((iface) => iface.type === type);
-      if (candidates.length === 0) return;
+      // If switching to WiFi with no WiFi interfaces, still allow UI to show WiFi view
+      // for planning/survey purposes (Fix #572 extension)
+      if (candidates.length === 0) {
+        if (type === "wifi") {
+          setIsWifi(true);
+        }
+        return;
+      }
       // Prefer a link-up interface, otherwise first in list
       const target = candidates.find((iface) => iface.up) ?? candidates[0];
       if (target) {
@@ -1360,23 +1367,98 @@ function App() {
             </div>
           </section>
 
-          {/* Footer notice */}
+          {/* Footer */}
           <footer
-            className={`${spacing.margin.top.section} ${radius.md} border border-surface-border bg-surface-raised pad sm:pad-lg text-center`}
+            className={`${spacing.margin.top.section} ${radius.lg} border border-surface-border bg-surface-raised ${spacing.pad.lg}`}
           >
-            <h2 className="heading-4 text-text-muted">
-              {t("app.title")} {appVersion}
-            </h2>
-            <p
-              className={`${spacing.margin.top.inline} body-small text-text-muted`}
-            >
-              {t("footer.runTestsHint")}
-              <span className="hidden sm:inline">
-                <br />
-              </span>
-              <span className="sm:hidden"> </span>
-              {t("footer.networkDiscoveryHint")}
-            </p>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {/* Product Info */}
+              <div>
+                <h3 className="heading-4 text-text-primary mb-2">
+                  {t("app.title")}
+                </h3>
+                <p className="body-small text-text-muted mb-1">
+                  {t("footer.byCompany", "by Mustard Seed Networks")}
+                </p>
+                <p className="caption text-text-muted">
+                  {t("footer.version", "Version")} {appVersion}
+                </p>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <h4 className="body-small font-medium text-text-primary mb-2">
+                  {t("footer.contact", "Contact")}
+                </h4>
+                <div className="space-y-1">
+                  <a
+                    href="mailto:support@mustardseednetworks.com"
+                    className="body-small text-brand-primary hover:underline block"
+                  >
+                    support@mustardseednetworks.com
+                  </a>
+                  <a
+                    href="tel:+17194403079"
+                    className="body-small text-text-muted hover:text-text-primary block"
+                  >
+                    719.440.3079
+                  </a>
+                </div>
+              </div>
+
+              {/* Website */}
+              <div>
+                <h4 className="body-small font-medium text-text-primary mb-2">
+                  {t("footer.website", "Website")}
+                </h4>
+                <a
+                  href="https://www.mustardseednetworks.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="body-small text-brand-primary hover:underline"
+                >
+                  www.mustardseednetworks.com
+                </a>
+              </div>
+
+              {/* Legal */}
+              <div>
+                <h4 className="body-small font-medium text-text-primary mb-2">
+                  {t("footer.legal", "Legal")}
+                </h4>
+                <div className="flex flex-wrap gap-x-3 gap-y-1">
+                  <a
+                    href="/terms"
+                    className="body-small text-text-muted hover:text-brand-primary"
+                  >
+                    {t("footer.tos", "Terms of Service")}
+                  </a>
+                  <a
+                    href="/privacy"
+                    className="body-small text-text-muted hover:text-brand-primary"
+                  >
+                    {t("footer.privacy", "Privacy")}
+                  </a>
+                  <a
+                    href="/license"
+                    className="body-small text-text-muted hover:text-brand-primary"
+                  >
+                    {t("footer.license", "License")}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="mt-6 pt-4 border-t border-surface-border text-center">
+              <p className="caption text-text-muted">
+                &copy; {new Date().getFullYear()}{" "}
+                {t(
+                  "footer.copyright",
+                  "Mustard Seed Networks. All rights reserved."
+                )}
+              </p>
+            </div>
           </footer>
         </div>
       </main>

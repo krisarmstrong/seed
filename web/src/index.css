@@ -115,17 +115,28 @@ body {
     -apple-system,
     "Segoe UI",
     sans-serif;
-  /* Gradient background inspired by brand colors */
+  /* Light mode gradient - subtle green tints */
   background: linear-gradient(135deg,
-    var(--color-surface-base) 0%,
-    color-mix(in srgb, var(--color-brand-primary) 8%, var(--color-surface-base)) 50%,
-    color-mix(in srgb, var(--color-brand-accent) 5%, var(--color-surface-base)) 100%
+    #F8F8F8 0%,
+    #E8F5E9 35%,
+    #F1F8E9 65%,
+    #F8F8F8 100%
   );
   background-attachment: fixed;
   min-height: 100vh;
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode gradient - richer green/teal undertones visible on dark */
+.dark body {
+  background: linear-gradient(135deg,
+    #1A1A1A 0%,
+    #1A2E1C 30%,
+    #1C2823 60%,
+    #1A1A1A 100%
+  );
 }
 
 /* ============================================================================

@@ -53,7 +53,9 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
     if (!searchQuery.trim()) return profiles;
     const query = searchQuery.toLowerCase();
     return profiles.filter(
-      (p) => p.name.toLowerCase().includes(query) || p.description?.toLowerCase().includes(query)
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query)
     );
   }, [profiles, searchQuery]);
 
@@ -120,9 +122,11 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
   }, [onClose]);
 
   return (
-    <div className="min-h-screen bg-surface-base">
+    <div className="fixed inset-0 z-50 overflow-auto bg-surface-base">
       {/* Header */}
-      <header className={`bg-surface-raised border-b border-surface-border ${spacing.pad.md}`}>
+      <header
+        className={`sticky top-0 z-10 bg-surface-raised border-b border-surface-border ${spacing.pad.md}`}
+      >
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
@@ -150,7 +154,10 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
                 {t("profile.management", "Profile Management")}
               </h1>
               <p className="body-small text-text-muted">
-                {t("profile.managementDesc", "Create and manage client-specific configurations")}
+                {t(
+                  "profile.managementDesc",
+                  "Create and manage client-specific configurations"
+                )}
               </p>
             </div>
           </div>
@@ -160,7 +167,12 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
               onClick={handleExport}
               className={`${spacing.pad.sm} ${radius.md} border border-surface-border bg-surface-base hover:bg-surface-hover text-text-primary body-small font-medium flex items-center gap-2`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -175,7 +187,12 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
               onClick={handleCreate}
               className={`${spacing.pad.sm} ${radius.md} bg-brand-primary hover:bg-brand-primary-hover text-white body-small font-medium flex items-center gap-2`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -230,7 +247,9 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
         {isLoading && profiles.length === 0 && (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary" />
-            <p className="mt-4 text-text-muted">{t("common.loading", "Loading...")}</p>
+            <p className="mt-4 text-text-muted">
+              {t("common.loading", "Loading...")}
+            </p>
           </div>
         )}
 
@@ -257,8 +276,14 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
             </h3>
             <p className="text-text-muted mb-6">
               {searchQuery
-                ? t("profile.noResultsDesc", "Try adjusting your search criteria")
-                : t("profile.noProfilesDesc", "Create your first profile to get started")}
+                ? t(
+                    "profile.noResultsDesc",
+                    "Try adjusting your search criteria"
+                  )
+                : t(
+                    "profile.noProfilesDesc",
+                    "Create your first profile to get started"
+                  )}
             </p>
             {!searchQuery && (
               <button
@@ -343,7 +368,9 @@ function ProfileCard({
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="heading-sm text-text-primary truncate">{profile.name}</h3>
+              <h3 className="heading-sm text-text-primary truncate">
+                {profile.name}
+              </h3>
               {profile.is_default && (
                 <span className="caption px-1.5 py-0.5 rounded bg-brand-primary/10 text-brand-primary font-medium">
                   {t("profile.default", "Default")}
@@ -356,7 +383,9 @@ function ProfileCard({
               )}
             </div>
             {profile.description && (
-              <p className="body-small text-text-muted line-clamp-2">{profile.description}</p>
+              <p className="body-small text-text-muted line-clamp-2">
+                {profile.description}
+              </p>
             )}
           </div>
 
@@ -368,14 +397,21 @@ function ProfileCard({
               className="p-1.5 hover:bg-surface-hover rounded transition-colors"
               aria-label={t("common.actions", "Actions")}
             >
-              <svg className="w-5 h-5 text-text-muted" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 text-text-muted"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
               </svg>
             </button>
 
             {showMenu && (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setShowMenu(false)}
+                />
                 <div
                   className={`absolute right-0 top-full mt-1 w-40 ${radius.md} border border-surface-border bg-surface-raised shadow-lg z-20 overflow-hidden`}
                 >
@@ -431,9 +467,12 @@ function ProfileCard({
       </div>
 
       {/* Card footer */}
-      <div className={`${spacing.pad.sm} bg-surface-base flex items-center justify-between`}>
+      <div
+        className={`${spacing.pad.sm} bg-surface-base flex items-center justify-between`}
+      >
         <span className="caption text-text-muted">
-          {t("profile.updated", "Updated")} {new Date(profile.updated_at).toLocaleDateString()}
+          {t("profile.updated", "Updated")}{" "}
+          {new Date(profile.updated_at).toLocaleDateString()}
         </span>
         {!isActive && (
           <button
@@ -499,7 +538,9 @@ function DeleteConfirmModal({
             disabled={isLoading}
             className={`${spacing.pad.sm} px-4 ${radius.md} bg-status-error hover:bg-status-error/90 text-white body-small font-medium disabled:opacity-50`}
           >
-            {isLoading ? t("common.deleting", "Deleting...") : t("common.delete", "Delete")}
+            {isLoading
+              ? t("common.deleting", "Deleting...")
+              : t("common.delete", "Delete")}
           </button>
         </div>
       </div>
