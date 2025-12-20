@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "Bash(go vet:*)",
+      "Bash(gofmt:*)",
+      "Bash(staticcheck:*)",
+      "Bash(golangci-lint run:*)",
+      "Bash(git add:*)",
+      "Bash(git tag:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run format:md:*)",
+      "Bash(npm run test:unit:*)",
+      "Bash(npm run test:*)"
+    ]
+  }
+}
