@@ -323,7 +323,7 @@ export const DEFAULT_IPERF_SETTINGS: IperfSettings = {
   direction: "download",
   duration: 10,
   serverPort: 5201,
-  enableServer: false,
+  enableServer: true,
 };
 
 // Fixes #730: Add sensible default health check tests so the card appears by default
@@ -331,8 +331,20 @@ export const DEFAULT_TESTS_SETTINGS: TestsSettings = {
   dnsHostname: "google.com",
   dnsServers: [],
   pingTargets: [
-    { id: "default-google-dns", name: "Google DNS", host: "8.8.8.8", enabled: true, count: 3 },
-    { id: "default-cloudflare-dns", name: "Cloudflare", host: "1.1.1.1", enabled: true, count: 3 },
+    {
+      id: "default-google-dns",
+      name: "Google DNS",
+      host: "8.8.8.8",
+      enabled: true,
+      count: 3,
+    },
+    {
+      id: "default-cloudflare-dns",
+      name: "Cloudflare",
+      host: "1.1.1.1",
+      enabled: true,
+      count: 3,
+    },
   ],
   tcpPorts: [],
   udpPorts: [],

@@ -762,7 +762,7 @@ func DefaultConfig() *Config {
 			Direction:     "download",
 			Duration:      10,
 			ServerPort:    5201,
-			EnableServer:  false,
+			EnableServer:  true,
 		},
 		FABOptions: FABOptionsConfig{
 			RunLink:             true,
