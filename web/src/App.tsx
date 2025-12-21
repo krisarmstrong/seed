@@ -1275,37 +1275,25 @@ function App() {
               {t("sections.connectivity")}
             </h2>
             <div
-              className={`flex flex-wrap justify-center ${spacing.gap.comfortable}`}
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${spacing.gap.comfortable}`}
             >
               {/* WiFi-only cards */}
               {isWifi && (
-                <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                  <WiFiCard
-                    data={cards.wifi}
-                    loading={loading}
-                    visible={true}
-                  />
-                </div>
+                <WiFiCard data={cards.wifi} loading={loading} visible={true} />
               )}
 
               {/* Ethernet-only cards */}
               {!isWifi && (
                 <>
-                  <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                    <LinkCard data={cards.link} loading={loading} />
-                  </div>
+                  <LinkCard data={cards.link} loading={loading} />
                   {cards.cable?.supported && (
-                    <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                      <CableCard data={cards.cable} loading={loading} />
-                    </div>
+                    <CableCard data={cards.cable} loading={loading} />
                   )}
-                  <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                    <SwitchCard
-                      data={cards.switch}
-                      vlanData={cards.vlan}
-                      loading={loading}
-                    />
-                  </div>
+                  <SwitchCard
+                    data={cards.switch}
+                    vlanData={cards.vlan}
+                    loading={loading}
+                  />
                 </>
               )}
             </div>
@@ -1323,22 +1311,16 @@ function App() {
               {t("sections.network")}
             </h2>
             <div
-              className={`flex flex-wrap justify-center ${spacing.gap.comfortable}`}
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${spacing.gap.comfortable}`}
             >
-              <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                <NetworkCard
-                  data={cards.dhcp}
-                  publicip={cards.publicip}
-                  loading={loading}
-                  showPublicIP={displayOptions.showPublicIP}
-                />
-              </div>
-              <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                <GatewayCard data={cards.gateway} loading={loading} />
-              </div>
-              <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                <DNSCard data={cards.dns} loading={loading} />
-              </div>
+              <NetworkCard
+                data={cards.dhcp}
+                publicip={cards.publicip}
+                loading={loading}
+                showPublicIP={displayOptions.showPublicIP}
+              />
+              <GatewayCard data={cards.gateway} loading={loading} />
+              <DNSCard data={cards.dns} loading={loading} />
             </div>
           </section>
 
@@ -1354,44 +1336,36 @@ function App() {
               {t("sections.testingDiscovery")}
             </h2>
             <div
-              className={`flex flex-wrap justify-center ${spacing.gap.comfortable}`}
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${spacing.gap.comfortable}`}
             >
               {/* Common cards for both interface types */}
-              <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                <HealthCheckCard loading={loading} />
-              </div>
+              <HealthCheckCard loading={loading} />
               {cardSettings.performance.enabled && (
-                <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                  <PerformanceCard
-                    loading={loading}
-                    runSpeedtestEnabled={
-                      cardSettings.performance.speedtest.enabled
-                    }
-                    runIperfEnabled={cardSettings.performance.iperf.enabled}
-                  />
-                </div>
+                <PerformanceCard
+                  loading={loading}
+                  runSpeedtestEnabled={
+                    cardSettings.performance.speedtest.enabled
+                  }
+                  runIperfEnabled={cardSettings.performance.iperf.enabled}
+                />
               )}
 
               {/* Ethernet-only: Network Discovery (ARP/LLDP/SNMP) */}
               {!isWifi && cardSettings.networkDiscovery.enabled && (
-                <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                  <NetworkDiscoveryCard
-                    data={networkDiscovery}
-                    loading={loading}
-                    onScan={triggerDeviceScan}
-                  />
-                </div>
+                <NetworkDiscoveryCard
+                  data={networkDiscovery}
+                  loading={loading}
+                  onScan={triggerDeviceScan}
+                />
               )}
 
               {/* WiFi-only: WiFi Survey for heatmaps and site surveys */}
               {/* Fix #572: Pass current interface to avoid hardcoded "wlan0" */}
               {isWifi && (
-                <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                  <WiFiSurveyCard
-                    isWifi={isWifi}
-                    currentInterface={currentInterface}
-                  />
-                </div>
+                <WiFiSurveyCard
+                  isWifi={isWifi}
+                  currentInterface={currentInterface}
+                />
               )}
             </div>
           </section>
@@ -1408,11 +1382,9 @@ function App() {
               {t("sections.system")}
             </h2>
             <div
-              className={`flex flex-wrap justify-center ${spacing.gap.comfortable}`}
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${spacing.gap.comfortable}`}
             >
-              <div className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-                <SystemHealthCard />
-              </div>
+              <SystemHealthCard />
             </div>
           </section>
 
