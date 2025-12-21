@@ -23,7 +23,13 @@
       "Bash(xargs -I{} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && grep -E \"\"\"\"^export \\(function|const.*= memo\\)\"\"\"\" {} | head -2')",
       "Bash(for f in /Users/krisarmstrong/Developer/projects/seed/web/src/components/settings/sections/*.tsx)",
       "Bash(do echo '=== $\\(basename $f\\) ===' grep -E \"^export \\(function|const.*= memo\\)\" $f)",
-      "mcp__plugin_playwright_playwright__browser_navigate"
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "Bash(git branch:*)",
+      "Bash(ls:*)",
+      "Bash(GOOS=linux GOARCH=arm64 go build:*)",
+      "Bash(cat:*)",
+      "Bash(make deploy:*)",
+      "Bash(rsync:*)"
     ]
   }
 }
