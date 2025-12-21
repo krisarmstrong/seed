@@ -47,7 +47,17 @@
     "pixelDistance": "Dist. píxeles",
     "distance": "Distancia",
     "meters": "metros",
-    "enterMeters": "Ingrese metros"
+    "feet": "pies",
+    "enterMeters": "Ingrese metros",
+    "enterFeet": "Ingrese pies"
+  },
+  "setup": {
+    "checklist": "Configuración de encuesta",
+    "uploadFloorPlan": "Subir imagen del plano de planta",
+    "calibrateScale": "Calibrar la escala para que coincida con distancias reales",
+    "wifiInterface": "Seleccionar una interfaz WiFi que pueda escanear",
+    "configureSurvey": "Configurar bandas, canales y adaptadores",
+    "readyToStart": "Iniciar la encuesta para comenzar a recolectar muestras"
   },
   "settings": {
     "title": "Configuración de Encuesta",
