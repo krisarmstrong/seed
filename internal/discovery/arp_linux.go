@@ -31,17 +31,18 @@ func (s *ARPScanner) readARPTablePlatform() ([]*ARPEntry, error) {
 		return nil, err
 	}
 
-	var entries []*ARPEntry
-	for _, neigh := range neighbors {
-		// Skip entries without valid MAC or IP
-		if neigh.HardwareAddr == nil || len(neigh.HardwareAddr) == 0 {
+	entries := make([]*ARPEntry, 0, len(neighbors))
+	for i := range neighbors {
+		neigh := &neighbors[i]
+		// Skip entries without valid MAC or IP.
+		if len(neigh.HardwareAddr) == 0 {
 			continue
 		}
 		if neigh.IP == nil || neigh.IP.To4() == nil {
 			continue
 		}
 
-		// Map netlink state to string
+		// Map netlink state to string.
 		state := neighStateToString(neigh.State)
 
 		// Skip failed/incomplete entries

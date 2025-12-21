@@ -252,7 +252,7 @@ func (db *DB) RecordAuditLog(ctx context.Context, entry *AuditLogEntry) error {
 
 // GetAuditLogs retrieves audit log entries.
 //
-//nolint:goconst,gocritic // SQL fragments are more readable inline; opts passed by value for API stability
+//nolint:gocritic // opts passed by value for API stability
 func (db *DB) GetAuditLogs(ctx context.Context, opts AuditLogOptions) ([]*AuditLogEntry, error) {
 	query := `
 		SELECT id, action, user, resource_type, resource_id, old_value_json,
