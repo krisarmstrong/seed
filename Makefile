@@ -1313,9 +1313,8 @@ verify: ## Full verification (lint, test, security, build, docker if available)
 	$(call timer-end,build,Build)
 	$(call step,5,5,Docker Verification)
 	@if command -v docker > /dev/null 2>&1 && docker info > /dev/null 2>&1; then \
-		$(call timer-start,docker); \
+		printf "$(CYAN)│$(RESET) Docker available - running docker-test...$(CYAN)│$(RESET)\n"; \
 		$(MAKE) --no-print-directory docker-test; \
-		$(call timer-end,docker,Docker); \
 	else \
 		printf "$(YELLOW)⊘ SKIP: Docker not available - skipping docker-test$(RESET)\n"; \
 		printf "$(YELLOW)  Run 'make docker-test' manually when Docker is running$(RESET)\n"; \
