@@ -67,6 +67,8 @@ func updateResolvConf(dnsServers []string) error {
 }
 
 // configureStaticIPPlatform applies static IP on Linux using netlink.
+//
+//nolint:gocyclo // Network configuration requires many validation and error handling branches.
 func configureStaticIPPlatform(iface string, cfg *StaticIPConfig) error {
 	// Validate interface name to prevent issues
 	if err := validation.ValidateInterface(iface); err != nil {
@@ -128,11 +130,11 @@ func configureStaticIPPlatform(iface string, cfg *StaticIPConfig) error {
 			return fmt.Errorf("invalid gateway IP: %s", cfg.Gateway)
 		}
 
-		// Delete existing default route (ignore errors, might not exist)
-		routes, _ := netlink.RouteList(nil, netlink.FAMILY_V4)
+		// Delete existing default route (errors expected if no route exists).
+		routes, _ := netlink.RouteList(nil, netlink.FAMILY_V4) //nolint:errcheck // Expected to fail if no routes.
 		for _, route := range routes {
 			if route.Dst == nil { // default route
-				_ = netlink.RouteDel(&route)
+				_ = netlink.RouteDel(&route) //nolint:errcheck // Best effort cleanup.
 			}
 		}
 

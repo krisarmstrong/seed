@@ -140,8 +140,9 @@ func (ns *NDPScanner) scanNeighborTable() error {
 	ns.mu.Lock()
 	defer ns.mu.Unlock()
 
-	for _, neigh := range neighs {
-		// Only process IPv6 addresses
+	for i := range neighs {
+		neigh := &neighs[i]
+		// Only process IPv6 addresses.
 		if neigh.IP.To4() != nil {
 			continue
 		}
@@ -149,11 +150,11 @@ func (ns *NDPScanner) scanNeighborTable() error {
 		ipv6Addr := neigh.IP.String()
 		mac := neigh.HardwareAddr.String()
 
-		// Determine if this is a router
-		// Routers typically have link-local fe80:: addresses and are in REACHABLE state
+		// Determine if this is a router.
+		// Routers typically have link-local fe80:: addresses and are in REACHABLE state.
 		isRouter := neigh.Flags&netlink.NTF_ROUTER != 0
 
-		// Get NUD state as string
+		// Get NUD state as string.
 		state := nudStateString(neigh.State)
 
 		neighbor, exists := ns.neighbors[ipv6Addr]

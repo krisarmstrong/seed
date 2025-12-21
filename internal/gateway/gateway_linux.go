@@ -18,8 +18,9 @@ func detectGatewayNetlink() (string, error) {
 		return "", err
 	}
 
-	for _, route := range routes {
-		// Default route has nil Dst OR 0.0.0.0/0
+	for i := range routes {
+		route := &routes[i]
+		// Default route has nil Dst OR 0.0.0.0/0.
 		isDefault := route.Dst == nil ||
 			(route.Dst != nil && route.Dst.IP.Equal(net.IPv4zero) && route.Dst.Mask.String() == "00000000")
 		if isDefault && route.Gw != nil {
@@ -37,15 +38,16 @@ func detectGatewayIPv6Netlink() (string, error) {
 		return "", err
 	}
 
-	for _, route := range routes {
-		// Default route has nil Dst (or ::/0)
+	for i := range routes {
+		route := &routes[i]
+		// Default route has nil Dst (or ::/0).
 		if route.Dst == nil && route.Gw != nil {
-			// Ensure it's a valid IPv6 address (not IPv4-mapped)
+			// Ensure it's a valid IPv6 address (not IPv4-mapped).
 			if ip := route.Gw; ip != nil && ip.To4() == nil {
 				return ip.String(), nil
 			}
 		}
-		// Also check for explicit ::/0 destination
+		// Also check for explicit ::/0 destination.
 		if route.Dst != nil && route.Dst.String() == "::/0" && route.Gw != nil {
 			if ip := route.Gw; ip != nil && ip.To4() == nil {
 				return ip.String(), nil
@@ -60,10 +62,11 @@ func detectGatewayIPv6Netlink() (string, error) {
 func GetAllRoutes() ([]RouteInfo, error) {
 	var routes []RouteInfo
 
-	// Get IPv4 routes
+	// Get IPv4 routes.
 	v4Routes, err := netlink.RouteList(nil, netlink.FAMILY_V4)
 	if err == nil {
-		for _, r := range v4Routes {
+		for i := range v4Routes {
+			r := &v4Routes[i]
 			ri := RouteInfo{
 				Family: "inet",
 			}
@@ -76,7 +79,7 @@ func GetAllRoutes() ([]RouteInfo, error) {
 				ri.Gateway = r.Gw.String()
 			}
 			if r.LinkIndex > 0 {
-				if link, err := netlink.LinkByIndex(r.LinkIndex); err == nil {
+				if link, linkErr := netlink.LinkByIndex(r.LinkIndex); linkErr == nil {
 					ri.Interface = link.Attrs().Name
 				}
 			}
@@ -84,10 +87,11 @@ func GetAllRoutes() ([]RouteInfo, error) {
 		}
 	}
 
-	// Get IPv6 routes
+	// Get IPv6 routes.
 	v6Routes, err := netlink.RouteList(nil, netlink.FAMILY_V6)
 	if err == nil {
-		for _, r := range v6Routes {
+		for i := range v6Routes {
+			r := &v6Routes[i]
 			ri := RouteInfo{
 				Family: "inet6",
 			}
@@ -100,7 +104,7 @@ func GetAllRoutes() ([]RouteInfo, error) {
 				ri.Gateway = r.Gw.String()
 			}
 			if r.LinkIndex > 0 {
-				if link, err := netlink.LinkByIndex(r.LinkIndex); err == nil {
+				if link, linkErr := netlink.LinkByIndex(r.LinkIndex); linkErr == nil {
 					ri.Interface = link.Attrs().Name
 				}
 			}
@@ -139,11 +143,6 @@ func GetDefaultGatewayInterface() (string, error) {
 	}
 
 	return "", nil
-}
-
-// isNetlinkAvailable returns true on Linux where netlink is supported.
-func isNetlinkAvailable() bool {
-	return true
 }
 
 // detectGatewayPlatform is the platform-specific gateway detection.
