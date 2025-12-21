@@ -49,7 +49,6 @@ import {
   DNSSettings,
   HealthChecksSettings,
   PerformanceSettings,
-  SNMPSettings,
   ThresholdsSettings,
   WiFiSettings,
 } from "./sections";
@@ -866,14 +865,14 @@ export const SettingsDrawer = memo(function SettingsDrawer({
   const deleteSubnet = async (cidr: string) => {
     setSubnetsStatus("saving");
     try {
-      const response = await fetch(`${API_BASE}/api/devices/subnets`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ cidr }),
-      });
+      // Backend expects CIDR as query parameter, not in body
+      const response = await fetch(
+        `${API_BASE}/api/devices/subnets?cidr=${encodeURIComponent(cidr)}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       if (response.ok) {
         setSubnetsStatus("saved");
@@ -1507,9 +1506,6 @@ export const SettingsDrawer = memo(function SettingsDrawer({
             addSubnet={addSubnet}
             toggleSubnet={toggleSubnet}
             deleteSubnet={deleteSubnet}
-          />
-
-          <SNMPSettings
             snmpSettings={snmpSettings}
             setSnmpSettings={setSnmpSettings}
             snmpStatus={snmpStatus}
