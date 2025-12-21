@@ -11,16 +11,16 @@ import (
 	"unsafe"
 )
 
-// SIOCETHTOOL ioctl command
+// SIOCETHTOOL ioctl command.
 const siocethtool = 0x8946
 
-// Ethtool command codes
+// Ethtool command codes.
 const (
-	ethtoolGDrvInfo   = 0x00000003 // Get driver info
-	ethtoolGLinkState = 0x0000000a // Get link state
+	ethtoolGDrvInfo   = 0x00000003 // Get driver info.
+	ethtoolGLinkState = 0x0000000a // Get link state.
 )
 
-// ethtoolDrvInfo structure for driver information
+// ethtoolDrvInfo structure for driver information.
 type ethtoolDrvInfo struct {
 	cmd         uint32
 	driver      [32]byte

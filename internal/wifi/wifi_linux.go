@@ -77,19 +77,19 @@ func getInfoPlatform(iface string) *Info {
 	info := &Info{
 		SSID:      bss.SSID,
 		BSSID:     bss.BSSID.String(),
-		Frequency: int(bss.Frequency / 1000000), // Convert Hz to MHz
+		Frequency: bss.Frequency / 1000000, // Convert Hz to MHz.
 	}
 
-	// Calculate channel from frequency
+	// Calculate channel from frequency.
 	if info.Frequency > 0 {
 		info.Channel = frequencyToChannel(info.Frequency)
 	}
 
-	// Get station info for signal strength
+	// Get station info for signal strength.
 	stationInfos, err := client.StationInfo(wifiIface)
 	if err == nil && len(stationInfos) > 0 {
-		// Signal strength is in dBm
-		info.Signal = int(stationInfos[0].Signal)
+		// Signal strength is in dBm.
+		info.Signal = stationInfos[0].Signal
 	}
 
 	// Try to determine security from BSS

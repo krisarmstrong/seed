@@ -107,6 +107,54 @@ linters:
       # 'api' is a meaningful package name for HTTP API handlers
       - path: internal/api/
         text: "var-naming: avoid meaningless package names"
+      # System paths in /sys and /run are legitimate absolute paths
+      - linters:
+          - gocritic
+        text: "filepathJoin.*contains a path separator"
+      # Low-level ioctl operations require unsafe pointers
+      - path: internal/cable/
+        linters:
+          - gosec
+        text: "G103: Use of unsafe calls"
+      # Reading /sys filesystem files is safe (not user-controlled paths)
+      - path: internal/network/detection/
+        linters:
+          - gosec
+        text: "G304: Potential file inclusion"
+      # SQL fragments are more readable inline than as constants
+      - path: internal/database/
+        linters:
+          - goconst
+      # NDP state constants match kernel naming convention
+      - path: internal/discovery/ndp_linux.go
+        linters:
+          - goconst
+      # ARP state constants match kernel naming convention
+      - path: internal/discovery/arp_linux.go
+        linters:
+          - revive
+        text: "var-naming: don't use ALL_CAPS"
+      # British spelling 'neighbour' matches kernel header file name
+      - path: internal/discovery/arp_linux.go
+        linters:
+          - misspell
+        text: "neighbour"
+      # Heatmap type aliases are intentional for user-friendly API
+      - path: internal/survey/
+        linters:
+          - goconst
+      # CVE severity strings match NVD API values
+      - path: internal/discovery/cve_nvd.go
+        linters:
+          - goconst
+      # Log levels are well-known strings, constants reduce readability
+      - path: internal/logging/
+        linters:
+          - goconst
+      # WiFi security type strings match standard values
+      - path: internal/wifi/wifi.go
+        linters:
+          - goconst
 
 output:
   sort-results: true

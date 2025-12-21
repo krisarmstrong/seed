@@ -123,13 +123,13 @@ func interpolateColor(stop1, stop2 ColorStop, value float64) color.RGBA {
 // Accepts both constant values and user-friendly aliases.
 func GetColorScaleByName(name string) *ColorScale {
 	switch name {
-	case string(HeatmapRSSI), "signal": //nolint:goconst // Intentional alias.
+	case string(HeatmapRSSI), "signal":
 		return &RSSIColorScale
 	case string(HeatmapSNR):
 		return &SNRColorScale
 	case string(HeatmapDensity), "ap_density":
 		return &APDensityColorScale
-	case string(HeatmapInterference), "cochannel": //nolint:goconst // Intentional alias.
+	case string(HeatmapInterference), "cochannel":
 		return &InterferenceColorScale
 	default:
 		return &RSSIColorScale
