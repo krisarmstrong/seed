@@ -59,7 +59,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/browser-playwright": "^4.0.15",
     "@vitest/coverage-v8": "^4.0.15",
-    "cspell": "^8.6.0",
+    "cspell": "^9.4.0",
     "eslint": "^9.39.2",
     "eslint-plugin-jsdoc": "^61.5.0",
     "eslint-plugin-react-hooks": "7.0.1",
