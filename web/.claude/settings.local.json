@@ -22,7 +22,8 @@
       "Bash(scp:*)",
       "Bash(xargs -I{} sh -c 'echo \"\"\"\"=== {} ===\"\"\"\" && grep -E \"\"\"\"^export \\(function|const.*= memo\\)\"\"\"\" {} | head -2')",
       "Bash(for f in /Users/krisarmstrong/Developer/projects/seed/web/src/components/settings/sections/*.tsx)",
-      "Bash(do echo '=== $\\(basename $f\\) ===' grep -E \"^export \\(function|const.*= memo\\)\" $f)"
+      "Bash(do echo '=== $\\(basename $f\\) ===' grep -E \"^export \\(function|const.*= memo\\)\" $f)",
+      "mcp__plugin_playwright_playwright__browser_navigate"
     ]
   }
 }
