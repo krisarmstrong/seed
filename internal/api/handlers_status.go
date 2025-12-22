@@ -65,6 +65,7 @@ func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleExport exports current diagnostic data as JSON (fixes #544 - split from handlers.go).
+// Accepts optional query parameter: ?interface=eth0.
 func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	if r.Method != http.MethodGet {
@@ -72,7 +73,8 @@ func (s *Server) handleExport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	currentIface := s.netManager.GetCurrentInterface()
+	// Get interface from query param or fallback to current.
+	currentIface := s.getInterfaceFromRequest(r)
 	if err := s.netManager.RefreshInterfaces(); err != nil {
 		sendErrorResponseWithDetails(w, logger, http.StatusInternalServerError, ErrCodeInternal, "Failed to refresh interfaces", err.Error()) // fixes #694, #699
 		return

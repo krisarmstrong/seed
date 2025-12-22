@@ -5,6 +5,7 @@ package api
 
 import (
 	"context"
+	"net/http"
 	"testing"
 	"time"
 )
@@ -645,4 +646,37 @@ func TestGatewayResponse(t *testing.T) {
 	if resp.Status == "" {
 		t.Error("expected status to be set")
 	}
+}
+
+// TestGetInterfaceFromRequest tests the interface query parameter extraction.
+func TestGetInterfaceFromRequest(t *testing.T) {
+	// Test with query parameter provided (should use query param regardless of netManager).
+	t.Run("query param provided", func(t *testing.T) {
+		server := &Server{netManager: nil} // nil netManager
+		req, _ := http.NewRequest(http.MethodGet, "/api/link?interface=eth0", http.NoBody)
+		result := server.getInterfaceFromRequest(req)
+		if result != "eth0" {
+			t.Errorf("getInterfaceFromRequest() = %q, want %q", result, "eth0")
+		}
+	})
+
+	// Test with no query parameter and nil netManager (should return empty).
+	t.Run("no query param, nil netManager", func(t *testing.T) {
+		server := &Server{netManager: nil}
+		req, _ := http.NewRequest(http.MethodGet, "/api/link", http.NoBody)
+		result := server.getInterfaceFromRequest(req)
+		if result != "" {
+			t.Errorf("getInterfaceFromRequest() = %q, want empty string", result)
+		}
+	})
+
+	// Test with special interface name.
+	t.Run("special interface name", func(t *testing.T) {
+		server := &Server{netManager: nil}
+		req, _ := http.NewRequest(http.MethodGet, "/api/link?interface=enp0s3", http.NoBody)
+		result := server.getInterfaceFromRequest(req)
+		if result != "enp0s3" {
+			t.Errorf("getInterfaceFromRequest() = %q, want %q", result, "enp0s3")
+		}
+	})
 }
