@@ -262,7 +262,7 @@ func (s *Server) onLinkStateChange(event network.LinkEvent) {
 			slog.Warn("Failed to restart discovery", "error", err)
 		}
 
-		// Notify WebSocket clients
+		// Notify WebSocket clients with linkState message
 		s.wsHub.Broadcast(Message{
 			Type: "linkState",
 			Payload: map[string]interface{}{
@@ -271,6 +271,13 @@ func (s *Server) onLinkStateChange(event network.LinkEvent) {
 				"timestamp": event.Timestamp.Format(time.RFC3339),
 			},
 		})
+
+		// Also broadcast link card update immediately to trigger frontend auto-run tests.
+		// The frontend listens for card_update messages on the "link" card to detect
+		// link-up transitions and run speedtest/iperf tests.
+		if linkData := s.collectLinkData(); linkData != nil {
+			s.wsHub.BroadcastCardUpdate("link", linkData)
+		}
 	case network.LinkStateDown:
 		// Link went down - notify clients
 		slog.Info("Link down - notifying clients")
@@ -282,6 +289,12 @@ func (s *Server) onLinkStateChange(event network.LinkEvent) {
 				"timestamp": event.Timestamp.Format(time.RFC3339),
 			},
 		})
+
+		// Also broadcast link card update for proper state tracking.
+		// Frontend uses this to track DOWN state for detecting DOWN→UP transitions.
+		if linkData := s.collectLinkData(); linkData != nil {
+			s.wsHub.BroadcastCardUpdate("link", linkData)
+		}
 	case network.LinkStateUnknown:
 		// Unknown state - log but don't take action
 		slog.Warn("Link state unknown", "interface", event.Interface)
