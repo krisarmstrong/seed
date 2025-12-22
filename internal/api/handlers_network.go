@@ -277,7 +277,8 @@ func (s *Server) handleInterface(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handleLink returns link status for the current interface.
+// handleLink returns link status for the specified or current interface.
+// Accepts optional query parameter: ?interface=eth0.
 func (s *Server) handleLink(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
@@ -296,7 +297,9 @@ func (s *Server) handleLink(w http.ResponseWriter, r *http.Request) {
 		sendErrorResponseWithDetails(w, logger, http.StatusInternalServerError, ErrCodeInternal, localizer.T("errors.network.refreshFailed"), err.Error()) // fixes #694
 		return
 	}
-	currentIface := s.netManager.GetCurrentInterface()
+
+	// Get interface from query param or fallback to current.
+	currentIface := s.getInterfaceFromRequest(r)
 
 	ifaceInfo, err := s.netManager.GetInterface(currentIface)
 	if err != nil {
@@ -346,7 +349,8 @@ func (s *Server) handleLink(w http.ResponseWriter, r *http.Request) {
 	sendJSONResponse(w, nil, http.StatusOK, resp)
 }
 
-// handleIPConfig returns IP configuration for the current interface.
+// handleIPConfig returns IP configuration for the specified or current interface.
+// Accepts optional query parameter: ?interface=eth0.
 func (s *Server) handleIPConfig(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
@@ -365,7 +369,9 @@ func (s *Server) handleIPConfig(w http.ResponseWriter, r *http.Request) {
 		sendErrorResponseWithDetails(w, logger, http.StatusInternalServerError, ErrCodeInternal, localizer.T("errors.network.refreshFailed"), err.Error()) // fixes #694
 		return
 	}
-	currentIface := s.netManager.GetCurrentInterface()
+
+	// Get interface from query param or fallback to current.
+	currentIface := s.getInterfaceFromRequest(r)
 
 	ifaceInfo, err := s.netManager.GetInterface(currentIface)
 	if err != nil {
@@ -895,6 +901,7 @@ func (s *Server) handleIPSettingsGet(w http.ResponseWriter, _ *http.Request) {
 }
 
 // handleIPSettingsPut updates the IP configuration settings.
+// Accepts optional query parameter: ?interface=eth0.
 func (s *Server) handleIPSettingsPut(w http.ResponseWriter, r *http.Request, logger *slog.Logger, localizer *i18n.Localizer) {
 	// Limit request body size to prevent DoS attacks (fixes #693)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
@@ -915,7 +922,8 @@ func (s *Server) handleIPSettingsPut(w http.ResponseWriter, r *http.Request, log
 	s.config.Lock()
 	defer s.config.Unlock()
 
-	currentIface := s.netManager.GetCurrentInterface()
+	// Get interface from query param or fallback to current.
+	currentIface := s.getInterfaceFromRequest(r)
 
 	if req.Mode == ipModeStatic {
 		// Apply static IP configuration
@@ -1049,6 +1057,18 @@ func (s *Server) handleCable(w http.ResponseWriter, r *http.Request) {
 // ============================================================================
 // Helper Functions
 // ============================================================================
+
+// getInterfaceFromRequest extracts the interface name from request query params.
+// Falls back to the netManager's current interface if not specified.
+func (s *Server) getInterfaceFromRequest(r *http.Request) string {
+	if iface := r.URL.Query().Get("interface"); iface != "" {
+		return iface
+	}
+	if s.netManager != nil {
+		return s.netManager.GetCurrentInterface()
+	}
+	return ""
+}
 
 // applyDHCPLeaseInfo populates the response with DHCP lease information.
 func applyDHCPLeaseInfo(resp *IPConfigResponse, currentIface string) {
