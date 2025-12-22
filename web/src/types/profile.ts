@@ -25,6 +25,55 @@ export interface ProfileConfig {
   thresholds?: ThresholdsConfig;
   discovery?: DiscoveryConfig;
   notes?: string;
+  /** Interface configurations for multi-interface support */
+  interfaces?: ProfileInterfaceConfigs;
+}
+
+// ============================================================================
+// Multi-Interface Support Types
+// ============================================================================
+
+/**
+ * ProfileInterfaceConfigs stores the selected interfaces for a profile.
+ * Supports both ethernet and WiFi interfaces independently.
+ */
+export interface ProfileInterfaceConfigs {
+  ethernet?: ProfileInterfaceSelection | null;
+  wifi?: ProfileInterfaceSelection | null;
+}
+
+/**
+ * ProfileInterfaceSelection stores configuration for a selected interface.
+ * Each interface can have its own thresholds and health check configuration.
+ */
+export interface ProfileInterfaceSelection {
+  /** Interface name (e.g., "eth0", "wlan0") */
+  name: string;
+  /** Whether this interface is enabled for testing */
+  enabled: boolean;
+  /** Optional per-interface thresholds */
+  thresholds?: ProfileInterfaceThresholds;
+  /** Optional per-interface health check overrides */
+  health_checks?: ProfileInterfaceHealthChecks;
+}
+
+/**
+ * ProfileInterfaceThresholds for per-interface latency/signal thresholds.
+ */
+export interface ProfileInterfaceThresholds {
+  latency_warning_ms?: number;
+  latency_critical_ms?: number;
+  signal_warning_dbm?: number;
+  signal_critical_dbm?: number;
+}
+
+/**
+ * ProfileInterfaceHealthChecks for per-interface health check overrides.
+ */
+export interface ProfileInterfaceHealthChecks {
+  ping_targets?: string[];
+  tcp_checks?: TcpCheck[];
+  http_checks?: HttpCheck[];
 }
 
 /**

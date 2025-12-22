@@ -31,6 +31,7 @@ import type {
   ProfileImportResponse,
   ProfileExportResponse,
   ActiveProfileResponse,
+  ProfileInterfaceSelection,
 } from "../types/profile";
 
 // ============================================================================
@@ -68,6 +69,12 @@ export interface ProfileContextValue {
   ) => Promise<ProfileImportResponse | null>;
   exportProfiles: () => Promise<ProfileExportResponse | null>;
   downloadProfiles: () => Promise<boolean>;
+
+  // Interface selection helpers (multi-interface support)
+  getEthernetInterface: () => ProfileInterfaceSelection | null;
+  getWifiInterface: () => ProfileInterfaceSelection | null;
+  setEthernetInterface: (name: string, enabled?: boolean) => Promise<boolean>;
+  setWifiInterface: (name: string, enabled?: boolean) => Promise<boolean>;
 }
 
 // Create context with undefined default to enforce provider requirement
@@ -418,6 +425,119 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
   }, [exportProfiles]);
 
   // ============================================================================
+  // Interface Selection Helpers
+  // ============================================================================
+
+  /**
+   * Get the currently selected ethernet interface from the active profile.
+   */
+  const getEthernetInterface =
+    useCallback((): ProfileInterfaceSelection | null => {
+      return activeProfile?.config?.interfaces?.ethernet ?? null;
+    }, [activeProfile]);
+
+  /**
+   * Get the currently selected WiFi interface from the active profile.
+   */
+  const getWifiInterface = useCallback((): ProfileInterfaceSelection | null => {
+    return activeProfile?.config?.interfaces?.wifi ?? null;
+  }, [activeProfile]);
+
+  /**
+   * Set the ethernet interface for the active profile.
+   * Updates the profile on the backend and refreshes local state.
+   */
+  const setEthernetInterface = useCallback(
+    async (name: string, enabled: boolean = true): Promise<boolean> => {
+      if (!activeProfile) {
+        logger.warn(
+          LogComponents.PROFILES,
+          "Cannot set ethernet interface: no active profile"
+        );
+        return false;
+      }
+
+      try {
+        const updatedConfig = {
+          ...activeProfile.config,
+          interfaces: {
+            ...activeProfile.config?.interfaces,
+            ethernet: { name, enabled },
+          },
+        };
+
+        await api.put(`/api/profiles/${activeProfile.id}`, {
+          name: activeProfile.name,
+          description: activeProfile.description,
+          config: updatedConfig,
+        });
+
+        await refreshActiveProfile();
+        logger.info(LogComponents.PROFILES, "Ethernet interface updated", {
+          profileId: activeProfile.id,
+          interface: name,
+        });
+        return true;
+      } catch (err) {
+        logger.error(
+          LogComponents.PROFILES,
+          "Failed to set ethernet interface",
+          err
+        );
+        return false;
+      }
+    },
+    [activeProfile, refreshActiveProfile]
+  );
+
+  /**
+   * Set the WiFi interface for the active profile.
+   * Updates the profile on the backend and refreshes local state.
+   */
+  const setWifiInterface = useCallback(
+    async (name: string, enabled: boolean = true): Promise<boolean> => {
+      if (!activeProfile) {
+        logger.warn(
+          LogComponents.PROFILES,
+          "Cannot set WiFi interface: no active profile"
+        );
+        return false;
+      }
+
+      try {
+        const updatedConfig = {
+          ...activeProfile.config,
+          interfaces: {
+            ...activeProfile.config?.interfaces,
+            wifi: { name, enabled },
+          },
+        };
+
+        await api.put(`/api/profiles/${activeProfile.id}`, {
+          name: activeProfile.name,
+          description: activeProfile.description,
+          config: updatedConfig,
+        });
+
+        await refreshActiveProfile();
+        logger.info(LogComponents.PROFILES, "WiFi interface updated", {
+          profileId: activeProfile.id,
+          interface: name,
+        });
+        return true;
+      } catch (err) {
+        logger.error(
+          LogComponents.PROFILES,
+          "Failed to set WiFi interface",
+          err
+        );
+        return false;
+      }
+    },
+    [activeProfile, refreshActiveProfile]
+  );
+
+  // ============================================================================
   // Initial Load
   // ============================================================================
 
@@ -455,6 +575,10 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     importProfiles,
     exportProfiles,
     downloadProfiles,
+    getEthernetInterface,
+    getWifiInterface,
+    setEthernetInterface,
+    setWifiInterface,
   };
 
   return (
