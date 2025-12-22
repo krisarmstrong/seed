@@ -409,7 +409,12 @@ function App() {
   // Fetch link data (Layer 2 only)
   const fetchLinkData = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/link`, {
+      // Use ref to get current interface without dependency change (#754)
+      const iface = currentInterfaceRef.current;
+      const url = iface
+        ? `${API_BASE}/api/link?interface=${encodeURIComponent(iface)}`
+        : `${API_BASE}/api/link`;
+      const response = await fetch(url, {
         credentials: "include",
       });
       if (response.ok) {
@@ -459,7 +464,12 @@ function App() {
   // Fetch IP configuration (DHCP card - Layer 3)
   const fetchIPConfig = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/ipconfig`, {
+      // Use ref to get current interface without dependency change (#754)
+      const iface = currentInterfaceRef.current;
+      const url = iface
+        ? `${API_BASE}/api/ipconfig?interface=${encodeURIComponent(iface)}`
+        : `${API_BASE}/api/ipconfig`;
+      const response = await fetch(url, {
         credentials: "include",
       });
       if (response.ok) {
