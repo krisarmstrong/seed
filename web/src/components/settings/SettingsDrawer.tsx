@@ -389,12 +389,15 @@ interface SettingsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   version?: string;
+  /** Whether currently viewing WiFi mode (shows WiFi settings instead of Link/Cable). */
+  isWifi?: boolean;
 }
 
 export const SettingsDrawer = memo(function SettingsDrawer({
   isOpen,
   onClose,
   version = "dev",
+  isWifi = false,
 }: SettingsDrawerProps) {
   const { t } = useTranslation("settings");
   const { theme, setTheme, isDark } = useTheme();
@@ -1330,20 +1333,24 @@ export const SettingsDrawer = memo(function SettingsDrawer({
           ref={scrollRef}
         >
           {/* Settings sections ordered to match dashboard card order */}
+          {/* Ethernet-specific settings shown when not in WiFi mode (#754) */}
+          {!isWifi && (
+            <>
+              {/* Link Settings - matches LinkCard position (first) */}
+              <LinkSettings
+                linkSettings={linkSettings}
+                setLinkSettings={setLinkSettings}
+                linkStatus={linkStatus}
+              />
 
-          {/* Link Settings - matches LinkCard position (first) */}
-          <LinkSettings
-            linkSettings={linkSettings}
-            setLinkSettings={setLinkSettings}
-            linkStatus={linkStatus}
-          />
-
-          {/* Cable Test Settings - for CableCard (second) */}
-          <CableTestSettings
-            cableTestSettings={cableTestSettings}
-            setCableTestSettings={setCableTestSettings}
-            cableTestStatus={cableTestStatus}
-          />
+              {/* Cable Test Settings - for CableCard (second) */}
+              <CableTestSettings
+                cableTestSettings={cableTestSettings}
+                setCableTestSettings={setCableTestSettings}
+                cableTestStatus={cableTestStatus}
+              />
+            </>
+          )}
 
           {/* Network Section - IP/DHCP config (third) */}
           <CollapsibleSection title={t("sections.network")}>
@@ -1651,12 +1658,14 @@ export const SettingsDrawer = memo(function SettingsDrawer({
             </div>
           </CollapsibleSection>
 
-          {/* WiFi Settings - for WiFi mode */}
-          <WiFiSettings
-            wifiSettings={wifiSettings}
-            setWifiSettings={setWifiSettings}
-            wifiStatus={wifiStatus}
-          />
+          {/* WiFi Settings - only shown in WiFi mode (#754) */}
+          {isWifi && (
+            <WiFiSettings
+              wifiSettings={wifiSettings}
+              setWifiSettings={setWifiSettings}
+              wifiStatus={wifiStatus}
+            />
+          )}
 
           {/* DNS Settings - matches DNSCard position */}
           <DNSSettings

@@ -1639,11 +1639,12 @@ function App() {
         </div>
       </main>
 
-      {/* Settings Drawer */}
+      {/* Settings Drawer - shows interface-specific settings (#754) */}
       <SettingsDrawer
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         version={appVersion}
+        isWifi={isWifi}
       />
 
       {/* Help Modal - improved with TOC, About, and search */}
