@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/krisarmstrong/seed/internal/version"
 )
 
 var (
@@ -17,7 +19,9 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "seed",
 	Short: "The Seed - Network Diagnostics by Mustard Seed Networks",
-	Long: `The Seed is a comprehensive network diagnostic tool that provides:
+	Long: fmt.Sprintf(`The Seed %s - Network Diagnostics by Mustard Seed Networks
+
+A comprehensive network diagnostic tool that provides:`, version.Version) + `
 
   - Network device discovery and monitoring
   - WiFi site surveys and heatmaps
@@ -45,6 +49,9 @@ func Execute() {
 }
 
 func init() {
+	// Set version for --version flag and help output
+	rootCmd.Version = version.Version
+
 	// Persistent flags are available to all subcommands
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file path (default: XDG config paths or configs/seed.yaml)")
 	rootCmd.PersistentFlags().BoolVar(&devMode, "dev", false, "run in development mode (HTTP instead of HTTPS)")
