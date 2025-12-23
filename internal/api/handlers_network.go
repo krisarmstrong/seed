@@ -6,11 +6,13 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/krisarmstrong/seed/internal/cable"
 	"github.com/krisarmstrong/seed/internal/config"
 	"github.com/krisarmstrong/seed/internal/dhcp"
 	"github.com/krisarmstrong/seed/internal/i18n"
 	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/network"
+	"github.com/krisarmstrong/seed/internal/phy"
 	"github.com/krisarmstrong/seed/internal/validation"
 	"github.com/krisarmstrong/seed/internal/vlan"
 	"github.com/krisarmstrong/seed/internal/wifi"
@@ -51,6 +53,44 @@ type LinkResponse struct {
 	FlapCount24h int                `json:"flapCount24h"`       // Link flap count in last 24 hours
 	History      []LinkHistoryEvent `json:"history,omitempty"`  // Recent link state changes
 	UptimeMs     int64              `json:"uptimeMs,omitempty"` // Monitor uptime in milliseconds
+	PoE          *PoEInfo           `json:"poe,omitempty"`      // Power over Ethernet status
+	SFP          *SFPInfo           `json:"sfp,omitempty"`      // SFP module and DDM info
+}
+
+// PoEInfo represents Power over Ethernet status.
+type PoEInfo struct {
+	Detected bool    `json:"detected"`
+	Standard string  `json:"standard,omitempty"` // 802.3af, 802.3at, 802.3bt
+	Class    int     `json:"class,omitempty"`
+	PowerMw  float64 `json:"powerMw,omitempty"`
+	Voltage  float64 `json:"voltage,omitempty"`
+}
+
+// SFPInfo represents SFP module information and DDM.
+type SFPInfo struct {
+	Present    bool        `json:"present"`
+	Vendor     string      `json:"vendor,omitempty"`
+	PartNumber string      `json:"partNumber,omitempty"`
+	Serial     string      `json:"serial,omitempty"`
+	Type       string      `json:"type,omitempty"`       // SR, LR, ER
+	Wavelength int         `json:"wavelength,omitempty"` // nm
+	Distance   int         `json:"distance,omitempty"`   // meters
+	Connector  string      `json:"connector,omitempty"`  // LC, SC
+	DDMSupport bool        `json:"ddmSupport"`
+	DDM        *SFPDDMInfo `json:"ddm,omitempty"`
+}
+
+// SFPDDMInfo contains DDM readings from SFP module.
+type SFPDDMInfo struct {
+	Temperature float64  `json:"temperature"` // Celsius
+	Voltage     float64  `json:"voltage"`     // Volts
+	TxPowerDbm  float64  `json:"txPowerDbm"`
+	TxPowerMw   float64  `json:"txPowerMw"`
+	RxPowerDbm  float64  `json:"rxPowerDbm"`
+	RxPowerMw   float64  `json:"rxPowerMw"`
+	LaserBiasMa float64  `json:"laserBiasMa"`
+	Alarms      []string `json:"alarms,omitempty"`
+	Warnings    []string `json:"warnings,omitempty"`
 }
 
 // IPv4Info represents IPv4 address configuration.
@@ -151,10 +191,32 @@ type WiFiSettingsResponse struct {
 
 // CableResponse represents the cable test results for the API.
 type CableResponse struct {
-	Supported bool     `json:"supported"`
-	Length    *float64 `json:"length,omitempty"` // meters
-	Status    string   `json:"status"`
-	Faults    []string `json:"faults"`
+	Supported   bool              `json:"supported"`
+	Status      string            `json:"status"`
+	Length      *float64          `json:"length,omitempty"`   // meters (overall or to first fault)
+	LengthFt    *float64          `json:"lengthFt,omitempty"` // feet
+	Pairs       []CablePairResult `json:"pairs,omitempty"`    // Per-pair results
+	Faults      []string          `json:"faults"`
+	WiringStd   string            `json:"wiringStandard"`        // 568A or 568B
+	Pinout      []CablePinout     `json:"pinout,omitempty"`      // Pin-to-color mapping
+	IsCrossover bool              `json:"isCrossover,omitempty"` // True if crossover cable
+	DriverName  string            `json:"driverName,omitempty"`  // NIC driver
+}
+
+// CablePairResult represents TDR test results for a single twisted pair.
+type CablePairResult struct {
+	Pair       string   `json:"pair"`               // "1-2", "3-6", "4-5", "7-8"
+	PairLetter string   `json:"pairLetter"`         // "A", "B", "C", "D"
+	Status     string   `json:"status"`             // ok, open, short, etc.
+	LengthM    *float64 `json:"lengthM,omitempty"`  // Distance in meters
+	LengthFt   *float64 `json:"lengthFt,omitempty"` // Distance in feet
+}
+
+// CablePinout represents a pin-to-color mapping for wiring standard display.
+type CablePinout struct {
+	Pin   int    `json:"pin"`
+	Color string `json:"color"`
+	Pair  string `json:"pair"` // Which pair this pin belongs to
 }
 
 // IPSettingsRequest represents a request to change IP configuration.
@@ -343,6 +405,50 @@ func (s *Server) handleLink(w http.ResponseWriter, r *http.Request) {
 					State:     event.State.String(),
 					Timestamp: event.Timestamp.Format("2006-01-02T15:04:05Z07:00"),
 				}
+			}
+		}
+	}
+
+	// Detect PoE and SFP/DDM status
+	phyDetector := phy.NewDetector(currentIface)
+
+	// Add PoE info if detected
+	poeStatus := phyDetector.GetPoEStatus()
+	if poeStatus != nil && poeStatus.Detected {
+		resp.PoE = &PoEInfo{
+			Detected: poeStatus.Detected,
+			Standard: poeStatus.Standard,
+			Class:    poeStatus.Class,
+			PowerMw:  poeStatus.PowerMw,
+			Voltage:  poeStatus.Voltage,
+		}
+	}
+
+	// Add SFP/DDM info if present
+	sfpInfo := phyDetector.GetSFPInfo()
+	if sfpInfo != nil && sfpInfo.Present {
+		resp.SFP = &SFPInfo{
+			Present:    sfpInfo.Present,
+			Vendor:     sfpInfo.Vendor,
+			PartNumber: sfpInfo.PartNumber,
+			Serial:     sfpInfo.Serial,
+			Type:       sfpInfo.Type,
+			Wavelength: sfpInfo.Wavelength,
+			Distance:   sfpInfo.Distance,
+			Connector:  sfpInfo.Connector,
+			DDMSupport: sfpInfo.DDMSupport,
+		}
+		if sfpInfo.DDM != nil {
+			resp.SFP.DDM = &SFPDDMInfo{
+				Temperature: sfpInfo.DDM.Temperature,
+				Voltage:     sfpInfo.DDM.Voltage,
+				TxPowerDbm:  sfpInfo.DDM.TxPowerDbm,
+				TxPowerMw:   sfpInfo.DDM.TxPowerMw,
+				RxPowerDbm:  sfpInfo.DDM.RxPowerDbm,
+				RxPowerMw:   sfpInfo.DDM.RxPowerMw,
+				LaserBiasMa: sfpInfo.DDM.LaserBiasMa,
+				Alarms:      sfpInfo.DDM.Alarms,
+				Warnings:    sfpInfo.DDM.Warnings,
 			}
 		}
 	}
@@ -1071,6 +1177,7 @@ func (s *Server) handleSetMTU(w http.ResponseWriter, r *http.Request) {
 }
 
 // handleCable performs a cable test and returns results.
+// Accepts optional query parameter: ?standard=568A (default: 568B).
 func (s *Server) handleCable(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
@@ -1087,11 +1194,46 @@ func (s *Server) handleCable(w http.ResponseWriter, r *http.Request) {
 
 	result := s.cableTester.Test()
 
+	// Allow wiring standard override via query param
+	wiringStd := cable.Wiring568B // Default to 568B (most common)
+	if std := r.URL.Query().Get("standard"); std == "568A" {
+		wiringStd = cable.Wiring568A
+	}
+
 	resp := CableResponse{
-		Supported: result.Supported,
-		Length:    result.Length,
-		Status:    string(result.Status),
-		Faults:    result.Faults,
+		Supported:   result.Supported,
+		Status:      string(result.Status),
+		Length:      result.Length,
+		LengthFt:    result.LengthFt,
+		Faults:      result.Faults,
+		WiringStd:   string(wiringStd),
+		IsCrossover: result.IsCrossover,
+		DriverName:  result.DriverName,
+	}
+
+	// Convert per-pair results
+	if len(result.Pairs) > 0 {
+		resp.Pairs = make([]CablePairResult, len(result.Pairs))
+		for i, pair := range result.Pairs {
+			resp.Pairs[i] = CablePairResult{
+				Pair:       pair.Pair,
+				PairLetter: pair.PairLetter,
+				Status:     string(pair.Status),
+				LengthM:    pair.LengthM,
+				LengthFt:   pair.LengthFt,
+			}
+		}
+	}
+
+	// Get pinout for requested wiring standard
+	pinout := cable.GetPinout(wiringStd)
+	resp.Pinout = make([]CablePinout, len(pinout))
+	for i, p := range pinout {
+		resp.Pinout[i] = CablePinout{
+			Pin:   p.Pin,
+			Color: p.Color,
+			Pair:  p.Pair,
+		}
 	}
 
 	sendJSONResponse(w, nil, http.StatusOK, resp)
