@@ -1333,24 +1333,19 @@ export const SettingsDrawer = memo(function SettingsDrawer({
           ref={scrollRef}
         >
           {/* Settings sections ordered to match dashboard card order */}
-          {/* Ethernet-specific settings shown when not in WiFi mode (#754) */}
-          {!isWifi && (
-            <>
-              {/* Link Settings - matches LinkCard position (first) */}
-              <LinkSettings
-                linkSettings={linkSettings}
-                setLinkSettings={setLinkSettings}
-                linkStatus={linkStatus}
-              />
+          {/* Link Settings - always visible for ethernet interface config */}
+          <LinkSettings
+            linkSettings={linkSettings}
+            setLinkSettings={setLinkSettings}
+            linkStatus={linkStatus}
+          />
 
-              {/* Cable Test Settings - for CableCard (second) */}
-              <CableTestSettings
-                cableTestSettings={cableTestSettings}
-                setCableTestSettings={setCableTestSettings}
-                cableTestStatus={cableTestStatus}
-              />
-            </>
-          )}
+          {/* Cable Test Settings - always visible for cable diagnostics */}
+          <CableTestSettings
+            cableTestSettings={cableTestSettings}
+            setCableTestSettings={setCableTestSettings}
+            cableTestStatus={cableTestStatus}
+          />
 
           {/* Network Section - IP/DHCP config (third) */}
           <CollapsibleSection title={t("sections.network")}>
