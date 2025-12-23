@@ -31,7 +31,10 @@ type DiscoveredDevice struct {
 	IPv6Address     string    `json:"ipv6,omitempty"`          // Primary IPv6 address
 	IPv6Addresses   []string  `json:"ipv6Addresses,omitempty"` // All IPv6 addresses
 	MAC             string    `json:"mac"`
-	Hostname        string    `json:"hostname,omitempty"`
+	Hostname        string    `json:"hostname,omitempty"`    // DNS PTR resolved name
+	NetBIOSName     string    `json:"netbiosName,omitempty"` // Windows NetBIOS name (UDP 137)
+	MDNSName        string    `json:"mdnsName,omitempty"`    // mDNS/Bonjour .local name
+	DisplayName     string    `json:"displayName,omitempty"` // Best available name for UI display
 	Vendor          string    `json:"vendor,omitempty"`
 	OSGuess         string    `json:"osGuess,omitempty"`
 	TTL             int       `json:"ttl,omitempty"`
@@ -99,15 +102,18 @@ type NDPDeviceInfo struct {
 
 // DeviceDiscovery aggregates device discovery from all sources.
 type DeviceDiscovery struct {
-	interfaceName string
-	oui           *OUIDatabase
-	arpScanner    *ARPScanner
-	ndpScanner    *NDPScanner
-	protoManager  *Manager
-	mu            sync.RWMutex
-	devices       map[string]*DiscoveredDevice // Key by MAC
-	lastScan      time.Time
-	scanning      bool
+	interfaceName   string
+	oui             *OUIDatabase
+	arpScanner      *ARPScanner
+	ndpScanner      *NDPScanner
+	protoManager    *Manager
+	netbiosResolver *NetBIOSResolver
+	mdnsListener    *MDNSListener
+	mu              sync.RWMutex
+	devices         map[string]*DiscoveredDevice // Key by MAC
+	lastScan        time.Time
+	scanning        bool
+	nameResolution  bool // Enable NetBIOS/mDNS name resolution
 }
 
 // NewDeviceDiscovery creates a new device discovery aggregator.
@@ -153,12 +159,15 @@ func NewDeviceDiscoveryWithOUI(interfaceName, ouiPath string, ouiMaxAge time.Dur
 	}
 
 	return &DeviceDiscovery{
-		interfaceName: interfaceName,
-		oui:           oui,
-		arpScanner:    NewARPScanner(interfaceName, oui),
-		ndpScanner:    NewNDPScanner(interfaceName),
-		protoManager:  NewManager(interfaceName),
-		devices:       make(map[string]*DiscoveredDevice),
+		interfaceName:   interfaceName,
+		oui:             oui,
+		arpScanner:      NewARPScanner(interfaceName, oui),
+		ndpScanner:      NewNDPScanner(interfaceName),
+		protoManager:    NewManager(interfaceName),
+		netbiosResolver: NewNetBIOSResolver(),
+		mdnsListener:    NewMDNSListener(interfaceName),
+		devices:         make(map[string]*DiscoveredDevice),
+		nameResolution:  true, // Enabled by default
 	}
 }
 
@@ -169,12 +178,21 @@ func (d *DeviceDiscovery) Start() error {
 		slog.Warn("Failed to start NDP scanner", "error", err)
 		// Continue even if NDP fails (may be on macOS or no IPv6)
 	}
+
+	// Start mDNS listener for passive name discovery
+	if d.nameResolution {
+		if err := d.mdnsListener.Start(); err != nil {
+			slog.Warn("Failed to start mDNS listener", "error", err)
+		}
+	}
+
 	return d.protoManager.Start()
 }
 
 // Stop stops all discovery.
 func (d *DeviceDiscovery) Stop() {
 	_ = d.ndpScanner.Stop() //nolint:errcheck // Best-effort cleanup
+	d.mdnsListener.Stop()
 	d.protoManager.Stop()
 }
 
@@ -223,6 +241,11 @@ func (d *DeviceDiscovery) Scan(ctx context.Context) error {
 	// Aggregate results
 	d.aggregateResults()
 
+	// Trigger NetBIOS name resolution in background
+	if d.nameResolution {
+		go d.ResolveNetBIOSNames(ctx)
+	}
+
 	return nil
 }
 
@@ -236,8 +259,10 @@ func (d *DeviceDiscovery) aggregateResults() {
 	d.mergeCDPResults()
 	d.mergeEDPResults()
 	d.mergeNDPResults()
+	d.mergeMDNSNames()
 	d.detectDuplicateIPs()
 	d.ensureVendorInfo()
+	d.computeDisplayNames()
 }
 
 // mergeARPResults merges ARP scan entries into devices. Must be called with mu held.
@@ -451,6 +476,32 @@ func (d *DeviceDiscovery) ensureVendorInfo() {
 	}
 }
 
+// mergeMDNSNames merges passively captured mDNS names into devices. Must be called with mu held.
+func (d *DeviceDiscovery) mergeMDNSNames() {
+	if d.mdnsListener == nil {
+		return
+	}
+
+	mdnsNames := d.mdnsListener.GetNames()
+	for _, device := range d.devices {
+		if device.IP != "" && device.MDNSName == "" {
+			if name, ok := mdnsNames[device.IP]; ok {
+				device.MDNSName = name
+				if !containsMethod(device.DiscoveryMethod, MethodMDNS) {
+					device.DiscoveryMethod = append(device.DiscoveryMethod, MethodMDNS)
+				}
+			}
+		}
+	}
+}
+
+// computeDisplayNames computes the best display name for all devices. Must be called with mu held.
+func (d *DeviceDiscovery) computeDisplayNames() {
+	for _, device := range d.devices {
+		device.DisplayName = device.ComputeDisplayName()
+	}
+}
+
 // getOrCreateDevice returns an existing device or creates a new one.
 func (d *DeviceDiscovery) getOrCreateDevice(mac string) *DiscoveredDevice {
 	device, exists := d.devices[mac]
@@ -574,4 +625,96 @@ func (d *DeviceDiscovery) ClearDevices() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.devices = make(map[string]*DiscoveredDevice)
+}
+
+// SetNameResolution enables or disables NetBIOS/mDNS name resolution.
+func (d *DeviceDiscovery) SetNameResolution(enabled bool) {
+	d.mu.Lock()
+	d.nameResolution = enabled
+	d.mu.Unlock()
+}
+
+// ResolveNetBIOSNames triggers active NetBIOS name resolution for discovered devices.
+// This is done asynchronously to avoid blocking the scan process.
+func (d *DeviceDiscovery) ResolveNetBIOSNames(ctx context.Context) {
+	if d.netbiosResolver == nil || !d.nameResolution {
+		return
+	}
+
+	d.mu.RLock()
+	var ips []string
+	deviceMap := make(map[string]*DiscoveredDevice)
+	for _, device := range d.devices {
+		// Only resolve for local devices without a NetBIOS name
+		if device.IP != "" && device.NetBIOSName == "" && device.IsLocal {
+			ips = append(ips, device.IP)
+			deviceMap[device.IP] = device
+		}
+	}
+	d.mu.RUnlock()
+
+	if len(ips) == 0 {
+		return
+	}
+
+	slog.Debug("NetBIOS: resolving names", "count", len(ips))
+
+	// Resolve in batch
+	results := d.netbiosResolver.ResolveBatch(ctx, ips)
+
+	// Update devices with resolved names
+	d.mu.Lock()
+	for _, result := range results {
+		if result.Err == nil && result.Name != "" {
+			if device, ok := deviceMap[result.IP]; ok {
+				device.NetBIOSName = result.Name
+				device.DisplayName = device.ComputeDisplayName()
+				slog.Debug("NetBIOS: resolved name", "ip", result.IP, "name", result.Name)
+			}
+		}
+	}
+	d.mu.Unlock()
+}
+
+// ComputeDisplayName returns the best available name for a device.
+// Priority order:
+//  1. LLDP/CDP SystemName (network devices identify themselves)
+//  2. mDNS name (Apple/Linux devices with Bonjour)
+//  3. NetBIOS name (Windows devices)
+//  4. DNS hostname (PTR record)
+//  5. IP address (fallback)
+func (device *DiscoveredDevice) ComputeDisplayName() string {
+	// Network device names from discovery protocols
+	if device.LLDPInfo != nil && device.LLDPInfo.SystemName != "" {
+		return device.LLDPInfo.SystemName
+	}
+	if device.CDPInfo != nil && device.CDPInfo.DeviceID != "" {
+		return device.CDPInfo.DeviceID
+	}
+	if device.EDPInfo != nil && device.EDPInfo.DisplayName != "" {
+		return device.EDPInfo.DisplayName
+	}
+
+	// mDNS name (usually friendly like "Johns-MacBook.local")
+	if device.MDNSName != "" {
+		return device.MDNSName
+	}
+
+	// NetBIOS name (Windows: DESKTOP-ABC123)
+	if device.NetBIOSName != "" {
+		return device.NetBIOSName
+	}
+
+	// DNS hostname (PTR record)
+	if device.Hostname != "" {
+		return device.Hostname
+	}
+
+	// Fallback to IP
+	if device.IP != "" {
+		return device.IP
+	}
+
+	// Last resort: MAC address
+	return device.MAC
 }
