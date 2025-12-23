@@ -62,6 +62,7 @@ import {
   NetworkDiscoveryCard,
   NetworkDiscoveryData,
   PublicIPData,
+  PathDiscoveryCard,
 } from "./components/cards";
 import { PerformanceCard } from "./components/cards/PerformanceCard";
 import { HealthCheckCard } from "./components/cards/HealthCheckCard";
@@ -1596,6 +1597,12 @@ function App() {
                   onScan={triggerDeviceScan}
                 />
               )}
+
+              {/* Path Discovery - Traceroute visualization */}
+              <PathDiscoveryCard
+                gateway={cards.gateway?.gateway}
+                dnsServer={cards.dns?.servers?.[0]?.address}
+              />
 
               {/* WiFi-only: WiFi Survey for heatmaps and site surveys */}
               {/* Fix #572: Pass current interface to avoid hardcoded "wlan0" */}
