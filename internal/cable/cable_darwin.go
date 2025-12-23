@@ -19,5 +19,7 @@ func testPlatform(_ string) *TestResult {
 		Supported: false,
 		Status:    StatusUnknown,
 		Faults:    []string{"Cable testing not supported on macOS"},
+		WiringStd: Wiring568B,
+		Pinout:    Get568BPinout(),
 	}
 }
