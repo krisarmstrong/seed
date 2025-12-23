@@ -107,7 +107,6 @@ export const DiscoverySettings = memo(function DiscoverySettings({
   );
 
   const currentProfile = networkDiscoverySettings.profile || "standard";
-  const showCustomOptions = currentProfile === "custom";
   const showSubnets =
     currentProfile === "full_scan" || currentProfile === "custom";
 
@@ -143,13 +142,11 @@ export const DiscoverySettings = memo(function DiscoverySettings({
           onStatusRefresh={fetchServiceStatus}
         />
 
-        {/* Custom Options (only shown when Custom profile is selected) */}
-        {showCustomOptions && (
-          <DiscoveryCustomOptions
-            settings={networkDiscoverySettings}
-            onSettingsChange={setNetworkDiscoverySettings}
-          />
-        )}
+        {/* Advanced Options - always available for fine-tuning */}
+        <DiscoveryCustomOptions
+          settings={networkDiscoverySettings}
+          onSettingsChange={setNetworkDiscoverySettings}
+        />
 
         {/* Timing Settings */}
         <DiscoveryTimingSettings
