@@ -154,8 +154,8 @@ do_upgrade() {
 
     # Step 4: Set capabilities
     log_step "4/5 Setting capabilities..."
-    setcap cap_net_raw=+ep "$INSTALL_DIR/$BINARY_NAME"
-    log_info "Capabilities set (cap_net_raw)"
+    setcap cap_net_raw,cap_net_admin=+ep "$INSTALL_DIR/$BINARY_NAME"
+    log_info "Capabilities set (cap_net_raw,cap_net_admin)"
 
     # Step 5: Start service
     log_step "5/5 Starting service..."
@@ -183,7 +183,7 @@ do_upgrade() {
         log_warn "Rolling back to previous version..."
         if [[ -f "$INSTALL_DIR/${BINARY_NAME}.bak" ]]; then
             cp "$INSTALL_DIR/${BINARY_NAME}.bak" "$INSTALL_DIR/$BINARY_NAME"
-            setcap cap_net_raw=+ep "$INSTALL_DIR/$BINARY_NAME"
+            setcap cap_net_raw,cap_net_admin=+ep "$INSTALL_DIR/$BINARY_NAME"
             systemctl start "$SERVICE_NAME"
             log_info "Rollback complete"
         fi
