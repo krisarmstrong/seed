@@ -826,13 +826,13 @@ func DefaultConfig() *Config {
 		Security: SecurityConfig{
 			AllowedOrigins: []string{}, // Empty = use RFC 1918 defaults
 			VulnerabilityScanning: VulnerabilityScanConfig{
-				Enabled:           false,
-				CVEDatabase:       "nvd",
+				Enabled:           true,  // Enable by default for security visibility
+				CVEDatabase:       "nvd", // NVD works without API key (rate limited)
 				NVDAPIKey:         "",
 				UpdateInterval:    86400, // 24 hours
 				SeverityThreshold: "medium",
 				MaxConcurrent:     5,
-				AutoScan:          false,
+				AutoScan:          true, // Auto-scan after device discovery
 			},
 		},
 		Iperf: IperfConfig{

@@ -266,3 +266,50 @@ func (nvd *NVDProvider) parseResponse(resp *nvdCVEResponse) ([]Vulnerability, er
 
 	return vulns, nil
 }
+
+// ValidateNVDAPIKey validates an NVD API key by making a test request.
+// Returns true if the key is valid, false otherwise.
+func ValidateNVDAPIKey(ctx context.Context, apiKey string) (bool, error) {
+	if apiKey == "" {
+		return false, nil
+	}
+
+	// Make a minimal test request to NVD API
+	// We query for a small result to minimize bandwidth
+	testURL := nvdAPIBaseURL + "?resultsPerPage=1&startIndex=0"
+
+	req, err := http.NewRequestWithContext(ctx, "GET", testURL, http.NoBody)
+	if err != nil {
+		return false, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	// Add API key header
+	req.Header.Set("apiKey", apiKey)
+
+	client := &http.Client{Timeout: 15 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, fmt.Errorf("failed to make request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Check status code
+	switch resp.StatusCode {
+	case http.StatusOK:
+		// API key is valid
+		return true, nil
+	case http.StatusForbidden, http.StatusUnauthorized:
+		// API key is invalid
+		return false, nil
+	case http.StatusTooManyRequests:
+		// Rate limited - key might still be valid, but we can't verify
+		return false, fmt.Errorf("rate limited - try again later")
+	default:
+		// Unexpected status
+		body, readErr := io.ReadAll(resp.Body)
+		if readErr != nil {
+			return false, fmt.Errorf("unexpected status %d (failed to read body: %v)", resp.StatusCode, readErr)
+		}
+		return false, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
+	}
+}
