@@ -479,11 +479,23 @@ func (d *DeviceDiscovery) detectDuplicateIPs() {
 
 // ensureVendorInfo populates vendor information for devices missing it. Must be called with mu held.
 func (d *DeviceDiscovery) ensureVendorInfo() {
+	if d.oui == nil {
+		slog.Warn("OUI database not available for vendor lookup")
+		return
+	}
+
+	vendorCount := 0
 	for _, device := range d.devices {
 		if device.Vendor == "" && device.MAC != "" {
-			device.Vendor = d.oui.LookupWithDefault(device.MAC, "Unknown")
+			vendor := d.oui.LookupWithDefault(device.MAC, "Unknown")
+			device.Vendor = vendor
+			if vendor != "Unknown" {
+				vendorCount++
+				slog.Debug("OUI vendor lookup", "mac", device.MAC, "vendor", vendor)
+			}
 		}
 	}
+	slog.Debug("Vendor info populated", "total_devices", len(d.devices), "vendors_found", vendorCount)
 }
 
 // mergeMDNSNames merges passively captured mDNS names into devices. Must be called with mu held.
