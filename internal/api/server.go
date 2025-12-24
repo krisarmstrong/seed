@@ -387,6 +387,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/vulnerabilities/results", s.handleVulnerabilityResults)
 	s.mux.HandleFunc("/api/vulnerabilities/device", s.handleDeviceVulnerabilities)
 	s.mux.HandleFunc("/api/vulnerabilities/settings", s.handleVulnerabilitySettings)
+	s.mux.HandleFunc("/api/vulnerabilities/validate-api-key", s.handleNVDAPIKeyValidate)
 	s.mux.HandleFunc("/api/survey/floorplan", s.updateSurveyFloorPlan)
 	s.mux.HandleFunc("/api/survey/settings", s.updateSurveySettings)
 	s.mux.HandleFunc("/api/survey/import/airmapper", s.importAirMapper)

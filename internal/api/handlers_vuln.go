@@ -250,3 +250,71 @@ func (s *Server) handleVulnerabilitySettings(w http.ResponseWriter, r *http.Requ
 		sendErrorResponseWithDetails(w, logger, http.StatusMethodNotAllowed, ErrCodeMethodNotAllowed, localizer.T("errors.api.methodNotAllowed"), "") // fixes #694
 	}
 }
+
+// NVDAPIKeyValidateRequest represents a request to validate an NVD API key.
+type NVDAPIKeyValidateRequest struct {
+	APIKey string `json:"apiKey"`
+}
+
+// NVDAPIKeyValidateResponse represents the response for NVD API key validation.
+type NVDAPIKeyValidateResponse struct {
+	Valid       bool   `json:"valid"`
+	Message     string `json:"message"`
+	RateLimit   int    `json:"rateLimit"`   // Requests per 30 seconds
+	ObtainURL   string `json:"obtainUrl"`   // URL to obtain an API key
+	HelpMessage string `json:"helpMessage"` // Help text for obtaining a key
+}
+
+// handleNVDAPIKeyValidate validates an NVD API key by making a test request
+// POST /api/vulnerabilities/validate-api-key.
+func (s *Server) handleNVDAPIKeyValidate(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
+	localizer := i18n.FromRequest(r)
+
+	if r.Method != http.MethodPost {
+		sendErrorResponseWithDetails(w, logger, http.StatusMethodNotAllowed, ErrCodeMethodNotAllowed, localizer.T("errors.api.methodNotAllowed"), "")
+		return
+	}
+
+	var req NVDAPIKeyValidateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, localizer.T("errors.vuln.invalidJson"), err.Error())
+		return
+	}
+
+	response := NVDAPIKeyValidateResponse{
+		ObtainURL:   "https://nvd.nist.gov/developers/request-an-api-key",
+		HelpMessage: "Get a free NVD API key from NIST to increase your rate limit from 10 to 100 requests per 30 seconds.",
+	}
+
+	// If no API key provided, return info about how to get one
+	if req.APIKey == "" {
+		response.Valid = false
+		response.Message = "No API key provided. You can use vulnerability scanning without an API key (rate limited to 10 requests per 30 seconds)."
+		response.RateLimit = 10
+		sendJSONResponse(w, logger, http.StatusOK, response)
+		return
+	}
+
+	// Validate the API key by making a test request to NVD
+	valid, err := discovery.ValidateNVDAPIKey(r.Context(), req.APIKey)
+	if err != nil {
+		response.Valid = false
+		response.Message = "Failed to validate API key: " + err.Error()
+		response.RateLimit = 10
+		sendJSONResponse(w, logger, http.StatusOK, response)
+		return
+	}
+
+	if valid {
+		response.Valid = true
+		response.Message = "API key is valid. Rate limit increased to 100 requests per 30 seconds."
+		response.RateLimit = 100
+	} else {
+		response.Valid = false
+		response.Message = "API key is invalid. Please check your key or request a new one."
+		response.RateLimit = 10
+	}
+
+	sendJSONResponse(w, logger, http.StatusOK, response)
+}
