@@ -262,7 +262,8 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
               onClick={() => setMethod("l3")}
               disabled={loading}
               className={cn(
-                "px-3 py-1.5 caption font-medium transition-colors",
+                buttonTokens.size.sm,
+                "font-medium transition-colors whitespace-nowrap",
                 method === "l3"
                   ? "bg-brand-primary text-text-inverse"
                   : "bg-surface-base text-text-secondary hover:bg-surface-hover"
@@ -275,7 +276,8 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
               onClick={() => setMethod("l2")}
               disabled={loading}
               className={cn(
-                "px-3 py-1.5 caption font-medium transition-colors border-x border-surface-border",
+                buttonTokens.size.sm,
+                "font-medium transition-colors whitespace-nowrap border-x border-surface-border",
                 method === "l2"
                   ? "bg-brand-primary text-text-inverse"
                   : "bg-surface-base text-text-secondary hover:bg-surface-hover"
@@ -288,7 +290,8 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
               onClick={() => setMethod("both")}
               disabled={loading}
               className={cn(
-                "px-3 py-1.5 caption font-medium transition-colors",
+                buttonTokens.size.sm,
+                "font-medium transition-colors whitespace-nowrap",
                 method === "both"
                   ? "bg-brand-primary text-text-inverse"
                   : "bg-surface-base text-text-secondary hover:bg-surface-hover"
