@@ -58,7 +58,7 @@ RUN mkdir -p /app/configs /app/logs /app/data && \
 
 # Copy binary and set capabilities
 COPY --from=builder-backend /seed /usr/local/bin/seed
-RUN setcap cap_net_raw=+ep /usr/local/bin/seed
+RUN setcap cap_net_raw,cap_net_admin=+ep /usr/local/bin/seed
 
 # Copy default config (empty password triggers setup wizard)
 COPY configs/seed.yaml /app/configs/seed.yaml

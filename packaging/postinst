@@ -35,7 +35,7 @@ fi
 
 # Set capabilities for raw socket access (required for network diagnostics)
 if command -v setcap &> /dev/null; then
-    setcap cap_net_raw=+ep "$BINARY_PATH" || echo "Warning: Could not set capabilities"
+    setcap cap_net_raw,cap_net_admin=+ep "$BINARY_PATH" || echo "Warning: Could not set capabilities"
 else
     echo "Warning: setcap not found. Install libcap2-bin for non-root operation."
 fi

@@ -44,10 +44,10 @@ Screenshots coming soon.
 
 See **[HARDWARE.md](HARDWARE.md)** for detailed compatibility guide and recommendations.
 
-**Note:** The Seed requires raw ICMP socket access for ping functionality. On Linux, this requires either:
+**Note:** The Seed requires raw socket access for network diagnostics. On Linux, this requires either:
 
 - Running as root (`sudo ./seed`), or
-- Setting capabilities: `sudo setcap cap_net_raw=+ep ./seed`
+- Setting capabilities: `sudo setcap cap_net_raw,cap_net_admin=+ep ./seed`
 
 ### Installation
 
@@ -109,7 +109,7 @@ sudo go run cmd/seed/main.go
 
 # Or build and set capabilities (preferred for repeated runs)
 go build -o seed ./cmd/seed
-sudo setcap cap_net_raw=+ep ./seed
+sudo setcap cap_net_raw,cap_net_admin=+ep ./seed
 ./seed
 
 # Run frontend in development mode
