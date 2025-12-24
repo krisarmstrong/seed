@@ -405,9 +405,13 @@ func (s *ARPScanner) enrichEntries(ctx context.Context, entries []*ARPEntry) {
 	newEntries := make(map[string]*ARPEntry)
 
 	for _, entry := range entries {
-		// OUI lookup
+		// OUI lookup - but first check if it's a locally administered address
 		if s.oui != nil {
-			entry.Vendor = s.oui.LookupWithDefault(entry.MAC, "Unknown")
+			if isLocallyAdministeredMAC(entry.MAC) {
+				entry.Vendor = "LAA"
+			} else {
+				entry.Vendor = s.oui.LookupWithDefault(entry.MAC, "Unknown")
+			}
 		}
 
 		// Hostname resolution (with timeout)
