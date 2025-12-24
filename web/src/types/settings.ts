@@ -569,13 +569,13 @@ export interface VulnerabilityScanStatus {
 }
 
 export const DEFAULT_VULNERABILITY_SETTINGS: VulnerabilityScanSettings = {
-  enabled: false,
-  cveDatabase: "nvd",
+  enabled: true, // Enable by default for security visibility
+  cveDatabase: "nvd", // NVD works without API key (rate limited)
   nvdApiKey: "",
   updateInterval: 86400, // 24 hours
   severityThreshold: "medium",
   maxConcurrent: 5,
-  autoScan: false,
+  autoScan: true, // Auto-scan after device discovery
 };
 
 // ============================================================================
