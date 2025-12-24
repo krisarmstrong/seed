@@ -52,6 +52,9 @@ vi.mock("react-i18next", () => ({
         "accessibility.switchToLightMode": "Switch to light mode",
         "accessibility.switchToDarkMode": "Switch to dark mode",
         "accessibility.selectInterface": "Select network interface",
+        "accessibility.selectEthernet": "Select Ethernet interface",
+        "accessibility.selectWifi": "Select WiFi interface",
+        "accessibility.selectProfile": "Select profile",
         // Cards namespace
         "system.title": "System Health",
         "system.cpu": "CPU",
