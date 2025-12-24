@@ -491,11 +491,10 @@ func (d *DeviceDiscovery) ensureVendorInfo() {
 			device.Vendor = vendor
 			if vendor != "Unknown" {
 				vendorCount++
-				slog.Debug("OUI vendor lookup", "mac", device.MAC, "vendor", vendor)
 			}
 		}
 	}
-	slog.Debug("Vendor info populated", "total_devices", len(d.devices), "vendors_found", vendorCount)
+	slog.Info("Vendor info populated", "total_devices", len(d.devices), "vendors_found", vendorCount, "oui_entries", d.oui.Count())
 }
 
 // mergeMDNSNames merges passively captured mDNS names into devices. Must be called with mu held.
