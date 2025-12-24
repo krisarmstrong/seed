@@ -841,7 +841,11 @@ function DeviceRow({
               {device.vendor && device.vendor !== "Unknown" && (
                 <span
                   className="caption text-text-muted truncate max-w-25"
-                  title={device.vendor}
+                  title={
+                    device.vendor === "LAA"
+                      ? "Locally Administered Address - A MAC address that was locally assigned rather than by the manufacturer. Common in virtual machines, containers, and devices with MAC randomization enabled for privacy."
+                      : device.vendor
+                  }
                 >
                   {device.vendor}
                 </span>
@@ -917,7 +921,27 @@ function DeviceRow({
               />
             )}
             {device.vendor && (
-              <CardRow label={t("discovery.vendor")} value={device.vendor} />
+              <div
+                className={cn(
+                  "flex justify-between",
+                  spacing.compact.py,
+                  "items-center"
+                )}
+              >
+                <span className="body-small shrink-0">
+                  {t("discovery.vendor")}
+                </span>
+                <span
+                  className="body-small font-medium text-text-secondary text-right"
+                  title={
+                    device.vendor === "LAA"
+                      ? "Locally Administered Address - A MAC address that was locally assigned rather than by the manufacturer. Common in virtual machines, containers, and devices with MAC randomization enabled for privacy."
+                      : undefined
+                  }
+                >
+                  {device.vendor}
+                </span>
+              </div>
             )}
             {device.osGuess && (
               <CardRow label={t("discovery.osGuess")} value={device.osGuess} />
