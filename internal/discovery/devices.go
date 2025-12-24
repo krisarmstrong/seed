@@ -518,7 +518,7 @@ func (d *DeviceDiscovery) ensureVendorInfo() {
 		if device.Vendor == "" && device.MAC != "" {
 			// Check if this is a locally administered address
 			if isLocallyAdministeredMAC(device.MAC) {
-				device.Vendor = "Private"
+				device.Vendor = "LAA"
 				laaCount++
 				continue
 			}
