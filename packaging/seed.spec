@@ -70,7 +70,7 @@ if [ ! -f /usr/local/seed/configs/seed.yaml ] && [ -f /etc/seed/seed.yaml ]; the
 fi
 
 # Set capabilities for raw socket access
-setcap cap_net_raw=+ep /usr/local/bin/seed || true
+setcap cap_net_raw,cap_net_admin=+ep /usr/local/bin/seed || true
 
 %systemd_post seed.service
 

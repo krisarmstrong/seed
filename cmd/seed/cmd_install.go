@@ -48,7 +48,7 @@ Type=simple
 User={{.User}}
 Group={{.Group}}
 WorkingDirectory={{.DataDir}}
-ExecStartPre=/sbin/setcap cap_net_raw=+ep {{.BinaryPath}}
+ExecStartPre=/sbin/setcap cap_net_raw,cap_net_admin=+ep {{.BinaryPath}}
 ExecStart={{.BinaryPath}} serve
 Restart=on-failure
 RestartSec=5
@@ -215,9 +215,11 @@ func runInstall(cmd *cobra.Command, _ []string) {
 	// Set capabilities (system mode only)
 	if mode == paths.ModeSystem {
 		fmt.Println("\nSetting capabilities...")
-		if err := runCommand("setcap", "cap_net_raw=+ep", destBinary); err != nil {
+		if err := runCommand("setcap", "cap_net_raw,cap_net_admin=+ep", destBinary); err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: Failed to set capabilities: %v\n", err)
-			fmt.Println("  ICMP features will require root")
+			fmt.Println("  ICMP and protocol capture features will require root")
+		} else {
+			fmt.Println("  Set cap_net_raw,cap_net_admin for raw socket access")
 		}
 	}
 

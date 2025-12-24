@@ -59,7 +59,7 @@ func checkICMPCapabilities() bool {
 		fmt.Fprintf(os.Stderr, "Warning: ICMP features disabled - %v\n", err)
 		fmt.Fprintln(os.Stderr, "Warning: Running without ICMP privileges - ping features will be unavailable")
 		fmt.Fprintln(os.Stderr, "For full functionality, run with: sudo ./seed")
-		fmt.Fprintln(os.Stderr, "Or grant capability: sudo setcap cap_net_raw=+ep ./seed")
+		fmt.Fprintln(os.Stderr, "Or grant capability: sudo setcap cap_net_raw,cap_net_admin=+ep ./seed")
 		return false
 	}
 	return true
