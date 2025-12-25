@@ -479,11 +479,10 @@ func (s *Server) importAirMapper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit file size to 50MB (fixes #701 - reviewed and kept at 50MB for large surveys)
-	const maxFileSize = 50 << 20 // 50 MB
-	r.Body = http.MaxBytesReader(w, r.Body, maxFileSize)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeAirMapper)
 
 	// Parse multipart form
-	if err := r.ParseMultipartForm(maxFileSize); err != nil {
+	if err := r.ParseMultipartForm(MaxBodySizeAirMapper); err != nil {
 		logger.Warn("Survey file too large", "error", err)
 		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, localizer.T("errors.survey.fileTooLarge"), "") // fixes #694, #H7
 		return

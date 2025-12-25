@@ -46,16 +46,21 @@ type CSRFToken struct {
 type CSRFManager struct {
 	mu     sync.RWMutex
 	tokens map[string]*CSRFToken // Map of token to metadata, keyed by user session
+	ctx    context.Context       // Context for shutdown coordination (fixes #785)
+	cancel context.CancelFunc    // Cancel function for shutdown (fixes #785)
 }
 
 // NewCSRFManager creates a new CSRF manager with context-based cleanup coordination (fixes #785).
-func NewCSRFManager(ctx context.Context) *CSRFManager {
+func NewCSRFManager() *CSRFManager {
+	ctx, cancel := context.WithCancel(context.Background())
 	manager := &CSRFManager{
 		tokens: make(map[string]*CSRFToken),
+		ctx:    ctx,
+		cancel: cancel,
 	}
 
 	// Start background cleanup goroutine with context cancellation (fixes #785)
-	go manager.cleanupExpiredTokens(ctx)
+	go manager.cleanupExpiredTokens()
 
 	return manager
 }
@@ -123,13 +128,13 @@ func (m *CSRFManager) RevokeToken(sessionID string) {
 }
 
 // cleanupExpiredTokens periodically removes expired tokens (fixes #785 - respects shutdown signal).
-func (m *CSRFManager) cleanupExpiredTokens(ctx context.Context) {
+func (m *CSRFManager) cleanupExpiredTokens() {
 	ticker := time.NewTicker(5 * time.Minute)
 	defer ticker.Stop()
 
 	for {
 		select {
-		case <-ctx.Done():
+		case <-m.ctx.Done():
 			slog.Debug("CSRF cleanup goroutine stopping")
 			return
 		case <-ticker.C:
@@ -143,6 +148,11 @@ func (m *CSRFManager) cleanupExpiredTokens(ctx context.Context) {
 			m.mu.Unlock()
 		}
 	}
+}
+
+// Stop gracefully shuts down the CSRF manager by stopping the cleanup goroutine (fixes #785).
+func (m *CSRFManager) Stop() {
+	m.cancel()
 }
 
 // CSRFMiddleware returns HTTP middleware that validates CSRF tokens on state-changing requests.
@@ -224,4 +234,3 @@ func getSessionIDFromRequest(r *http.Request) string {
 
 	return ""
 }
-
