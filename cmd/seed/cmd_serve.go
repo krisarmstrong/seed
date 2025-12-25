@@ -46,6 +46,10 @@ func runServe(_ *cobra.Command, _ []string) {
 	icmpAvailable := checkICMPCapabilities()
 	cfg := loadAndConfigureConfig(configPath, devMode)
 	logPath := setupLogging(cfg)
+
+	// Check for deprecated SNMP settings after logging is initialized
+	cfg.WarnDeprecatedSNMPSettings()
+
 	netMgr := setupNetworkInterface(cfg, configPath)
 
 	server := api.NewServer(cfg, configPath, logPath, netMgr, icmpAvailable)

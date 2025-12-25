@@ -606,9 +606,13 @@ type SNMPConfig struct {
 
 // SNMPv3Credential contains SNMP v3 authentication credentials.
 type SNMPv3Credential struct {
-	Name          string `yaml:"name"`           // Friendly name for this credential set
-	Username      string `yaml:"username"`       // Security name (user)
-	AuthProtocol  string `yaml:"auth_protocol"`  // "MD5", "SHA", "SHA256", "SHA512", or "" for noAuth
+	Name     string `yaml:"name"`     // Friendly name for this credential set
+	Username string `yaml:"username"` // Security name (user)
+	// AuthProtocol specifies the authentication protocol.
+	// Supported values: "SHA", "SHA256", "SHA512", or "" for noAuth.
+	//
+	// Deprecated: "MD5" is cryptographically broken and will be removed in the next major version.
+	AuthProtocol  string `yaml:"auth_protocol"`  // "MD5" (DEPRECATED), "SHA", "SHA256", "SHA512", or "" for noAuth
 	AuthPassword  string `yaml:"auth_password"`  // Authentication password
 	PrivProtocol  string `yaml:"priv_protocol"`  // "DES", "AES", "AES192", "AES256", or "" for noPriv
 	PrivPassword  string `yaml:"priv_password"`  // Privacy password
@@ -1107,6 +1111,24 @@ func (c *Config) validateSNMPConfig() []string {
 		errs = append(errs, "snmp.timeout must be positive")
 	}
 	return errs
+}
+
+// WarnDeprecatedSNMPSettings logs warnings for deprecated SNMP configurations.
+// This function should be called after logging is initialized.
+func (c *Config) WarnDeprecatedSNMPSettings() {
+	c.RLock()
+	defer c.RUnlock()
+
+	// Check for MD5 authentication protocol in SNMPv3 credentials
+	// MD5 is cryptographically broken and will be removed in a future major version
+	for i := range c.SNMP.V3Credentials {
+		cred := &c.SNMP.V3Credentials[i]
+		if cred.AuthProtocol == "MD5" {
+			slog.Warn("SNMP MD5 authentication is deprecated and will be removed in a future version. Please migrate to SHA256 or SHA512.",
+				"credential_name", cred.Name,
+				"username", cred.Username)
+		}
+	}
 }
 
 // validateLoggingConfig checks logging configuration.

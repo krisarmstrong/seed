@@ -172,7 +172,7 @@ func (s *Server) handleRogueDHCPConfig(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPut:
 		// Limit request body size to prevent DoS attacks (fixes #682)
-		r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
+		r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
 		// Update configuration
 		var req struct {
@@ -381,7 +381,7 @@ func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
 	localizer := i18n.FromRequest(r)
 
 	// Limit request body size to prevent DoS attacks (fixes #682)
-	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
 	var req SNMPSettingsResponse
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

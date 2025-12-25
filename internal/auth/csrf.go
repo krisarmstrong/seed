@@ -2,6 +2,7 @@
 package auth
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/subtle"
 	"encoding/base64"
@@ -45,26 +46,18 @@ type CSRFToken struct {
 type CSRFManager struct {
 	mu     sync.RWMutex
 	tokens map[string]*CSRFToken // Map of token to metadata, keyed by user session
-	stopCh chan struct{}         // Channel to signal cleanup goroutine to stop (fixes #785)
 }
 
-// NewCSRFManager creates a new CSRF manager.
-func NewCSRFManager() *CSRFManager {
+// NewCSRFManager creates a new CSRF manager with context-based cleanup coordination (fixes #785).
+func NewCSRFManager(ctx context.Context) *CSRFManager {
 	manager := &CSRFManager{
 		tokens: make(map[string]*CSRFToken),
-		stopCh: make(chan struct{}),
 	}
 
-	// Start background cleanup goroutine (fixes #785 - now has shutdown coordination)
-	go manager.cleanupExpiredTokens()
+	// Start background cleanup goroutine with context cancellation (fixes #785)
+	go manager.cleanupExpiredTokens(ctx)
 
 	return manager
-}
-
-// Stop gracefully shuts down the CSRF manager's cleanup goroutine (fixes #785).
-// This should be called during application shutdown to prevent goroutine leaks.
-func (m *CSRFManager) Stop() {
-	close(m.stopCh)
 }
 
 // GenerateToken creates a new CSRF token for the given session/user.
@@ -130,14 +123,14 @@ func (m *CSRFManager) RevokeToken(sessionID string) {
 }
 
 // cleanupExpiredTokens periodically removes expired tokens (fixes #785 - respects shutdown signal).
-func (m *CSRFManager) cleanupExpiredTokens() {
-	ticker := time.NewTicker(15 * time.Minute)
+func (m *CSRFManager) cleanupExpiredTokens(ctx context.Context) {
+	ticker := time.NewTicker(5 * time.Minute)
 	defer ticker.Stop()
 
 	for {
 		select {
-		case <-m.stopCh:
-			// Shutdown signal received, exit goroutine
+		case <-ctx.Done():
+			slog.Debug("CSRF cleanup goroutine stopping")
 			return
 		case <-ticker.C:
 			m.mu.Lock()

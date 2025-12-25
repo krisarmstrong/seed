@@ -725,6 +725,92 @@ func TestValidateInvalidSNMPRetries(t *testing.T) {
 	}
 }
 
+func TestWarnDeprecatedSNMPSettings(t *testing.T) {
+	tests := []struct {
+		name        string
+		credentials []SNMPv3Credential
+		expectWarn  bool
+	}{
+		{
+			name: "MD5 auth protocol triggers warning",
+			credentials: []SNMPv3Credential{
+				{
+					Name:         "test-md5",
+					Username:     "snmpuser",
+					AuthProtocol: "MD5",
+					AuthPassword: "password",
+				},
+			},
+			expectWarn: true,
+		},
+		{
+			name: "SHA256 does not trigger warning",
+			credentials: []SNMPv3Credential{
+				{
+					Name:         "test-sha256",
+					Username:     "snmpuser",
+					AuthProtocol: "SHA256",
+					AuthPassword: "password",
+				},
+			},
+			expectWarn: false,
+		},
+		{
+			name: "SHA512 does not trigger warning",
+			credentials: []SNMPv3Credential{
+				{
+					Name:         "test-sha512",
+					Username:     "snmpuser",
+					AuthProtocol: "SHA512",
+					AuthPassword: "password",
+				},
+			},
+			expectWarn: false,
+		},
+		{
+			name: "SHA does not trigger warning",
+			credentials: []SNMPv3Credential{
+				{
+					Name:         "test-sha",
+					Username:     "snmpuser",
+					AuthProtocol: "SHA",
+					AuthPassword: "password",
+				},
+			},
+			expectWarn: false,
+		},
+		{
+			name: "multiple credentials with one MD5",
+			credentials: []SNMPv3Credential{
+				{
+					Name:         "test-sha256",
+					Username:     "user1",
+					AuthProtocol: "SHA256",
+					AuthPassword: "password",
+				},
+				{
+					Name:         "test-md5",
+					Username:     "user2",
+					AuthProtocol: "MD5",
+					AuthPassword: "password",
+				},
+			},
+			expectWarn: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(_ *testing.T) {
+			cfg := DefaultConfig()
+			cfg.SNMP.V3Credentials = tt.credentials
+
+			// WarnDeprecatedSNMPSettings logs warnings but doesn't return errors.
+			// This test verifies it doesn't panic and can be called safely.
+			cfg.WarnDeprecatedSNMPSettings()
+		})
+	}
+}
+
 // ========== Port Preset Tests ==========
 
 func TestPortPresetConstants(t *testing.T) {

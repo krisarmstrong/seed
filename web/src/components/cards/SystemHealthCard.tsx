@@ -112,18 +112,48 @@ function getResourceStatus(percent: number): Status {
   return "success";
 }
 
+/**
+ * Returns contextual remediation suggestions based on resource type and usage level
+ */
+function getSuggestion(type: 'cpu' | 'memory' | 'disk', usage: number): string {
+  if (type === 'cpu') {
+    if (usage >= 90) {
+      return "Check for runaway processes or consider upgrading CPU resources";
+    }
+    return "Consider closing unused applications or background tasks";
+  }
+
+  if (type === 'memory') {
+    if (usage >= 90) {
+      return "Critical: Restart applications to free memory or add more RAM";
+    }
+    return "Consider increasing system memory or closing memory-intensive applications";
+  }
+
+  if (type === 'disk') {
+    if (usage >= 90) {
+      return "Critical: Clear temporary files and archive old data immediately";
+    }
+    return "Clear temporary files, remove unused applications, or archive old data";
+  }
+
+  return "";
+}
+
 function ResourceBar({
   label,
   percent,
   used,
   total,
   topProcesses,
+  type,
 }: {
   label: string;
   percent: number;
   used: number;
   total: number;
   topProcesses?: ProcessInfo[];
+  type: 'cpu' | 'memory' | 'disk';
 }) {
   const status = getResourceStatus(percent);
   const barColor = (() => {
@@ -169,6 +199,11 @@ function ResourceBar({
               - {proc.name} ({Math.round(proc.memoryMb)} MB)
             </div>
           ))}
+        </div>
+      )}
+      {percent >= 75 && (
+        <div className="mt-2 text-xs text-text-muted">
+          <span className="font-medium">Tip:</span> {getSuggestion(type, percent)}
         </div>
       )}
     </div>
@@ -240,6 +275,7 @@ export function SystemHealthCard() {
             used={0}
             total={0}
             topProcesses={health.topCpuProcesses}
+            type="cpu"
           />
           <ResourceBar
             label={t("system.memory")}
@@ -247,12 +283,14 @@ export function SystemHealthCard() {
             used={health.memoryUsed ?? 0}
             total={health.memoryTotal ?? 0}
             topProcesses={health.topMemoryProcesses}
+            type="memory"
           />
           <ResourceBar
             label={t("system.disk")}
             percent={health.diskPercent ?? 0}
             used={health.diskUsed ?? 0}
             total={health.diskTotal ?? 0}
+            type="disk"
           />
 
           <CardDivider />
