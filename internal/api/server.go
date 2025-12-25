@@ -509,16 +509,6 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// Body size limits for different request types.
-const (
-	MaxBodySizeAuth      int64 = 1 * 1024         // 1KB for auth requests
-	MaxBodySizeConfig    int64 = 64 * 1024        // 64KB for config updates
-	MaxBodySizeJSON      int64 = 256 * 1024       // 256KB for general JSON
-	MaxBodySizeFloorPlan int64 = 10 * 1024 * 1024 // 10MB for floor plan uploads
-	MaxBodySizeAirMapper int64 = 50 * 1024 * 1024 // 50MB for AirMapper imports
-	MaxBodySizeDefault   int64 = 1 * 1024 * 1024  // 1MB default
-)
-
 // bodyLimitMiddleware enforces request body size limits to prevent DoS attacks.
 // Different endpoints have different limits based on expected payload size.
 func bodyLimitMiddleware(next http.Handler) http.Handler {

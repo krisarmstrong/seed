@@ -30,7 +30,8 @@ const (
 
 // AuthProtocolMD5 is the deprecated MD5 authentication protocol.
 //
-// Deprecated: MD5 is cryptographically broken. Use SHA256 or SHA512 instead.
+// Deprecated: MD5 is cryptographically broken and will be removed in the next major version.
+// Use SHA256 or SHA512 instead for secure authentication.
 const AuthProtocolMD5 = "MD5"
 
 // SystemInfo contains standard SNMP system information.
@@ -198,9 +199,10 @@ func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credent
 	// Warn if MD5 authentication is being used.
 	// MD5 is cryptographically broken and will be removed in the next major version.
 	if cred.AuthProtocol == AuthProtocolMD5 { //nolint:staticcheck // Intentionally checking deprecated field to warn users
-		slog.Warn("SNMP MD5 authentication is deprecated and will be removed in a future version. Please migrate to SHA256 or SHA512.",
+		slog.Warn("SNMP MD5 authentication is deprecated and will be removed in the next major version",
 			"target", ip,
-			"credential_name", cred.Name)
+			"credential_name", cred.Name,
+			"recommendation", "Use SHA256 or SHA512 for secure authentication")
 	}
 
 	params := &gosnmp.GoSNMP{
@@ -250,9 +252,10 @@ func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *co
 	// Warn if MD5 authentication is being used.
 	// MD5 is cryptographically broken and will be removed in the next major version.
 	if cred.AuthProtocol == AuthProtocolMD5 { //nolint:staticcheck // Intentionally checking deprecated field to warn users
-		slog.Warn("SNMP MD5 authentication is deprecated and will be removed in a future version. Please migrate to SHA256 or SHA512.",
+		slog.Warn("SNMP MD5 authentication is deprecated and will be removed in the next major version",
 			"target", ip,
-			"credential_name", cred.Name)
+			"credential_name", cred.Name,
+			"recommendation", "Use SHA256 or SHA512 for secure authentication")
 	}
 
 	params := &gosnmp.GoSNMP{
