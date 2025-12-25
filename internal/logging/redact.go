@@ -1,4 +1,31 @@
 // Package logging provides secure logging utilities with automatic redaction of sensitive data.
+//
+// SECURITY MODEL FOR IP ADDRESS LOGGING (Plan G6):
+//
+// This package includes utilities for logging HTTP requests, including client IP addresses.
+// It's critical to understand the trust model for IP address sources:
+//
+// UNTRUSTED SOURCES (can be spoofed by clients):
+//   - X-Forwarded-For header
+//   - X-Real-IP header
+//   - X-Client-IP header
+//   - Other proxy headers (CF-Connecting-IP, True-Client-IP, etc.)
+//
+// TRUSTED SOURCE (cannot be spoofed):
+//   - r.RemoteAddr (the actual TCP connection source)
+//
+// GetClientIP() in this package uses UNTRUSTED sources for convenience in logging
+// scenarios where you want to see the "apparent" client IP when behind a reverse proxy.
+// However, WITHOUT proper proxy configuration, these values can be spoofed.
+//
+// For security-critical operations (rate limiting, access control, IP banning):
+//   - Use api.GetClientIP() which ONLY uses r.RemoteAddr
+//   - Never trust X-Forwarded-For or similar headers for security decisions
+//
+// Logs may show spoofed IPs in reverse proxy scenarios unless:
+//  1. The reverse proxy is configured to strip/override client-supplied headers
+//  2. Trusted proxy configuration is properly set up
+//  3. The proxy is verified to be in the request path
 package logging
 
 import (
@@ -76,14 +103,17 @@ var sensitiveHeaders = map[string]bool{
 	"apikey":              true,
 	"api-key":             true,
 	// Privacy-sensitive headers (fixes #714 - client IP exposure)
-	// These headers can reveal client identity and should not be logged
-	"x-forwarded-for":     true,
-	"x-real-ip":           true,
-	"x-client-ip":         true,
-	"cf-connecting-ip":    true, // Cloudflare
-	"true-client-ip":      true, // Akamai
-	"x-cluster-client-ip": true,
-	"forwarded":           true, // RFC 7239
+	// SECURITY NOTE: These headers are UNTRUSTED and can be spoofed by clients.
+	// They are redacted in logs for privacy, but also because they should NEVER
+	// be used for security decisions (rate limiting, access control, etc.).
+	// For security-critical IP tracking, use r.RemoteAddr only (see api.GetClientIP).
+	"x-forwarded-for":     true, // UNTRUSTED - can be spoofed
+	"x-real-ip":           true, // UNTRUSTED - can be spoofed
+	"x-client-ip":         true, // UNTRUSTED - can be spoofed
+	"cf-connecting-ip":    true, // Cloudflare - only trust if behind verified CF proxy
+	"true-client-ip":      true, // Akamai - only trust if behind verified Akamai proxy
+	"x-cluster-client-ip": true, // UNTRUSTED - can be spoofed
+	"forwarded":           true, // RFC 7239 - UNTRUSTED without proxy verification
 }
 
 // RedactString removes sensitive data from a string.
@@ -171,31 +201,63 @@ func LogRequest(r *http.Request, message string) {
 	)
 }
 
-// GetClientIP extracts client IP from request.
-// Security note (fixes #714): This function trusts X-Forwarded-For and X-Real-IP headers,
-// which can be spoofed by clients. Only use this for logging/display purposes, NOT for
-// security decisions like rate limiting or access control. For security-critical uses,
-// see api.GetClientIP which uses only RemoteAddr.
+// GetClientIP extracts client IP from request for logging and display purposes.
 //
-// IMPORTANT: The returned IP is considered sensitive data and should be redacted in logs
-// unless absolutely necessary. Consider using RemoteAddr directly for security contexts.
+// SECURITY WARNING (fixes #714 - Plan G6):
+// This function returns UNTRUSTED IP addresses that can be spoofed by malicious clients.
+// It checks X-Forwarded-For and X-Real-IP headers which are trivially spoofed.
+//
+// TRUST MODEL:
+// - X-Forwarded-For: UNTRUSTED - Any client can set this header to any value
+// - X-Real-IP: UNTRUSTED - Any client can set this header to any value
+// - r.RemoteAddr: TRUSTED - This is the actual TCP connection source
+//
+// USE CASES:
+// - OK for logging/debugging (helps in reverse proxy scenarios)
+// - OK for display in admin dashboards
+// - NEVER use for rate limiting (see api.GetClientIP which uses only RemoteAddr)
+// - NEVER use for access control or security decisions
+// - NEVER use for ban lists or IP blocking
+//
+// REVERSE PROXY SCENARIOS:
+// When behind a reverse proxy (nginx, Cloudflare, etc.), this function will show
+// the client IP if the proxy sets XFF correctly. However, WITHOUT proper proxy
+// configuration to strip client-supplied XFF headers, logs can show spoofed IPs.
+//
+// For production deployments behind reverse proxies:
+// 1. Configure the proxy to strip/override client XFF headers
+// 2. Set trusted proxy configuration
+// 3. Use api.GetClientIP for any security-sensitive operations.
 func GetClientIP(r *http.Request) string {
-	// Check X-Forwarded-For (but don't log it - could be sensitive)
-	// WARNING: This header can be spoofed - do not use for security decisions
+	// Check X-Forwarded-For header (UNTRUSTED - can be spoofed by clients)
+	// This is checked first for convenience in reverse proxy scenarios, but
+	// the value should be treated as untrusted user input.
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
 		parts := strings.Split(xff, ",")
 		if len(parts) > 0 {
-			return strings.TrimSpace(parts[0])
+			clientIP := strings.TrimSpace(parts[0])
+			// Log when XFF is present to indicate the IP may be untrusted
+			slog.Debug("Request includes X-Forwarded-For header (UNTRUSTED)",
+				"xff_value", xff,
+				"parsed_ip", clientIP,
+				"remote_addr", r.RemoteAddr,
+				"security_note", "XFF can be spoofed - only use for logging, not security decisions")
+			return clientIP
 		}
 	}
 
-	// Check X-Real-IP
-	// WARNING: This header can be spoofed - do not use for security decisions
+	// Check X-Real-IP header (UNTRUSTED - can be spoofed by clients)
+	// Similar trust issues as X-Forwarded-For
 	if xri := r.Header.Get("X-Real-IP"); xri != "" {
+		slog.Debug("Request includes X-Real-IP header (UNTRUSTED)",
+			"xri_value", xri,
+			"remote_addr", r.RemoteAddr,
+			"security_note", "X-Real-IP can be spoofed - only use for logging, not security decisions")
 		return xri
 	}
 
-	// Fall back to RemoteAddr (the only trustworthy source)
+	// Fall back to RemoteAddr (TRUSTED - the only reliable source)
+	// This is the actual TCP connection source and cannot be spoofed
 	addr := r.RemoteAddr
 	if idx := strings.LastIndex(addr, ":"); idx != -1 {
 		addr = addr[:idx]

@@ -54,7 +54,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit request body size to prevent memory exhaustion (1KB is plenty for login)
-	r.Body = http.MaxBytesReader(w, r.Body, 1024)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeAuth)
 
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -310,7 +310,7 @@ func (s *Server) handleSetupComplete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit request body size to prevent memory exhaustion
-	r.Body = http.MaxBytesReader(w, r.Body, 1024)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeAuth)
 
 	var req SetupCompleteRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

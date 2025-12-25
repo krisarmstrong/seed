@@ -4,6 +4,7 @@ package snmp
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/gosnmp/gosnmp"
 
@@ -26,6 +27,11 @@ const (
 	OIDHPVersion      = "1.3.6.1.4.1.11.2.14.11.5.1.1.2.0" // HP/Aruba version
 	OIDJuniperVersion = "1.3.6.1.4.1.2636.3.1.2.0"         // Juniper JUNOS version
 )
+
+// AuthProtocolMD5 is the deprecated MD5 authentication protocol.
+//
+// Deprecated: MD5 is cryptographically broken. Use SHA256 or SHA512 instead.
+const AuthProtocolMD5 = "MD5"
 
 // SystemInfo contains standard SNMP system information.
 type SystemInfo struct {
@@ -189,6 +195,14 @@ func queryMultipleWithCommunity(ctx context.Context, ip string, oids []string, c
 
 // queryWithV3 performs SNMP v3 query with credentials.
 func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credential, cfg *config.SNMPConfig) (string, error) {
+	// Warn if MD5 authentication is being used.
+	// MD5 is cryptographically broken and will be removed in the next major version.
+	if cred.AuthProtocol == AuthProtocolMD5 { //nolint:staticcheck // Intentionally checking deprecated field to warn users
+		slog.Warn("SNMP MD5 authentication is deprecated and will be removed in a future version. Please migrate to SHA256 or SHA512.",
+			"target", ip,
+			"credential_name", cred.Name)
+	}
+
 	params := &gosnmp.GoSNMP{
 		Target:        ip,
 		Port:          uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
@@ -199,7 +213,7 @@ func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credent
 		MsgFlags:      gosnmp.AuthPriv,
 		SecurityParameters: &gosnmp.UsmSecurityParameters{
 			UserName:                 cred.Username,
-			AuthenticationProtocol:   getAuthProtocol(cred.AuthProtocol),
+			AuthenticationProtocol:   getAuthProtocol(cred.AuthProtocol), //nolint:staticcheck // Internal usage of deprecated field
 			AuthenticationPassphrase: cred.AuthPassword,
 			PrivacyProtocol:          getPrivProtocol(cred.PrivProtocol),
 			PrivacyPassphrase:        cred.PrivPassword,
@@ -233,6 +247,14 @@ func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credent
 
 // queryMultipleWithV3 performs multiple SNMP queries with v3 credentials.
 func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *config.SNMPv3Credential, cfg *config.SNMPConfig) (map[string]string, error) {
+	// Warn if MD5 authentication is being used.
+	// MD5 is cryptographically broken and will be removed in the next major version.
+	if cred.AuthProtocol == AuthProtocolMD5 { //nolint:staticcheck // Intentionally checking deprecated field to warn users
+		slog.Warn("SNMP MD5 authentication is deprecated and will be removed in a future version. Please migrate to SHA256 or SHA512.",
+			"target", ip,
+			"credential_name", cred.Name)
+	}
+
 	params := &gosnmp.GoSNMP{
 		Target:        ip,
 		Port:          uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
@@ -243,7 +265,7 @@ func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *co
 		MsgFlags:      gosnmp.AuthPriv,
 		SecurityParameters: &gosnmp.UsmSecurityParameters{
 			UserName:                 cred.Username,
-			AuthenticationProtocol:   getAuthProtocol(cred.AuthProtocol),
+			AuthenticationProtocol:   getAuthProtocol(cred.AuthProtocol), //nolint:staticcheck // Internal usage of deprecated field
 			AuthenticationPassphrase: cred.AuthPassword,
 			PrivacyProtocol:          getPrivProtocol(cred.PrivProtocol),
 			PrivacyPassphrase:        cred.PrivPassword,

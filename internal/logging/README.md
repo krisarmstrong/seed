@@ -260,6 +260,65 @@ The CI pipeline includes automated checks for unsafe logging patterns:
 - `io.ReadAll.*r.Body.*log`
 - And more (see CI workflow)
 
+## IP Address Trust Model (Plan G6)
+
+### Security Warning: X-Forwarded-For is UNTRUSTED
+
+The `GetClientIP()` function returns IP addresses that **can be spoofed** by malicious clients. Understanding this trust model is critical for security.
+
+#### Trusted vs Untrusted Sources
+
+**UNTRUSTED** (can be spoofed by clients):
+- `X-Forwarded-For` header
+- `X-Real-IP` header
+- `X-Client-IP` header
+- `CF-Connecting-IP` (only trusted if behind verified Cloudflare proxy)
+- `True-Client-IP` (only trusted if behind verified Akamai proxy)
+- Other proxy headers
+
+**TRUSTED** (cannot be spoofed):
+- `r.RemoteAddr` - The actual TCP connection source
+
+#### When to Use Each
+
+**Use `logging.GetClientIP()` (this package):**
+- Logging and debugging
+- Display in admin dashboards
+- Non-security purposes
+
+**Use `api.GetClientIP()` (secure version):**
+- Rate limiting
+- Access control
+- IP banning/blocking
+- Any security decision
+
+#### Example: Why This Matters
+
+```go
+// INSECURE - Client can bypass rate limiting by spoofing X-Forwarded-For
+ip := logging.GetClientIP(r)
+if rateLimiter.IsBlocked(ip) {
+    return http.StatusTooManyRequests  // VULNERABLE!
+}
+
+// SECURE - Uses only r.RemoteAddr which cannot be spoofed
+ip := api.GetClientIP(r)
+if rateLimiter.IsBlocked(ip) {
+    return http.StatusTooManyRequests  // Safe
+}
+```
+
+#### Reverse Proxy Deployments
+
+When behind a reverse proxy (nginx, Cloudflare, etc.):
+
+1. **Configure the proxy** to strip/override client-supplied XFF headers
+2. **Set up trusted proxy configuration** to validate proxy chain
+3. **Use `api.GetClientIP()`** for security decisions (it ignores proxy headers)
+4. **Logs may show spoofed IPs** unless proxy is properly configured
+
+Without proper configuration, logs can show whatever IP the client claims to be, which is useful for debugging but **must not** be trusted for security.
+
 ## Best Practices
 
 1. **Always use `logging.Logf` instead of `log.Printf`** for user-generated or external data
@@ -267,6 +326,7 @@ The CI pipeline includes automated checks for unsafe logging patterns:
 3. **Redact headers before logging** - use `logging.RedactHeaders()`
 4. **Use `http.MaxBytesReader`** to prevent memory exhaustion
 5. **Return safe errors** - use `logging.SafeError()` for errors exposed to users
+6. **Never use `logging.GetClientIP()` for security** - use `api.GetClientIP()` instead
 
 ## Performance
 

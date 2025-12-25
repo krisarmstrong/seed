@@ -11,6 +11,7 @@
 //   - Heartbeat: Ping every 54 seconds, expect pong within 60 seconds
 //   - Message size limit: 512 bytes for client->server messages
 //   - Write timeout: 10 seconds per message
+//   - Rate limit: 100 messages/second per connection with burst of 20
 //
 // Message Types (client receives):
 //   - "linkState": Network link up/down events
@@ -26,6 +27,7 @@
 //   - Default: RFC 1918 private network addresses only
 //   - Configurable via Security.AllowedOrigins in config
 //   - Wildcard "*" allows all origins (use only in development)
+//   - Per-connection rate limiting prevents message flooding attacks
 //
 // Clients must:
 //   - Respond to ping frames with pong within 60 seconds
@@ -49,6 +51,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"golang.org/x/time/rate"
 
 	"github.com/krisarmstrong/seed/internal/auth"
 	"github.com/krisarmstrong/seed/internal/i18n"
@@ -75,6 +78,14 @@ const (
 	// Client-to-server messages are currently unused, so this is kept small.
 	// Server-to-client broadcasts have no size limit (but should remain reasonable).
 	maxMessageSize = 512
+
+	// messageRateLimit is the maximum number of messages per second per connection.
+	// Set to 100 messages/second to prevent resource exhaustion via rapid message flooding.
+	messageRateLimit = 100
+
+	// messageRateBurst is the maximum burst size for the rate limiter.
+	// Allows brief bursts of up to 20 messages before rate limiting kicks in.
+	messageRateBurst = 20
 )
 
 // configuredOrigins holds explicitly configured WebSocket/CORS origins from the config file.
@@ -381,11 +392,13 @@ type CardUpdate struct {
 //   - A write error occurs (network failure, slow client)
 //   - A read error occurs (client disconnected, ping/pong timeout)
 //   - No pong is received within pongWait (60 seconds)
+//   - Message rate limit is exceeded (100 msg/sec with burst of 20)
 type Client struct {
 	hub       *Hub
 	conn      *websocket.Conn
 	send      chan []byte
-	closeOnce sync.Once // Ensures connection is closed only once
+	limiter   *rate.Limiter // Per-connection rate limiter to prevent message flooding
+	closeOnce sync.Once     // Ensures connection is closed only once
 }
 
 // Hub maintains the set of active clients and broadcasts messages.
@@ -571,9 +584,10 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &Client{
-		hub:  s.wsHub,
-		conn: conn,
-		send: make(chan []byte, 256),
+		hub:     s.wsHub,
+		conn:    conn,
+		send:    make(chan []byte, 256),
+		limiter: rate.NewLimiter(messageRateLimit, messageRateBurst),
 	}
 
 	s.wsHub.register <- client
@@ -677,6 +691,17 @@ func (c *Client) readPump() {
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				slog.Warn("WebSocket error", "error", err)
+			}
+			break
+		}
+
+		// Check rate limit before processing message
+		if !c.limiter.Allow() {
+			slog.Warn("WebSocket rate limit exceeded, closing connection")
+			// Send close message with policy violation code (1008)
+			closeMsg := websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "rate limit exceeded")
+			if err := c.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(writeWait)); err != nil {
+				slog.Error("Failed to send rate limit close message", "error", err)
 			}
 			break
 		}
