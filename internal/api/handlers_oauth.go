@@ -411,7 +411,7 @@ func (s *Server) handleSSOUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit request body size (fixes #760)
-	r.Body = http.MaxBytesReader(w, r.Body, 4096)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
 	var req struct {
 		Provider     string   `json:"provider"`

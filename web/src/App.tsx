@@ -29,10 +29,13 @@
 
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useWebSocket, Message, CardUpdate } from "./hooks/useWebSocket";
+import { useWebSocket } from "./hooks/useWebSocket";
 // Fix #669: Removed deprecated getAuthHeaders - using credentials: 'include' for cookie auth
 import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
+import { useCardState } from "./hooks/useCardState";
+import { useNetworkFetchers } from "./hooks/useNetworkFetchers";
+import { useInterfaceState } from "./hooks/useInterfaceState";
 import { useSettings } from "./contexts/useSettings";
 import { SettingsDrawer } from "./components/settings/SettingsDrawer";
 import { ImprovedHelpModal } from "./components/help/ImprovedHelpModal";
@@ -45,23 +48,14 @@ import { setSessionExpiredCallback } from "./lib/api";
 const API_BASE = import.meta.env.VITE_API_BASE || "";
 import {
   LinkCard,
-  LinkData,
   SwitchCard,
-  SwitchData,
   NetworkCard,
-  DHCPData,
   DNSCard,
-  type DNSData,
   GatewayCard,
-  GatewayData,
-  VLANData,
   WiFiCard,
-  WiFiData,
   CableCard,
-  CableData,
   NetworkDiscoveryCard,
   NetworkDiscoveryData,
-  PublicIPData,
   PathDiscoveryCard,
 } from "./components/cards";
 import { PerformanceCard } from "./components/cards/PerformanceCard";
@@ -82,45 +76,6 @@ import {
   section,
   cn,
 } from "./styles/theme";
-
-/**
- * Centralized state for all network monitoring cards.
- * Each card can be null if not yet loaded or unavailable.
- */
-interface CardState {
-  link: LinkData | null; // Network interface link status
-  cable: CableData | null; // Ethernet cable diagnostics
-  vlan: VLANData | null; // VLAN configuration and status
-  switch: SwitchData | null; // Network switch information (LLDP/CDP)
-  wifi: WiFiData | null; // WiFi connection and signal info
-  dhcp: DHCPData | null; // DHCP configuration
-  dns: DNSData | null; // DNS server and resolution info
-  gateway: GatewayData | null; // Gateway reachability
-  publicip: PublicIPData | null; // Public IP and location info
-}
-
-const CARD_IDS = [
-  "link",
-  "cable",
-  "vlan",
-  "switch",
-  "wifi",
-  "dhcp",
-  "dns",
-  "gateway",
-  "publicip",
-] as const;
-type CardId = (typeof CARD_IDS)[number];
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isCardId(value: unknown): value is CardId {
-  return (
-    typeof value === "string" && (CARD_IDS as readonly string[]).includes(value)
-  );
-}
 
 /**
  * Main App Component
@@ -165,6 +120,33 @@ function App() {
   // Security fix #724, #758: Store setup token for secure setup completion
   const [setupToken, setSetupToken] = useState<string | undefined>(undefined);
 
+  // Network state
+  const [interfaces, setInterfaces] = useState<
+    Array<{
+      name: string;
+      friendlyName?: string;
+      description?: string;
+      type: string;
+      up: boolean;
+      speedDisplay?: string;
+      chipsetVendor?: string;
+      chipsetModel?: string;
+      hasTDR?: boolean;
+      hasDOM?: boolean;
+      score?: number;
+    }>
+  >([]);
+  const [networkDiscovery, setNetworkDiscovery] =
+    useState<NetworkDiscoveryData | null>(null);
+  const [appVersion, setAppVersion] = useState("dev");
+
+  // Refs to track device scan polling interval and timeout for cleanup
+  const scanPollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null
+  );
+  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const networkDiscoveryAbortRef = useRef<AbortController | null>(null);
+
   // Check if setup is needed on mount
   useEffect(() => {
     checkSetupStatus().then((status) => {
@@ -204,186 +186,76 @@ function App() {
     prevActiveProfileRef.current = currentProfileId;
   }, [activeProfile?.id, refreshSettings]);
 
-  const [cards, setCards] = useState<CardState>({
-    link: null,
-    cable: null,
-    vlan: null,
-    switch: null,
-    wifi: null,
-    dhcp: null,
-    dns: null,
-    gateway: null,
-    publicip: null,
+  // Initialize interface state hook (provides interface switching logic)
+  const {
+    currentInterface,
+    isWifi,
+    setCurrentInterface,
+    setIsWifi,
+    userSetWifiModeRef,
+    currentInterfaceRef,
+    hasEthernet,
+    hasWifiInterface,
+    setEthernetInterfaceState,
+    setWifiInterfaceState,
+    setActiveMode,
+    ethernetInterface,
+    wifiInterface,
+  } = useInterfaceState({
+    interfaces,
+    activeProfile,
+    setEthernetInterface,
+    setWifiInterface,
   });
-  const [loading, setLoading] = useState(true);
-  // Dual interface state: track both ethernet and WiFi interfaces separately (#754 enhancement)
-  // This allows seamless switching between modes without losing the previously selected interface
-  const [ethernetInterface, setEthernetInterfaceState] = useState("");
-  const [wifiInterface, setWifiInterfaceState] = useState("");
-  const [activeMode, setActiveMode] = useState<"ethernet" | "wifi">("ethernet");
 
-  // Computed values for backwards compatibility with existing components
-  const currentInterface =
-    activeMode === "wifi" ? wifiInterface : ethernetInterface;
-  const isWifi = activeMode === "wifi";
+  // Initialize card state hook
+  const {
+    cards,
+    loading,
+    setCards,
+    setLoading,
+    handleMessage,
+    handleCardUpdate,
+    prevLinkUpRef,
+  } = useCardState({
+    setCurrentInterface,
+    setIsWifi,
+    userSetWifiModeRef,
+  });
 
-  // Helper to set the appropriate interface based on mode
-  const setCurrentInterface = useCallback(
-    (name: string) => {
-      if (activeMode === "wifi") {
-        setWifiInterfaceState(name);
-      } else {
-        setEthernetInterfaceState(name);
-      }
-    },
-    [activeMode]
-  );
+  // Initialize network fetchers hook
+  const {
+    fetchLinkData,
+    fetchIPConfig,
+    fetchInterfaces,
+    fetchVersion,
+    fetchDiscoveryData,
+    fetchDNSData,
+    fetchVLANData,
+    fetchGatewayData,
+    fetchWiFiData,
+    fetchCableData,
+    fetchPublicIP,
+    fetchNetworkDiscovery,
+  } = useNetworkFetchers({
+    currentInterfaceRef,
+    setCards,
+    setCurrentInterface,
+    setInterfaces,
+    setAppVersion,
+    setNetworkDiscovery,
+    setIsWifi,
+    userSetWifiModeRef,
+    networkDiscoveryAbortRef,
+    prevLinkUpRef,
+  });
 
-  // Helper to set isWifi (actually sets activeMode)
-  const setIsWifi = useCallback((wifi: boolean) => {
-    setActiveMode(wifi ? "wifi" : "ethernet");
-  }, []);
-
-  // Track if user manually selected Wi-Fi/Ethernet mode - prevents auto-switching from API responses
-  const userSetWifiModeRef = useRef(false);
-  const [interfaces, setInterfaces] = useState<
-    Array<{
-      name: string;
-      friendlyName?: string;
-      description?: string;
-      type: string;
-      up: boolean;
-      speedDisplay?: string;
-      chipsetVendor?: string;
-      chipsetModel?: string;
-      hasTDR?: boolean;
-      hasDOM?: boolean;
-      score?: number;
-    }>
-  >([]);
-  const [networkDiscovery, setNetworkDiscovery] =
-    useState<NetworkDiscoveryData | null>(null);
-  const [appVersion, setAppVersion] = useState("dev");
-
-  // Refs to track device scan polling interval and timeout for cleanup
-  const scanPollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null
-  );
-  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const networkDiscoveryAbortRef = useRef<AbortController | null>(null);
-  const currentInterfaceRef = useRef(currentInterface);
-  // Track previous link state to detect link-up transitions for auto-run
-  const prevLinkUpRef = useRef<boolean | null>(null);
-  // Track if we've triggered initial auto-run on page load
-  const initialAutoRunDoneRef = useRef(false);
-
-  useEffect(() => {
-    currentInterfaceRef.current = currentInterface;
-  }, [currentInterface]);
-
+  // Cleanup network discovery on unmount
   useEffect(() => {
     return () => {
       networkDiscoveryAbortRef.current?.abort();
     };
   }, []);
-
-  const handleMessage = useCallback(
-    (message: Message) => {
-      if (message.type === "initial_state") {
-        setLoading(false);
-        if (!isPlainObject(message.payload)) {
-          logger.warn(
-            LogComponents.WEBSOCKET,
-            "Invalid initial_state payload",
-            {
-              payload: message.payload,
-            }
-          );
-          return;
-        }
-
-        const payload = message.payload;
-        if (typeof payload.interface === "string" && payload.interface) {
-          setCurrentInterface(payload.interface);
-        }
-
-        // Only auto-set WiFi mode if user hasn't manually selected
-        if (
-          typeof payload.isWireless === "boolean" &&
-          !userSetWifiModeRef.current
-        ) {
-          setIsWifi(payload.isWireless);
-        }
-
-        if (isPlainObject(payload.cards)) {
-          const updates: Partial<CardState> = {};
-          for (const [key, value] of Object.entries(payload.cards)) {
-            if (!isCardId(key)) continue;
-
-            const normalized =
-              value === null ? null : isPlainObject(value) ? value : undefined;
-            if (normalized === undefined) continue;
-
-            switch (key) {
-              case "link":
-                updates.link = normalized as CardState["link"];
-                // Initialize prevLinkUpRef on first load
-                if (
-                  normalized &&
-                  typeof (normalized as { linkUp?: boolean }).linkUp ===
-                    "boolean"
-                ) {
-                  const linkUp = (normalized as { linkUp: boolean }).linkUp;
-                  prevLinkUpRef.current = linkUp;
-
-                  // Trigger initial auto-run if link is up on page load
-                  if (linkUp && !initialAutoRunDoneRef.current) {
-                    initialAutoRunDoneRef.current = true;
-                    logger.info(
-                      LogComponents.NETWORK,
-                      "Link up on initial load, triggering auto-run tests"
-                    );
-                    setTimeout(() => {
-                      window.dispatchEvent(new CustomEvent("runAllTests"));
-                    }, 2000);
-                  }
-                }
-                break;
-              case "cable":
-                updates.cable = normalized as CardState["cable"];
-                break;
-              case "vlan":
-                updates.vlan = normalized as CardState["vlan"];
-                break;
-              case "switch":
-                updates.switch = normalized as CardState["switch"];
-                break;
-              case "wifi":
-                updates.wifi = normalized as CardState["wifi"];
-                break;
-              case "dhcp":
-                updates.dhcp = normalized as CardState["dhcp"];
-                break;
-              case "dns":
-                updates.dns = normalized as CardState["dns"];
-                break;
-              case "gateway":
-                updates.gateway = normalized as CardState["gateway"];
-                break;
-              case "publicip":
-                updates.publicip = normalized as CardState["publicip"];
-                break;
-            }
-          }
-
-          if (Object.keys(updates).length > 0) {
-            setCards((prev) => ({ ...prev, ...updates }));
-          }
-        }
-      }
-    },
-    [setCurrentInterface, setIsWifi]
-  );
 
   // Handle session expiration via API client callback
   useEffect(() => {
@@ -395,523 +267,6 @@ function App() {
       setSessionExpiredCallback(null);
     };
   }, [logout]);
-
-  const handleCardUpdate = useCallback((update: CardUpdate) => {
-    if (!update || typeof update !== "object") {
-      return;
-    }
-
-    const { cardId, data } = update as { cardId?: unknown; data?: unknown };
-
-    if (!isCardId(cardId)) {
-      logger.warn(
-        LogComponents.WEBSOCKET,
-        "Ignoring card_update for unknown cardId",
-        { cardId }
-      );
-      return;
-    }
-
-    if (data === undefined || (data !== null && !isPlainObject(data))) {
-      logger.warn(
-        LogComponents.WEBSOCKET,
-        "Ignoring card_update with invalid data",
-        {
-          cardId,
-          data,
-        }
-      );
-      return;
-    }
-
-    // Detect link-up transition for auto-run tests
-    if (cardId === "link" && data && typeof data === "object") {
-      const linkData = data as { linkUp?: boolean };
-      const newLinkUp = linkData.linkUp === true;
-      const wasDown = prevLinkUpRef.current === false;
-
-      // Update previous state
-      if (typeof linkData.linkUp === "boolean") {
-        prevLinkUpRef.current = linkData.linkUp;
-      }
-
-      // Trigger auto-run when link transitions from down to up
-      if (newLinkUp && wasDown) {
-        logger.info(
-          LogComponents.NETWORK,
-          "Link up detected, triggering auto-run tests"
-        );
-        // Small delay to let link stabilize before running tests
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent("runAllTests"));
-        }, 1500);
-      }
-    }
-
-    setCards((prev) => ({
-      ...prev,
-      [cardId]: data as CardState[typeof cardId],
-    }));
-  }, []);
-
-  // Fetch link data (Layer 2 only)
-  const fetchLinkData = useCallback(async () => {
-    try {
-      // Use ref to get current interface without dependency change (#754)
-      const iface = currentInterfaceRef.current;
-      const url = iface
-        ? `${API_BASE}/api/link?interface=${encodeURIComponent(iface)}`
-        : `${API_BASE}/api/link`;
-      const response = await fetch(url, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-
-        // Detect link-up transition for auto-run tests (fallback polling case)
-        const newLinkUp = data.linkUp === true;
-        const wasDown = prevLinkUpRef.current === false;
-
-        // Update previous state
-        if (typeof data.linkUp === "boolean") {
-          prevLinkUpRef.current = data.linkUp;
-        }
-
-        // Trigger auto-run when link transitions from down to up
-        if (newLinkUp && wasDown) {
-          logger.info(
-            LogComponents.NETWORK,
-            "Link up detected (poll), triggering auto-run tests"
-          );
-          setTimeout(() => {
-            window.dispatchEvent(new CustomEvent("runAllTests"));
-          }, 1500);
-        }
-
-        setCards((prev) => ({
-          ...prev,
-          link: {
-            linkUp: data.linkUp,
-            carrier: data.carrier ?? data.linkUp, // Fallback for compatibility
-            hasIP: data.hasIP ?? data.linkUp, // Fallback for compatibility
-            speed: data.speed || "",
-            duplex: data.duplex || "",
-            advertisedSpeeds: data.advertisedSpeeds || [],
-            mtu: data.mtu || 0,
-            autoNeg: data.autoNeg,
-          },
-        }));
-        setCurrentInterface(data.interface || "unknown");
-        // isWifi is now set by fetchWiFiData which properly detects wireless interfaces
-      }
-    } catch (err) {
-      logger.error(LogComponents.NETWORK, "Failed to fetch link data", err);
-    }
-  }, [setCurrentInterface]);
-
-  // Fetch IP configuration (DHCP card - Layer 3)
-  const fetchIPConfig = useCallback(async () => {
-    try {
-      // Use ref to get current interface without dependency change (#754)
-      const iface = currentInterfaceRef.current;
-      const url = iface
-        ? `${API_BASE}/api/ipconfig?interface=${encodeURIComponent(iface)}`
-        : `${API_BASE}/api/ipconfig`;
-      const response = await fetch(url, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCards((prev) => ({
-          ...prev,
-          dhcp: {
-            mac: data.mac || "",
-            mode: data.mode || "auto",
-            ipv4: data.ipv4 || null,
-            ipv6: data.ipv6 || [],
-            dns: data.dns || [],
-            timing: data.timing || null,
-          },
-        }));
-      }
-    } catch (err) {
-      logger.error(LogComponents.NETWORK, "Failed to fetch IP config", err);
-    }
-  }, []);
-
-  // Fetch interfaces
-  const fetchInterfaces = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/interfaces`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setInterfaces(data);
-      }
-    } catch (err) {
-      logger.error(LogComponents.NETWORK, "Failed to fetch interfaces", err);
-    }
-  }, []);
-
-  // Fetch app version from status endpoint
-  const fetchVersion = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/status`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.version) {
-          setAppVersion(data.version);
-        }
-      }
-    } catch (err) {
-      logger.error(LogComponents.SYSTEM, "Failed to fetch version", err);
-    }
-  }, []);
-
-  // Fetch discovery data (LLDP/CDP/EDP neighbors)
-  const fetchDiscoveryData = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/discovery`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data: unknown = await response.json();
-        const neighbors =
-          isPlainObject(data) && Array.isArray(data.neighbors)
-            ? data.neighbors
-            : [];
-
-        // Use the first neighbor as the "nearest switch"
-        if (neighbors.length > 0 && isPlainObject(neighbors[0])) {
-          const neighbor = neighbors[0];
-          const rawProtocol =
-            typeof neighbor.protocol === "string"
-              ? neighbor.protocol.toLowerCase()
-              : "unknown";
-          const protocol: SwitchData["protocol"] =
-            rawProtocol === "lldp" ||
-            rawProtocol === "cdp" ||
-            rawProtocol === "edp" ||
-            rawProtocol === "fdp"
-              ? rawProtocol
-              : "unknown";
-
-          const systemName =
-            typeof neighbor.systemName === "string" ? neighbor.systemName : "";
-          const chassisId =
-            typeof neighbor.chassisId === "string" ? neighbor.chassisId : "";
-
-          setCards((prev) => ({
-            ...prev,
-            switch: {
-              protocol,
-              switchName: systemName || chassisId || null,
-              portId:
-                typeof neighbor.portId === "string" ? neighbor.portId : null,
-              portDescription:
-                typeof neighbor.portDescription === "string"
-                  ? neighbor.portDescription
-                  : null,
-              managementIp:
-                typeof neighbor.managementAddress === "string"
-                  ? neighbor.managementAddress
-                  : null,
-              systemDescription:
-                typeof neighbor.systemDescription === "string"
-                  ? neighbor.systemDescription
-                  : null,
-            },
-          }));
-        } else {
-          setCards((prev) => ({
-            ...prev,
-            switch: null,
-          }));
-        }
-      }
-    } catch (err) {
-      logger.error(
-        LogComponents.DISCOVERY,
-        "Failed to fetch discovery data",
-        err
-      );
-    }
-  }, []);
-
-  // Fetch DNS test data
-  const fetchDNSData = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/dns`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCards((prev) => ({
-          ...prev,
-          dns: {
-            server: data.server || "Unknown",
-            servers: data.servers || [],
-            testHostname: data.testHostname || "google.com",
-            forward: data.forward
-              ? {
-                  result: data.forward.result,
-                  time: data.forward.time || data.forward.timeMs || 0,
-                  timeMs: data.forward.timeMs || data.forward.time || 0,
-                  status: data.forward.status,
-                  error: data.forward.error,
-                  resolved: data.forward.resolved,
-                }
-              : null,
-            forwardIpv6: data.forwardIpv6
-              ? {
-                  result: data.forwardIpv6.result,
-                  time: data.forwardIpv6.time || data.forwardIpv6.timeMs || 0,
-                  timeMs: data.forwardIpv6.timeMs || data.forwardIpv6.time || 0,
-                  status: data.forwardIpv6.status,
-                  error: data.forwardIpv6.error,
-                  resolved: data.forwardIpv6.resolved,
-                }
-              : null,
-            reverse: data.reverse
-              ? {
-                  result: data.reverse.result,
-                  time: data.reverse.time || data.reverse.timeMs || 0,
-                  timeMs: data.reverse.timeMs || data.reverse.time || 0,
-                  status: data.reverse.status,
-                  error: data.reverse.error,
-                  resolved: data.reverse.resolved,
-                }
-              : null,
-            reverseIpv6: data.reverseIpv6
-              ? {
-                  result: data.reverseIpv6.result,
-                  time: data.reverseIpv6.time || data.reverseIpv6.timeMs || 0,
-                  timeMs: data.reverseIpv6.timeMs || data.reverseIpv6.time || 0,
-                  status: data.reverseIpv6.status,
-                  error: data.reverseIpv6.error,
-                  resolved: data.reverseIpv6.resolved,
-                }
-              : null,
-          },
-        }));
-      }
-    } catch (err) {
-      logger.error(LogComponents.DNS, "Failed to fetch DNS data", err);
-    }
-  }, []);
-
-  // Fetch VLAN data
-  const fetchVLANData = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/vlan`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCards((prev) => ({
-          ...prev,
-          vlan: {
-            nativeVlan: data.nativeVlan || null,
-            taggedVlans: data.taggedVlans || [],
-            voiceVlan: data.voiceVlan || null,
-            configured: data.configured || { enabled: false, id: 0 },
-          },
-        }));
-      }
-    } catch (err) {
-      logger.error(LogComponents.VLAN, "Failed to fetch VLAN data", err);
-    }
-  }, []);
-
-  // Fetch Gateway ping data
-  const fetchGatewayData = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/gateway`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCards((prev) => ({
-          ...prev,
-          gateway: {
-            gateway: data.gateway || "",
-            reachable: data.reachable || false,
-            sent: data.sent || 0,
-            received: data.received || 0,
-            lossPercent: data.lossPercent || 0,
-            minTime: data.minTime || 0,
-            maxTime: data.maxTime || 0,
-            avgTime: data.avgTime || 0,
-            lastTime: data.lastTime || 0,
-            status: data.status || "unknown",
-            ipv6: data.ipv6
-              ? {
-                  gateway: data.ipv6.gateway || "",
-                  reachable: data.ipv6.reachable || false,
-                  sent: data.ipv6.sent || 0,
-                  received: data.ipv6.received || 0,
-                  lossPercent: data.ipv6.lossPercent || 0,
-                  minTime: data.ipv6.minTime || 0,
-                  maxTime: data.ipv6.maxTime || 0,
-                  avgTime: data.ipv6.avgTime || 0,
-                  lastTime: data.ipv6.lastTime || 0,
-                  status: data.ipv6.status || "unknown",
-                }
-              : undefined,
-          },
-        }));
-      }
-    } catch (err) {
-      logger.error(LogComponents.GATEWAY, "Failed to fetch Gateway data", err);
-    }
-  }, []);
-
-  // Fetch Wi-Fi data
-  const fetchWiFiData = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/wifi`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        // Check if this is a wireless interface with data
-        if (data.ssid) {
-          setCards((prev) => ({
-            ...prev,
-            wifi: {
-              ssid: data.ssid || "",
-              bssid: data.bssid || "",
-              signal: data.signal || 0,
-              channel: data.channel || 0,
-              frequency: data.frequency || 0,
-              security: data.security || "Unknown",
-            },
-          }));
-          // Only auto-set WiFi mode if user hasn't manually selected
-          if (!userSetWifiModeRef.current) {
-            setIsWifi(true);
-          }
-        } else {
-          setCards((prev) => ({ ...prev, wifi: null }));
-          // Only auto-set WiFi mode if user hasn't manually selected
-          if (!userSetWifiModeRef.current) {
-            setIsWifi(data.wireless === true);
-          }
-        }
-      }
-    } catch (err) {
-      logger.error(LogComponents.WIFI, "Failed to fetch Wi-Fi data", err);
-    }
-  }, [setIsWifi]);
-
-  // Fetch Cable test data
-  const fetchCableData = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/cable`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCards((prev) => ({
-          ...prev,
-          cable: {
-            supported: data.supported || false,
-            length: data.length || null,
-            status: data.status || "unknown",
-            faults: data.faults || [],
-          },
-        }));
-      }
-    } catch (err) {
-      logger.error(LogComponents.CABLE, "Failed to fetch Cable data", err);
-    }
-  }, []);
-
-  // Fetch Public IP data
-  const fetchPublicIP = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/publicip`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCards((prev) => ({
-          ...prev,
-          publicip: {
-            ipv4: data.ipv4 || undefined,
-            ipv6: data.ipv6 || undefined,
-            lastChecked: data.lastChecked || new Date().toISOString(),
-            error: data.error || undefined,
-          },
-        }));
-      }
-    } catch (err) {
-      logger.error(
-        LogComponents.PUBLICIP,
-        "Failed to fetch Public IP data",
-        err
-      );
-    }
-  }, []);
-
-  // Fetch Network Discovery data (devices and status)
-  const fetchNetworkDiscovery = useCallback(async () => {
-    try {
-      networkDiscoveryAbortRef.current?.abort();
-      const controller = new AbortController();
-      networkDiscoveryAbortRef.current = controller;
-      const requestedInterface = currentInterface;
-
-      const [devicesRes, statusRes] = await Promise.all([
-        fetch(`${API_BASE}/api/devices`, {
-          credentials: "include",
-          signal: controller.signal,
-        }),
-        fetch(`${API_BASE}/api/devices/status`, {
-          credentials: "include",
-          signal: controller.signal,
-        }),
-      ]);
-
-      if (devicesRes.ok && statusRes.ok) {
-        const devicesData = await devicesRes.json();
-        const status = await statusRes.json();
-
-        if (
-          controller.signal.aborted ||
-          currentInterfaceRef.current !== requestedInterface
-        ) {
-          return;
-        }
-
-        // devicesData contains { devices: [...], status: {...} }
-        // Extract the devices array from the response
-        setNetworkDiscovery({
-          devices: devicesData.devices || [],
-          status: status || {
-            scanning: false,
-            deviceCount: 0,
-            lastScan: "",
-            subnet: "",
-            localIP: "",
-            interface: requestedInterface,
-          },
-        });
-      }
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        return;
-      }
-      logger.error(
-        LogComponents.DEVICES,
-        "Failed to fetch network discovery data",
-        err
-      );
-    }
-  }, [currentInterface]);
 
   // Trigger network device scan
   const triggerDeviceScan = useCallback(async () => {
@@ -1024,18 +379,11 @@ function App() {
       fetchCableData,
       setCurrentInterface,
       setIsWifi,
+      userSetWifiModeRef,
     ]
   );
 
-  // Quick helpers for interface groups and fast switching between Ethernet/Wi‑Fi views
-  const hasEthernet = useMemo(
-    () => interfaces.some((iface) => iface.type === "ethernet"),
-    [interfaces]
-  );
-  const hasWifiInterface = useMemo(
-    () => interfaces.some((iface) => iface.type === "wifi"),
-    [interfaces]
-  );
+  // Fast switching between Ethernet/Wi-Fi views
   const switchToInterfaceType = useCallback(
     async (type: "ethernet" | "wifi") => {
       // Mark that user explicitly selected this mode - prevents API responses from flipping back
@@ -1087,11 +435,14 @@ function App() {
       setWifiInterface,
       ethernetInterface,
       wifiInterface,
+      setActiveMode,
+      setEthernetInterfaceState,
+      setWifiInterfaceState,
+      userSetWifiModeRef,
     ]
   );
 
   // Load interface selections from active profile (#754 multi-interface support)
-  // With dual interface state, we load BOTH interfaces into state
   const profileInterfaceLoadedRef = useRef<string | null>(null);
   useEffect(() => {
     // Only load once per profile change, and only if interfaces are available
@@ -1141,7 +492,6 @@ function App() {
       }
 
       // Batch all state updates in a single setTimeout to avoid cascading renders
-      // and satisfy React Compiler requirements
       setTimeout(() => {
         if (restoredEthernet && profileInterfaces.ethernet?.name) {
           setEthernetInterfaceState(profileInterfaces.ethernet.name);
@@ -1150,7 +500,6 @@ function App() {
           setWifiInterfaceState(profileInterfaces.wifi.name);
         }
         // Set the active interface on the backend
-        // Prefer ethernet if both are restored, otherwise use whichever was restored
         if (restoredEthernet) {
           changeInterface(profileInterfaces.ethernet!.name);
           setActiveMode("ethernet");
@@ -1161,7 +510,7 @@ function App() {
       }, 0);
     }
     profileInterfaceLoadedRef.current = activeProfile.id;
-  }, [activeProfile, interfaces, changeInterface]);
+  }, [activeProfile, interfaces, changeInterface, setActiveMode, setEthernetInterfaceState, setWifiInterfaceState]);
 
   // Memoize run options to prevent unnecessary re-computation (fixes #671)
   const runOpts = useMemo(

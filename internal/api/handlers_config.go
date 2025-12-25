@@ -96,7 +96,7 @@ func (s *Server) handleConfigRestore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Limit request body size to prevent DoS attacks (fixes #682)
-	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeConfig)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
 	var req RestoreRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
