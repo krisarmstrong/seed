@@ -578,12 +578,15 @@ func (p *Pipeline) run(ctx context.Context) {
 
 	p.mu.Lock()
 	p.currentRun.DevicesFound = len(devices)
+	// Copy values under lock to avoid race after unlock (fixes #827)
+	runID := p.currentRun.ID
+	startedAt := p.currentRun.StartedAt
 	p.mu.Unlock()
 
 	slog.Info("Pipeline completed",
-		"runId", p.currentRun.ID,
+		"runId", runID,
 		"devicesFound", len(devices),
-		"duration", time.Since(p.currentRun.StartedAt))
+		"duration", time.Since(startedAt))
 }
 
 // runEnumerationPhase executes the device enumeration phase.

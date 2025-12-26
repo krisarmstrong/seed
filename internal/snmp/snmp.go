@@ -196,6 +196,23 @@ func queryMultipleWithCommunity(ctx context.Context, ip string, oids []string, c
 
 // queryWithV3 performs SNMP v3 query with credentials.
 func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credential, cfg *config.SNMPConfig) (string, error) {
+	// Validate credentials to fail fast instead of silently (fixes #832)
+	if cred.Username == "" {
+		return "", fmt.Errorf("SNMPv3 credential '%s' has empty username", cred.Name)
+	}
+	if cred.AuthProtocol != "" && cred.AuthProtocol != "NoAuth" && cred.AuthPassword == "" {
+		slog.Warn("SNMPv3 credential has auth protocol but empty password - authentication will likely fail",
+			"credential_name", cred.Name,
+			"auth_protocol", cred.AuthProtocol,
+			"target", ip)
+	}
+	if cred.PrivProtocol != "" && cred.PrivProtocol != "NoPriv" && cred.PrivPassword == "" {
+		slog.Warn("SNMPv3 credential has privacy protocol but empty password - encryption will likely fail",
+			"credential_name", cred.Name,
+			"priv_protocol", cred.PrivProtocol,
+			"target", ip)
+	}
+
 	// Warn if MD5 authentication is being used.
 	// MD5 is cryptographically broken and will be removed in the next major version.
 	if cred.AuthProtocol == AuthProtocolMD5 { //nolint:staticcheck // Intentionally checking deprecated field to warn users
@@ -249,6 +266,23 @@ func queryWithV3(ctx context.Context, ip, oid string, cred *config.SNMPv3Credent
 
 // queryMultipleWithV3 performs multiple SNMP queries with v3 credentials.
 func queryMultipleWithV3(ctx context.Context, ip string, oids []string, cred *config.SNMPv3Credential, cfg *config.SNMPConfig) (map[string]string, error) {
+	// Validate credentials to fail fast instead of silently (fixes #832)
+	if cred.Username == "" {
+		return nil, fmt.Errorf("SNMPv3 credential '%s' has empty username", cred.Name)
+	}
+	if cred.AuthProtocol != "" && cred.AuthProtocol != "NoAuth" && cred.AuthPassword == "" {
+		slog.Warn("SNMPv3 credential has auth protocol but empty password - authentication will likely fail",
+			"credential_name", cred.Name,
+			"auth_protocol", cred.AuthProtocol,
+			"target", ip)
+	}
+	if cred.PrivProtocol != "" && cred.PrivProtocol != "NoPriv" && cred.PrivPassword == "" {
+		slog.Warn("SNMPv3 credential has privacy protocol but empty password - encryption will likely fail",
+			"credential_name", cred.Name,
+			"priv_protocol", cred.PrivProtocol,
+			"target", ip)
+	}
+
 	// Warn if MD5 authentication is being used.
 	// MD5 is cryptographically broken and will be removed in the next major version.
 	if cred.AuthProtocol == AuthProtocolMD5 { //nolint:staticcheck // Intentionally checking deprecated field to warn users

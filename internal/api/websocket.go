@@ -482,7 +482,16 @@ func (h *Hub) Run() {
 
 // Shutdown stops the hub.
 func (h *Hub) Shutdown() {
-	close(h.shutdown)
+	// Protect against double-close panic (fixes #833)
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	select {
+	case <-h.shutdown:
+		// Already closed
+		return
+	default:
+		close(h.shutdown)
+	}
 }
 
 // Broadcast sends a message to all connected clients.

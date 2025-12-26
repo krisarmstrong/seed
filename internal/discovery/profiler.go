@@ -302,8 +302,34 @@ func (p *DeviceProfiler) profileDevice(ip string) {
 		p.mu.Unlock()
 	}()
 
+	// Get stopCh under lock to check for shutdown (fixes #828)
+	p.mu.RLock()
+	stopCh := p.stopCh
+	p.mu.RUnlock()
+
+	// Check if we're shutting down before starting work
+	if stopCh == nil {
+		return
+	}
+	select {
+	case <-stopCh:
+		return
+	default:
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
+	// Create cancellable context that respects shutdown (fixes #828)
+	ctx, cancelWithShutdown := context.WithCancel(ctx)
+	go func() {
+		select {
+		case <-stopCh:
+			cancelWithShutdown()
+		case <-ctx.Done():
+		}
+	}()
+	defer cancelWithShutdown()
 
 	profile := &DeviceProfile{
 		ProfiledAt:  time.Now(),
@@ -330,13 +356,21 @@ func (p *DeviceProfiler) profileDevice(ip string) {
 		go func(port int) {
 			defer wg.Done()
 
-			// Acquire semaphore
-			sem <- struct{}{}
+			// Check for context cancellation before acquiring semaphore (fixes #834)
+			select {
+			case <-ctx.Done():
+				return
+			case sem <- struct{}{}:
+			}
 			defer func() { <-sem }()
 
-			// Apply probe delay for IDS-friendly scanning
+			// Apply probe delay for IDS-friendly scanning with context check (fixes #834)
 			if p.config.ProbeDelay > 0 {
-				time.Sleep(p.config.ProbeDelay)
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(p.config.ProbeDelay):
+				}
 			}
 
 			result := p.checkPortWithConfig(ctx, ip, port)
