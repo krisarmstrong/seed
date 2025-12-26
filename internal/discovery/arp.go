@@ -351,8 +351,14 @@ func (s *ARPScanner) pingSweep(ctx context.Context, subnet *net.IPNet) error {
 
 // Close releases resources held by the ARPScanner.
 func (s *ARPScanner) Close() error {
-	if s.pinger != nil {
-		return s.pinger.Close()
+	// Access pinger under lock to avoid race with pingSweep (fixes #826)
+	s.mu.Lock()
+	pinger := s.pinger
+	s.pinger = nil
+	s.mu.Unlock()
+
+	if pinger != nil {
+		return pinger.Close()
 	}
 	return nil
 }
