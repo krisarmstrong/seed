@@ -120,7 +120,8 @@ type DeviceDiscovery struct {
 	devices         map[string]*DiscoveredDevice // Key by MAC
 	lastScan        time.Time
 	scanning        bool
-	nameResolution  bool // Enable NetBIOS/mDNS name resolution
+	nameResolution  bool          // Enable NetBIOS/mDNS name resolution
+	deviceTTL       time.Duration // How long to keep stale devices (fixes #829)
 }
 
 // NewDeviceDiscovery creates a new device discovery aggregator.
@@ -175,7 +176,8 @@ func NewDeviceDiscoveryWithOUI(interfaceName, ouiPath string, ouiMaxAge time.Dur
 		mdnsResolver:    NewMDNSResolver(interfaceName),
 		mdnsListener:    NewMDNSListener(interfaceName),
 		devices:         make(map[string]*DiscoveredDevice),
-		nameResolution:  true, // Enabled by default
+		nameResolution:  true,           // Enabled by default
+		deviceTTL:       24 * time.Hour, // Default: expire stale devices after 24h (fixes #829)
 	}
 }
 
@@ -277,9 +279,31 @@ func (d *DeviceDiscovery) aggregateResults() {
 	d.mergeEDPResults()
 	d.mergeNDPResults()
 	d.mergeMDNSNames()
+	d.expireStaleDevices() // Remove old devices to prevent unbounded growth (fixes #829)
 	d.detectDuplicateIPs()
 	d.ensureVendorInfo()
 	d.computeDisplayNames()
+}
+
+// expireStaleDevices removes devices that haven't been seen within deviceTTL.
+// This prevents unbounded memory growth when devices leave the network.
+// Must be called with d.mu held. (fixes #829)
+func (d *DeviceDiscovery) expireStaleDevices() {
+	if d.deviceTTL <= 0 {
+		return // TTL disabled
+	}
+
+	cutoff := time.Now().Add(-d.deviceTTL)
+	expired := 0
+	for key, device := range d.devices {
+		if device.LastSeen.Before(cutoff) {
+			delete(d.devices, key)
+			expired++
+		}
+	}
+	if expired > 0 {
+		slog.Info("Expired stale devices", "count", expired, "ttl", d.deviceTTL)
+	}
 }
 
 // mergeARPResults merges ARP scan entries into devices. Must be called with mu held.

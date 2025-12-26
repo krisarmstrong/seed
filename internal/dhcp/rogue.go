@@ -144,6 +144,22 @@ func (rd *RogueDetector) IsRunning() bool {
 
 // capturePackets is the main packet capture loop.
 func (rd *RogueDetector) capturePackets(ctx context.Context) {
+	// Ensure cleanup happens if capturePackets exits unexpectedly (fixes #831)
+	defer func() {
+		rd.mu.Lock()
+		if rd.running {
+			// goroutine exited unexpectedly, clean up resources
+			if rd.handle != nil {
+				rd.handle.Close()
+				rd.handle = nil
+			}
+			rd.running = false
+			rd.cancel = nil
+			slog.Warn("Rogue DHCP detector capture loop exited unexpectedly")
+		}
+		rd.mu.Unlock()
+	}()
+
 	packetSource := gopacket.NewPacketSource(rd.handle, rd.handle.LinkType())
 
 	for {

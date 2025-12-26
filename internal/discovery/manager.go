@@ -232,9 +232,16 @@ func (m *Manager) Stop() {
 
 // GetNeighbors returns all discovered neighbors from all protocols.
 func (m *Manager) GetNeighbors() []*Neighbor {
-	lldpNeighbors := m.lldp.GetNeighbors()
-	cdpNeighbors := m.cdp.GetNeighbors()
-	edpNeighbors := m.edp.GetNeighbors()
+	// Copy capture object references under lock to avoid race with SetInterface (fixes #830)
+	m.mu.RLock()
+	lldp := m.lldp
+	cdp := m.cdp
+	edp := m.edp
+	m.mu.RUnlock()
+
+	lldpNeighbors := lldp.GetNeighbors()
+	cdpNeighbors := cdp.GetNeighbors()
+	edpNeighbors := edp.GetNeighbors()
 
 	total := len(lldpNeighbors) + len(cdpNeighbors) + len(edpNeighbors)
 	neighbors := make([]*Neighbor, 0, total)
