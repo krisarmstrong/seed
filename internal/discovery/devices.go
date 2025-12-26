@@ -480,8 +480,11 @@ func (d *DeviceDiscovery) mergeNDPResults() {
 			if device.IPv6Address == "" {
 				device.IPv6Address = ndp.IPv6
 			}
-			if !containsIPv6(device.IPv6Addresses, ndp.IPv6) {
-				device.IPv6Addresses = append(device.IPv6Addresses, ndp.IPv6)
+			// Fixes #884: Limit IPv6 addresses to prevent unbounded growth
+			if len(device.IPv6Addresses) < maxIPv6AddressesPerDevice {
+				if !containsIPv6(device.IPv6Addresses, ndp.IPv6) {
+					device.IPv6Addresses = append(device.IPv6Addresses, ndp.IPv6)
+				}
 			}
 		}
 
@@ -652,14 +655,34 @@ func containsIPv6(addresses []string, addr string) bool {
 	return false
 }
 
+// maxIPv6AddressesPerDevice limits IPv6 address accumulation to prevent
+// unbounded memory growth from devices with many addresses (fixes #884).
+const maxIPv6AddressesPerDevice = 16
+
 // GetDevices returns all discovered devices.
+// Fixes #886: Returns shallow copies to prevent external mutation of internal state.
 func (d *DeviceDiscovery) GetDevices() []*DiscoveredDevice {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
 	devices := make([]*DiscoveredDevice, 0, len(d.devices))
 	for _, device := range d.devices {
-		devices = append(devices, device)
+		// Fixes #886: Return copy to prevent external mutation
+		deviceCopy := *device
+		// Deep copy slices that could be mutated
+		if device.DiscoveryMethod != nil {
+			deviceCopy.DiscoveryMethod = make([]Method, len(device.DiscoveryMethod))
+			copy(deviceCopy.DiscoveryMethod, device.DiscoveryMethod)
+		}
+		if device.IPv6Addresses != nil {
+			deviceCopy.IPv6Addresses = make([]string, len(device.IPv6Addresses))
+			copy(deviceCopy.IPv6Addresses, device.IPv6Addresses)
+		}
+		if device.DuplicateMACs != nil {
+			deviceCopy.DuplicateMACs = make([]string, len(device.DuplicateMACs))
+			copy(deviceCopy.DuplicateMACs, device.DuplicateMACs)
+		}
+		devices = append(devices, &deviceCopy)
 	}
 	return devices
 }

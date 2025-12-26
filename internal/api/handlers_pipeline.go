@@ -96,6 +96,7 @@ func (s *Server) handlePipelineConfig(w http.ResponseWriter, _ *http.Request) {
 }
 
 // handlePipelineConfigUpdate updates the pipeline configuration (PUT /api/pipeline/config).
+// Fixes #883: Wrap pipeline update and config save in atomic transaction to prevent race.
 func (s *Server) handlePipelineConfigUpdate(w http.ResponseWriter, r *http.Request) {
 	if s.pipeline == nil {
 		http.Error(w, "Pipeline not initialized", http.StatusServiceUnavailable)
@@ -118,13 +119,18 @@ func (s *Server) handlePipelineConfigUpdate(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
+	// Fixes #883: Hold config lock during both pipeline update and config file save
+	// to ensure atomicity and prevent race conditions
+	s.config.Lock()
+
+	// Update pipeline with new config while holding the lock
 	if err := s.pipeline.UpdateConfig(&config); err != nil {
+		s.config.Unlock()
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Also update the config file
-	s.config.Lock()
+	// Now update the config file (both operations are atomic)
 	s.config.Pipeline.Phases.Enumeration = config.Phases.Enumeration
 	s.config.Pipeline.Phases.NameResolution = config.Phases.NameResolution
 	s.config.Pipeline.Phases.ServiceDiscovery = config.Phases.ServiceDiscovery
