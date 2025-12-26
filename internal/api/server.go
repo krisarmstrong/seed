@@ -87,6 +87,7 @@ type Server struct {
 	redirectServer      *http.Server    // HTTP→HTTPS redirect server (fixes #515)
 	redirectServerErr   chan error      // Error channel for redirect server
 	trustedProxies      *TrustedProxies // Trusted proxy IPs for X-Forwarded-For handling (#H4)
+	pipeline            *discovery.Pipeline // Phased discovery pipeline orchestrator
 }
 
 // getClientIP extracts the client IP from a request, considering trusted proxies.
@@ -210,6 +211,18 @@ func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.M
 	s.logBroadcaster = logging.InitBroadcaster(1000) // Buffer last 1000 log entries
 	s.logBroadcaster.SetBroadcaster(&logBroadcastAdapter{hub: s.wsHub})
 	slog.Info("Log broadcaster initialized", "buffer_size", 1000)
+
+	// Initialize discovery pipeline orchestrator
+	pipelineCfg := discovery.PipelineConfigFromAdapter(&cfg.Pipeline)
+	s.pipeline = discovery.NewPipeline(
+		pipelineCfg,
+		s.deviceDiscovery,
+		discovery.NewDeviceProfiler(discovery.DefaultProfilerConfig(), &cfg.SNMP),
+		&pipelineBroadcastAdapter{hub: s.wsHub},
+	)
+	slog.Info("Discovery pipeline initialized",
+		"phases_enabled", s.pipeline.GetEnabledPhaseNames(),
+		"port_scan_intensity", cfg.Pipeline.PortScan.Intensity)
 
 	// Initialize vulnerability scanner if enabled
 	if cfg.Security.VulnerabilityScanning.Enabled {
@@ -373,6 +386,14 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/discovery/options", s.handleDiscoveryOptions)
 	s.mux.HandleFunc("/api/discovery/service/status", s.handleDiscoveryServiceStatus)
 	s.mux.HandleFunc("/api/discovery/fingerprint", s.handleAdvancedFingerprint)
+
+	// Pipeline routes - phased discovery orchestration
+	s.mux.HandleFunc("/api/pipeline/status", s.handlePipelineStatus)
+	s.mux.HandleFunc("/api/pipeline/start", s.handlePipelineStart)
+	s.mux.HandleFunc("/api/pipeline/cancel", s.handlePipelineCancel)
+	s.mux.HandleFunc("/api/pipeline/config", s.handlePipelineConfig)
+	s.mux.HandleFunc("/api/pipeline/port-intensity", s.handlePipelinePortIntensityInfo)
+	s.mux.HandleFunc("/api/pipeline/timing-profiles", s.handlePipelineTimingProfiles)
 	s.mux.HandleFunc("/api/publicip", s.handlePublicIP)
 	s.mux.HandleFunc("/api/logs", s.handleLogs)
 	// Enhanced logging API endpoints (comprehensive logging enhancement)
