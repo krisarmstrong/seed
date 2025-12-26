@@ -54,6 +54,7 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/krisarmstrong/seed/internal/auth"
+	"github.com/krisarmstrong/seed/internal/discovery"
 	"github.com/krisarmstrong/seed/internal/i18n"
 	"github.com/krisarmstrong/seed/internal/logging"
 )
@@ -546,6 +547,21 @@ type logBroadcastAdapter struct {
 func (a *logBroadcastAdapter) BroadcastLogEntry(entry *logging.LogEntry) {
 	if a.hub != nil {
 		a.hub.BroadcastLogEntry(entry)
+	}
+}
+
+// pipelineBroadcastAdapter implements discovery.EventBroadcaster for pipeline events.
+type pipelineBroadcastAdapter struct {
+	hub *Hub
+}
+
+// BroadcastPipelineEvent implements discovery.EventBroadcaster interface.
+func (a *pipelineBroadcastAdapter) BroadcastPipelineEvent(event discovery.PipelineEvent) {
+	if a.hub != nil {
+		a.hub.Broadcast(Message{
+			Type:    "pipeline",
+			Payload: event,
+		})
 	}
 }
 

@@ -50,6 +50,140 @@ type Config struct {
 	Logging          LoggingConfig          `yaml:"logging"`
 	MCP              MCPConfig              `yaml:"mcp"`
 	Database         DatabaseConfig         `yaml:"database"`
+	Pipeline         PipelineConfig         `yaml:"pipeline"`
+}
+
+// PipelineConfig controls the sequential discovery pipeline.
+type PipelineConfig struct {
+	// Phases controls which pipeline phases are enabled.
+	Phases PipelinePhaseConfig `yaml:"phases"`
+
+	// Timing controls rate limiting and delays.
+	Timing PipelineTimingConfig `yaml:"timing"`
+
+	// PortScan controls port scanning behavior and intensity.
+	PortScan PipelinePortScanConfig `yaml:"port_scan"`
+
+	// SNMPCollection controls extended SNMP MIB collection.
+	SNMPCollection PipelineSNMPConfig `yaml:"snmp_collection"`
+
+	// Persistence controls how results are stored.
+	Persistence PipelinePersistenceConfig `yaml:"persistence"`
+}
+
+// PipelinePhaseConfig controls which phases are executed.
+type PipelinePhaseConfig struct {
+	Enumeration      bool `yaml:"enumeration"`       // Always true - core functionality
+	NameResolution   bool `yaml:"name_resolution"`   // Default: true
+	ServiceDiscovery bool `yaml:"service_discovery"` // Default: false (passive only)
+	VulnAssessment   bool `yaml:"vuln_assessment"`   // Default: false
+}
+
+// PipelineTimingConfig controls scan rate limiting.
+type PipelineTimingConfig struct {
+	// ProbeDelay is the minimum time between probes to a single host.
+	ProbeDelay time.Duration `yaml:"probe_delay"`
+
+	// HostDelay is the minimum time between starting scans of different hosts.
+	HostDelay time.Duration `yaml:"host_delay"`
+
+	// MaxConcurrentHosts limits parallel host scanning.
+	MaxConcurrentHosts int `yaml:"max_concurrent_hosts"`
+
+	// PhaseTimeout is the max duration for any single phase.
+	PhaseTimeout time.Duration `yaml:"phase_timeout"`
+
+	// Profile selects a pre-defined timing profile: polite, normal, aggressive.
+	Profile string `yaml:"profile"`
+}
+
+// PipelinePortScanConfig controls port scanning intensity.
+type PipelinePortScanConfig struct {
+	// Intensity controls which ports are scanned: off, quick, standard, comprehensive, custom.
+	Intensity string `yaml:"intensity"`
+
+	// CustomPorts for Intensity="custom".
+	CustomPorts []int `yaml:"custom_ports,omitempty"`
+
+	// BannerGrab enables service banner reading.
+	BannerGrab bool `yaml:"banner_grab"`
+
+	// ConnectTimeout for port connections.
+	ConnectTimeout time.Duration `yaml:"connect_timeout"`
+}
+
+// PipelineSNMPConfig controls extended SNMP data collection.
+type PipelineSNMPConfig struct {
+	// Enabled turns on extended SNMP collection in Phase 3.
+	Enabled bool `yaml:"enabled"`
+
+	// MIBs specifies which MIB groups to collect.
+	MIBs PipelineSNMPMIBs `yaml:"mibs"`
+
+	// WalkTimeout per MIB walk operation.
+	WalkTimeout time.Duration `yaml:"walk_timeout"`
+
+	// MaxOIDsPerRequest for bulk requests.
+	MaxOIDsPerRequest int `yaml:"max_oids_per_request"`
+}
+
+// PipelineSNMPMIBs controls which MIBs are collected.
+type PipelineSNMPMIBs struct {
+	System      bool `yaml:"system"`       // SNMPv2-MIB::system (always on)
+	Interfaces  bool `yaml:"interfaces"`   // IF-MIB (ifTable, ifXTable)
+	IPAddresses bool `yaml:"ip_addresses"` // IP-MIB (ipAddrTable)
+	Routing     bool `yaml:"routing"`      // IP-FORWARD-MIB
+	Bridge      bool `yaml:"bridge"`       // BRIDGE-MIB (MAC table)
+	Entity      bool `yaml:"entity"`       // ENTITY-MIB (physical inventory)
+	LLDP        bool `yaml:"lldp"`         // LLDP-MIB
+	VLAN        bool `yaml:"vlan"`         // Q-BRIDGE-MIB
+}
+
+// PipelinePersistenceConfig controls database storage.
+type PipelinePersistenceConfig struct {
+	// StoreHistory keeps historical device state.
+	StoreHistory bool `yaml:"store_history"`
+
+	// StalenessThreshold marks devices inactive after this duration.
+	StalenessThreshold time.Duration `yaml:"staleness_threshold"`
+
+	// PurgeAfter removes inactive devices after this duration.
+	PurgeAfter time.Duration `yaml:"purge_after"`
+}
+
+// GetPhases implements discovery.ConfigPipelineAdapter.
+func (c *PipelineConfig) GetPhases() (enumeration, nameResolution, serviceDiscovery, vulnAssessment bool) {
+	return c.Phases.Enumeration, c.Phases.NameResolution, c.Phases.ServiceDiscovery, c.Phases.VulnAssessment
+}
+
+// GetTiming implements discovery.ConfigPipelineAdapter.
+func (c *PipelineConfig) GetTiming() (probeDelay, hostDelay, phaseTimeout time.Duration, maxConcurrentHosts int, profile string) {
+	return c.Timing.ProbeDelay, c.Timing.HostDelay, c.Timing.PhaseTimeout, c.Timing.MaxConcurrentHosts, c.Timing.Profile
+}
+
+// GetPortScan implements discovery.ConfigPipelineAdapter.
+func (c *PipelineConfig) GetPortScan() (intensity string, customPorts []int, bannerGrab bool, connectTimeout time.Duration) {
+	return c.PortScan.Intensity, c.PortScan.CustomPorts, c.PortScan.BannerGrab, c.PortScan.ConnectTimeout
+}
+
+// GetSNMP implements discovery.ConfigPipelineAdapter.
+func (c *PipelineConfig) GetSNMP() (enabled bool, system, interfaces, ipAddresses, routing, bridge, entity, lldp, vlan bool, walkTimeout time.Duration, maxOIDsPerRequest int) {
+	return c.SNMPCollection.Enabled,
+		c.SNMPCollection.MIBs.System,
+		c.SNMPCollection.MIBs.Interfaces,
+		c.SNMPCollection.MIBs.IPAddresses,
+		c.SNMPCollection.MIBs.Routing,
+		c.SNMPCollection.MIBs.Bridge,
+		c.SNMPCollection.MIBs.Entity,
+		c.SNMPCollection.MIBs.LLDP,
+		c.SNMPCollection.MIBs.VLAN,
+		c.SNMPCollection.WalkTimeout,
+		c.SNMPCollection.MaxOIDsPerRequest
+}
+
+// GetPersistence implements discovery.ConfigPipelineAdapter.
+func (c *PipelineConfig) GetPersistence() (storeHistory bool, stalenessThreshold, purgeAfter time.Duration) {
+	return c.Persistence.StoreHistory, c.Persistence.StalenessThreshold, c.Persistence.PurgeAfter
 }
 
 // DatabaseConfig contains SQLite database configuration.
@@ -120,6 +254,7 @@ func (c *Config) cloneFields() *Config {
 		Logging:          c.Logging,
 		MCP:              c.MCP,
 		Database:         c.Database,
+		Pipeline:         c.Pipeline,
 	}
 }
 
@@ -150,6 +285,7 @@ func (c *Config) CopyFieldsFrom(src *Config) {
 	c.Logging = temp.Logging
 	c.MCP = temp.MCP
 	c.Database = temp.Database
+	c.Pipeline = temp.Pipeline
 }
 
 // ServerConfig contains HTTP server settings.
@@ -889,6 +1025,46 @@ func DefaultConfig() *Config {
 			RetentionDays:  90,   // 3 months of historical data
 			EnableWAL:      true, // Better concurrency
 			MaxConnections: 10,
+		},
+		Pipeline: PipelineConfig{
+			Phases: PipelinePhaseConfig{
+				Enumeration:      true,  // Always enabled
+				NameResolution:   true,  // Enabled by default
+				ServiceDiscovery: false, // Disabled by default (requires opt-in for port scanning)
+				VulnAssessment:   false, // Disabled by default (requires opt-in)
+			},
+			Timing: PipelineTimingConfig{
+				ProbeDelay:         50 * time.Millisecond,
+				HostDelay:          20 * time.Millisecond,
+				MaxConcurrentHosts: 20,
+				PhaseTimeout:       10 * time.Minute,
+				Profile:            "normal", // polite, normal, aggressive
+			},
+			PortScan: PipelinePortScanConfig{
+				Intensity:      "off", // OFF by default - security conscious
+				BannerGrab:     true,
+				ConnectTimeout: 2 * time.Second,
+			},
+			SNMPCollection: PipelineSNMPConfig{
+				Enabled: true,
+				MIBs: PipelineSNMPMIBs{
+					System:      true, // Always collect system info
+					Interfaces:  true, // Critical for network devices
+					IPAddresses: true, // Essential for topology
+					Routing:     false,
+					Bridge:      false, // Can be large on switches
+					Entity:      false,
+					LLDP:        true,
+					VLAN:        false, // Can be large
+				},
+				WalkTimeout:       30 * time.Second,
+				MaxOIDsPerRequest: 10,
+			},
+			Persistence: PipelinePersistenceConfig{
+				StoreHistory:       true,
+				StalenessThreshold: 24 * time.Hour,
+				PurgeAfter:         30 * 24 * time.Hour,
+			},
 		},
 	}
 }

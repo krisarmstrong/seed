@@ -265,7 +265,7 @@ func (s *Server) saveSettingsToActiveProfile(ctx context.Context, logger *slog.L
 		if getDefaultErr != nil {
 			// No profile exists - this is not an error, just nothing to save to
 			logger.Debug("No active or default profile to save settings to", "reason", getDefaultErr.Error())
-			return nil //nolint:nilerr // Intentionally returning nil - no profile means nothing to save
+			return nil
 		}
 		activeID = defaultProfile.ID
 	}
