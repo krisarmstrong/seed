@@ -55,6 +55,12 @@ type DiscoveredDevice struct {
 
 	// Auto-profiling results
 	Profile *DeviceProfile `json:"profile,omitempty"`
+
+	// Extended SNMP data from Phase 3 scanning
+	SNMPData *SNMPFullData `json:"snmpData,omitempty"`
+
+	// Vulnerability assessment results from Phase 4
+	Vulnerabilities *DeviceVulnerabilities `json:"vulnerabilities,omitempty"`
 }
 
 // LLDPDeviceInfo contains LLDP-specific device information.

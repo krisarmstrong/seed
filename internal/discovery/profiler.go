@@ -83,6 +83,15 @@ type ProfilerConfig struct {
 	Timeout       time.Duration
 	MaxConcurrent int
 	QuickPorts    []int // Ports to check during quick profile
+
+	// Enhanced settings for pipeline integration
+	PortScanIntensity PortScanIntensity // Intensity level for port scanning
+	TimingProfile     ScanTimingProfile // Timing profile for rate limiting
+	CustomPorts       []int             // Custom port list when intensity is PortScanCustom
+	BannerGrab        bool              // Whether to attempt banner grabbing
+	ProbeDelay        time.Duration     // Delay between probes to same host
+	HostDelay         time.Duration     // Delay between starting different hosts
+	ConnectTimeout    time.Duration     // Timeout for TCP connections
 }
 
 // DefaultProfilerConfig returns sensible defaults.
@@ -100,6 +109,45 @@ func DefaultProfilerConfig() *ProfilerConfig {
 			8443, // HTTPS Alt
 			// Note: SNMP (port 161) is UDP, probed separately via probeSNMP()
 		},
+		PortScanIntensity: PortScanOff, // Default: OFF for security
+		TimingProfile:     ScanProfileNormal,
+		BannerGrab:        true,
+		ProbeDelay:        50 * time.Millisecond,
+		HostDelay:         20 * time.Millisecond,
+		ConnectTimeout:    2 * time.Second,
+	}
+}
+
+// NewProfilerConfigFromPipeline creates a ProfilerConfig from pipeline settings.
+func NewProfilerConfigFromPipeline(pipelineConfig PipelineConfig) *ProfilerConfig {
+	cfg := DefaultProfilerConfig()
+	cfg.PortScanIntensity = pipelineConfig.PortScan.Intensity
+	cfg.CustomPorts = pipelineConfig.PortScan.CustomPorts
+	cfg.BannerGrab = pipelineConfig.PortScan.BannerGrab
+	cfg.ConnectTimeout = pipelineConfig.PortScan.ConnectTimeout
+	cfg.TimingProfile = pipelineConfig.Timing.Profile
+	cfg.ProbeDelay = pipelineConfig.Timing.ProbeDelay
+	cfg.HostDelay = pipelineConfig.Timing.HostDelay
+	cfg.MaxConcurrent = pipelineConfig.Timing.MaxConcurrentHosts
+	cfg.Timeout = pipelineConfig.Timing.PhaseTimeout
+	return cfg
+}
+
+// GetPortsForIntensity returns the appropriate port list based on intensity level.
+func (c *ProfilerConfig) GetPortsForIntensity() []int {
+	switch c.PortScanIntensity {
+	case PortScanOff:
+		return nil
+	case PortScanQuick:
+		return QuickPorts
+	case PortScanStandard:
+		return StandardPorts
+	case PortScanComprehensive:
+		return ComprehensivePorts
+	case PortScanCustom:
+		return c.CustomPorts
+	default:
+		return nil
 	}
 }
 
@@ -258,13 +306,32 @@ func (p *DeviceProfiler) profileDevice(ip string) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 
-	// Check common ports in parallel
-	for _, port := range p.config.QuickPorts {
+	// Determine which ports to scan based on intensity
+	portsToScan := p.config.GetPortsForIntensity()
+	if len(portsToScan) == 0 {
+		// Fall back to QuickPorts if intensity is off but profiler is enabled
+		portsToScan = p.config.QuickPorts
+	}
+
+	// Rate limiting semaphore for IDS-friendly scanning
+	sem := make(chan struct{}, p.config.MaxConcurrent)
+
+	// Check ports with rate limiting based on timing profile
+	for _, port := range portsToScan {
 		wg.Add(1)
 		go func(port int) {
 			defer wg.Done()
 
-			result := p.checkPort(ctx, ip, port)
+			// Acquire semaphore
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			// Apply probe delay for IDS-friendly scanning
+			if p.config.ProbeDelay > 0 {
+				time.Sleep(p.config.ProbeDelay)
+			}
+
+			result := p.checkPortWithConfig(ctx, ip, port)
 			if result.IsOpen {
 				mu.Lock()
 				profile.OpenPorts = append(profile.OpenPorts, result)
@@ -308,8 +375,9 @@ func (p *DeviceProfiler) profileDevice(ip string) {
 	slog.Info("Profiled device", "ip", ip, "open_ports", len(profile.OpenPorts), "type", profile.DeviceType, "icons", profile.DeviceIcons)
 }
 
-// checkPort checks if a TCP port is open.
-func (p *DeviceProfiler) checkPort(ctx context.Context, ip string, port int) OpenPort {
+// checkPortWithConfig checks if a TCP port is open using configurable settings.
+// Uses ConnectTimeout from config and respects BannerGrab setting.
+func (p *DeviceProfiler) checkPortWithConfig(ctx context.Context, ip string, port int) OpenPort {
 	result := OpenPort{
 		Port:     port,
 		Protocol: "tcp",
@@ -317,8 +385,14 @@ func (p *DeviceProfiler) checkPort(ctx context.Context, ip string, port int) Ope
 		IsOpen:   false,
 	}
 
+	// Use configured connect timeout
+	timeout := p.config.ConnectTimeout
+	if timeout == 0 {
+		timeout = p.config.Timeout
+	}
+
 	address := fmt.Sprintf("%s:%d", ip, port)
-	d := net.Dialer{Timeout: p.config.Timeout}
+	d := net.Dialer{Timeout: timeout}
 
 	conn, err := d.DialContext(ctx, "tcp", address)
 	if err != nil {
@@ -328,13 +402,17 @@ func (p *DeviceProfiler) checkPort(ctx context.Context, ip string, port int) Ope
 
 	result.IsOpen = true
 
-	// Try to grab banner for certain ports
-	if port == 22 || port == 21 || port == 23 || port == 25 || port == 110 || port == 143 {
-		_ = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond)) //nolint:errcheck // Best-effort deadline
-		banner := make([]byte, 256)
-		n, _ := conn.Read(banner) //nolint:errcheck // Best-effort banner read
-		if n > 0 {
-			result.Banner = strings.TrimSpace(string(banner[:n]))
+	// Only grab banner if enabled in config
+	if p.config.BannerGrab {
+		// Try to grab banner for certain ports that typically send banners
+		if port == 22 || port == 21 || port == 23 || port == 25 || port == 110 || port == 143 ||
+			port == 3306 || port == 5432 || port == 6379 || port == 27017 {
+			_ = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond)) //nolint:errcheck // Best-effort deadline
+			banner := make([]byte, 256)
+			n, _ := conn.Read(banner) //nolint:errcheck // Best-effort banner read
+			if n > 0 {
+				result.Banner = strings.TrimSpace(string(banner[:n]))
+			}
 		}
 	}
 

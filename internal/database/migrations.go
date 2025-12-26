@@ -243,6 +243,91 @@ var migrations = []Migration{
 			CREATE INDEX IF NOT EXISTS idx_audit_resource ON audit_log(resource_type, resource_id);
 		`,
 	},
+	{
+		Version:     12,
+		Description: "Create pipeline tables for discovery pipeline",
+		Up: `
+			-- Pipeline run history
+			CREATE TABLE IF NOT EXISTS pipeline_runs (
+				id TEXT PRIMARY KEY,
+				started_at TEXT NOT NULL,
+				completed_at TEXT,
+				status TEXT NOT NULL,
+				triggered_by TEXT,
+				phases_enabled TEXT NOT NULL,
+				config_json TEXT,
+				summary_json TEXT,
+				error_message TEXT
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_runs(status);
+			CREATE INDEX IF NOT EXISTS idx_pipeline_runs_started ON pipeline_runs(started_at);
+
+			-- Device interfaces from SNMP
+			CREATE TABLE IF NOT EXISTS device_interfaces (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				device_id TEXT NOT NULL,
+				if_index INTEGER NOT NULL,
+				name TEXT,
+				description TEXT,
+				alias TEXT,
+				type INTEGER,
+				mtu INTEGER,
+				speed_mbps INTEGER,
+				mac_address TEXT,
+				admin_status TEXT,
+				oper_status TEXT,
+				collected_at TEXT NOT NULL,
+				FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_device_interfaces_device ON device_interfaces(device_id);
+			CREATE INDEX IF NOT EXISTS idx_device_interfaces_mac ON device_interfaces(mac_address);
+			CREATE UNIQUE INDEX IF NOT EXISTS idx_device_interfaces_unique ON device_interfaces(device_id, if_index);
+
+			-- Device open ports from port scanning
+			CREATE TABLE IF NOT EXISTS device_ports (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				device_id TEXT NOT NULL,
+				port INTEGER NOT NULL,
+				protocol TEXT NOT NULL DEFAULT 'tcp',
+				state TEXT NOT NULL DEFAULT 'open',
+				service_name TEXT,
+				banner TEXT,
+				version TEXT,
+				scanned_at TEXT NOT NULL,
+				FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_device_ports_device ON device_ports(device_id);
+			CREATE INDEX IF NOT EXISTS idx_device_ports_port ON device_ports(port);
+			CREATE UNIQUE INDEX IF NOT EXISTS idx_device_ports_unique ON device_ports(device_id, port, protocol);
+
+			-- Device vulnerabilities from assessment phase
+			CREATE TABLE IF NOT EXISTS device_vulnerabilities (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				device_id TEXT NOT NULL,
+				cve_id TEXT NOT NULL,
+				severity TEXT,
+				cvss_score REAL,
+				cvss_vector TEXT,
+				affected_component TEXT,
+				affected_version TEXT,
+				fix_available INTEGER DEFAULT 0,
+				status TEXT DEFAULT 'new',
+				detected_at TEXT NOT NULL,
+				resolved_at TEXT,
+				notes TEXT,
+				FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_device_vulns_device ON device_vulnerabilities(device_id);
+			CREATE INDEX IF NOT EXISTS idx_device_vulns_cve ON device_vulnerabilities(cve_id);
+			CREATE INDEX IF NOT EXISTS idx_device_vulns_severity ON device_vulnerabilities(severity);
+			CREATE INDEX IF NOT EXISTS idx_device_vulns_status ON device_vulnerabilities(status);
+			CREATE UNIQUE INDEX IF NOT EXISTS idx_device_vulns_unique ON device_vulnerabilities(device_id, cve_id);
+		`,
+	},
 }
 
 // migrate runs all pending migrations.
