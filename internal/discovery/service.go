@@ -145,11 +145,20 @@ func (s *Service) shouldDoActiveScan() bool {
 
 // rescanLoop periodically triggers network scans based on RescanInterval.
 func (s *Service) rescanLoop() {
+	// Capture ticker channel at start to avoid race with Stop() setting ticker to nil
+	s.mu.RLock()
+	ticker := s.rescanTicker
+	s.mu.RUnlock()
+
+	if ticker == nil {
+		return
+	}
+
 	for {
 		select {
 		case <-s.stopCh:
 			return
-		case <-s.rescanTicker.C:
+		case <-ticker.C:
 			slog.Debug("Discovery: starting scheduled rescan")
 			ctx, cancel := context.WithTimeout(context.Background(), s.cfg.NetworkDiscovery.ScanTimeout)
 			if err := s.Scan(ctx); err != nil {

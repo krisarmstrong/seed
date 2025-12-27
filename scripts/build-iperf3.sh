@@ -37,6 +37,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 BUILD_DIR="$PROJECT_ROOT/build/iperf3"
 OUTPUT_DIR="$PROJECT_ROOT/bin"
+EMBED_DIR="$PROJECT_ROOT/internal/iperf/binaries"
 
 # Detect OS and architecture
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -62,6 +63,7 @@ echo "Building iperf3 $IPERF_VERSION for $OS-$ARCH"
 # Create directories
 mkdir -p "$BUILD_DIR"
 mkdir -p "$OUTPUT_DIR"
+mkdir -p "$EMBED_DIR"
 
 # Determine binary name based on OS/arch
 # For consistency, always use platform suffix except for local dev
@@ -162,6 +164,11 @@ if [ "$BINARY_PATH" != "$LOCAL_BINARY" ]; then
     ln -sf "$(basename "$BINARY_PATH")" "$LOCAL_BINARY"
     echo "Created symlink: $LOCAL_BINARY -> $(basename "$BINARY_PATH")"
 fi
+
+# Copy to embed directory for go:embed
+EMBED_BINARY="$EMBED_DIR/iperf3-$OS-$ARCH"
+cp "$BINARY_PATH" "$EMBED_BINARY"
+echo "Copied to embed directory: $EMBED_BINARY"
 
 # Verify the binary works
 echo "Verifying build..."

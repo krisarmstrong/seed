@@ -47,10 +47,11 @@
 
 .PHONY: all build build-frontend frontend-deps generate-types build-backend build-backend-dev \
         build-darwin build-all \
-        build-iperf3 build-iperf3-linux build-iperf3-linux-amd64 build-iperf3-linux-arm64 build-iperf3-all \
+        build-iperf3 build-iperf3-quiet build-iperf3-linux build-iperf3-linux-amd64 build-iperf3-linux-arm64 build-iperf3-all \
         build-linux-amd64 build-linux-arm64 build-linux-docker \
         docker docker-build docker-test docker-push \
         clean clean-all \
+        deb rpm packages \
         test test-all test-backend test-frontend test-coverage test-integration \
         test-e2e test-e2e-ui test-e2e-install \
         lint lint-backend lint-frontend lint-md \
@@ -171,11 +172,15 @@ all: verify ## Full build and validation (recommended before release)
 # Build complete application (frontend embedded in Go binary)
 build: ## Build everything (frontend embedded in binary)
 	@printf "$(BOLD)$(CYAN)┌─ Building Application ───────────────────────────────────────────────────────┐$(RESET)\n"
-	@printf "$(CYAN)│$(RESET) $(BOLD)[1/2]$(RESET) Frontend (React/TypeScript)                                           $(CYAN)│$(RESET)\n"
+	@printf "$(CYAN)│$(RESET) $(BOLD)[1/3]$(RESET) iperf3 (native platform)                                              $(CYAN)│$(RESET)\n"
+	$(call timer-start,build-iperf3)
+	@$(MAKE) --no-print-directory build-iperf3-quiet
+	$(call timer-end,build-iperf3,iperf3 build)
+	@printf "$(CYAN)│$(RESET) $(BOLD)[2/3]$(RESET) Frontend (React/TypeScript)                                           $(CYAN)│$(RESET)\n"
 	$(call timer-start,build-frontend)
 	@$(MAKE) --no-print-directory build-frontend-quiet
 	$(call timer-end,build-frontend,Frontend build)
-	@printf "$(CYAN)│$(RESET) $(BOLD)[2/2]$(RESET) Backend (Go)                                                          $(CYAN)│$(RESET)\n"
+	@printf "$(CYAN)│$(RESET) $(BOLD)[3/3]$(RESET) Backend (Go)                                                          $(CYAN)│$(RESET)\n"
 	$(call timer-start,build-backend)
 	@$(MAKE) --no-print-directory build-backend-quiet
 	$(call timer-end,build-backend,Backend build)
@@ -189,6 +194,16 @@ build: ## Build everything (frontend embedded in binary)
 build-iperf3: ## Build iperf3 from source (native platform)
 	@echo "Building iperf3 for native platform..."
 	@./scripts/build-iperf3.sh
+
+# iperf3 build (quiet mode) - skips if already built
+build-iperf3-quiet:
+	@if [ ! -f internal/iperf/binaries/iperf3-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') ]; then \
+		printf "   Building iperf3...\n"; \
+		./scripts/build-iperf3.sh > /dev/null 2>&1; \
+		printf "   Output: internal/iperf/binaries/\n"; \
+	else \
+		printf "   iperf3 already built (skipping)\n"; \
+	fi
 
 build-iperf3-linux: ## Build iperf3 for Linux (AMD64 + ARM64 via Docker)
 	@echo "Cross-compiling iperf3 for Linux (all architectures)..."
@@ -1099,6 +1114,65 @@ clean: ## Clean build artifacts
 clean-all: clean ## Clean everything including dependencies
 	rm -rf web/node_modules
 	rm -rf build/iperf3 bin/iperf3*
+	rm -rf dist/
+
+# =============================================================================
+# Packaging - Create distributable packages
+# =============================================================================
+
+# Detect architecture for packaging
+PKG_ARCH=$(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+PKG_VERSION=$(shell echo $(VERSION) | sed 's/^v//')
+DEB_ARCH=$(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+RPM_ARCH=$(shell uname -m | sed 's/amd64/x86_64/;s/arm64/aarch64/')
+
+# Build Debian package
+deb: build ## Build Debian package (.deb)
+	@printf "$(BOLD)📦 Building Debian package...$(RESET)\n"
+	@mkdir -p dist/deb/DEBIAN
+	@mkdir -p dist/deb/usr/bin
+	@mkdir -p dist/deb/usr/lib/systemd/system
+	@mkdir -p dist/deb/var/lib/seed
+	@mkdir -p dist/deb/var/log/seed
+	@# Copy binary
+	@cp $(BINARY_NAME) dist/deb/usr/bin/seed
+	@chmod 755 dist/deb/usr/bin/seed
+	@# Copy systemd service
+	@cp packaging/seed.service dist/deb/usr/lib/systemd/system/
+	@# Generate control file with version
+	@sed 's/__VERSION__/$(PKG_VERSION)/g; s/__ARCHITECTURE__/$(DEB_ARCH)/g' \
+		packaging/control > dist/deb/DEBIAN/control
+	@# Copy maintainer scripts
+	@cp packaging/postinst dist/deb/DEBIAN/
+	@cp packaging/prerm dist/deb/DEBIAN/
+	@cp packaging/postrm dist/deb/DEBIAN/
+	@chmod 755 dist/deb/DEBIAN/postinst dist/deb/DEBIAN/prerm dist/deb/DEBIAN/postrm
+	@# Build the package
+	@dpkg-deb --build dist/deb dist/seed_$(PKG_VERSION)_$(DEB_ARCH).deb
+	@printf "$(GREEN)✓ Debian package: dist/seed_$(PKG_VERSION)_$(DEB_ARCH).deb$(RESET)\n"
+
+# Build RPM package
+rpm: build ## Build RPM package (.rpm)
+	@printf "$(BOLD)📦 Building RPM package...$(RESET)\n"
+	@mkdir -p dist/rpm/BUILD dist/rpm/RPMS dist/rpm/SOURCES dist/rpm/SPECS dist/rpm/SRPMS
+	@# Copy binary to SOURCES
+	@mkdir -p dist/rpm/SOURCES/seed-$(PKG_VERSION)
+	@cp $(BINARY_NAME) dist/rpm/SOURCES/seed-$(PKG_VERSION)/seed
+	@cp packaging/seed.service dist/rpm/SOURCES/seed-$(PKG_VERSION)/
+	@# Generate spec file with version
+	@sed 's/__VERSION__/$(PKG_VERSION)/g; s/__ARCHITECTURE__/$(RPM_ARCH)/g; s|%{_repo_root}|$(CURDIR)|g' \
+		packaging/seed.spec > dist/rpm/SPECS/seed.spec
+	@# Build RPM
+	@rpmbuild --define "_topdir $(CURDIR)/dist/rpm" \
+		--define "_repo_root $(CURDIR)" \
+		-bb dist/rpm/SPECS/seed.spec
+	@mv dist/rpm/RPMS/$(RPM_ARCH)/*.rpm dist/ 2>/dev/null || true
+	@printf "$(GREEN)✓ RPM package: dist/seed-$(PKG_VERSION)-1.*.$(RPM_ARCH).rpm$(RESET)\n"
+
+# Build both packages
+packages: deb rpm ## Build both .deb and .rpm packages
+	@printf "$(GREEN)✓ All packages built in dist/$(RESET)\n"
+	@ls -la dist/*.deb dist/*.rpm 2>/dev/null || true
 
 # =============================================================================
 # Dependencies
