@@ -24,14 +24,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 OUTPUT_DIR="$PROJECT_ROOT/bin"
+EMBED_DIR="$PROJECT_ROOT/internal/iperf/binaries"
 
 IPERF_VERSION="${IPERF_VERSION:-v3.20}"
 # sha256 from upstream release tarball (https://github.com/esnet/iperf/releases)
 IPERF_SHA256="${IPERF_SHA256:-e6cfb22e549d9328b5b9f3a4e3f7f07a44d6c9e672bf7e9ba4d3b641c385e8c8}"
 TARGET_ARCH="${1:-all}"  # amd64, arm64, or all
 
-# Create output directory
+# Create output directories
 mkdir -p "$OUTPUT_DIR"
+mkdir -p "$EMBED_DIR"
 
 # Check for Docker
 if ! command -v docker &> /dev/null; then
@@ -106,6 +108,10 @@ build_for_arch() {
         file /build/bin/$binary_name
         /build/bin/$binary_name --version || echo '(Cannot run - different architecture)'
     "
+
+    # Copy to embed directory
+    cp "$OUTPUT_DIR/$binary_name" "$EMBED_DIR/$binary_name"
+    echo "Copied to embed directory: $EMBED_DIR/$binary_name"
 
     echo ""
     echo "Successfully built: $OUTPUT_DIR/$binary_name"
