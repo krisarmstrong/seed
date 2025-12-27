@@ -238,14 +238,17 @@ func (p *DeviceProfiler) Stop() {
 }
 
 // worker processes profile requests from the queue.
+// Fixes #981: Added nil check and defensive handling for stopCh.
 func (p *DeviceProfiler) worker() {
 	defer p.wg.Done()
 
 	// Capture stopCh locally to avoid race with Stop() setting it to nil
 	p.mu.Lock()
 	stopCh := p.stopCh
+	queue := p.queue
 	p.mu.Unlock()
 
+	// Fixes #981: If stopCh is nil, worker should exit immediately
 	if stopCh == nil {
 		return
 	}
@@ -254,7 +257,11 @@ func (p *DeviceProfiler) worker() {
 		select {
 		case <-stopCh:
 			return
-		case ip := <-p.queue:
+		case ip, ok := <-queue:
+			// Fixes #981: Handle queue close (ok=false means channel closed)
+			if !ok {
+				return
+			}
 			p.profileDevice(ip)
 		}
 	}
@@ -547,7 +554,18 @@ func (p *DeviceProfiler) probeSNMP(ctx context.Context, ip string) *SNMPInfo {
 }
 
 // truncateString truncates a string to maxLen with ellipsis.
+// Fixes #982: Guard against maxLen < 3 to prevent negative slice index panic.
 func truncateString(s string, maxLen int) string {
+	if maxLen < 3 {
+		// Can't fit ellipsis, just truncate to maxLen (or return empty for 0 or negative)
+		if maxLen <= 0 {
+			return ""
+		}
+		if len(s) <= maxLen {
+			return s
+		}
+		return s[:maxLen]
+	}
 	if len(s) <= maxLen {
 		return s
 	}

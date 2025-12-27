@@ -118,9 +118,14 @@ func (f *Fingerprinter) ProbeDevice(ctx context.Context, ip string, profile *Dev
 	}
 
 	// TLS certificate inspection for HTTPS ports
+	// Fixes #980: Cap tlsPorts to prevent unbounded growth from malicious profiles
+	const maxTLSPorts = 20
 	tlsPorts := []int{443, 8443, 8080}
 	if profile != nil {
 		for _, port := range profile.OpenPorts {
+			if len(tlsPorts) >= maxTLSPorts {
+				break // Prevent unbounded slice growth
+			}
 			if port.Port == 443 || port.Port == 8443 || strings.HasSuffix(port.Service, "s") {
 				if !containsInt(tlsPorts, port.Port) {
 					tlsPorts = append(tlsPorts, port.Port)
