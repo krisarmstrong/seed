@@ -62,18 +62,13 @@ import { PerformanceCard } from "./components/cards/PerformanceCard";
 import { HealthCheckCard } from "./components/cards/HealthCheckCard";
 import { SystemHealthCard } from "./components/cards/SystemHealthCard";
 import { WiFiSurveyCard } from "./components/cards/WiFiSurveyCard";
+import { LogViewerCard } from "./components/cards/LogViewerCard";
 import { FAB } from "./components/ui/FAB";
 import { ProfileManagement } from "./components/profiles/ProfileManagement";
 import { useProfileContext } from "./contexts/ProfileContext";
 import { HeaderBar } from "./components/app/HeaderBar";
 import { LoginForm } from "./app/LoginForm";
-import {
-  radius,
-  layout,
-  spacing,
-  section,
-  cn,
-} from "./styles/theme";
+import { radius, layout, spacing, section, cn } from "./styles/theme";
 
 /**
  * Main App Component
@@ -510,7 +505,14 @@ function App() {
       }, 0);
     }
     profileInterfaceLoadedRef.current = activeProfile.id;
-  }, [activeProfile, interfaces, changeInterface, setActiveMode, setEthernetInterfaceState, setWifiInterfaceState]);
+  }, [
+    activeProfile,
+    interfaces,
+    changeInterface,
+    setActiveMode,
+    setEthernetInterfaceState,
+    setWifiInterfaceState,
+  ]);
 
   // Memoize run options to prevent unnecessary re-computation (fixes #671)
   const runOpts = useMemo(
@@ -982,6 +984,7 @@ function App() {
             </h2>
             <div className={layout.grid.cards}>
               <SystemHealthCard />
+              <LogViewerCard maxHeight="400px" />
             </div>
           </section>
 
@@ -1122,6 +1125,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
