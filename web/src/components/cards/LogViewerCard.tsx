@@ -4,7 +4,7 @@
  * Shows a summary view with:
  * - Live/Paused streaming status toggle
  * - Total logs, error count, warning count
- * - "View Logs" button to open full-screen modal
+ * - Maximize icon in header to open full-screen modal
  *
  * Full log viewing, filtering, and searching is done in the LogViewerModal.
  *
@@ -17,8 +17,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLogs } from "../../hooks/useLogs";
-import { cn, spacing, radius, layout } from "../../styles/theme";
+import { cn, spacing, radius, layout, icon as iconTokens } from "../../styles/theme";
 import { LogViewerModal } from "./LogViewerModal";
+import { Maximize2 } from "../ui/Icons";
 
 /** Props for the LogViewerCard component. */
 export interface LogViewerCardProps {
@@ -68,21 +69,38 @@ export function LogViewerCard({ className = "" }: LogViewerCardProps) {
             {t("logs.title", "System Logs")}
           </h2>
         </div>
-        {/* Streaming toggle */}
-        <button
-          type="button"
-          onClick={() => setIsStreaming(!isStreaming)}
-          className={cn(
-            spacing.chip.sm,
-            radius.md,
-            "text-xs font-medium transition-colors",
-            isStreaming
-              ? "bg-status-success text-text-inverse hover:brightness-90"
-              : "bg-surface-base text-text-primary hover:bg-surface-hover"
-          )}
-        >
-          {isStreaming ? t("logs.streaming", "Live") : t("logs.paused", "Paused")}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Full Screen button */}
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className={cn(
+              "p-1.5",
+              "bg-surface-hover text-text-secondary",
+              radius.md,
+              "hover:bg-surface-border hover:text-text-primary transition-colors flex items-center justify-center cursor-pointer"
+            )}
+            aria-label={t("logs.fullScreen", "Full Screen")}
+            title={t("logs.fullScreen", "Full Screen")}
+          >
+            <Maximize2 className={iconTokens.size.sm} aria-hidden="true" />
+          </button>
+          {/* Streaming toggle */}
+          <button
+            type="button"
+            onClick={() => setIsStreaming(!isStreaming)}
+            className={cn(
+              spacing.chip.sm,
+              radius.md,
+              "text-xs font-medium transition-colors",
+              isStreaming
+                ? "bg-status-success text-text-inverse hover:brightness-90"
+                : "bg-surface-base text-text-primary hover:bg-surface-hover"
+            )}
+          >
+            {isStreaming ? t("logs.streaming", "Live") : t("logs.paused", "Paused")}
+          </button>
+        </div>
       </div>
 
       {/* Minimal stats summary */}
@@ -127,33 +145,6 @@ export function LogViewerCard({ className = "" }: LogViewerCardProps) {
               )}
             </div>
 
-            {/* View Logs button - opens full screen modal */}
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(true)}
-              className={cn(
-                "w-full flex items-center justify-center gap-2",
-                spacing.chip.md,
-                "bg-surface-secondary text-text-primary",
-                radius.md,
-                "hover:bg-surface-hover transition-colors body-small font-medium"
-              )}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                />
-              </svg>
-              {t("logs.viewLogs", "View Logs")}
-            </button>
           </>
         )}
       </div>

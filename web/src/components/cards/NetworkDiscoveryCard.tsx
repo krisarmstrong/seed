@@ -1,6 +1,7 @@
 import { useState, memo, useCallback, useMemo, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardValue, CardRow, CardDivider, Status } from "../ui/Card";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CollapsibleSection } from "../ui/CollapsibleSection";
 import { Tooltip } from "../ui/Tooltip";
 // Fix #669: Removed deprecated getAuthHeaders - using credentials: 'include' for cookie auth
@@ -273,7 +274,8 @@ interface NetworkDiscoveryCardProps {
 type SortField = "ip" | "hostname" | "vendor" | "lastSeen" | null;
 type SortDirection = "asc" | "desc";
 
-// Search bar component - Responsive design for various screen widths
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// Search bar component - kept for potential future use in modal
 function DeviceSearchBar({
   searchQuery,
   onSearchChange,
@@ -379,6 +381,7 @@ function DeviceSearchBar({
     </div>
   );
 }
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 // Format SNMP sysUpTime (in hundredths of a second) to human-readable duration
 function formatUptime(ticks: number): string {
@@ -882,6 +885,8 @@ function getServiceName(port: number): string {
   return PORT_SERVICES_MAP.get(port) || `Port ${port}`;
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// DeviceRow - kept for potential future use in modal
 function DeviceRow({
   device,
   isExpanded,
@@ -1613,6 +1618,7 @@ function DeviceRow({
     </div>
   );
 }
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 // Common ports to scan for Deep Scan
 const COMMON_PORTS = [
@@ -1626,7 +1632,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
   onScan,
 }: NetworkDiscoveryCardProps) {
   const { t } = useTranslation("cards");
-  const [expandedDevices, setExpandedDevices] = useState<Set<string>>(
+  const [_expandedDevices, _setExpandedDevices] = useState<Set<string>>(
     new Set()
   );
   const [scanningDevices, setScanningDevices] = useState<Set<string>>(
@@ -1635,8 +1641,8 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
   const [scanResults, setScanResults] = useState<Map<string, DeepScanResult>>(
     new Map()
   );
-  // Search and sort state
-  const [searchQuery, setSearchQuery] = useState("");
+  // Search and sort state (kept for modal use)
+  const [searchQuery, _setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
@@ -1722,8 +1728,8 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
     fetchSettings();
   }, []);
 
-  // Toggle sort field/direction
-  const handleSortChange = useCallback(
+  // Toggle sort field/direction (kept for modal use)
+  const _handleSortChange = useCallback(
     (field: SortField) => {
       if (sortField === field) {
         // Toggle direction or clear
@@ -1741,8 +1747,8 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
     [sortField, sortDirection]
   );
 
-  const toggleDevice = (mac: string) => {
-    setExpandedDevices((prev) => {
+  const _toggleDevice = (mac: string) => {
+    _setExpandedDevices((prev) => {
       const next = new Set(prev);
       if (next.has(mac)) {
         next.delete(mac);
@@ -2174,7 +2180,7 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
     return result;
   }, [devices, searchQuery, sortField, sortDirection, ipToNum]);
 
-  const filteredCount = filteredDevices.length;
+  const _filteredCount = filteredDevices.length;
 
   // If no user sort applied, use default sorting: local first, then by discovery methods, then by IP
   const sortedDevices = useMemo(() => {
@@ -2269,9 +2275,9 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
 
   const cardStatus = getOverallStatus();
 
-  // Separate into local and extended for display
-  const localDevices = sortedDevices.filter((d) => d.isLocal);
-  const extendedDevices = sortedDevices.filter((d) => !d.isLocal);
+  // Separate into local and extended for display (kept for modal use)
+  const _localDevices = sortedDevices.filter((d) => d.isLocal);
+  const _extendedDevices = sortedDevices.filter((d) => !d.isLocal);
 
   return (
     <Card
@@ -2360,24 +2366,6 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
         onCancelPipeline={cancelPipeline}
         t={t}
       />
-
-      {/* View All Devices button - opens full screen modal */}
-      {deviceCount > 0 && (
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className={cn(
-            "w-full flex items-center justify-center gap-2",
-            spacing.chip.md,
-            "bg-surface-secondary text-text-primary",
-            radius.md,
-            "hover:bg-surface-hover transition-colors body-small font-medium"
-          )}
-        >
-          <Search className={iconTokens.size.sm} aria-hidden="true" />
-          {t("discovery.viewAllDevices", "View All Devices")}
-        </button>
-      )}
 
       {deviceCount === 0 && !status.scanning && !isPipelineRunning && (
         <p
