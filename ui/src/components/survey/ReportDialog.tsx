@@ -126,6 +126,11 @@ export function ReportDialog({ surveyId, surveyName, open, onClose }: ReportDial
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+      role="dialog"
+      aria-modal="true"
     >
       <div
         style={{

@@ -106,7 +106,6 @@ export function LogViewerCard({ className = "" }: LogViewerCardProps) {
           {/* Full Screen button */}
           <button
             type="button"
-            type="button"
             onClick={() => setIsModalOpen(true)}
             className={cn(
               "p-1.5",

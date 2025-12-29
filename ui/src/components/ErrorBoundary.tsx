@@ -126,7 +126,6 @@ export class ErrorBoundary extends Component<Props, State> {
                 </p>
                 <button
                   type="button"
-                  type="button"
                   onClick={this.handleRetry}
                   className={cn(
                     button.size.md,

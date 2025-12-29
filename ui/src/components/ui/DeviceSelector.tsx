@@ -257,10 +257,10 @@ export const DeviceSelector = memo(function DeviceSelector({
   };
 
   return (
-    <div ref={dropdownRef} className="relative" onKeyDown={handleKeyDown}>
+    // biome-ignore lint/a11y/useSemanticElements: Group role is semantically correct for dropdown container
+    <div ref={dropdownRef} className="relative" onKeyDown={handleKeyDown} role="group">
       {/* Trigger button */}
       <button
-        type="button"
         ref={buttonRef}
         type="button"
         disabled={disabled || isLoading}
@@ -386,7 +386,6 @@ export const DeviceSelector = memo(function DeviceSelector({
               <div className="flex gap-2 mt-2">
                 <button
                   type="button"
-                  type="button"
                   onClick={() => submitManualIp(manualInputRef.current?.value || "")}
                   className={cn(
                     "flex-1 px-3 py-1.5",
@@ -399,7 +398,6 @@ export const DeviceSelector = memo(function DeviceSelector({
                   {t("device.select", "Select")}
                 </button>
                 <button
-                  type="button"
                   type="button"
                   onClick={() => setManualEntry(false)}
                   className={cn(
@@ -458,7 +456,6 @@ export const DeviceSelector = memo(function DeviceSelector({
                       <button
                         type="button"
                         key={device.ip}
-                        type="button"
                         onClick={() => selectDevice(device)}
                         className={cn(
                           "w-full flex items-center",
@@ -510,7 +507,6 @@ export const DeviceSelector = memo(function DeviceSelector({
           {!manualEntry && (
             <div className="border-t border-surface-border">
               <button
-                type="button"
                 type="button"
                 onClick={handleManualEntry}
                 className={cn(

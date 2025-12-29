@@ -106,8 +106,6 @@ export function Card({
     }
   };
 
-  const interactiveProps = isInteractive ? { role: "button" as const, tabIndex: 0 } : {};
-
   // Fixes #674: Add aria-label and aria-live for accessibility
   const ariaProps = {
     "aria-label": ariaLabel || `${title}${subtitle ? ` - ${subtitle}` : ""}`,
@@ -118,6 +116,7 @@ export function Card({
   };
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: Interactive role is conditionally applied based on onClick presence
     <div
       className={cn(
         card.base,
@@ -132,7 +131,8 @@ export function Card({
       )}
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      {...interactiveProps}
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
       {...ariaProps}
     >
       <div className={layout.flex.between}>

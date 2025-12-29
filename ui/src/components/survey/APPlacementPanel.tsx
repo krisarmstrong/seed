@@ -145,6 +145,7 @@ export function ApPlacementPanel({
       ) : (
         <div className={cn(layout.stack.tight, "max-h-64 overflow-y-auto")}>
           {apLocations.map((ap) => (
+            // biome-ignore lint/a11y/useSemanticElements: Complex card with nested interactive elements
             <div
               key={ap.id}
               className={cn(
@@ -156,10 +157,21 @@ export function ApPlacementPanel({
                   : "border-surface-border hover:bg-surface-hover",
               )}
               onClick={() => editingApId !== ap.id && onApSelect(ap.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  if (editingApId !== ap.id) onApSelect(ap.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
               {editingApId === ap.id ? (
-                // Edit mode
-                <div className={cn(layout.stack.tight)} onClick={(e) => e.stopPropagation()}>
+                <div
+                  className={cn(layout.stack.tight)}
+                  onClick={(e) => e.stopPropagation()}
+                  aria-hidden="true"
+                >
                   {/* Label */}
                   <input
                     type="text"
@@ -293,7 +305,12 @@ export function ApPlacementPanel({
                       </p>
                     )}
                   </div>
-                  <div className={cn(layout.inline.tight)} onClick={(e) => e.stopPropagation()}>
+                  {/* biome-ignore lint/a11y/noStaticElementInteractions: Used to stop propagation to parent button */}
+                  <div
+                    className={cn(layout.inline.tight)}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                  >
                     <button
                       type="button"
                       onClick={() => handleEdit(ap)}

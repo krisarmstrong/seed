@@ -78,11 +78,6 @@
     "notFound": "Subnet not found",
     "cidrRequired": "CIDR parameter required"
   },
-  "survey": {
-    "nameRequired": "Survey name is required",
-    "idRequired": "Survey ID required",
-    "notFound": "Survey not found"
-  },
   "wifi": {
     "notWireless": "Current interface is not a wireless adapter",
     "notConnected": "Not connected to a wireless network"
@@ -159,6 +154,9 @@
     "iperfValidationFailed": "Validation failed"
   },
   "survey": {
+    "nameRequired": "Survey name is required",
+    "idRequired": "Survey ID required",
+    "notFound": "Survey not found",
     "invalidId": "Invalid survey ID",
     "invalidType": "Invalid survey type (must be passive, active, or throughput)",
     "descriptionTooLong": "Description too long (max 500 characters)",

@@ -376,7 +376,6 @@ export function NetworkCard({
                 {showTiming ? (
                   <button
                     type="button"
-                    type="button"
                     className={cn(
                       "caption font-medium text-brand-primary hover:text-brand-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",
                       spacing.actionBtn,
@@ -389,7 +388,6 @@ export function NetworkCard({
                   </button>
                 ) : (
                   <button
-                    type="button"
                     type="button"
                     className={cn(
                       "caption font-medium text-brand-primary hover:text-brand-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",

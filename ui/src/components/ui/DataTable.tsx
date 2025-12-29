@@ -267,6 +267,7 @@ export function DataTable<T>({
 
       {/* Loading state (fixes #680) */}
       {loading && (
+        // biome-ignore lint/a11y/useSemanticElements: Status role is semantically correct for loading indicator
         <div
           className={cn(
             spacing.pad.sm,
@@ -274,7 +275,7 @@ export function DataTable<T>({
             "bg-surface-hover text-text-muted body-small text-center",
           )}
           role="status"
-          aria-live="polite"
+          aria-label="Loading data"
         >
           <span className="inline-block animate-spin mr-2">◐</span>
           Loading data...
@@ -305,7 +306,6 @@ export function DataTable<T>({
           {searchQuery && (
             <button
               type="button"
-              type="button"
               onClick={() => setSearchQuery("")}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
               aria-label="Clear search"
@@ -316,7 +316,6 @@ export function DataTable<T>({
         </div>
         {filterOptions && filterOptions.length > 0 && (
           <button
-            type="button"
             type="button"
             onClick={() => setShowFilters(!showFilters)}
             className={cn(
@@ -362,7 +361,6 @@ export function DataTable<T>({
           ))}
           {hasActiveFilters && (
             <button
-              type="button"
               type="button"
               onClick={clearFilters}
               className={cn(

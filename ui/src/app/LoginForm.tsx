@@ -82,13 +82,7 @@ export function LoginForm({ onLogin, isLoading, error }: LoginFormProps) {
       <div className="w-full max-w-sm">
         <div className={cn("text-center", spacing.margin.bottom.sectionLg)}>
           <div className="w-16 h-16 mx-auto text-brand-primary">
-            <svg
-              viewBox="0 0 48 48"
-              fill="none"
-              className="w-full h-full"
-              aria-hidden="true"
-              aria-hidden="true"
-            >
+            <svg viewBox="0 0 48 48" fill="none" className="w-full h-full" aria-hidden="true">
               <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" opacity="0.3" />
               <circle cx="24" cy="24" r="14" stroke="currentColor" strokeWidth="2" opacity="0.5" />
               <circle cx="24" cy="24" r="4" fill="currentColor" />
@@ -247,7 +241,6 @@ export function LoginForm({ onLogin, isLoading, error }: LoginFormProps) {
           )}
 
           <button
-            type="button"
             type="submit"
             disabled={isLoading}
             className={cn(
@@ -269,7 +262,6 @@ export function LoginForm({ onLogin, isLoading, error }: LoginFormProps) {
               {isProviderEnabled("google") && (
                 <button
                   type="button"
-                  type="button"
                   onClick={() => {
                     window.location.href = `${API_BASE}/api/sso/login?provider=google`;
                   }}
@@ -287,7 +279,6 @@ export function LoginForm({ onLogin, isLoading, error }: LoginFormProps) {
               {isProviderEnabled("microsoft") && (
                 <button
                   type="button"
-                  type="button"
                   onClick={() => {
                     window.location.href = `${API_BASE}/api/sso/login?provider=microsoft`;
                   }}
@@ -304,7 +295,6 @@ export function LoginForm({ onLogin, isLoading, error }: LoginFormProps) {
               )}
               {isProviderEnabled("github") && (
                 <button
-                  type="button"
                   type="button"
                   onClick={() => {
                     window.location.href = `${API_BASE}/api/sso/login?provider=github`;

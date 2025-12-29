@@ -72,6 +72,7 @@ export function StatusBadge({
           config.bgColor.replace("/10", ""),
           className,
         )}
+        role="img"
         aria-label={config.label}
       />
     );
@@ -88,9 +89,12 @@ export function StatusBadge({
         sizes.padding,
         className,
       )}
+      role="img"
       aria-label={config.label}
     >
-      <span className={sizes.icon}>{config.icon}</span>
+      <span className={sizes.icon} aria-hidden="true">
+        {config.icon}
+      </span>
     </span>
   );
 }

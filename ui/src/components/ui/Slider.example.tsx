@@ -310,7 +310,6 @@ export function FormIntegrationExample() {
       />
 
       <button
-        type="button"
         type="submit"
         className="w-full px-4 py-2 bg-brand-primary text-text-inverse rounded-md hover:bg-brand-accent transition-colors"
       >
