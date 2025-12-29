@@ -351,7 +351,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
             )}
 
             <button
-              type="button"
               type="submit"
               disabled={loading || !target.trim()}
               className={cn(
@@ -374,7 +373,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
               type="button"
-              type="button"
               onClick={traceGateway}
               disabled={loading || !gateway}
               className={cn(
@@ -388,7 +386,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
             </button>
             <button
               type="button"
-              type="button"
               onClick={traceDns}
               disabled={loading}
               className={cn(
@@ -401,7 +398,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
               {t("pathDiscovery.dns", "DNS")}
             </button>
             <button
-              type="button"
               type="button"
               onClick={traceInternet}
               disabled={loading}
@@ -492,7 +488,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
           >
             <button
               type="button"
-              type="button"
               onClick={exportJson}
               className={cn(
                 buttonTokens.base,
@@ -504,7 +499,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
               {t("pathDiscovery.exportJSON", "Export JSON")}
             </button>
             <button
-              type="button"
               type="button"
               onClick={exportCsv}
               className={cn(
@@ -518,7 +512,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
             </button>
             <button
               type="button"
-              type="button"
               onClick={copyToClipboard}
               className={cn(
                 buttonTokens.base,
@@ -530,7 +523,6 @@ export const PathDiscoveryCard = memo(function PathDiscoveryCard({
               {t("pathDiscovery.copy", "Copy")}
             </button>
             <button
-              type="button"
               type="button"
               onClick={() => runTrace(target)}
               disabled={loading}
@@ -832,7 +824,6 @@ const L2HopDetail = memo(function L2HopDetail({ hop, isExpanded, onToggle, t }: 
     <div className={cn("border border-surface-border", radius.default, "overflow-hidden")}>
       {/* Header */}
       <button
-        type="button"
         type="button"
         onClick={onToggle}
         className={cn(

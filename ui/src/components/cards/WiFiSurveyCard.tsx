@@ -196,20 +196,15 @@ export function WifiSurveyCard({ isWifi, currentInterface = "" }: WifiSurveyCard
                 className={cn(
                   "border border-surface-border",
                   radius.md,
-                  "pad-sm hover:bg-surface-hover transition-colors cursor-pointer",
+                  "pad-sm hover:bg-surface-hover transition-colors",
                 )}
-                onClick={() => setSelectedSurvey(survey)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setSelectedSurvey(survey);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
               >
                 <div className={layout.flex.between}>
-                  <div className="flex-1 min-w-0">
+                  <button
+                    type="button"
+                    className="flex-1 min-w-0 text-left cursor-pointer bg-transparent border-none p-0"
+                    onClick={() => setSelectedSurvey(survey)}
+                  >
                     <div className={layout.inline.default}>
                       <h4 className="font-medium body-small truncate">{survey.name}</h4>
                       <span className="caption text-text-muted">
@@ -228,15 +223,12 @@ export function WifiSurveyCard({ isWifi, currentInterface = "" }: WifiSurveyCard
                         {survey.samples?.length ?? 0} {t("survey.samples").toLowerCase()}
                       </span>
                     </div>
-                  </div>
+                  </button>
                   <div className={cn(layout.inline.tight, spacing.margin.left.inline)}>
                     {survey.status === "created" && (
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startSurvey(survey.id);
-                        }}
+                        onClick={() => startSurvey(survey.id)}
                         className={cn(
                           button.size.xs,
                           "caption border border-surface-border",
@@ -251,10 +243,7 @@ export function WifiSurveyCard({ isWifi, currentInterface = "" }: WifiSurveyCard
                     {survey.status === "in_progress" && (
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          pauseSurvey(survey.id);
-                        }}
+                        onClick={() => pauseSurvey(survey.id)}
                         className={cn(
                           button.size.xs,
                           "caption border border-surface-border",
@@ -270,10 +259,7 @@ export function WifiSurveyCard({ isWifi, currentInterface = "" }: WifiSurveyCard
                       <>
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            startSurvey(survey.id);
-                          }}
+                          onClick={() => startSurvey(survey.id)}
                           className={cn(
                             button.size.xs,
                             "caption border border-surface-border",
@@ -286,10 +272,7 @@ export function WifiSurveyCard({ isWifi, currentInterface = "" }: WifiSurveyCard
                         </button>
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            completeSurvey(survey.id);
-                          }}
+                          onClick={() => completeSurvey(survey.id)}
                           className={cn(
                             button.size.xs,
                             "caption border border-surface-border",
@@ -304,10 +287,7 @@ export function WifiSurveyCard({ isWifi, currentInterface = "" }: WifiSurveyCard
                     )}
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(survey.id);
-                      }}
+                      onClick={() => handleDelete(survey.id)}
                       className={cn(
                         button.size.xs,
                         "caption border border-surface-border",

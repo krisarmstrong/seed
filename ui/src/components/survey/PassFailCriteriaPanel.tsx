@@ -158,7 +158,6 @@ function CriteriaSection({
       {/* Section header */}
       <button
         type="button"
-        type="button"
         onClick={onToggle}
         className={cn(
           "w-full justify-between py-1.5 hover:bg-surface-hover transition-colors",
@@ -275,7 +274,6 @@ export function PassFailCriteriaPanel({
         {onValidate && (
           <button
             type="button"
-            type="button"
             onClick={onValidate}
             disabled={disabled || validating}
             className={cn(
@@ -313,7 +311,6 @@ export function PassFailCriteriaPanel({
         <div className={cn(layout.inline.tight)}>
           <button
             type="button"
-            type="button"
             onClick={handleReset}
             disabled={disabled}
             className={cn(
@@ -328,7 +325,6 @@ export function PassFailCriteriaPanel({
           </button>
           <button
             type="button"
-            type="button"
             onClick={handleLoadAll}
             disabled={disabled}
             className={cn(
@@ -342,7 +338,6 @@ export function PassFailCriteriaPanel({
         </div>
         {onImportFromAirMapper && (
           <button
-            type="button"
             type="button"
             onClick={onImportFromAirMapper}
             disabled={disabled}

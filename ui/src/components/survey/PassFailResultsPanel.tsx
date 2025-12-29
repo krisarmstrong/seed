@@ -182,7 +182,6 @@ function ResultRow({
       {result.failedSampleCount > 0 && onShowLocations && (
         <button
           type="button"
-          type="button"
           onClick={onShowLocations}
           className={cn(layout.inline.tight, "mt-1 caption text-brand-primary hover:underline")}
         >
@@ -351,7 +350,6 @@ export function PassFailResultsPanel({
         {onGenerateReport && (
           <button
             type="button"
-            type="button"
             onClick={onGenerateReport}
             className={cn(
               button.size.sm,
@@ -367,7 +365,6 @@ export function PassFailResultsPanel({
         )}
         {onExportCsv && (
           <button
-            type="button"
             type="button"
             onClick={onExportCsv}
             className={cn(

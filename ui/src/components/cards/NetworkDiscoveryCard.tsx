@@ -1153,7 +1153,6 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
         {onScan && (
           <button
             type="button"
-            type="button"
             onClick={onScan}
             className={cn(
               spacing.margin.top.heading,
@@ -1199,7 +1198,6 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
           {/* Full Screen button */}
           <button
             type="button"
-            type="button"
             onClick={() => setIsModalOpen(true)}
             className={cn(
               "p-1.5",
@@ -1216,7 +1214,6 @@ export const NetworkDiscoveryCard = memo(function NetworkDiscoveryCard({
           {/* Scan button */}
           {(onScan || startPipeline) && (
             <button
-              type="button"
               type="button"
               onClick={() => {
                 // Use pipeline start with port scanning enabled

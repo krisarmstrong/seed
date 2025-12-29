@@ -287,6 +287,7 @@ export const SnmpSettingsSection = memo(function SnmpSettingsSection({
               "overflow-hidden",
             )}
           >
+            {/* biome-ignore lint/a11y/useSemanticElements: Accordion header pattern with nested interactive elements */}
             <div
               className={cn(
                 "flex items-center justify-between",
@@ -296,6 +297,14 @@ export const SnmpSettingsSection = memo(function SnmpSettingsSection({
               onClick={() =>
                 setExpandedCredential(expandedCredential === cred.id ? null : (cred.id ?? ""))
               }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setExpandedCredential(expandedCredential === cred.id ? null : (cred.id ?? ""));
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
               <span className="body-small text-text-primary">
                 {cred.name || t("snmp.unnamedCredential")}

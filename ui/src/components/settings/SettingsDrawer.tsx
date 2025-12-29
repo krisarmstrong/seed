@@ -1256,6 +1256,7 @@ export const SettingsDrawer = memo(function SettingsDrawer({
         aria-modal="true"
         aria-labelledby="settings-drawer-title"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         className="fixed right-0 top-0 h-full w-full sm:w-96 lg:w-lg bg-surface-raised border-l border-surface-border z-50 overflow-y-auto shadow-xl"
       >
         {/* Header */}

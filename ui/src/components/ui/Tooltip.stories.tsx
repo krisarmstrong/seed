@@ -55,7 +55,10 @@ export const WithIcon: Story = {
   args: {
     content: "Click to access settings",
     children: (
-      <button className={cn(spacing.pad.xs, "rounded-lg bg-surface-raised hover:bg-surface-hover")}>
+      <button
+        type="button"
+        className={cn(spacing.pad.xs, "rounded-lg bg-surface-raised hover:bg-surface-hover")}
+      >
         <Settings className="w-5 h-5 text-text-secondary" />
       </button>
     ),

@@ -203,7 +203,6 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
           >
             <button
               type="button"
-              type="button"
               onClick={handleCreate}
               className={cn(
                 spacing.pad.sm,
@@ -218,7 +217,6 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -230,7 +228,6 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
               {t("profile.create", "Create Profile")}
             </button>
             <button
-              type="button"
               type="button"
               onClick={handleExport}
               className={cn(
@@ -246,7 +243,6 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                aria-hidden="true"
                 aria-hidden="true"
               >
                 <path
@@ -344,7 +340,6 @@ export function ProfileManagement({ onClose }: ProfileManagementProps) {
                 </p>
                 {!searchQuery && (
                   <button
-                    type="button"
                     type="button"
                     onClick={handleCreate}
                     className={cn(
@@ -465,7 +460,6 @@ function ProfileCard({
           {/* Edit button */}
           <button
             type="button"
-            type="button"
             onClick={onEdit}
             className={cn(
               spacing.chip.sm,
@@ -479,7 +473,6 @@ function ProfileCard({
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              aria-hidden="true"
               aria-hidden="true"
             >
               <path
@@ -495,7 +488,6 @@ function ProfileCard({
           {/* Clone/Duplicate button */}
           <button
             type="button"
-            type="button"
             onClick={onDuplicate}
             className={cn(
               spacing.chip.sm,
@@ -509,7 +501,6 @@ function ProfileCard({
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              aria-hidden="true"
               aria-hidden="true"
             >
               <path
@@ -526,7 +517,6 @@ function ProfileCard({
           {!profile.is_default && !isActive && (
             <button
               type="button"
-              type="button"
               onClick={onDelete}
               className={cn(
                 spacing.chip.sm,
@@ -540,7 +530,6 @@ function ProfileCard({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                aria-hidden="true"
                 aria-hidden="true"
               >
                 <path
@@ -558,7 +547,6 @@ function ProfileCard({
           {!isActive && (
             <button
               type="button"
-              type="button"
               onClick={onSetActive}
               className={cn(
                 spacing.chip.sm,
@@ -572,7 +560,6 @@ function ProfileCard({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                aria-hidden="true"
                 aria-hidden="true"
               >
                 <path
@@ -613,7 +600,7 @@ function DeleteConfirmModal({
   return (
     // z-60 required: nested modal must appear above parent modal (z-50)
     <div className={cn(modal.overlay, "z-60")}>
-      <div className={modal.backdrop} onClick={onCancel} />
+      <div className={modal.backdrop} onClick={onCancel} aria-hidden="true" />
       <div className={cn("relative", modal.content, modal.size.sm, modal.padding.md)}>
         <h3 className="heading-2 text-text-primary mb-2">
           {t("profile.deleteConfirm", "Delete Profile?")}
@@ -628,7 +615,6 @@ function DeleteConfirmModal({
         <div className="flex justify-end gap-3">
           <button
             type="button"
-            type="button"
             onClick={onCancel}
             disabled={isLoading}
             className={cn(
@@ -641,7 +627,6 @@ function DeleteConfirmModal({
             {t("common.cancel", "Cancel")}
           </button>
           <button
-            type="button"
             type="button"
             onClick={onConfirm}
             disabled={isLoading}

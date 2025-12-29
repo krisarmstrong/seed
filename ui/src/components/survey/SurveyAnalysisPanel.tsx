@@ -443,9 +443,18 @@ export function SurveyAnalysisPanel({
     const bgClass = getSeverityBg(finding.severity);
 
     return (
+      // biome-ignore lint/a11y/useSemanticElements: Finding card pattern with complex content
       <div
         key={finding.id}
         onClick={() => handleClick(finding)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick(finding);
+          }
+        }}
+        role="button"
+        tabIndex={0}
         className={cn(
           spacing.pad.sm,
           radius.md,
@@ -514,7 +523,6 @@ export function SurveyAnalysisPanel({
           )}
           {onGenerateReport && findings.length > 0 && (
             <button
-              type="button"
               type="button"
               onClick={() => onGenerateReport(findings)}
               className={cn(

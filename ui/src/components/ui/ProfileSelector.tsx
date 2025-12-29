@@ -131,10 +131,10 @@ export const ProfileSelector = memo(function ProfileSelector({
   const isDisabled = disabled || loading || switching;
 
   return (
-    <div ref={dropdownRef} className="relative" onKeyDown={handleKeyDown}>
+    // biome-ignore lint/a11y/useSemanticElements: Group role is semantically correct for dropdown container
+    <div ref={dropdownRef} className="relative" onKeyDown={handleKeyDown} role="group">
       {/* Trigger button */}
       <button
-        type="button"
         ref={buttonRef}
         type="button"
         disabled={isDisabled}
@@ -228,7 +228,6 @@ export const ProfileSelector = memo(function ProfileSelector({
                   <button
                     type="button"
                     key={profile.id}
-                    type="button"
                     onClick={() => selectProfile(profile.id)}
                     disabled={switching}
                     className={cn(
@@ -293,7 +292,6 @@ export const ProfileSelector = memo(function ProfileSelector({
           {/* Manage profiles link */}
           <div className="border-t border-surface-border">
             <button
-              type="button"
               type="button"
               onClick={goToManagement}
               className={cn(

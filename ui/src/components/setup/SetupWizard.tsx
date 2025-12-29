@@ -334,7 +334,6 @@ export function SetupWizard({
                         </code>
                         <button
                           type="button"
-                          type="button"
                           onClick={() => navigator.clipboard.writeText(suggestedPassword)}
                           className={cn(
                             button.size.xs,
@@ -380,7 +379,6 @@ export function SetupWizard({
                     minLength={12}
                   />
                   <button
-                    type="button"
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
@@ -468,7 +466,6 @@ export function SetupWizard({
           )}
 
           <button
-            type="button"
             type="submit"
             disabled={isSubmitting}
             className={buttonClass("primary", "md", "w-full")}
@@ -495,7 +492,6 @@ export function SetupWizard({
                 {isProviderEnabled("google") && (
                   <button
                     type="button"
-                    type="button"
                     onClick={() => {
                       window.location.href = `${API_BASE}/api/sso/login?provider=google`;
                     }}
@@ -513,7 +509,6 @@ export function SetupWizard({
                 {isProviderEnabled("microsoft") && (
                   <button
                     type="button"
-                    type="button"
                     onClick={() => {
                       window.location.href = `${API_BASE}/api/sso/login?provider=microsoft`;
                     }}
@@ -530,7 +525,6 @@ export function SetupWizard({
                 )}
                 {isProviderEnabled("github") && (
                   <button
-                    type="button"
                     type="button"
                     onClick={() => {
                       window.location.href = `${API_BASE}/api/sso/login?provider=github`;

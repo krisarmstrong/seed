@@ -149,7 +149,6 @@ export class ErrorBoundary extends Component<Props, State> {
                   {/* Retry button to attempt recovery by resetting error state */}
                   <button
                     type="button"
-                    type="button"
                     onClick={this.handleRetry}
                     className={cn(
                       button.size.sm,

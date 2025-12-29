@@ -327,7 +327,6 @@ function DeviceRow({
             {onDeepScan && device.ip && (
               <button
                 type="button"
-                type="button"
                 onClick={handleScan}
                 disabled={isScanning}
                 className={cn(
@@ -801,7 +800,6 @@ export function DiscoveryModal({ isOpen, onClose, data, onScan, onDeepScan }: Di
             {onScan && (
               <button
                 type="button"
-                type="button"
                 onClick={onScan}
                 disabled={data?.status?.scanning}
                 className={cn(
@@ -822,7 +820,6 @@ export function DiscoveryModal({ isOpen, onClose, data, onScan, onDeepScan }: Di
             <div className="flex items-center gap-1">
               <button
                 type="button"
-                type="button"
                 onClick={exportCsv}
                 className={cn(
                   button.base,
@@ -836,7 +833,6 @@ export function DiscoveryModal({ isOpen, onClose, data, onScan, onDeepScan }: Di
                 CSV
               </button>
               <button
-                type="button"
                 type="button"
                 onClick={exportJson}
                 className={cn(
@@ -854,7 +850,6 @@ export function DiscoveryModal({ isOpen, onClose, data, onScan, onDeepScan }: Di
 
             {/* Close button */}
             <button
-              type="button"
               type="button"
               onClick={onClose}
               className={cn(
@@ -893,7 +888,6 @@ export function DiscoveryModal({ isOpen, onClose, data, onScan, onDeepScan }: Di
             {searchQuery && (
               <button
                 type="button"
-                type="button"
                 onClick={() => setSearchQuery("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
               >
@@ -905,7 +899,6 @@ export function DiscoveryModal({ isOpen, onClose, data, onScan, onDeepScan }: Di
           {/* Filter toggles */}
           <div className="flex items-center gap-2">
             <button
-              type="button"
               type="button"
               onClick={() => setShowLocalOnly(!showLocalOnly)}
               className={cn(
