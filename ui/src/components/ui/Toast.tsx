@@ -89,7 +89,9 @@ interface ToastContainerProps {
 
 function ToastContainer({ toasts, removeToast }: ToastContainerProps) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: Region role with aria-live is the correct pattern for toast notifications
     <div
+      role="region"
       aria-live="polite"
       aria-label="Notifications"
       className={cn("fixed bottom-20 right-4 z-50 max-w-sm", layout.stack.default)}

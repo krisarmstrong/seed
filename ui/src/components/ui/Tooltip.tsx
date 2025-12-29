@@ -50,17 +50,22 @@ export function Tooltip({ content, children, position = "top" }: TooltipProps) {
 
   return (
     <div className="relative inline-flex items-center">
+      {/* biome-ignore lint/a11y/useSemanticElements: Tooltip trigger wraps arbitrary content - cannot use semantic button */}
       <div
         onMouseEnter={() => setShow(true)}
         onMouseLeave={() => setShow(false)}
         onFocus={() => setShow(true)}
         onBlur={() => setShow(false)}
         className="cursor-help"
+        tabIndex={0}
+        role="button"
+        aria-describedby={show ? "tooltip-content" : undefined}
       >
         {children}
       </div>
       {show && (
         <div
+          id="tooltip-content"
           className={cn(
             "absolute z-50 shadow-lg max-w-xs",
             spacing.cell.px,

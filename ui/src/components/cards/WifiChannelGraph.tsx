@@ -188,6 +188,7 @@ function ChannelGraph({
         height={height}
         className="w-full"
         viewBox={`0 0 ${width} ${height}`}
+        role="img"
         aria-label="WiFi channel signal graph"
       >
         {/* Background grid */}
@@ -269,6 +270,7 @@ function ChannelGraph({
             const isHovered = hoveredNetwork?.bssid === network.bssid;
 
             return (
+              // biome-ignore lint/a11y/noStaticElementInteractions: SVG path element with hover events for data visualization
               <path
                 key={network.bssid}
                 d={path}
@@ -279,6 +281,7 @@ function ChannelGraph({
                 className="transition-all cursor-pointer"
                 onMouseEnter={() => setHoveredNetwork(network)}
                 onMouseLeave={() => setHoveredNetwork(null)}
+                aria-label={`Network ${network.ssid || network.bssid} on channel ${network.channel}`}
               />
             );
           })}

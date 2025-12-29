@@ -142,6 +142,8 @@ export const SpeedGauge = memo(function SpeedGauge({
           height={sizeConfig.height}
           viewBox={`0 0 ${sizeConfig.width} ${sizeConfig.height}`}
           className={isRunning ? "animate-pulse" : ""}
+          role="img"
+          aria-label={`Speed gauge showing ${value} ${unit}`}
         >
           {/* Background arc */}
           <path

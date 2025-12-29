@@ -170,6 +170,7 @@ export function AirMapperImport({ onImport, onCancel }: AirMapperImportProps) {
 
   // Render drop zone
   const renderDropZone = () => (
+    // biome-ignore lint/a11y/useSemanticElements: Drop zone with drag/drop events - no semantic HTML alternative
     <div
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -182,6 +183,8 @@ export function AirMapperImport({ onImport, onCancel }: AirMapperImportProps) {
         spacing.pad.lg,
         "text-center transition-colors",
       )}
+      role="region"
+      aria-label={t("import.dropZone", "File drop zone")}
     >
       {isLoading ? (
         <div className={cn(layout.stack.default, "items-center")}>

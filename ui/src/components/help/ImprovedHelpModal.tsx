@@ -181,7 +181,6 @@ export function ImprovedHelpModal({ isOpen, onClose, version = "dev" }: HelpModa
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
-              aria-hidden="true"
             >
               <path
                 fillRule="evenodd"

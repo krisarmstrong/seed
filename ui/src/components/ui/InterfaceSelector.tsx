@@ -162,10 +162,10 @@ export const InterfaceSelector = memo(function InterfaceSelector({
   };
 
   return (
-    <div ref={dropdownRef} className="relative" onKeyDown={handleKeyDown}>
+    // biome-ignore lint/a11y/useSemanticElements: Group role is semantically correct for dropdown container
+    <div ref={dropdownRef} className="relative" onKeyDown={handleKeyDown} role="group">
       {/* Trigger button */}
       <button
-        type="button"
         ref={buttonRef}
         type="button"
         disabled={disabled}
@@ -235,7 +235,6 @@ export const InterfaceSelector = memo(function InterfaceSelector({
                 <button
                   type="button"
                   key={iface.name}
-                  type="button"
                   onClick={() => selectInterface(iface.name)}
                   className={cn(
                     "w-full flex items-center",
@@ -298,7 +297,6 @@ export const InterfaceSelector = memo(function InterfaceSelector({
                 <button
                   type="button"
                   key={iface.name}
-                  type="button"
                   onClick={() => selectInterface(iface.name)}
                   className={cn(
                     "w-full flex items-center",

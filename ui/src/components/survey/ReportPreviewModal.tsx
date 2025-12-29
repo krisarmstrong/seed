@@ -214,7 +214,6 @@ export function ReportPreviewModal({ isOpen, onClose, report }: ReportPreviewMod
           </div>
           <button
             type="button"
-            type="button"
             onClick={onClose}
             className={cn(
               spacing.iconBtn.sm,
@@ -326,7 +325,6 @@ export function ReportPreviewModal({ isOpen, onClose, report }: ReportPreviewMod
         >
           <button
             type="button"
-            type="button"
             onClick={onClose}
             className={cn(
               button.size.md,
@@ -338,7 +336,6 @@ export function ReportPreviewModal({ isOpen, onClose, report }: ReportPreviewMod
             {t("report.close")}
           </button>
           <button
-            type="button"
             type="button"
             onClick={handleDownloadHtml}
             className={cn(
@@ -353,7 +350,6 @@ export function ReportPreviewModal({ isOpen, onClose, report }: ReportPreviewMod
             <span>{t("report.downloadHTML")}</span>
           </button>
           <button
-            type="button"
             type="button"
             onClick={handlePrint}
             className={cn(

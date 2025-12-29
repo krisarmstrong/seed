@@ -362,9 +362,18 @@ export function FloorSelector({
           }
 
           return (
+            // biome-ignore lint/a11y/useSemanticElements: Complex floor selector card with nested buttons
             <div
               key={floor.id}
               onClick={() => !disabled && onSelectFloor(floor.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  if (!disabled) onSelectFloor(floor.id);
+                }
+              }}
+              role="button"
+              tabIndex={disabled ? -1 : 0}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -442,12 +451,14 @@ export function FloorSelector({
               </div>
 
               {/* Actions */}
+              {/* biome-ignore lint/a11y/noStaticElementInteractions: Used to stop propagation to parent button */}
               <div
                 style={{
                   display: "flex",
                   gap: "4px",
                 }}
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
               >
                 {onRenameFloor && (
                   <button

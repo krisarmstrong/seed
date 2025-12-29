@@ -272,7 +272,6 @@ export const PerformanceSettings = memo(function PerformanceSettings({
                 <p className="caption text-text-muted">{t("performance.autoSelectDesc")}</p>
                 <button
                   type="button"
-                  type="button"
                   onClick={() =>
                     setTestsSettings((prev) => ({
                       ...prev,
@@ -330,7 +329,6 @@ export const PerformanceSettings = memo(function PerformanceSettings({
               <div className={cn(layout.flex.between, spacing.margin.top.inline)}>
                 <button
                   type="button"
-                  type="button"
                   disabled={iperfSuggestionsStatus === "loading"}
                   onClick={fetchIperfSuggestions}
                   className="caption text-brand-primary hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
@@ -373,7 +371,6 @@ export const PerformanceSettings = memo(function PerformanceSettings({
                 >
                   {iperfSuggestions.map((sugg) => (
                     <button
-                      type="button"
                       type="button"
                       key={`${sugg.host}-${sugg.hostname || ""}`}
                       className={cn(
