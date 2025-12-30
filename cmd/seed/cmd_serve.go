@@ -15,11 +15,17 @@ import (
 
 	"github.com/krisarmstrong/seed/internal/api"
 	"github.com/krisarmstrong/seed/internal/auth"
+	"github.com/krisarmstrong/seed/internal/canopy"
 	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/database"
 	"github.com/krisarmstrong/seed/internal/discovery"
+	"github.com/krisarmstrong/seed/internal/harvest"
 	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/network"
 	"github.com/krisarmstrong/seed/internal/paths"
+	"github.com/krisarmstrong/seed/internal/roots"
+	"github.com/krisarmstrong/seed/internal/sap"
+	"github.com/krisarmstrong/seed/internal/shell"
 	"github.com/krisarmstrong/seed/internal/version"
 )
 
@@ -58,8 +64,58 @@ func runServe(_ *cobra.Command, _ []string) {
 		slog.Info("Trusted proxies configured", "count", proxies.Count())
 	}
 
-	server := api.NewServer(cfg, configPath, logPath, netMgr, icmpAvailable, proxies)
-	runServerWithShutdown(server, cfg)
+	// Initialize database
+	db := initializeDatabase(cfg)
+
+	// Initialize modules
+	modules := initializeModules(cfg, db)
+
+	server := api.NewServer(cfg, configPath, logPath, netMgr, icmpAvailable, proxies, db, modules)
+	runServerWithShutdown(server, cfg, modules)
+}
+
+// initializeDatabase opens and configures the SQLite database.
+func initializeDatabase(cfg *config.Config) *database.DB {
+	dbPath := cfg.Database.Path
+	if dbPath == "" {
+		dbPath = "data/seed.db"
+	}
+
+	db, err := database.Open(dbPath)
+	if err != nil {
+		slog.Error("Failed to open database", "path", dbPath, "error", err)
+		return nil
+	}
+
+	slog.Info("Database initialized", "path", dbPath)
+	return db
+}
+
+// initializeModules creates all application modules.
+func initializeModules(cfg *config.Config, db *database.DB) *api.Modules {
+	modules := &api.Modules{}
+
+	// Sap: Live telemetry (gateway, DNS, speedtest, iperf monitoring)
+	modules.Sap = sap.New(cfg, db)
+	slog.Info("Sap module initialized")
+
+	// Shell: Security posture (DHCP monitoring, vulnerability scanning)
+	modules.Shell = shell.New(cfg, db)
+	slog.Info("Shell module initialized")
+
+	// Canopy: Wi-Fi planning (surveys, site planning)
+	modules.Canopy = canopy.New(cfg, db)
+	slog.Info("Canopy module initialized")
+
+	// Roots: Path analysis (traceroute, topology, IP enrichment)
+	modules.Roots = roots.New(cfg, db)
+	slog.Info("Roots module initialized")
+
+	// Harvest: Reporting (report generation, templates, scheduling)
+	modules.Harvest = harvest.New(cfg, db)
+	slog.Info("Harvest module initialized")
+
+	return modules
 }
 
 // checkICMPCapabilities checks for ICMP privileges and returns availability status.
@@ -292,7 +348,17 @@ func applyActiveInterface(cfg *config.Config, netMgr *network.Manager, activeInt
 }
 
 // runServerWithShutdown starts the server and handles graceful shutdown.
-func runServerWithShutdown(server *api.Server, cfg *config.Config) {
+func runServerWithShutdown(server *api.Server, cfg *config.Config, modules *api.Modules) {
+	// Start modules
+	ctx := context.Background()
+	if modules != nil {
+		if err := modules.Start(ctx); err != nil {
+			slog.Error("Failed to start modules", "error", err)
+			os.Exit(1)
+		}
+		slog.Info("All modules started successfully")
+	}
+
 	serverErrors := make(chan error, 1)
 	go func() {
 		slog.Info("Starting server", "port", cfg.Server.Port, "https", cfg.Server.HTTPS)
@@ -317,9 +383,18 @@ func runServerWithShutdown(server *api.Server, cfg *config.Config) {
 			os.Exit(1)
 		}()
 
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		if err := server.Shutdown(ctx); err != nil {
+
+		// Stop modules first
+		if modules != nil {
+			slog.Info("Stopping modules...")
+			if err := modules.Stop(); err != nil {
+				slog.Error("Error stopping modules", "error", err)
+			}
+		}
+
+		if err := server.Shutdown(shutdownCtx); err != nil {
 			slog.Error("Error during shutdown", "error", err)
 		}
 	}

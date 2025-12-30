@@ -40,7 +40,7 @@ func newTestEndpointServer(t *testing.T) *testEndpointServer {
 		t.Logf("Warning: Could not create network manager: %v", err)
 	}
 
-	server := NewServer(cfg, configPath, "", netMgr, false, nil)
+	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 	// Force IPv4 listener to avoid environments where IPv6 binds are disallowed
 	ln, err := net.Listen("tcp4", "127.0.0.1:0")
 	if err != nil {
@@ -237,7 +237,7 @@ func TestWebSocketHub(t *testing.T) {
 	}
 
 	netMgr, _ := network.NewManager("")
-	server := NewServer(cfg, configPath, "", netMgr, false, nil)
+	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 
 	// Test hub exists
 	hub := server.Hub()
@@ -258,7 +258,7 @@ func TestWebSocketHub(t *testing.T) {
 // 	}
 //
 // 	netMgr, _ := network.NewManager("")
-// 	server := NewServer(cfg, configPath, "", netMgr, false, nil)
+// 	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 //
 // 	ts := httptest.NewServer(server.mux)
 // 	defer ts.Close()
@@ -302,7 +302,7 @@ func TestDevicesEndpoints(t *testing.T) {
 	}
 
 	netMgr, _ := network.NewManager("")
-	server := NewServer(cfg, configPath, "", netMgr, false, nil)
+	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 
 	ts := httptest.NewServer(server.mux)
 	defer ts.Close()
@@ -380,7 +380,7 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 	}
 
 	netMgr, _ := network.NewManager("")
-	server := NewServer(cfg, configPath, "", netMgr, false, nil)
+	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 
 	ts := httptest.NewServer(server.mux)
 	defer ts.Close()
