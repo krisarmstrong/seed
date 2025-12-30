@@ -90,6 +90,7 @@ type Server struct {
 	pipeline            *discovery.Pipeline // Phased discovery pipeline orchestrator
 	acmeChallengeServer *http.Server        // HTTP-01 challenge server for ACME (fixes #837)
 	retentionStopCh     chan struct{}       // Signals data retention goroutine to stop (fixes #848)
+	modules             *Modules            // Application modules (Sap, Shell, Canopy, Roots, Harvest)
 }
 
 // getClientIP extracts the client IP from a request, considering trusted proxies.
@@ -102,7 +103,7 @@ func (s *Server) getClientIP(r *http.Request) string {
 // NewServer creates a new server instance.
 //
 //nolint:gocyclo // Server initialization requires many configuration steps
-func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.Manager, icmpAvailable bool, trustedProxies *TrustedProxies) *Server {
+func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.Manager, icmpAvailable bool, trustedProxies *TrustedProxies, db *database.DB, modules *Modules) *Server {
 	s := &Server{
 		config:         cfg,
 		configPath:     configPath,
@@ -112,6 +113,8 @@ func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.M
 		icmpAvailable:  icmpAvailable,
 		trustedProxies: trustedProxies, // Trusted proxy support (#H4)
 		startTime:      time.Now(),     // Track application start time (fixes #540)
+		db:             db,             // Database passed from cmd_serve.go
+		modules:        modules,        // Modules passed from cmd_serve.go
 		authManager: auth.NewManager(
 			cfg.Auth.JWTSecret,
 			cfg.Auth.SessionTimeout,
@@ -186,18 +189,8 @@ func NewServer(cfg *config.Config, configPath, logPath string, netMgr *network.M
 	// Initialize OAuth manager for SSO
 	s.initOAuthManager()
 
-	// Initialize SQLite database (#755)
-	dbPath := cfg.Database.Path
-	if dbPath == "" {
-		dbPath = "data/seed.db"
-	}
-	db, err := database.Open(dbPath)
-	if err != nil {
-		slog.Error("Failed to open database", "path", dbPath, "error", err)
-	} else {
-		s.db = db
-		slog.Info("Database initialized", "path", dbPath)
-
+	// Configure database-backed services if db was passed in
+	if db != nil {
 		// Set up database-backed user store for authentication
 		userStore := database.NewUserStoreAdapter(db)
 		s.authManager.SetUserStore(userStore)
