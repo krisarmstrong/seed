@@ -73,8 +73,8 @@ func runMCP(_ *cobra.Command, _ []string) {
 
 	// Create a minimal API server instance for service access
 	// This doesn't start the HTTP server, just provides service access
-	// Note: MCP runs over stdio, not HTTP, so trusted proxies not needed
-	server := api.NewServer(cfg, configPath, "", netMgr, icmpAvailable, nil)
+	// Note: MCP runs over stdio, not HTTP, so trusted proxies/db/modules not needed
+	server := api.NewServer(cfg, configPath, "", netMgr, icmpAvailable, nil, nil, nil)
 
 	// Create MCP server
 	mcpServer := mcp.NewServer(&cfg.MCP, server)
