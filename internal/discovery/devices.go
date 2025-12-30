@@ -749,6 +749,7 @@ func (d *DeviceDiscovery) GetDeviceByIP(ip string) *DiscoveredDevice {
 // copyDevice creates a shallow copy with deep-copied slices to prevent mutation.
 func copyDevice(device *DiscoveredDevice) *DiscoveredDevice {
 	deviceCopy := *device
+
 	// Deep copy slices that could be mutated
 	if device.DiscoveryMethod != nil {
 		deviceCopy.DiscoveryMethod = make([]Method, len(device.DiscoveryMethod))
@@ -762,6 +763,91 @@ func copyDevice(device *DiscoveredDevice) *DiscoveredDevice {
 		deviceCopy.DuplicateMACs = make([]string, len(device.DuplicateMACs))
 		copy(deviceCopy.DuplicateMACs, device.DuplicateMACs)
 	}
+
+	// Deep copy protocol-specific info pointers
+	if device.LLDPInfo != nil {
+		infoCopy := *device.LLDPInfo
+		if device.LLDPInfo.Capabilities != nil {
+			infoCopy.Capabilities = make([]string, len(device.LLDPInfo.Capabilities))
+			copy(infoCopy.Capabilities, device.LLDPInfo.Capabilities)
+		}
+		deviceCopy.LLDPInfo = &infoCopy
+	}
+	if device.CDPInfo != nil {
+		infoCopy := *device.CDPInfo
+		if device.CDPInfo.Capabilities != nil {
+			infoCopy.Capabilities = make([]string, len(device.CDPInfo.Capabilities))
+			copy(infoCopy.Capabilities, device.CDPInfo.Capabilities)
+		}
+		deviceCopy.CDPInfo = &infoCopy
+	}
+	if device.EDPInfo != nil {
+		infoCopy := *device.EDPInfo
+		deviceCopy.EDPInfo = &infoCopy
+	}
+	if device.NDPInfo != nil {
+		infoCopy := *device.NDPInfo
+		deviceCopy.NDPInfo = &infoCopy
+	}
+
+	// Deep copy profile (contains slices)
+	if device.Profile != nil {
+		profileCopy := *device.Profile
+		if device.Profile.OpenPorts != nil {
+			profileCopy.OpenPorts = make([]OpenPort, len(device.Profile.OpenPorts))
+			copy(profileCopy.OpenPorts, device.Profile.OpenPorts)
+		}
+		if device.Profile.MDNSServices != nil {
+			profileCopy.MDNSServices = make([]MDNSService, len(device.Profile.MDNSServices))
+			copy(profileCopy.MDNSServices, device.Profile.MDNSServices)
+		}
+		if device.Profile.DeviceIcons != nil {
+			profileCopy.DeviceIcons = make([]string, len(device.Profile.DeviceIcons))
+			copy(profileCopy.DeviceIcons, device.Profile.DeviceIcons)
+		}
+		deviceCopy.Profile = &profileCopy
+	}
+
+	// Deep copy SNMP data (contains slices)
+	if device.SNMPData != nil {
+		snmpCopy := *device.SNMPData
+		if device.SNMPData.Interfaces != nil {
+			snmpCopy.Interfaces = make([]SNMPInterface, len(device.SNMPData.Interfaces))
+			copy(snmpCopy.Interfaces, device.SNMPData.Interfaces)
+		}
+		if device.SNMPData.IPAddresses != nil {
+			snmpCopy.IPAddresses = make([]SNMPIPAddress, len(device.SNMPData.IPAddresses))
+			copy(snmpCopy.IPAddresses, device.SNMPData.IPAddresses)
+		}
+		if device.SNMPData.VLANs != nil {
+			snmpCopy.VLANs = make([]SNMPVLAN, len(device.SNMPData.VLANs))
+			copy(snmpCopy.VLANs, device.SNMPData.VLANs)
+		}
+		if device.SNMPData.MACTable != nil {
+			snmpCopy.MACTable = make([]SNMPMACEntry, len(device.SNMPData.MACTable))
+			copy(snmpCopy.MACTable, device.SNMPData.MACTable)
+		}
+		if device.SNMPData.Inventory != nil {
+			snmpCopy.Inventory = make([]SNMPEntity, len(device.SNMPData.Inventory))
+			copy(snmpCopy.Inventory, device.SNMPData.Inventory)
+		}
+		if device.SNMPData.LLDPNeighbors != nil {
+			snmpCopy.LLDPNeighbors = make([]SNMPLLDPNeighbor, len(device.SNMPData.LLDPNeighbors))
+			copy(snmpCopy.LLDPNeighbors, device.SNMPData.LLDPNeighbors)
+		}
+		deviceCopy.SNMPData = &snmpCopy
+	}
+
+	// Deep copy vulnerabilities (contains slices)
+	if device.Vulnerabilities != nil {
+		vulnCopy := *device.Vulnerabilities
+		if device.Vulnerabilities.Vulnerabilities != nil {
+			vulnCopy.Vulnerabilities = make([]Vulnerability, len(device.Vulnerabilities.Vulnerabilities))
+			copy(vulnCopy.Vulnerabilities, device.Vulnerabilities.Vulnerabilities)
+		}
+		deviceCopy.Vulnerabilities = &vulnCopy
+	}
+
 	return &deviceCopy
 }
 

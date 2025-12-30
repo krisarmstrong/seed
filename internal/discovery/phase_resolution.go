@@ -9,7 +9,6 @@ import (
 	"net"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
@@ -128,6 +127,9 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 	var progress ResolutionProgress
 	progress.Start(len(devices))
 
+	// Mutex to protect device field updates from concurrent goroutines
+	var deviceMu sync.Mutex
+
 	// Collect IPs for resolution
 	var ips []string
 	deviceByIP := make(map[string]*DiscoveredDevice)
@@ -151,8 +153,8 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 				if progressCh != nil {
 					progressCh <- PhaseProgressPayload{
 						Phase:           "resolution",
-						ProcessedCount:  int(progress.Resolved()),
-						TotalCount:      len(ips),
+						ProcessedCount:  progress.Resolved(),
+						TotalCount:      len(devices), // Use devices count, not IPs
 						PercentComplete: progress.PercentComplete(),
 						CurrentTarget:   progress.CurrentTarget(),
 						ElapsedMs:       time.Since(start).Milliseconds(),
@@ -170,7 +172,7 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			p.resolveDNS(resolveCtx, ips, deviceByIP, &progress)
+			p.resolveDNS(resolveCtx, ips, deviceByIP, &deviceMu, &progress)
 		}()
 	}
 
@@ -179,7 +181,7 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			p.resolveNetBIOS(resolveCtx, ips, deviceByIP, &progress)
+			p.resolveNetBIOS(resolveCtx, ips, deviceByIP, &deviceMu, &progress)
 		}()
 	}
 
@@ -188,7 +190,7 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			p.resolveMDNS(resolveCtx, ips, deviceByIP, &progress)
+			p.resolveMDNS(resolveCtx, ips, deviceByIP, &deviceMu, &progress)
 		}()
 	}
 
@@ -196,7 +198,7 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 	wg.Wait()
 	close(done)
 
-	// Compute display names for all devices
+	// Compute display names for all devices (single-threaded, no lock needed)
 	for _, device := range devices {
 		device.DisplayName = device.ComputeDisplayName()
 	}
@@ -218,7 +220,7 @@ func (p *ResolutionPhase) Run(ctx context.Context, devices []*DiscoveredDevice, 
 }
 
 // resolveDNS performs reverse DNS lookups for all devices.
-func (p *ResolutionPhase) resolveDNS(ctx context.Context, ips []string, deviceByIP map[string]*DiscoveredDevice, progress *ResolutionProgress) {
+func (p *ResolutionPhase) resolveDNS(ctx context.Context, ips []string, deviceByIP map[string]*DiscoveredDevice, deviceMu *sync.Mutex, progress *ResolutionProgress) {
 	sem := make(chan struct{}, p.config.Timing.MaxConcurrentDNS)
 	var wg sync.WaitGroup
 
@@ -236,10 +238,14 @@ func (p *ResolutionPhase) resolveDNS(ctx context.Context, ips []string, deviceBy
 
 			progress.SetCurrentTarget(ipAddr)
 
-			// Skip if device already has a hostname
+			// Check if device already has a hostname (under lock)
+			deviceMu.Lock()
 			device := deviceByIP[ipAddr]
-			if device.Hostname != "" {
-				progress.IncrementResolved()
+			hasHostname := device.Hostname != ""
+			deviceMu.Unlock()
+
+			if hasHostname {
+				progress.MarkResolved(ipAddr)
 				return
 			}
 
@@ -255,8 +261,11 @@ func (p *ResolutionPhase) resolveDNS(ctx context.Context, ips []string, deviceBy
 
 			if len(names) > 0 {
 				hostname := strings.TrimSuffix(names[0], ".")
+				// Update device under lock
+				deviceMu.Lock()
 				device.Hostname = hostname
-				progress.IncrementResolved()
+				deviceMu.Unlock()
+				progress.MarkResolved(ipAddr)
 				slog.Debug("DNS resolved", "ip", ipAddr, "hostname", hostname)
 			}
 		}(ip)
@@ -268,15 +277,17 @@ func (p *ResolutionPhase) resolveDNS(ctx context.Context, ips []string, deviceBy
 // resolveNetBIOS performs NetBIOS name resolution for Windows devices.
 //
 //nolint:dupl // Similar to resolveMDNS but uses NetBIOSResolver with NetBIOSResult type.
-func (p *ResolutionPhase) resolveNetBIOS(ctx context.Context, ips []string, deviceByIP map[string]*DiscoveredDevice, progress *ResolutionProgress) {
-	// Filter IPs that don't already have NetBIOS names
+func (p *ResolutionPhase) resolveNetBIOS(ctx context.Context, ips []string, deviceByIP map[string]*DiscoveredDevice, deviceMu *sync.Mutex, progress *ResolutionProgress) {
+	// Filter IPs that don't already have NetBIOS names (under lock)
 	var toResolve []string
+	deviceMu.Lock()
 	for _, ip := range ips {
 		device := deviceByIP[ip]
 		if device.NetBIOSName == "" {
 			toResolve = append(toResolve, ip)
 		}
 	}
+	deviceMu.Unlock()
 
 	if len(toResolve) == 0 {
 		return
@@ -289,10 +300,14 @@ func (p *ResolutionPhase) resolveNetBIOS(ctx context.Context, ips []string, devi
 
 	for _, result := range results {
 		if result.Err == nil && result.Name != "" {
+			deviceMu.Lock()
 			if device, ok := deviceByIP[result.IP]; ok {
 				device.NetBIOSName = result.Name
-				progress.IncrementResolved()
+				deviceMu.Unlock()
+				progress.MarkResolved(result.IP)
 				slog.Debug("NetBIOS resolved", "ip", result.IP, "name", result.Name)
+			} else {
+				deviceMu.Unlock()
 			}
 		}
 	}
@@ -301,15 +316,17 @@ func (p *ResolutionPhase) resolveNetBIOS(ctx context.Context, ips []string, devi
 // resolveMDNS performs mDNS name resolution for Apple/Linux devices.
 //
 //nolint:dupl // Similar to resolveNetBIOS but uses MDNSResolver with MDNSResult type.
-func (p *ResolutionPhase) resolveMDNS(ctx context.Context, ips []string, deviceByIP map[string]*DiscoveredDevice, progress *ResolutionProgress) {
-	// Filter IPs that don't already have mDNS names
+func (p *ResolutionPhase) resolveMDNS(ctx context.Context, ips []string, deviceByIP map[string]*DiscoveredDevice, deviceMu *sync.Mutex, progress *ResolutionProgress) {
+	// Filter IPs that don't already have mDNS names (under lock)
 	var toResolve []string
+	deviceMu.Lock()
 	for _, ip := range ips {
 		device := deviceByIP[ip]
 		if device.MDNSName == "" {
 			toResolve = append(toResolve, ip)
 		}
 	}
+	deviceMu.Unlock()
 
 	if len(toResolve) == 0 {
 		return
@@ -322,21 +339,26 @@ func (p *ResolutionPhase) resolveMDNS(ctx context.Context, ips []string, deviceB
 
 	for _, result := range results {
 		if result.Err == nil && result.Name != "" {
+			deviceMu.Lock()
 			if device, ok := deviceByIP[result.IP]; ok {
 				device.MDNSName = result.Name
-				progress.IncrementResolved()
+				deviceMu.Unlock()
+				progress.MarkResolved(result.IP)
 				slog.Debug("mDNS resolved", "ip", result.IP, "name", result.Name)
+			} else {
+				deviceMu.Unlock()
 			}
 		}
 	}
 }
 
 // ResolutionProgress tracks progress during name resolution.
+// It tracks unique resolved devices to prevent counting the same device multiple times.
 type ResolutionProgress struct {
 	mu            sync.RWMutex
 	startTime     time.Time
 	totalDevices  int
-	resolved      int64
+	resolvedIPs   map[string]bool // Track which IPs have been resolved (by any method)
 	currentTarget string
 }
 
@@ -346,6 +368,7 @@ func (p *ResolutionProgress) Start(totalDevices int) {
 	defer p.mu.Unlock()
 	p.startTime = time.Now()
 	p.totalDevices = totalDevices
+	p.resolvedIPs = make(map[string]bool)
 }
 
 // SetCurrentTarget updates the target being resolved.
@@ -362,27 +385,40 @@ func (p *ResolutionProgress) CurrentTarget() string {
 	return p.currentTarget
 }
 
-// IncrementResolved adds to the resolved count.
-func (p *ResolutionProgress) IncrementResolved() {
-	atomic.AddInt64(&p.resolved, 1)
+// MarkResolved marks an IP as resolved. Thread-safe and idempotent.
+// Returns true if this is the first time the IP was marked resolved.
+func (p *ResolutionProgress) MarkResolved(ip string) bool {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.resolvedIPs[ip] {
+		return false // Already resolved by another method
+	}
+	p.resolvedIPs[ip] = true
+	return true
 }
 
 // Resolved returns the number of devices with resolved names.
-func (p *ResolutionProgress) Resolved() int64 {
-	return atomic.LoadInt64(&p.resolved)
+func (p *ResolutionProgress) Resolved() int {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return len(p.resolvedIPs)
 }
 
-// PercentComplete returns completion percentage.
+// PercentComplete returns completion percentage (capped at 100).
 func (p *ResolutionProgress) PercentComplete() float64 {
 	p.mu.RLock()
 	total := p.totalDevices
+	resolved := len(p.resolvedIPs)
 	p.mu.RUnlock()
 
 	if total == 0 {
 		return 100
 	}
-	resolved := p.Resolved()
-	return float64(resolved) / float64(total) * 100
+	pct := float64(resolved) / float64(total) * 100
+	if pct > 100 {
+		pct = 100
+	}
+	return pct
 }
 
 // DNSResolver wraps the standard library resolver with additional features.

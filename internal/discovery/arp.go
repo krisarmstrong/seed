@@ -343,9 +343,16 @@ func (s *ARPScanner) Scan(ctx context.Context) error {
 	return nil
 }
 
+// MaxChunksDefault is the default maximum number of /24 chunks to scan.
+// This provides a safety guardrail for very large CIDRs like /8.
+// 256 chunks = /16 subnet = 65,534 hosts (reasonable upper bound).
+const MaxChunksDefault = 256
+
 // splitSubnetIntoChunks splits a large subnet into /24 chunks for manageable scanning.
 // Returns the original subnet in a slice if it's already /24 or smaller.
-func splitSubnetIntoChunks(subnet *net.IPNet) []*net.IPNet {
+// maxChunks limits the number of chunks to prevent memory/time issues with huge CIDRs.
+// Pass 0 for maxChunks to use MaxChunksDefault.
+func splitSubnetIntoChunks(subnet *net.IPNet, maxChunks int) []*net.IPNet {
 	ones, bits := subnet.Mask.Size()
 	if bits != 32 {
 		// IPv6 or invalid - return as-is
@@ -359,6 +366,19 @@ func splitSubnetIntoChunks(subnet *net.IPNet) []*net.IPNet {
 
 	// Calculate number of /24 chunks needed
 	numChunks := 1 << (24 - ones) // e.g., /22 = 4 chunks, /16 = 256 chunks
+
+	// Apply safety cap
+	if maxChunks <= 0 {
+		maxChunks = MaxChunksDefault
+	}
+	if numChunks > maxChunks {
+		slog.Warn("Subnet too large - capping chunk count",
+			"subnet", subnet.String(),
+			"totalChunks", numChunks,
+			"maxChunks", maxChunks,
+			"coverage", fmt.Sprintf("%.1f%%", float64(maxChunks)/float64(numChunks)*100))
+		numChunks = maxChunks
+	}
 
 	chunks := make([]*net.IPNet, 0, numChunks)
 	baseIP := subnet.IP.Mask(subnet.Mask).To4()
@@ -391,17 +411,24 @@ func splitSubnetIntoChunks(subnet *net.IPNet) []*net.IPNet {
 
 // pingSweep sends ICMP echo requests to all hosts in the subnet using raw sockets.
 // For subnets larger than /24, automatically splits into /24 chunks and scans sequentially.
+// Respects maxHostsPerSubnet configuration to cap total hosts scanned.
 func (s *ARPScanner) pingSweep(ctx context.Context, subnet *net.IPNet) error {
 	ones, bits := subnet.Mask.Size()
 	totalHosts := 1<<(bits-ones) - 2 // Exclude network and broadcast
 
+	// Calculate max chunks based on configured host limit
+	// maxHostsPerSubnet / 254 = max /24 chunks to scan
+	maxHosts := s.GetMaxHostsPerSubnet()
+	maxChunks := (maxHosts + 253) / 254 // Round up
+
 	// For large subnets, split into /24 chunks and scan sequentially
-	chunks := splitSubnetIntoChunks(subnet)
+	chunks := splitSubnetIntoChunks(subnet, maxChunks)
 	if len(chunks) > 1 {
 		slog.Info("Large subnet detected - scanning in chunks",
 			"subnet", subnet.String(),
 			"totalHosts", totalHosts,
-			"chunks", len(chunks))
+			"chunks", len(chunks),
+			"maxHosts", maxHosts)
 
 		for i, chunk := range chunks {
 			select {

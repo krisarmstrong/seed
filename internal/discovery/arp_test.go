@@ -353,6 +353,7 @@ func TestSplitSubnetIntoChunks(t *testing.T) {
 	tests := []struct {
 		name           string
 		cidr           string
+		maxChunks      int // 0 = use default
 		expectedChunks int
 		firstChunk     string
 		lastChunk      string
@@ -393,9 +394,9 @@ func TestSplitSubnetIntoChunks(t *testing.T) {
 			lastChunk:      "172.16.15.0/24",
 		},
 		{
-			name:           "/16 - 256 chunks (supernet)",
+			name:           "/16 - 256 chunks (capped by default)",
 			cidr:           "10.0.0.0/16",
-			expectedChunks: 256,
+			expectedChunks: MaxChunksDefault, // 256 - capped by default
 			firstChunk:     "10.0.0.0/24",
 			lastChunk:      "10.0.255.0/24",
 		},
@@ -408,7 +409,7 @@ func TestSplitSubnetIntoChunks(t *testing.T) {
 				t.Fatalf("Invalid CIDR %s: %v", tt.cidr, err)
 			}
 
-			chunks := splitSubnetIntoChunks(subnet)
+			chunks := splitSubnetIntoChunks(subnet, tt.maxChunks)
 
 			if len(chunks) != tt.expectedChunks {
 				t.Errorf("Expected %d chunks, got %d", tt.expectedChunks, len(chunks))
@@ -450,22 +451,39 @@ func TestSplitSubnetIntoChunks(t *testing.T) {
 	}
 }
 
-func TestSplitSubnetIntoChunks_EdgeCases(t *testing.T) {
-	// Test /8 supernet (256 * 256 = 65536 /24 chunks - this is huge!)
-	// We won't actually create all chunks, just verify the count
+func TestSplitSubnetIntoChunks_MaxChunksCap(t *testing.T) {
+	// Test /8 supernet with explicit cap
 	_, subnet, _ := net.ParseCIDR("10.0.0.0/8")
-	chunks := splitSubnetIntoChunks(subnet)
 
-	expectedChunks := 1 << (24 - 8) // 65536 chunks
-	if len(chunks) != expectedChunks {
-		t.Errorf("/8 supernet: expected %d chunks, got %d", expectedChunks, len(chunks))
+	// With cap of 16, should only get 16 chunks
+	chunks := splitSubnetIntoChunks(subnet, 16)
+	if len(chunks) != 16 {
+		t.Errorf("/8 with maxChunks=16: expected 16 chunks, got %d", len(chunks))
 	}
 
-	// Verify first and last chunks
+	// First chunk should still be correct
 	if chunks[0].String() != "10.0.0.0/24" {
 		t.Errorf("First chunk: expected 10.0.0.0/24, got %s", chunks[0].String())
 	}
-	if chunks[len(chunks)-1].String() != "10.255.255.0/24" {
-		t.Errorf("Last chunk: expected 10.255.255.0/24, got %s", chunks[len(chunks)-1].String())
+
+	// Last chunk should be 10.0.15.0/24 (16th chunk, 0-indexed)
+	if chunks[len(chunks)-1].String() != "10.0.15.0/24" {
+		t.Errorf("Last chunk: expected 10.0.15.0/24, got %s", chunks[len(chunks)-1].String())
+	}
+}
+
+func TestSplitSubnetIntoChunks_DefaultCap(t *testing.T) {
+	// Test /8 supernet with default cap (MaxChunksDefault = 256)
+	_, subnet, _ := net.ParseCIDR("10.0.0.0/8")
+
+	// With default cap, should get MaxChunksDefault chunks
+	chunks := splitSubnetIntoChunks(subnet, 0)
+	if len(chunks) != MaxChunksDefault {
+		t.Errorf("/8 with default cap: expected %d chunks, got %d", MaxChunksDefault, len(chunks))
+	}
+
+	// First chunk should still be correct
+	if chunks[0].String() != "10.0.0.0/24" {
+		t.Errorf("First chunk: expected 10.0.0.0/24, got %s", chunks[0].String())
 	}
 }
