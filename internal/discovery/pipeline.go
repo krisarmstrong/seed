@@ -336,9 +336,9 @@ func DefaultPipelineConfig() PipelineConfig {
 			MaxOIDsPerRequest: 10,
 		},
 		Resolution: PipelineResolutionConfig{
-			DNS:     true,  // Enabled by default
-			NetBIOS: true,  // Enabled by default for Windows devices
-			MDNS:    true,  // Enabled by default for Apple/Linux devices
+			DNS:     true, // Enabled by default
+			NetBIOS: true, // Enabled by default for Windows devices
+			MDNS:    true, // Enabled by default for Apple/Linux devices
 		},
 		Persistence: PipelinePersistenceConfig{
 			StoreHistory:       true,
@@ -565,6 +565,38 @@ func (p *Pipeline) UpdateConfig(config *PipelineConfig) error {
 			config.Timing = preset
 			config.Timing.Profile = profileName // Restore profile name
 		}
+	}
+
+	// Check if resolution config changed - recreate resolution phase if needed
+	if p.config.Resolution.DNS != config.Resolution.DNS ||
+		p.config.Resolution.NetBIOS != config.Resolution.NetBIOS ||
+		p.config.Resolution.MDNS != config.Resolution.MDNS {
+
+		resConfig := &ResolutionConfig{
+			DNS:     config.Resolution.DNS,
+			NetBIOS: config.Resolution.NetBIOS,
+			MDNS:    config.Resolution.MDNS,
+			Timing: ResolutionTiming{
+				DNSTimeout:           500 * time.Millisecond,
+				NetBIOSTimeout:       500 * time.Millisecond,
+				MDNSTimeout:          2 * time.Second,
+				PhaseTimeout:         config.Timing.PhaseTimeout,
+				MaxConcurrentDNS:     50,
+				MaxConcurrentNetBIOS: 20,
+				MaxConcurrentMDNS:    10,
+			},
+		}
+
+		interfaceName := ""
+		if p.deviceDiscovery != nil {
+			interfaceName = p.deviceDiscovery.GetInterfaceName()
+		}
+		p.resolutionPhase = NewResolutionPhase(interfaceName, resConfig, p.broadcaster)
+
+		slog.Info("Resolution phase config updated",
+			"dns", config.Resolution.DNS,
+			"netbios", config.Resolution.NetBIOS,
+			"mdns", config.Resolution.MDNS)
 	}
 
 	p.config = *config

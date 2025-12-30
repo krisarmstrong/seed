@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -144,6 +145,17 @@ func (s *Server) handleNetworkScan(ctx context.Context, request mcp.CallToolRequ
 	}
 
 	if err := svc.Scan(ctx); err != nil {
+		// ErrScanInProgress is not a failure - a scan is just already running
+		// Return current devices instead of an error
+		if errors.Is(err, discovery.ErrScanInProgress) {
+			devices := svc.GetDevices()
+			result := map[string]interface{}{
+				"status":  "scan_in_progress",
+				"message": "A network scan is already in progress. Returning cached devices.",
+				"devices": devices,
+			}
+			return formatJSONResult(result)
+		}
 		return mcp.NewToolResultError(fmt.Sprintf("Scan failed: %v", err)), nil
 	}
 
