@@ -198,6 +198,9 @@ func TestPingResultFields(t *testing.T) {
 	if !result.Success {
 		t.Error("expected Success true")
 	}
+	if result.Error != "" {
+		t.Errorf("expected empty Error, got %q", result.Error)
+	}
 }
 
 func TestPingStatsFields(t *testing.T) {
@@ -232,6 +235,30 @@ func TestPingStatsFields(t *testing.T) {
 	}
 	if stats.LossPercent != 20.0 {
 		t.Errorf("expected LossPercent 20.0, got %v", stats.LossPercent)
+	}
+	if stats.MinTime != 10.5 {
+		t.Errorf("expected MinTime 10.5, got %v", stats.MinTime)
+	}
+	if stats.MaxTime != 50.3 {
+		t.Errorf("expected MaxTime 50.3, got %v", stats.MaxTime)
+	}
+	if stats.AvgTime != 25.2 {
+		t.Errorf("expected AvgTime 25.2, got %v", stats.AvgTime)
+	}
+	if stats.LastTime != 22.1 {
+		t.Errorf("expected LastTime 22.1, got %v", stats.LastTime)
+	}
+	if stats.Status != StatusSuccess {
+		t.Errorf("expected StatusSuccess, got %v", stats.Status)
+	}
+	if !stats.Reachable {
+		t.Error("expected Reachable true")
+	}
+	if len(stats.Results) != 0 {
+		t.Errorf("expected empty Results, got %d", len(stats.Results))
+	}
+	if stats.LastUpdated != now {
+		t.Errorf("expected LastUpdated %v, got %v", now, stats.LastUpdated)
 	}
 }
 
@@ -480,6 +507,12 @@ func TestPingResultWithError(t *testing.T) {
 	if result.Sequence != 3 {
 		t.Errorf("expected Sequence 3, got %d", result.Sequence)
 	}
+	if result.Time != 0 {
+		t.Errorf("expected Time 0, got %v", result.Time)
+	}
+	if result.TimeMs != 0 {
+		t.Errorf("expected TimeMs 0, got %v", result.TimeMs)
+	}
 }
 
 func TestPingStatsZeroValues(t *testing.T) {
@@ -578,6 +611,21 @@ func TestPingStatsWithResults(t *testing.T) {
 		Results:     results,
 	}
 
+	if stats.Gateway != "192.168.1.1" {
+		t.Errorf("expected Gateway '192.168.1.1', got %q", stats.Gateway)
+	}
+	if stats.Sent != 3 {
+		t.Errorf("expected Sent 3, got %d", stats.Sent)
+	}
+	if stats.Received != 2 {
+		t.Errorf("expected Received 2, got %d", stats.Received)
+	}
+	if stats.Lost != 1 {
+		t.Errorf("expected Lost 1, got %d", stats.Lost)
+	}
+	if stats.LossPercent != 33.33 {
+		t.Errorf("expected LossPercent 33.33, got %v", stats.LossPercent)
+	}
 	if len(stats.Results) != 3 {
 		t.Errorf("expected 3 results, got %d", len(stats.Results))
 	}
