@@ -395,8 +395,17 @@ func TestSystemInfo(t *testing.T) {
 	if info.SysDescr == "" {
 		t.Error("SysDescr should not be empty")
 	}
+	if info.SysObjectID != "1.3.6.1.4.1.9" {
+		t.Errorf("expected SysObjectID '1.3.6.1.4.1.9', got %q", info.SysObjectID)
+	}
 	if info.SysName == "" {
 		t.Error("SysName should not be empty")
+	}
+	if info.SysContact != "admin@example.com" {
+		t.Errorf("expected SysContact 'admin@example.com', got %q", info.SysContact)
+	}
+	if info.SysLocation != "Data Center" {
+		t.Errorf("expected SysLocation 'Data Center', got %q", info.SysLocation)
 	}
 	if info.SysUpTime == 0 {
 		t.Error("SysUpTime should not be zero")
@@ -521,8 +530,20 @@ func TestV3CredentialFields(t *testing.T) {
 	if cred.AuthProtocol == "" {
 		t.Error("AuthProtocol should not be empty")
 	}
+	if cred.AuthPassword != "authpass123" {
+		t.Errorf("expected AuthPassword 'authpass123', got %q", cred.AuthPassword)
+	}
 	if cred.PrivProtocol == "" {
 		t.Error("PrivProtocol should not be empty")
+	}
+	if cred.PrivPassword != "privpass456" {
+		t.Errorf("expected PrivPassword 'privpass456', got %q", cred.PrivPassword)
+	}
+	if cred.ContextName != "context1" {
+		t.Errorf("expected ContextName 'context1', got %q", cred.ContextName)
+	}
+	if cred.SecurityLevel != "authPriv" {
+		t.Errorf("expected SecurityLevel 'authPriv', got %q", cred.SecurityLevel)
 	}
 
 	// Test protocol conversion

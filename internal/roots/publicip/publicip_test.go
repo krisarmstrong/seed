@@ -568,8 +568,17 @@ func TestGeoResponse(t *testing.T) {
 	if geo.City != "San Francisco" {
 		t.Errorf("expected city 'San Francisco', got %q", geo.City)
 	}
+	if geo.RegionName != "California" {
+		t.Errorf("expected region 'California', got %q", geo.RegionName)
+	}
 	if geo.Country != "US" {
 		t.Errorf("expected country 'US', got %q", geo.Country)
+	}
+	if geo.ISP != "Test ISP" {
+		t.Errorf("expected ISP 'Test ISP', got %q", geo.ISP)
+	}
+	if geo.AS != "AS12345" {
+		t.Errorf("expected AS 'AS12345', got %q", geo.AS)
 	}
 }
 
@@ -586,21 +595,40 @@ func TestHistoryEntry(t *testing.T) {
 	if entry.IP != "203.0.113.1" {
 		t.Errorf("expected IP '203.0.113.1', got %q", entry.IP)
 	}
+	if !entry.FirstSeen.Equal(now) {
+		t.Errorf("expected FirstSeen %v, got %v", now, entry.FirstSeen)
+	}
+	if !entry.LastSeen.Equal(now) {
+		t.Errorf("expected LastSeen %v, got %v", now, entry.LastSeen)
+	}
 	if entry.City != "London" {
 		t.Errorf("expected city 'London', got %q", entry.City)
+	}
+	if entry.Country != "UK" {
+		t.Errorf("expected country 'UK', got %q", entry.Country)
 	}
 }
 
 func TestResult_WithGeoFields(t *testing.T) {
+	now := time.Now()
 	result := Result{
 		IPv4:        "203.0.113.1",
 		IPv6:        "2001:db8::1",
-		LastChecked: time.Now(),
+		LastChecked: now,
 		City:        "Paris",
 		Country:     "FR",
 		ISP:         "French ISP",
 	}
 
+	if result.IPv4 != "203.0.113.1" {
+		t.Errorf("expected IPv4 '203.0.113.1', got %q", result.IPv4)
+	}
+	if result.IPv6 != "2001:db8::1" {
+		t.Errorf("expected IPv6 '2001:db8::1', got %q", result.IPv6)
+	}
+	if !result.LastChecked.Equal(now) {
+		t.Errorf("expected LastChecked %v, got %v", now, result.LastChecked)
+	}
 	if result.City != "Paris" {
 		t.Errorf("expected city 'Paris', got %q", result.City)
 	}
@@ -623,6 +651,12 @@ func TestResult_WithHistory(t *testing.T) {
 		},
 	}
 
+	if result.IPv4 != "203.0.113.1" {
+		t.Errorf("expected IPv4 '203.0.113.1', got %q", result.IPv4)
+	}
+	if !result.LastChecked.Equal(now) {
+		t.Errorf("expected LastChecked %v, got %v", now, result.LastChecked)
+	}
 	if len(result.History) != 2 {
 		t.Errorf("expected 2 history entries, got %d", len(result.History))
 	}

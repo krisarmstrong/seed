@@ -363,6 +363,9 @@ func TestLookupResultFields(t *testing.T) {
 	if result.Status != StatusSuccess {
 		t.Errorf("expected StatusSuccess, got %v", result.Status)
 	}
+	if result.Error != "" {
+		t.Errorf("expected empty Error, got %q", result.Error)
+	}
 	if len(result.Resolved) != 2 {
 		t.Errorf("expected 2 resolved addresses, got %d", len(result.Resolved))
 	}
@@ -593,6 +596,15 @@ func TestServerTestResultFields(t *testing.T) {
 
 	if result.Server != "8.8.8.8" {
 		t.Errorf("expected Server '8.8.8.8', got %q", result.Server)
+	}
+	if result.Forward == nil || result.Forward.Status != StatusSuccess {
+		t.Error("expected Forward with StatusSuccess")
+	}
+	if result.ForwardIPv6 == nil || result.ForwardIPv6.Status != StatusWarning {
+		t.Error("expected ForwardIPv6 with StatusWarning")
+	}
+	if result.Status != StatusSuccess {
+		t.Errorf("expected StatusSuccess, got %v", result.Status)
 	}
 	if result.AvgTimeMs != 15 {
 		t.Errorf("expected AvgTimeMs 15, got %d", result.AvgTimeMs)
