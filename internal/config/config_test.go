@@ -941,8 +941,14 @@ func TestTCPPortTestConfig(t *testing.T) {
 	if test.Name != "SSH" {
 		t.Errorf("expected name 'SSH', got %q", test.Name)
 	}
+	if test.Host != "server.local" {
+		t.Errorf("expected host 'server.local', got %q", test.Host)
+	}
 	if test.Port != 22 {
 		t.Errorf("expected port 22, got %d", test.Port)
+	}
+	if !test.Enabled {
+		t.Error("expected Enabled to be true")
 	}
 }
 
@@ -957,8 +963,14 @@ func TestHTTPEndpointConfig(t *testing.T) {
 	if endpoint.Name != "API Health" {
 		t.Errorf("expected name 'API Health', got %q", endpoint.Name)
 	}
+	if endpoint.URL != "https://api.example.com/health" {
+		t.Errorf("expected URL 'https://api.example.com/health', got %q", endpoint.URL)
+	}
 	if endpoint.ExpectedStatus != 200 {
 		t.Errorf("expected status 200, got %d", endpoint.ExpectedStatus)
+	}
+	if !endpoint.Enabled {
+		t.Error("expected Enabled to be true")
 	}
 }
 
@@ -975,8 +987,23 @@ func TestSNMPv3CredentialConfig(t *testing.T) {
 		SecurityLevel: "authPriv",
 	}
 
+	if cred.Name != "Admin" {
+		t.Errorf("expected name 'Admin', got %q", cred.Name)
+	}
 	if cred.Username != "snmpv3admin" {
 		t.Errorf("expected username 'snmpv3admin', got %q", cred.Username)
+	}
+	if cred.AuthProtocol != "SHA" {
+		t.Errorf("expected auth protocol 'SHA', got %q", cred.AuthProtocol)
+	}
+	if cred.AuthPassword != "authpass123" {
+		t.Errorf("expected auth password 'authpass123', got %q", cred.AuthPassword)
+	}
+	if cred.PrivProtocol != "AES" {
+		t.Errorf("expected priv protocol 'AES', got %q", cred.PrivProtocol)
+	}
+	if cred.PrivPassword != "privpass456" {
+		t.Errorf("expected priv password 'privpass456', got %q", cred.PrivPassword)
 	}
 	if cred.SecurityLevel != "authPriv" {
 		t.Errorf("expected security level 'authPriv', got %q", cred.SecurityLevel)
@@ -1032,6 +1059,15 @@ func TestACMEConfig(t *testing.T) {
 	}
 	if acme.Domain != "example.com" {
 		t.Errorf("expected domain 'example.com', got %q", acme.Domain)
+	}
+	if acme.Email != "admin@example.com" {
+		t.Errorf("expected email 'admin@example.com', got %q", acme.Email)
+	}
+	if acme.CacheDir != "/var/certs" {
+		t.Errorf("expected cache dir '/var/certs', got %q", acme.CacheDir)
+	}
+	if !acme.Staging {
+		t.Error("expected staging to be true")
 	}
 }
 
@@ -1101,6 +1137,9 @@ func TestRogueDetectionConfig(t *testing.T) {
 	}
 	if len(rogue.KnownServers) != 2 {
 		t.Errorf("expected 2 known servers, got %d", len(rogue.KnownServers))
+	}
+	if !rogue.AlertOnDetection {
+		t.Error("expected AlertOnDetection to be true")
 	}
 }
 

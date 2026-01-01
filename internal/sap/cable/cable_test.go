@@ -250,6 +250,12 @@ func TestTestResultEmptyFaults(t *testing.T) {
 		Faults:    make([]string, 0),
 	}
 
+	if !result.Supported {
+		t.Error("expected Supported to be true")
+	}
+	if result.Status != StatusOK {
+		t.Errorf("expected Status %v, got %v", StatusOK, result.Status)
+	}
 	if len(result.Faults) != 0 {
 		t.Error("expected empty faults slice")
 	}
