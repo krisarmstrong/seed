@@ -497,123 +497,59 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 	localizer := i18n.FromRequest(r)
 
 	if r.Method != http.MethodPut {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusMethodNotAllowed,
-			ErrCodeMethodNotAllowed,
-			localizer.T("errors.api.methodNotAllowed"),
-			"",
-		) // fixes #694
+		sendErrorResponseWithDetails(w, logger, http.StatusMethodNotAllowed, ErrCodeMethodNotAllowed, localizer.T("errors.api.methodNotAllowed"), "")
 		return
 	}
 
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidId"),
-			"",
-		) // fixes #694
+		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeValidation, localizer.T("errors.survey.invalidId"), "")
 		return
 	}
 
-	// Limit request body size to prevent DoS attacks (fixes #682)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
-
 	var req UpdateSurveySettingsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Warn("Invalid request body", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.api.invalidRequestBody"),
-			"",
-		) // fixes #694, #H7
+		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, localizer.T("errors.api.invalidRequestBody"), "")
 		return
 	}
 
-	// Validate survey type (fixes #695)
-	validTypes := []survey.Type{survey.TypePassive, survey.TypeActive, survey.TypeThroughput}
+	// Validate survey type
 	surveyType := survey.Type(req.SurveyType)
-	validType := slices.Contains(validTypes, surveyType)
-	if !validType {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidType"),
-			"",
-		) // fixes #694
+	if !slices.Contains([]survey.Type{survey.TypePassive, survey.TypeActive, survey.TypeThroughput}, surveyType) {
+		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeValidation, localizer.T("errors.survey.invalidType"), "")
 		return
 	}
 
-	// Validate iPerf server if provided (fixes #695)
+	// Validate optional fields
 	if req.IperfServer != "" {
 		if err := validation.ValidateServerAddress(req.IperfServer); err != nil {
 			logger.Warn("Survey validation failed", "error", err)
-			sendErrorResponseWithDetails(
-				w,
-				logger,
-				http.StatusBadRequest,
-				ErrCodeValidation,
-				localizer.T("errors.survey.validationFailed"),
-				"",
-			) // fixes #694, #H7
+			sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeValidation, localizer.T("errors.survey.validationFailed"), "")
 			return
 		}
 	}
-
-	// Validate test duration (fixes #695)
 	if req.TestDuration != 0 {
 		if err := validation.ValidateIntRange(req.TestDuration, "testDuration", 1, 300); err != nil {
 			logger.Warn("Survey validation failed", "error", err)
-			sendErrorResponseWithDetails(
-				w,
-				logger,
-				http.StatusBadRequest,
-				ErrCodeValidation,
-				localizer.T("errors.survey.validationFailed"),
-				"",
-			) // fixes #694, #H7
+			sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeValidation, localizer.T("errors.survey.validationFailed"), "")
 			return
 		}
 	}
 
 	if err := s.surveyManager.UpdateSurveySettings(id, surveyType, req.IperfServer, req.TestDuration); err != nil {
 		logger.Error("Failed to update survey", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.survey.updateFailed"),
-			"",
-		) // fixes #694, #H7
+		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, localizer.T("errors.survey.updateFailed"), "")
 		return
 	}
 
-	// Return the updated survey so the frontend can update its state
 	settingsUpdatedSurvey, err := s.surveyManager.GetSurvey(id)
 	if err != nil {
 		logger.Error("Failed to get survey", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusInternalServerError,
-			ErrCodeInternal,
-			localizer.T("errors.survey.getSurveyFailed"),
-			"",
-		) // fixes #694, #H7
+		sendErrorResponseWithDetails(w, logger, http.StatusInternalServerError, ErrCodeInternal, localizer.T("errors.survey.getSurveyFailed"), "")
 		return
 	}
-
 	sendJSONResponse(w, logger, http.StatusOK, settingsUpdatedSurvey)
 }
 
