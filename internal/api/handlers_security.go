@@ -3,6 +3,7 @@ package api
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -51,7 +52,6 @@ func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		// Get current status
 		resp := RogueDHCPResponse{
 			Enabled: s.config.DHCP.RogueDetection.Enabled,
 			Running: s.rogueDetector.IsRunning(),
@@ -59,91 +59,93 @@ func (s *Server) handleRogueDHCP(w http.ResponseWriter, r *http.Request) {
 		sendJSONResponse(w, logger, http.StatusOK, resp)
 
 	case http.MethodPost:
-		// Limit request body size to prevent DoS attacks (fixes #682)
-		r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
-
-		// Start/stop detection
-		var req struct {
-			Action string `json:"action"` // "start" or "stop"
-		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			logger.Warn("Invalid request body", "error", err)
-			sendErrorResponseWithDetails(
-				w,
-				logger,
-				http.StatusBadRequest,
-				ErrCodeBadRequest,
-				localizer.T("errors.api.invalidRequestBody"),
-				"",
-			) // fixes #694, #H7
-			return
-		}
-
-		resp := RogueDHCPResponse{
-			Enabled: s.config.DHCP.RogueDetection.Enabled,
-		}
-
-		switch strings.ToLower(req.Action) {
-		case "start":
-			if !s.config.DHCP.RogueDetection.Enabled {
-				resp.Error = "Rogue DHCP detection is disabled in configuration"
-				sendJSONResponse(w, logger, http.StatusBadRequest, resp)
-				return
-			}
-			if s.rogueDetector.IsRunning() {
-				resp.Running = true
-				resp.Message = "Rogue DHCP detector already running"
-				sendJSONResponse(w, logger, http.StatusOK, resp)
-				return
-			}
-			if err := s.rogueDetector.Start(); err != nil {
-				logger.Error("Failed to start rogue DHCP detector", "error", err)
-				resp.Error = "internal server error"
-				sendJSONResponse(w, logger, http.StatusInternalServerError, resp)
-				return
-			}
-			resp.Running = true
-			resp.Message = "Rogue DHCP detector started"
-			sendJSONResponse(w, logger, http.StatusOK, resp)
-
-		case "stop":
-			if !s.rogueDetector.IsRunning() {
-				resp.Running = false
-				resp.Message = "Rogue DHCP detector not running"
-				sendJSONResponse(w, logger, http.StatusOK, resp)
-				return
-			}
-			if err := s.rogueDetector.Stop(); err != nil {
-				logger.Error("Failed to stop rogue DHCP detector", "error", err)
-				resp.Error = "internal server error"
-				sendJSONResponse(w, logger, http.StatusInternalServerError, resp)
-				return
-			}
-			resp.Running = false
-			resp.Message = "Rogue DHCP detector stopped"
-			sendJSONResponse(w, logger, http.StatusOK, resp)
-
-		default:
-			sendErrorResponseWithDetails(
-				w,
-				logger,
-				http.StatusBadRequest,
-				ErrCodeBadRequest,
-				localizer.T("errors.security.invalidAction"),
-				"",
-			) // fixes #694
-		}
+		s.handleRogueDHCPAction(w, r, logger, localizer)
 
 	default:
 		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusMethodNotAllowed,
-			ErrCodeMethodNotAllowed,
-			localizer.T("errors.api.methodNotAllowed"),
-			"",
-		) // fixes #694
+			w, logger, http.StatusMethodNotAllowed, ErrCodeMethodNotAllowed,
+			localizer.T("errors.api.methodNotAllowed"), "",
+		)
 	}
+}
+
+// handleRogueDHCPAction handles POST requests to start/stop rogue DHCP detection.
+func (s *Server) handleRogueDHCPAction(
+	w http.ResponseWriter,
+	r *http.Request,
+	logger *slog.Logger,
+	localizer *i18n.Localizer,
+) {
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
+
+	var req struct {
+		Action string `json:"action"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.Warn("Invalid request body", "error", err)
+		sendErrorResponseWithDetails(
+			w, logger, http.StatusBadRequest, ErrCodeBadRequest,
+			localizer.T("errors.api.invalidRequestBody"), "",
+		)
+		return
+	}
+
+	resp := RogueDHCPResponse{Enabled: s.config.DHCP.RogueDetection.Enabled}
+
+	switch strings.ToLower(req.Action) {
+	case "start":
+		s.handleRogueDHCPStart(w, logger, &resp)
+	case "stop":
+		s.handleRogueDHCPStop(w, logger, &resp)
+	default:
+		sendErrorResponseWithDetails(
+			w, logger, http.StatusBadRequest, ErrCodeBadRequest,
+			localizer.T("errors.security.invalidAction"), "",
+		)
+	}
+}
+
+// handleRogueDHCPStart starts the rogue DHCP detector.
+func (s *Server) handleRogueDHCPStart(w http.ResponseWriter, logger *slog.Logger, resp *RogueDHCPResponse) {
+	if !s.config.DHCP.RogueDetection.Enabled {
+		resp.Error = "Rogue DHCP detection is disabled in configuration"
+		sendJSONResponse(w, logger, http.StatusBadRequest, *resp)
+		return
+	}
+	if s.rogueDetector.IsRunning() {
+		resp.Running = true
+		resp.Message = "Rogue DHCP detector already running"
+		sendJSONResponse(w, logger, http.StatusOK, *resp)
+		return
+	}
+	if err := s.rogueDetector.Start(); err != nil {
+		logger.Error("Failed to start rogue DHCP detector", "error", err)
+		resp.Error = "internal server error"
+		sendJSONResponse(w, logger, http.StatusInternalServerError, *resp)
+		return
+	}
+	resp.Running = true
+	resp.Message = "Rogue DHCP detector started"
+	sendJSONResponse(w, logger, http.StatusOK, *resp)
+}
+
+// handleRogueDHCPStop stops the rogue DHCP detector.
+func (s *Server) handleRogueDHCPStop(w http.ResponseWriter, logger *slog.Logger, resp *RogueDHCPResponse) {
+	if !s.rogueDetector.IsRunning() {
+		resp.Running = false
+		resp.Message = "Rogue DHCP detector not running"
+		sendJSONResponse(w, logger, http.StatusOK, *resp)
+		return
+	}
+	if err := s.rogueDetector.Stop(); err != nil {
+		logger.Error("Failed to stop rogue DHCP detector", "error", err)
+		resp.Error = "internal server error"
+		sendJSONResponse(w, logger, http.StatusInternalServerError, *resp)
+		return
+	}
+	resp.Running = false
+	resp.Message = "Rogue DHCP detector stopped"
+	sendJSONResponse(w, logger, http.StatusOK, *resp)
 }
 
 // handleRogueDHCPServers returns detected DHCP servers (GET) or clears the list (DELETE).
