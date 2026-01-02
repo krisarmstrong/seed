@@ -60,140 +60,60 @@ func (s *Server) handleSettings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// buildThresholdSettings builds threshold configuration for API response.
+func (s *Server) buildThresholdSettings() map[string]any {
+	t := &s.config.Thresholds
+	return map[string]any{
+		"dns":        map[string]int64{"good": t.DNS.Warning.Milliseconds(), "warning": t.DNS.Critical.Milliseconds()},
+		"gateway":    map[string]int64{"good": t.Ping.Warning.Milliseconds(), "warning": t.Ping.Critical.Milliseconds()},
+		"wifi":       map[string]int{"good": t.WiFi.Signal.Warning, "warning": t.WiFi.Signal.Critical},
+		"customPing": map[string]int64{"good": t.CustomTests.Ping.Warning.Milliseconds(), "warning": t.CustomTests.Ping.Critical.Milliseconds()},
+		"customTcp":  map[string]int64{"good": t.CustomTests.TCP.Warning.Milliseconds(), "warning": t.CustomTests.TCP.Critical.Milliseconds()},
+		"customHttp": map[string]int64{"good": t.CustomTests.HTTP.Warning.Milliseconds(), "warning": t.CustomTests.HTTP.Critical.Milliseconds()},
+		"httpTimings": map[string]map[string]int64{
+			"dns":  {"good": t.CustomTests.HTTPTimings.DNS.Warning.Milliseconds(), "warning": t.CustomTests.HTTPTimings.DNS.Critical.Milliseconds()},
+			"tcp":  {"good": t.CustomTests.HTTPTimings.TCP.Warning.Milliseconds(), "warning": t.CustomTests.HTTPTimings.TCP.Critical.Milliseconds()},
+			"tls":  {"good": t.CustomTests.HTTPTimings.TLS.Warning.Milliseconds(), "warning": t.CustomTests.HTTPTimings.TLS.Critical.Milliseconds()},
+			"ttfb": {"good": t.CustomTests.HTTPTimings.TTFB.Warning.Milliseconds(), "warning": t.CustomTests.HTTPTimings.TTFB.Critical.Milliseconds()},
+		},
+	}
+}
+
+// buildCardSettings builds default card visibility settings.
+func buildCardSettings() map[string]any {
+	defaultCard := map[string]any{"visible": true, "autoRunOnLink": true}
+	return map[string]any{
+		"link": defaultCard, "switch": defaultCard, "vlan": defaultCard,
+		"network": defaultCard, "gateway": defaultCard, "dns": defaultCard,
+		"healthChecks": defaultCard, "networkDiscovery": defaultCard,
+		"performance": map[string]any{
+			"visible": true, "autoRunOnLink": true,
+			"speedtest": map[string]any{"enabled": true, "autoRunOnLink": true},
+			"iperf":     map[string]any{"enabled": false, "autoRunOnLink": false},
+		},
+	}
+}
+
 func (s *Server) getSettings(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
-	// Lock config for read access
 	s.config.RLock()
 	defer s.config.RUnlock()
 
 	settings := map[string]any{
-		"interface": map[string]any{
-			"current":   s.config.Interface.Default,
-			"available": []string{}, // Will be populated by network module
-		},
-		"vlan": map[string]any{
-			"enabled": s.config.VLAN.Enabled,
-			"id":      s.config.VLAN.ID,
-		},
-		"ip": map[string]any{
-			"mode": s.config.IP.Mode,
-		},
-		"thresholds": map[string]any{
-			"dns": map[string]int64{
-				"good":    s.config.Thresholds.DNS.Warning.Milliseconds(),
-				"warning": s.config.Thresholds.DNS.Critical.Milliseconds(),
-			},
-			"gateway": map[string]int64{
-				"good":    s.config.Thresholds.Ping.Warning.Milliseconds(),
-				"warning": s.config.Thresholds.Ping.Critical.Milliseconds(),
-			},
-			"wifi": map[string]int{
-				"good":    s.config.Thresholds.WiFi.Signal.Warning,
-				"warning": s.config.Thresholds.WiFi.Signal.Critical,
-			},
-			"customPing": map[string]int64{
-				"good":    s.config.Thresholds.CustomTests.Ping.Warning.Milliseconds(),
-				"warning": s.config.Thresholds.CustomTests.Ping.Critical.Milliseconds(),
-			},
-			"customTcp": map[string]int64{
-				"good":    s.config.Thresholds.CustomTests.TCP.Warning.Milliseconds(),
-				"warning": s.config.Thresholds.CustomTests.TCP.Critical.Milliseconds(),
-			},
-			"customHttp": map[string]int64{
-				"good":    s.config.Thresholds.CustomTests.HTTP.Warning.Milliseconds(),
-				"warning": s.config.Thresholds.CustomTests.HTTP.Critical.Milliseconds(),
-			},
-			"httpTimings": map[string]map[string]int64{
-				"dns": {
-					"good":    s.config.Thresholds.CustomTests.HTTPTimings.DNS.Warning.Milliseconds(),
-					"warning": s.config.Thresholds.CustomTests.HTTPTimings.DNS.Critical.Milliseconds(),
-				},
-				"tcp": {
-					"good":    s.config.Thresholds.CustomTests.HTTPTimings.TCP.Warning.Milliseconds(),
-					"warning": s.config.Thresholds.CustomTests.HTTPTimings.TCP.Critical.Milliseconds(),
-				},
-				"tls": {
-					"good":    s.config.Thresholds.CustomTests.HTTPTimings.TLS.Warning.Milliseconds(),
-					"warning": s.config.Thresholds.CustomTests.HTTPTimings.TLS.Critical.Milliseconds(),
-				},
-				"ttfb": {
-					"good":    s.config.Thresholds.CustomTests.HTTPTimings.TTFB.Warning.Milliseconds(),
-					"warning": s.config.Thresholds.CustomTests.HTTPTimings.TTFB.Critical.Milliseconds(),
-				},
-			},
-		},
-		"healthChecks": map[string]any{
-			"runPerformance": true,
-			"runSpeedtest":   true,
-			"runIperf":       false, // iPerf disabled by default (requires server)
-			"runDiscovery":   true,
-		},
-		"speedtest": map[string]any{
-			"serverId":      s.config.Speedtest.ServerID,
-			"autoRunOnLink": true, // Always auto-run speedtest on link
-		},
+		"interface":    map[string]any{"current": s.config.Interface.Default, "available": []string{}},
+		"vlan":         map[string]any{"enabled": s.config.VLAN.Enabled, "id": s.config.VLAN.ID},
+		"ip":           map[string]any{"mode": s.config.IP.Mode},
+		"thresholds":   s.buildThresholdSettings(),
+		"healthChecks": map[string]any{"runPerformance": true, "runSpeedtest": true, "runIperf": false, "runDiscovery": true},
+		"speedtest":    map[string]any{"serverId": s.config.Speedtest.ServerID, "autoRunOnLink": true},
 		"iperf": map[string]any{
-			"autoRunOnLink": s.config.Iperf.AutoRunOnLink,
-			"server":        s.config.Iperf.Server,
-			"port":          s.config.Iperf.Port,
-			"protocol":      s.config.Iperf.Protocol,
-			"direction":     s.config.Iperf.Direction,
-			"duration":      s.config.Iperf.Duration,
-			"serverPort":    s.config.Iperf.ServerPort,
-			"enableServer":  s.config.Iperf.EnableServer,
+			"autoRunOnLink": s.config.Iperf.AutoRunOnLink, "server": s.config.Iperf.Server,
+			"port": s.config.Iperf.Port, "protocol": s.config.Iperf.Protocol,
+			"direction": s.config.Iperf.Direction, "duration": s.config.Iperf.Duration,
+			"serverPort": s.config.Iperf.ServerPort, "enableServer": s.config.Iperf.EnableServer,
 		},
-		// Card visibility settings - all cards visible by default
-		// Card visibility is managed entirely by the frontend via DEFAULT_CARD_SETTINGS
-		"cardSettings": map[string]any{
-			"link": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"switch": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"vlan": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"network": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"gateway": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"dns": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"healthChecks": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"networkDiscovery": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-			},
-			"performance": map[string]any{
-				"visible":       true,
-				"autoRunOnLink": true,
-				"speedtest": map[string]any{
-					"enabled":       true,
-					"autoRunOnLink": true,
-				},
-				"iperf": map[string]any{
-					"enabled":       false, // iPerf disabled by default (requires server)
-					"autoRunOnLink": false,
-				},
-			},
-		},
-		"displayOptions": map[string]any{
-			"showPublicIP": s.config.DisplayOptions.ShowPublicIP,
-			"unitSystem":   s.config.DisplayOptions.UnitSystem,
-		},
+		"cardSettings":   buildCardSettings(),
+		"displayOptions": map[string]any{"showPublicIP": s.config.DisplayOptions.ShowPublicIP, "unitSystem": s.config.DisplayOptions.UnitSystem},
 	}
 
 	sendJSONResponse(w, logger, http.StatusOK, settings)
