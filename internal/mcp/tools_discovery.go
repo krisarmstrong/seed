@@ -16,126 +16,65 @@ import (
 
 // registerDiscoveryTools registers all discovery-related MCP tools.
 func (s *Server) registerDiscoveryTools(isAllowed func(string) bool) {
-	// network_scan - Scan the local network for devices
+	s.registerNetworkScanTools(isAllowed)
+	s.registerDeviceTools(isAllowed)
+	s.registerProbeTools(isAllowed)
+}
+
+// registerNetworkScanTools registers network scanning tools.
+func (s *Server) registerNetworkScanTools(isAllowed func(string) bool) {
 	s.addTool("network_scan", isAllowed,
-		mcp.NewTool(
-			"network_scan",
-			mcp.WithDescription(
-				"Scan the local network for devices using ARP/ICMP/NDP protocols. Returns a list of discovered devices with their IP, MAC, hostname, and vendor information.",
-			),
-			mcp.WithNumber("timeout",
-				mcp.Description("Scan timeout in seconds (default: 30, max: 300)"),
-			),
-		),
-		s.handleNetworkScan,
-	)
+		mcp.NewTool("network_scan",
+			mcp.WithDescription("Scan the local network for devices using ARP/ICMP/NDP protocols. Returns a list of discovered devices with their IP, MAC, hostname, and vendor information."),
+			mcp.WithNumber("timeout", mcp.Description("Scan timeout in seconds (default: 30, max: 300)")),
+		), s.handleNetworkScan)
 
-	// get_devices - List all discovered devices
 	s.addTool("get_devices", isAllowed,
-		mcp.NewTool(
-			"get_devices",
-			mcp.WithDescription(
-				"Get all previously discovered devices on the network. Returns devices found from previous scans without initiating a new scan.",
-			),
-		),
-		s.handleGetDevices,
-	)
+		mcp.NewTool("get_devices",
+			mcp.WithDescription("Get all previously discovered devices on the network. Returns devices found from previous scans without initiating a new scan."),
+		), s.handleGetDevices)
+}
 
-	// device_fingerprint - Fingerprint a specific device
+// registerDeviceTools registers device fingerprinting and neighbor tools.
+func (s *Server) registerDeviceTools(isAllowed func(string) bool) {
 	s.addTool("device_fingerprint", isAllowed,
-		mcp.NewTool(
-			"device_fingerprint",
-			mcp.WithDescription(
-				"Perform OS fingerprinting and service detection on a specific device. Attempts to identify the operating system, open services, and device type.",
-			),
-			mcp.WithString("ip",
-				mcp.Required(),
-				mcp.Description("IP address of the device to fingerprint"),
-			),
-		),
-		s.handleDeviceFingerprint,
-	)
+		mcp.NewTool("device_fingerprint",
+			mcp.WithDescription("Perform OS fingerprinting and service detection on a specific device. Attempts to identify the operating system, open services, and device type."),
+			mcp.WithString("ip", mcp.Required(), mcp.Description("IP address of the device to fingerprint")),
+		), s.handleDeviceFingerprint)
 
-	// get_neighbors - Get LLDP/CDP/EDP neighbors
 	s.addTool("get_neighbors", isAllowed,
-		mcp.NewTool(
-			"get_neighbors",
-			mcp.WithDescription(
-				"Get network neighbors discovered via Layer 2 protocols (LLDP, CDP, EDP). Shows connected switches, routers, and other network devices.",
-			),
-			mcp.WithString("protocol",
-				mcp.Description("Filter by protocol: lldp, cdp, edp, or all (default: all)"),
-			),
-		),
-		s.handleGetNeighbors,
-	)
+		mcp.NewTool("get_neighbors",
+			mcp.WithDescription("Get network neighbors discovered via Layer 2 protocols (LLDP, CDP, EDP). Shows connected switches, routers, and other network devices."),
+			mcp.WithString("protocol", mcp.Description("Filter by protocol: lldp, cdp, edp, or all (default: all)")),
+		), s.handleGetNeighbors)
 
-	// traceroute - Trace route to target
 	s.addTool("traceroute", isAllowed,
-		mcp.NewTool(
-			"traceroute",
-			mcp.WithDescription(
-				"Trace the network path to a target host, showing each hop along the route with latency information.",
-			),
-			mcp.WithString("target",
-				mcp.Required(),
-				mcp.Description("Target hostname or IP address to trace"),
-			),
-			mcp.WithNumber("max_hops",
-				mcp.Description("Maximum number of hops (default: 30, max: 64)"),
-			),
-			mcp.WithNumber("timeout",
-				mcp.Description("Timeout per hop in seconds (default: 3)"),
-			),
-		),
-		s.handleTraceroute,
-	)
+		mcp.NewTool("traceroute",
+			mcp.WithDescription("Trace the network path to a target host, showing each hop along the route with latency information."),
+			mcp.WithString("target", mcp.Required(), mcp.Description("Target hostname or IP address to trace")),
+			mcp.WithNumber("max_hops", mcp.Description("Maximum number of hops (default: 30, max: 64)")),
+			mcp.WithNumber("timeout", mcp.Description("Timeout per hop in seconds (default: 3)")),
+		), s.handleTraceroute)
+}
 
-	// tcp_probe - Probe a TCP port
+// registerProbeTools registers TCP probe and port scan tools.
+func (s *Server) registerProbeTools(isAllowed func(string) bool) {
 	s.addTool("tcp_probe", isAllowed,
-		mcp.NewTool(
-			"tcp_probe",
-			mcp.WithDescription(
-				"Probe a specific TCP port on a host to check if it's open and measure connection latency.",
-			),
-			mcp.WithString("host",
-				mcp.Required(),
-				mcp.Description("Target hostname or IP address"),
-			),
-			mcp.WithNumber("port",
-				mcp.Required(),
-				mcp.Description("TCP port number to probe (1-65535)"),
-			),
-			mcp.WithNumber("timeout",
-				mcp.Description("Connection timeout in seconds (default: 5)"),
-			),
-		),
-		s.handleTCPProbe,
-	)
+		mcp.NewTool("tcp_probe",
+			mcp.WithDescription("Probe a specific TCP port on a host to check if it's open and measure connection latency."),
+			mcp.WithString("host", mcp.Required(), mcp.Description("Target hostname or IP address")),
+			mcp.WithNumber("port", mcp.Required(), mcp.Description("TCP port number to probe (1-65535)")),
+			mcp.WithNumber("timeout", mcp.Description("Connection timeout in seconds (default: 5)")),
+		), s.handleTCPProbe)
 
-	// port_scan - Scan ports on a host
 	s.addTool("port_scan", isAllowed,
-		mcp.NewTool(
-			"port_scan",
-			mcp.WithDescription(
-				"Scan for open ports on a host with optional service banner detection. Returns a list of open ports with service information.",
-			),
-			mcp.WithString("host",
-				mcp.Required(),
-				mcp.Description("Target hostname or IP address"),
-			),
-			mcp.WithString(
-				"ports",
-				mcp.Description(
-					"Ports to scan: comma-separated list (e.g., '22,80,443') or range (e.g., '1-1024'). Default: common ports",
-				),
-			),
-			mcp.WithBoolean("banners",
-				mcp.Description("Attempt to grab service banners (default: true)"),
-			),
-		),
-		s.handlePortScan,
-	)
+		mcp.NewTool("port_scan",
+			mcp.WithDescription("Scan for open ports on a host with optional service banner detection. Returns a list of open ports with service information."),
+			mcp.WithString("host", mcp.Required(), mcp.Description("Target hostname or IP address")),
+			mcp.WithString("ports", mcp.Description("Ports to scan: comma-separated list (e.g., '22,80,443') or range (e.g., '1-1024'). Default: common ports")),
+			mcp.WithBoolean("banners", mcp.Description("Attempt to grab service banners (default: true)")),
+		), s.handlePortScan)
 }
 
 // getArguments safely extracts arguments as a map.
