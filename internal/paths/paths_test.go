@@ -1,17 +1,20 @@
-package paths
+// Package paths_test tests the paths package for XDG and system path resolution.
+package paths_test
 
 import (
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/krisarmstrong/seed/internal/paths"
 )
 
 func TestResolve_SystemMode(t *testing.T) {
-	paths := Resolve(ModeSystem)
+	p := paths.Resolve(paths.ModeSystem)
 
-	if paths.Mode != ModeSystem {
-		t.Errorf("expected Mode=ModeSystem, got %v", paths.Mode)
+	if p.Mode != paths.ModeSystem {
+		t.Errorf("expected Mode=ModeSystem, got %v", p.Mode)
 	}
 
 	tests := []struct {
@@ -19,12 +22,12 @@ func TestResolve_SystemMode(t *testing.T) {
 		got      string
 		expected string
 	}{
-		{"ConfigDir", paths.ConfigDir, "/etc/seed"},
-		{"ConfigFile", paths.ConfigFile, "/etc/seed/config.yaml"},
-		{"DataDir", paths.DataDir, "/var/lib/seed"},
-		{"LogDir", paths.LogDir, "/var/log/seed"},
-		{"CacheDir", paths.CacheDir, "/var/cache/seed"},
-		{"BinaryDir", paths.BinaryDir, "/usr/local/bin"},
+		{"ConfigDir", p.ConfigDir, "/etc/seed"},
+		{"ConfigFile", p.ConfigFile, "/etc/seed/config.yaml"},
+		{"DataDir", p.DataDir, "/var/lib/seed"},
+		{"LogDir", p.LogDir, "/var/log/seed"},
+		{"CacheDir", p.CacheDir, "/var/cache/seed"},
+		{"BinaryDir", p.BinaryDir, "/usr/local/bin"},
 	}
 
 	for _, tt := range tests {
@@ -51,10 +54,10 @@ func TestResolve_UserMode_WithXDG(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", stateHome)
 	t.Setenv("XDG_CACHE_HOME", cacheHome)
 
-	paths := Resolve(ModeUser)
+	p := paths.Resolve(paths.ModeUser)
 
-	if paths.Mode != ModeUser {
-		t.Errorf("expected Mode=ModeUser, got %v", paths.Mode)
+	if p.Mode != paths.ModeUser {
+		t.Errorf("expected Mode=ModeUser, got %v", p.Mode)
 	}
 
 	tests := []struct {
@@ -62,11 +65,11 @@ func TestResolve_UserMode_WithXDG(t *testing.T) {
 		got      string
 		expected string
 	}{
-		{"ConfigDir", paths.ConfigDir, filepath.Join(configHome, "seed")},
-		{"ConfigFile", paths.ConfigFile, filepath.Join(configHome, "seed", "config.yaml")},
-		{"DataDir", paths.DataDir, filepath.Join(dataHome, "seed")},
-		{"LogDir", paths.LogDir, filepath.Join(stateHome, "seed", "logs")},
-		{"CacheDir", paths.CacheDir, filepath.Join(cacheHome, "seed")},
+		{"ConfigDir", p.ConfigDir, filepath.Join(configHome, "seed")},
+		{"ConfigFile", p.ConfigFile, filepath.Join(configHome, "seed", "config.yaml")},
+		{"DataDir", p.DataDir, filepath.Join(dataHome, "seed")},
+		{"LogDir", p.LogDir, filepath.Join(stateHome, "seed", "logs")},
+		{"CacheDir", p.CacheDir, filepath.Join(cacheHome, "seed")},
 	}
 
 	for _, tt := range tests {
@@ -85,15 +88,15 @@ func TestResolve_UserMode_WithoutXDG(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", "")
 	t.Setenv("XDG_CACHE_HOME", "")
 
-	paths := Resolve(ModeUser)
+	p := paths.Resolve(paths.ModeUser)
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		t.Fatalf("failed to get home directory: %v", err)
 	}
 
-	if paths.Mode != ModeUser {
-		t.Errorf("expected Mode=ModeUser, got %v", paths.Mode)
+	if p.Mode != paths.ModeUser {
+		t.Errorf("expected Mode=ModeUser, got %v", p.Mode)
 	}
 
 	tests := []struct {
@@ -101,12 +104,12 @@ func TestResolve_UserMode_WithoutXDG(t *testing.T) {
 		got      string
 		expected string
 	}{
-		{"ConfigDir", paths.ConfigDir, filepath.Join(homeDir, ".config", "seed")},
-		{"ConfigFile", paths.ConfigFile, filepath.Join(homeDir, ".config", "seed", "config.yaml")},
-		{"DataDir", paths.DataDir, filepath.Join(homeDir, ".local", "share", "seed")},
-		{"LogDir", paths.LogDir, filepath.Join(homeDir, ".local", "state", "seed", "logs")},
-		{"CacheDir", paths.CacheDir, filepath.Join(homeDir, ".cache", "seed")},
-		{"BinaryDir", paths.BinaryDir, filepath.Join(homeDir, ".local", "bin")},
+		{"ConfigDir", p.ConfigDir, filepath.Join(homeDir, ".config", "seed")},
+		{"ConfigFile", p.ConfigFile, filepath.Join(homeDir, ".config", "seed", "config.yaml")},
+		{"DataDir", p.DataDir, filepath.Join(homeDir, ".local", "share", "seed")},
+		{"LogDir", p.LogDir, filepath.Join(homeDir, ".local", "state", "seed", "logs")},
+		{"CacheDir", p.CacheDir, filepath.Join(homeDir, ".cache", "seed")},
+		{"BinaryDir", p.BinaryDir, filepath.Join(homeDir, ".local", "bin")},
 	}
 
 	for _, tt := range tests {
@@ -132,11 +135,11 @@ func TestResolve_ModeAuto_AsUser(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", "")
 	t.Setenv("XDG_CACHE_HOME", "")
 
-	paths := Resolve(ModeAuto)
+	p := paths.Resolve(paths.ModeAuto)
 
 	// Should detect as user mode
-	if paths.Mode != ModeUser {
-		t.Errorf("ModeAuto should resolve to ModeUser when not root/systemd, got %v", paths.Mode)
+	if p.Mode != paths.ModeUser {
+		t.Errorf("ModeAuto should resolve to ModeUser when not root/systemd, got %v", p.Mode)
 	}
 
 	homeDir, err := os.UserHomeDir()
@@ -145,8 +148,8 @@ func TestResolve_ModeAuto_AsUser(t *testing.T) {
 	}
 
 	expectedConfig := filepath.Join(homeDir, ".config", "seed", "config.yaml")
-	if paths.ConfigFile != expectedConfig {
-		t.Errorf("ConfigFile: got %q, want %q", paths.ConfigFile, expectedConfig)
+	if p.ConfigFile != expectedConfig {
+		t.Errorf("ConfigFile: got %q, want %q", p.ConfigFile, expectedConfig)
 	}
 }
 
@@ -159,15 +162,15 @@ func TestResolve_ModeAuto_WithSystemd(t *testing.T) {
 	// Set systemd environment variable
 	t.Setenv("INVOCATION_ID", "test-invocation-id")
 
-	paths := Resolve(ModeAuto)
+	p := paths.Resolve(paths.ModeAuto)
 
 	// Should detect as system mode due to systemd
-	if paths.Mode != ModeSystem {
-		t.Errorf("ModeAuto should resolve to ModeSystem when systemd detected, got %v", paths.Mode)
+	if p.Mode != paths.ModeSystem {
+		t.Errorf("ModeAuto should resolve to ModeSystem when systemd detected, got %v", p.Mode)
 	}
 
-	if paths.ConfigFile != "/etc/seed/config.yaml" {
-		t.Errorf("ConfigFile: got %q, want %q", paths.ConfigFile, "/etc/seed/config.yaml")
+	if p.ConfigFile != "/etc/seed/config.yaml" {
+		t.Errorf("ConfigFile: got %q, want %q", p.ConfigFile, "/etc/seed/config.yaml")
 	}
 }
 
@@ -176,7 +179,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 		name        string
 		explicit    string
 		envValue    string
-		mode        Mode
+		mode        paths.Mode
 		expected    string
 		description string
 	}{
@@ -184,7 +187,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 			name:        "explicit_path_takes_priority",
 			explicit:    "/custom/config.yaml",
 			envValue:    "/env/config.yaml",
-			mode:        ModeUser,
+			mode:        paths.ModeUser,
 			expected:    "/custom/config.yaml",
 			description: "explicit path should override env and defaults",
 		},
@@ -192,7 +195,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 			name:        "default_filename_ignored",
 			explicit:    "config.yaml",
 			envValue:    "/env/config.yaml",
-			mode:        ModeUser,
+			mode:        paths.ModeUser,
 			expected:    "/env/config.yaml",
 			description: "explicit 'config.yaml' should be treated as default",
 		},
@@ -200,7 +203,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 			name:        "env_overrides_default",
 			explicit:    "",
 			envValue:    "/env/custom.yaml",
-			mode:        ModeUser,
+			mode:        paths.ModeUser,
 			expected:    "/env/custom.yaml",
 			description: "env variable should override XDG default",
 		},
@@ -208,7 +211,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 			name:        "fallback_to_xdg_user",
 			explicit:    "",
 			envValue:    "",
-			mode:        ModeUser,
+			mode:        paths.ModeUser,
 			expected:    "", // Will be XDG path, checked separately
 			description: "should fall back to XDG user path",
 		},
@@ -216,7 +219,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 			name:        "fallback_to_system",
 			explicit:    "",
 			envValue:    "",
-			mode:        ModeSystem,
+			mode:        paths.ModeSystem,
 			expected:    "/etc/seed/config.yaml",
 			description: "should fall back to system path",
 		},
@@ -231,7 +234,7 @@ func TestResolveConfigPath_Priority(t *testing.T) {
 				t.Setenv("SEED_CONFIG_PATH", "")
 			}
 
-			got := ResolveConfigPath(tt.explicit, tt.mode)
+			got := paths.ResolveConfigPath(tt.explicit, tt.mode)
 
 			if tt.expected == "" {
 				// For XDG fallback test, just verify it's not empty and contains "seed"
@@ -291,7 +294,7 @@ func TestDetectLegacyConfig(t *testing.T) {
 			}
 
 			// Test detection
-			path, found := DetectLegacyConfig()
+			path, found := paths.DetectLegacyConfig()
 
 			if found != tt.expectFound {
 				t.Errorf("found=%v, want %v", found, tt.expectFound)
@@ -358,7 +361,7 @@ func TestIsSystemdService(t *testing.T) {
 			t.Setenv("NOTIFY_SOCKET", tt.notifySocket)
 			t.Setenv("INVOCATION_ID", tt.invocationID)
 
-			got := isSystemdService()
+			got := paths.IsSystemdService()
 
 			expected := tt.expectedOther
 			if runtime.GOOS == "linux" {
@@ -366,7 +369,7 @@ func TestIsSystemdService(t *testing.T) {
 			}
 
 			if got != expected {
-				t.Errorf("isSystemdService()=%v, want %v (GOOS=%s)", got, expected, runtime.GOOS)
+				t.Errorf("IsSystemdService()=%v, want %v (GOOS=%s)", got, expected, runtime.GOOS)
 			}
 		})
 	}
