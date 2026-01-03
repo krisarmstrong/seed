@@ -1,19 +1,21 @@
-// Package api provides the HTTP/WebSocket server.
+// Package api_test provides the HTTP/WebSocket server tests.
 // Integration tests validate JWT authentication enforcement across API endpoints.
-package api
+package api_test
 
 import (
 	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/krisarmstrong/seed/internal/api"
 )
 
 // TestEndpointAuthentication verifies that all API endpoints properly enforce JWT authentication
 // This is a comprehensive test suite for Issue #452: API Endpoints Skip JWT Auth Checks.
 func TestEndpointAuthentication(t *testing.T) {
 	// Create a test server without auth token
-	server := createTestServer(t)
+	server := createAuthTestServer(t)
 	defer server.cleanup()
 
 	// Define all API endpoints and their expected auth behavior
@@ -150,11 +152,11 @@ func TestEndpointAuthentication(t *testing.T) {
 
 // TestEndpointAuthWithValidToken verifies that endpoints work correctly with valid auth tokens.
 func TestEndpointAuthWithValidToken(t *testing.T) {
-	server := createTestServer(t)
+	server := createAuthTestServer(t)
 	defer server.cleanup()
 
 	// Generate a valid token
-	token, err := server.server.authManager.GenerateToken(context.Background(), "testuser")
+	token, err := server.server.AuthManager().GenerateToken(context.Background(), "testuser")
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
@@ -187,7 +189,7 @@ func TestEndpointAuthWithValidToken(t *testing.T) {
 
 // TestEndpointAuthWithInvalidToken verifies that invalid tokens are rejected.
 func TestEndpointAuthWithInvalidToken(t *testing.T) {
-	server := createTestServer(t)
+	server := createAuthTestServer(t)
 	defer server.cleanup()
 
 	tests := []struct {
@@ -219,7 +221,7 @@ func TestEndpointAuthWithInvalidToken(t *testing.T) {
 
 // TestEndpointAuthWithExpiredToken verifies that expired tokens are rejected.
 func TestEndpointAuthWithExpiredToken(t *testing.T) {
-	server := createTestServer(t)
+	server := createAuthTestServer(t)
 	defer server.cleanup()
 
 	// Create a token with 0 duration (immediately expired)
@@ -230,7 +232,7 @@ func TestEndpointAuthWithExpiredToken(t *testing.T) {
 
 // TestWebSocketAuth verifies WebSocket authentication via query parameter.
 func TestWebSocketAuth(t *testing.T) {
-	server := createTestServer(t)
+	server := createAuthTestServer(t)
 	defer server.cleanup()
 
 	// Test without token
@@ -254,7 +256,7 @@ func TestWebSocketAuth(t *testing.T) {
 	// Test with token in query (DISABLED for security fix #706)
 	// Query parameter authentication is no longer supported to prevent token leakage via logs/referer
 	t.Run("WebSocket with token in query (disabled #706)", func(t *testing.T) {
-		token, err := server.server.authManager.GenerateToken(context.Background(), "testuser")
+		token, err := server.server.AuthManager().GenerateToken(context.Background(), "testuser")
 		if err != nil {
 			t.Fatalf("Failed to generate token: %v", err)
 		}
@@ -279,7 +281,7 @@ func TestWebSocketAuth(t *testing.T) {
 
 	// Test with token in Sec-WebSocket-Protocol header (new secure method)
 	t.Run("WebSocket with token in subprotocol", func(t *testing.T) {
-		token, err := server.server.authManager.GenerateToken(context.Background(), "testuser")
+		token, err := server.server.AuthManager().GenerateToken(context.Background(), "testuser")
 		if err != nil {
 			t.Fatalf("Failed to generate token: %v", err)
 		}
@@ -303,7 +305,7 @@ func TestWebSocketAuth(t *testing.T) {
 
 // TestStaticFilesNoAuth verifies that static files don't require authentication.
 func TestStaticFilesNoAuth(t *testing.T) {
-	server := createTestServer(t)
+	server := createAuthTestServer(t)
 	defer server.cleanup()
 
 	// Test various static file paths
@@ -329,21 +331,21 @@ func TestStaticFilesNoAuth(t *testing.T) {
 }
 
 // Helper to create a test server.
-type testServer struct {
-	server  *Server
+type authTestServer struct {
+	server  *api.Server
 	handler http.Handler
 }
 
-func (ts *testServer) cleanup() {
+func (ts *authTestServer) cleanup() {
 	// Cleanup resources if needed
 	// WebSocket hub doesn't require explicit cleanup in tests
 }
 
-func createTestServer(_ *testing.T) *testServer {
-	server := NewTestServer()
+func createAuthTestServer(_ *testing.T) *authTestServer {
+	server := api.NewTestServer()
 	handler := server.GetAuthenticatedHandler()
 
-	return &testServer{
+	return &authTestServer{
 		server:  server,
 		handler: handler,
 	}

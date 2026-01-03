@@ -5,6 +5,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/krisarmstrong/seed/internal/auth"
 	"github.com/krisarmstrong/seed/internal/config"
 )
 
@@ -120,11 +121,6 @@ func (s *Server) SetConfigPath(path string) {
 	s.configPath = path
 }
 
-// GetConfig returns the server config for testing.
-func (s *Server) GetConfig() *config.Config {
-	return s.config
-}
-
 // HandleConfigVersion exports handleConfigVersion for testing.
 func (s *Server) HandleConfigVersion(w http.ResponseWriter, r *http.Request) {
 	s.handleConfigVersion(w, r)
@@ -148,4 +144,39 @@ func (s *Server) HandleConfigRestore(w http.ResponseWriter, r *http.Request) {
 // HandleConfigBackupDelete exports handleConfigBackupDelete for testing.
 func (s *Server) HandleConfigBackupDelete(w http.ResponseWriter, r *http.Request) {
 	s.handleConfigBackupDelete(w, r)
+}
+
+// HandleRefreshToken exports handleRefreshToken for testing.
+func (s *Server) HandleRefreshToken(w http.ResponseWriter, r *http.Request) {
+	s.handleRefreshToken(w, r)
+}
+
+// HandleLogout exports handleLogout for testing.
+func (s *Server) HandleLogout(w http.ResponseWriter, r *http.Request) {
+	s.handleLogout(w, r)
+}
+
+// HandleSetupComplete exports handleSetupComplete for testing.
+func (s *Server) HandleSetupComplete(w http.ResponseWriter, r *http.Request) {
+	s.handleSetupComplete(w, r)
+}
+
+// HandleSetupStatus exports handleSetupStatus for testing.
+func (s *Server) HandleSetupStatus(w http.ResponseWriter, r *http.Request) {
+	s.handleSetupStatus(w, r)
+}
+
+// AuthManager returns the server's auth manager for testing.
+func (s *Server) AuthManager() *auth.Manager {
+	return s.authManager
+}
+
+// SetupTokenManager returns the server's setup token manager for testing.
+func (s *Server) SetupTokenManager() *SetupTokenManager {
+	return s.setupTokenManager
+}
+
+// Mux returns the server's HTTP mux for testing.
+func (s *Server) Mux() *http.ServeMux {
+	return s.mux
 }
