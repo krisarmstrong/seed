@@ -1,6 +1,6 @@
-// Package api provides the HTTP/WebSocket server.
+// Package api_test provides the HTTP/WebSocket server tests.
 // Integration tests validate API endpoints for correct responses, configs, and data handling.
-package api
+package api_test
 
 import (
 	"bytes"
@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/krisarmstrong/seed/internal/api"
 	"github.com/krisarmstrong/seed/internal/network"
 	"github.com/krisarmstrong/seed/internal/testutil"
 )
@@ -40,13 +41,13 @@ func newTestEndpointServer(t *testing.T) *testEndpointServer {
 		t.Logf("Warning: Could not create network manager: %v", err)
 	}
 
-	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
+	server := api.NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 	// Force IPv4 listener to avoid environments where IPv6 binds are disallowed
 	ln, err := net.Listen("tcp4", "127.0.0.1:0")
 	if err != nil {
 		t.Fatalf("Failed to create IPv4 listener: %v", err)
 	}
-	ts := httptest.NewUnstartedServer(server.mux)
+	ts := httptest.NewUnstartedServer(server.Mux())
 	ts.Listener = ln
 	ts.Start()
 	return &testEndpointServer{ts: ts}
@@ -68,7 +69,7 @@ func (s *testEndpointServer) testStatusEndpoint(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", resp.StatusCode)
 	}
 
-	var status StatusResponse
+	var status api.StatusResponse
 	if decodeErr := json.NewDecoder(resp.Body).Decode(&status); decodeErr != nil {
 		t.Errorf("Failed to decode status response: %v", decodeErr)
 	}
@@ -128,7 +129,7 @@ func (s *testEndpointServer) testSNMPSettingsEndpoint(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", resp.StatusCode)
 	}
 
-	var settings SNMPSettingsResponse
+	var settings api.SNMPSettingsResponse
 	if decodeErr := json.NewDecoder(resp.Body).Decode(&settings); decodeErr != nil {
 		t.Errorf("Failed to decode SNMP settings: %v", decodeErr)
 	}
@@ -170,7 +171,7 @@ func (s *testEndpointServer) testIPConfigEndpoint(t *testing.T) {
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var ipconfig IPConfigResponse
+		var ipconfig api.IPConfigResponse
 		if decodeErr := json.NewDecoder(resp.Body).Decode(&ipconfig); decodeErr != nil {
 			t.Errorf("Failed to decode ipconfig response: %v", decodeErr)
 		}
@@ -237,7 +238,7 @@ func TestWebSocketHub(t *testing.T) {
 	}
 
 	netMgr, _ := network.NewManager("")
-	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
+	server := api.NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 
 	// Test hub exists
 	hub := server.Hub()
@@ -302,9 +303,9 @@ func TestDevicesEndpoints(t *testing.T) {
 	}
 
 	netMgr, _ := network.NewManager("")
-	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
+	server := api.NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 
-	ts := httptest.NewServer(server.mux)
+	ts := httptest.NewServer(server.Mux())
 	defer ts.Close()
 
 	t.Run("GetDevices", func(t *testing.T) {
@@ -342,7 +343,7 @@ func TestDevicesEndpoints(t *testing.T) {
 			t.Errorf("Expected status 200, got %d", resp.StatusCode)
 		}
 
-		var settings NetworkDiscoverySettingsResponse
+		var settings api.NetworkDiscoverySettingsResponse
 		if decodeErr := json.NewDecoder(resp.Body).Decode(&settings); decodeErr != nil {
 			t.Errorf("Failed to decode discovery settings: %v", decodeErr)
 		}
@@ -380,9 +381,9 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 	}
 
 	netMgr, _ := network.NewManager("")
-	server := NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
+	server := api.NewServer(cfg, configPath, "", netMgr, false, nil, nil, nil)
 
-	ts := httptest.NewServer(server.mux)
+	ts := httptest.NewServer(server.Mux())
 	defer ts.Close()
 
 	t.Run("GetHealthChecksSettings", func(t *testing.T) {
@@ -396,7 +397,7 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 			t.Errorf("Expected status 200, got %d", resp.StatusCode)
 		}
 
-		var settings TestsSettingsResponse
+		var settings api.TestsSettingsResponse
 		if decodeErr := json.NewDecoder(resp.Body).Decode(&settings); decodeErr != nil {
 			t.Errorf("Failed to decode health checks settings: %v", decodeErr)
 		}
@@ -404,10 +405,10 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 
 	t.Run("UpdateHealthChecksSettings", func(t *testing.T) {
 		// Issue #605 fixed: config.Save() deadlock resolved by unlocking before Save()
-		settings := TestsSettingsResponse{
+		settings := api.TestsSettingsResponse{
 			DNSHostname: "example.com",
-			DNSServers:  []DNSServerResponse{{Address: "8.8.8.8", Enabled: true}},
-			PingTargets: []PingTargetResponse{{Name: "Google", Host: "8.8.8.8", Enabled: true}},
+			DNSServers:  []api.DNSServerResponse{{Address: "8.8.8.8", Enabled: true}},
+			PingTargets: []api.PingTargetResponse{{Name: "Google", Host: "8.8.8.8", Enabled: true}},
 		}
 
 		body, _ := json.Marshal(settings)

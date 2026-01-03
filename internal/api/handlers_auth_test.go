@@ -1,4 +1,4 @@
-package api
+package api_test
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/krisarmstrong/seed/internal/api"
 	"github.com/krisarmstrong/seed/internal/auth"
 	"github.com/krisarmstrong/seed/internal/config"
 	"github.com/krisarmstrong/seed/internal/testutil"
@@ -24,10 +25,10 @@ type refreshTokenTestCase struct {
 }
 
 // prepareRefreshToken generates or returns the appropriate refresh token.
-func prepareRefreshToken(t *testing.T, server *Server, tc refreshTokenTestCase) string {
+func prepareRefreshToken(t *testing.T, server *api.Server, tc refreshTokenTestCase) string {
 	t.Helper()
 	if tc.setupCookie && tc.cookieValue == "" {
-		token, err := server.authManager.GenerateRefreshToken(context.Background(), "admin")
+		token, err := server.AuthManager().GenerateRefreshToken(context.Background(), "admin")
 		if err != nil {
 			t.Fatalf("Failed to generate refresh token: %v", err)
 		}
@@ -39,7 +40,7 @@ func prepareRefreshToken(t *testing.T, server *Server, tc refreshTokenTestCase) 
 // verifyTokenResponse checks the response contains valid token data.
 func verifyTokenResponse(t *testing.T, w *httptest.ResponseRecorder) {
 	t.Helper()
-	var resp LoginResponse
+	var resp api.LoginResponse
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 		t.Fatalf("Failed to decode response: %v", err)
 	}
@@ -99,7 +100,7 @@ func TestHandleRefreshToken(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := NewTestServer()
+			server := api.NewTestServer()
 			refreshToken := prepareRefreshToken(t, server, tt)
 
 			req := httptest.NewRequest(http.MethodPost, "/api/auth/refresh", http.NoBody)
@@ -111,7 +112,7 @@ func TestHandleRefreshToken(t *testing.T) {
 			}
 
 			w := httptest.NewRecorder()
-			server.handleRefreshToken(w, req)
+			server.HandleRefreshToken(w, req)
 
 			if w.Code != tt.expectedStatus {
 				t.Errorf("Expected status %d, got %d", tt.expectedStatus, w.Code)
@@ -126,7 +127,7 @@ func TestHandleRefreshToken(t *testing.T) {
 
 // TestHandleRefreshTokenMethodNotAllowed tests non-POST methods.
 func TestHandleRefreshTokenMethodNotAllowed(t *testing.T) {
-	server := NewTestServer()
+	server := api.NewTestServer()
 
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
@@ -134,7 +135,7 @@ func TestHandleRefreshTokenMethodNotAllowed(t *testing.T) {
 			req := httptest.NewRequest(method, "/api/auth/refresh", http.NoBody)
 			w := httptest.NewRecorder()
 
-			server.handleRefreshToken(w, req)
+			server.HandleRefreshToken(w, req)
 
 			if w.Code != http.StatusMethodNotAllowed {
 				t.Errorf("Expected status %d for %s, got %d",
@@ -146,10 +147,10 @@ func TestHandleRefreshTokenMethodNotAllowed(t *testing.T) {
 
 // TestHandleLogout tests the logout endpoint.
 func TestHandleLogout(t *testing.T) {
-	server := NewTestServer()
+	server := api.NewTestServer()
 
 	// Create authenticated request
-	token, err := server.authManager.GenerateToken(context.Background(), "admin")
+	token, err := server.AuthManager().GenerateToken(context.Background(), "admin")
 	if err != nil {
 		t.Fatalf("Failed to generate token: %v", err)
 	}
@@ -158,7 +159,7 @@ func TestHandleLogout(t *testing.T) {
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	w := httptest.NewRecorder()
-	server.handleLogout(w, req)
+	server.HandleLogout(w, req)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status %d, got %d", http.StatusOK, w.Code)
@@ -190,7 +191,7 @@ func TestHandleLogout(t *testing.T) {
 
 // TestHandleLogoutMethodNotAllowed tests non-POST methods for logout.
 func TestHandleLogoutMethodNotAllowed(t *testing.T) {
-	server := NewTestServer()
+	server := api.NewTestServer()
 
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
@@ -198,7 +199,7 @@ func TestHandleLogoutMethodNotAllowed(t *testing.T) {
 			req := httptest.NewRequest(method, "/api/auth/logout", http.NoBody)
 			w := httptest.NewRecorder()
 
-			server.handleLogout(w, req)
+			server.HandleLogout(w, req)
 
 			if w.Code != http.StatusMethodNotAllowed {
 				t.Errorf("Expected status %d for %s, got %d",
@@ -256,13 +257,13 @@ func TestHandleSetupComplete(t *testing.T) {
 				WithAuth(defaults.Auth.Username, auth.SetupModePlaceholder).
 				Build()
 
-			server := NewTestServerWithConfig(cfg)
+			server := api.NewTestServerWithConfig(cfg)
 
 			// Generate a valid setup token for testing
-			setupToken, _ := server.setupTokenManager.GenerateToken()
+			setupToken, _ := server.SetupTokenManager().GenerateToken()
 
 			// Create request
-			reqBody := SetupCompleteRequest{
+			reqBody := api.SetupCompleteRequest{
 				Password:   tt.password,
 				SetupToken: setupToken,
 			}
@@ -271,7 +272,7 @@ func TestHandleSetupComplete(t *testing.T) {
 			req.Header.Set("Content-Type", "application/json")
 
 			w := httptest.NewRecorder()
-			server.handleSetupComplete(w, req)
+			server.HandleSetupComplete(w, req)
 
 			if w.Code != tt.expectedStatus {
 				t.Errorf("Expected status %d, got %d. Response: %s",
@@ -324,18 +325,18 @@ func TestHandleSetupStatus(t *testing.T) {
 				cfg = testutil.NewConfigBuilder().Build()
 			}
 
-			server := NewTestServerWithConfig(cfg)
+			server := api.NewTestServerWithConfig(cfg)
 
 			req := httptest.NewRequest(http.MethodGet, "/api/setup/status", http.NoBody)
 			w := httptest.NewRecorder()
 
-			server.handleSetupStatus(w, req)
+			server.HandleSetupStatus(w, req)
 
 			if w.Code != http.StatusOK {
 				t.Errorf("Expected status %d, got %d", http.StatusOK, w.Code)
 			}
 
-			var resp SetupStatusResponse
+			var resp api.SetupStatusResponse
 			if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 				t.Fatalf("Failed to decode response: %v", err)
 			}
