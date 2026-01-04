@@ -62,5 +62,7 @@ func scanPlatform(iface string) ([]*ScannedNetwork, error) {
 	// Get BSS (scan results) - this returns the current BSS we're connected to
 	// For a full scan, we would need to use StationInfo, but that's more complex
 	// For now, just return an error indicating scanning is not fully implemented
-	return nil, fmt.Errorf("WiFi scanning not fully implemented on Linux - requires additional nl80211 work")
+	return nil, fmt.Errorf(
+		"WiFi scanning not fully implemented on Linux - requires additional nl80211 work",
+	)
 }

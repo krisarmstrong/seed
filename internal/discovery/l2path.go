@@ -45,7 +45,10 @@ type L2PathBuilder struct {
 }
 
 // NewL2PathBuilder creates a new L2 path builder.
-func NewL2PathBuilder(deviceDiscovery *DeviceDiscovery, snmpConfig *config.SNMPConfig) *L2PathBuilder {
+func NewL2PathBuilder(
+	deviceDiscovery *DeviceDiscovery,
+	snmpConfig *config.SNMPConfig,
+) *L2PathBuilder {
 	return &L2PathBuilder{
 		deviceDiscovery: deviceDiscovery,
 		snmpConfig:      snmpConfig,
@@ -60,7 +63,10 @@ func NewL2PathBuilder(deviceDiscovery *DeviceDiscovery, snmpConfig *config.SNMPC
 //     - Identify egress port (LLDP/CDP neighbor toward destination)
 //     - Query port details via SNMP if available
 //  3. Continue until destination is reached or no more neighbors found.
-func (b *L2PathBuilder) BuildPath(ctx context.Context, sourceIP, destIP string) (*L2PathResult, error) {
+func (b *L2PathBuilder) BuildPath(
+	ctx context.Context,
+	sourceIP, destIP string,
+) (*L2PathResult, error) {
 	result := &L2PathResult{
 		Hops: make([]L2Hop, 0),
 	}
@@ -205,7 +211,11 @@ func (b *L2PathBuilder) findFirstHop(sourceDevice *DiscoveredDevice) *L2Hop {
 }
 
 // findNextHop finds the next hop in the L2 path toward the destination.
-func (b *L2PathBuilder) findNextHop(ctx context.Context, currentHop *L2Hop, destDevice *DiscoveredDevice) *L2Hop {
+func (b *L2PathBuilder) findNextHop(
+	ctx context.Context,
+	currentHop *L2Hop,
+	destDevice *DiscoveredDevice,
+) *L2Hop {
 	// Query SNMP for more detailed port information if available
 	if currentHop.DeviceIP != "" && b.snmpConfig != nil {
 		b.enrichHopWithSNMP(ctx, currentHop)
@@ -225,14 +235,16 @@ func (b *L2PathBuilder) enrichHopWithSNMP(ctx context.Context, hop *L2Hop) {
 	}
 
 	// Check if SNMP is configured (has communities or v3 credentials)
-	if b.snmpConfig == nil || (len(b.snmpConfig.Communities) == 0 && len(b.snmpConfig.V3Credentials) == 0) {
+	if b.snmpConfig == nil ||
+		(len(b.snmpConfig.Communities) == 0 && len(b.snmpConfig.V3Credentials) == 0) {
 		return
 	}
 
 	// Try to get system info to confirm device identity
 	systemInfo, err := snmp.GetSystemInfo(ctx, hop.DeviceIP, b.snmpConfig)
 	if err != nil {
-		logging.GetLogger().Debug("Failed to get SNMP system info", "device", hop.DeviceIP, "error", err)
+		logging.GetLogger().
+			Debug("Failed to get SNMP system info", "device", hop.DeviceIP, "error", err)
 		return
 	}
 
@@ -247,7 +259,10 @@ func (b *L2PathBuilder) enrichHopWithSNMP(ctx context.Context, hop *L2Hop) {
 }
 
 // findNeighborTowardDestination finds a neighbor that might lead to the destination.
-func (b *L2PathBuilder) findNeighborTowardDestination(currentHop *L2Hop, destDevice *DiscoveredDevice) *L2Hop {
+func (b *L2PathBuilder) findNeighborTowardDestination(
+	currentHop *L2Hop,
+	destDevice *DiscoveredDevice,
+) *L2Hop {
 	// Get all devices to search for neighbors
 	allDevices := b.deviceDiscovery.GetDevices()
 
@@ -283,7 +298,11 @@ func (b *L2PathBuilder) findNeighborTowardDestination(currentHop *L2Hop, destDev
 func (b *L2PathBuilder) checkDeviceAsNeighbor(device *DiscoveredDevice, currentHop *L2Hop) *L2Hop {
 	// Check LLDP neighbor
 	if device.LLDPInfo != nil &&
-		b.deviceMatchesHop(device.LLDPInfo.SystemName, device.LLDPInfo.ManagementAddress, currentHop) {
+		b.deviceMatchesHop(
+			device.LLDPInfo.SystemName,
+			device.LLDPInfo.ManagementAddress,
+			currentHop,
+		) {
 		return &L2Hop{
 			Device:   device.LLDPInfo.SystemName,
 			DeviceIP: device.LLDPInfo.ManagementAddress,
@@ -343,7 +362,11 @@ func (b *L2PathBuilder) checkDeviceAsNeighbor(device *DiscoveredDevice, currentH
 func (b *L2PathBuilder) checkDestinationReached(currentHop *L2Hop, destDevice *DiscoveredDevice) {
 	// Check if destination device has LLDP/CDP pointing to current hop
 	if destDevice.LLDPInfo != nil &&
-		b.deviceMatchesHop(destDevice.LLDPInfo.SystemName, destDevice.LLDPInfo.ManagementAddress, currentHop) {
+		b.deviceMatchesHop(
+			destDevice.LLDPInfo.SystemName,
+			destDevice.LLDPInfo.ManagementAddress,
+			currentHop,
+		) {
 		currentHop.EgressPort = &PortInfo{
 			Name:        destDevice.LLDPInfo.PortID,
 			ConnectedTo: destDevice.MAC,
@@ -352,7 +375,11 @@ func (b *L2PathBuilder) checkDestinationReached(currentHop *L2Hop, destDevice *D
 	}
 
 	if destDevice.CDPInfo != nil &&
-		b.deviceMatchesHop(destDevice.CDPInfo.DeviceID, destDevice.CDPInfo.ManagementAddress, currentHop) {
+		b.deviceMatchesHop(
+			destDevice.CDPInfo.DeviceID,
+			destDevice.CDPInfo.ManagementAddress,
+			currentHop,
+		) {
 		currentHop.EgressPort = &PortInfo{
 			Name:        destDevice.CDPInfo.PortID,
 			ConnectedTo: destDevice.MAC,

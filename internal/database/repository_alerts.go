@@ -164,7 +164,11 @@ func (r *AlertRepository) Acknowledge(ctx context.Context, id int64, by string) 
 // AcknowledgeAll marks all matching alerts as acknowledged.
 //
 
-func (r *AlertRepository) AcknowledgeAll(ctx context.Context, opts AlertListOptions, by string) (int64, error) {
+func (r *AlertRepository) AcknowledgeAll(
+	ctx context.Context,
+	opts AlertListOptions,
+	by string,
+) (int64, error) {
 	now := time.Now().UTC()
 
 	query := `

@@ -216,7 +216,10 @@ func (a *AirMapperFile) ToImportResult() (*AirMapperImportResult, error) {
 			result.Calibration.PropagationM = a.Serial.Propagation * 0.3048 // Default to feet
 			result.Warnings = append(
 				result.Warnings,
-				fmt.Sprintf("Unknown propagation unit: %s, assuming feet", a.Serial.PropagationUnit),
+				fmt.Sprintf(
+					"Unknown propagation unit: %s, assuming feet",
+					a.Serial.PropagationUnit,
+				),
 			)
 		}
 	} else {

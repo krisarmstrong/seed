@@ -93,7 +93,11 @@ func NewFingerprinter(timeout time.Duration) *Fingerprinter {
 }
 
 // ProbeDevice performs advanced probing on a device.
-func (f *Fingerprinter) ProbeDevice(ctx context.Context, ip string, profile *DeviceProfile) *AdvancedProbeResult {
+func (f *Fingerprinter) ProbeDevice(
+	ctx context.Context,
+	ip string,
+	profile *DeviceProfile,
+) *AdvancedProbeResult {
 	result := &AdvancedProbeResult{
 		IP:              ip,
 		ProbedAt:        time.Now(),
@@ -145,7 +149,11 @@ func (f *Fingerprinter) ProbeDevice(ctx context.Context, ip string, profile *Dev
 }
 
 // fingerprintOS attempts to identify the operating system.
-func (f *Fingerprinter) fingerprintOS(_ context.Context, _ string, profile *DeviceProfile) *OSFingerprint {
+func (f *Fingerprinter) fingerprintOS(
+	_ context.Context,
+	_ string,
+	profile *DeviceProfile,
+) *OSFingerprint {
 	fp := &OSFingerprint{
 		Methods: []string{},
 	}
@@ -265,7 +273,12 @@ var serverOSMatchers = []osMatch{
 	{[]string{"centos"}, osLinux, "rhel", 85},
 	{[]string{"red hat"}, osLinux, "rhel", 85},
 	{[]string{"cisco"}, osCisco, "", 90},
-	{[]string{"routeros"}, "mikrotik", "", 95}, //nolint:misspell // RouterOS is MikroTik's product name
+	{
+		[]string{"routeros"},
+		"mikrotik",
+		"",
+		95,
+	}, //nolint:misspell // RouterOS is MikroTik's product name
 	{[]string{"fortinet"}, "fortinet", "", 95},
 	{[]string{"fortigate"}, "fortinet", "", 95},
 	{[]string{"pfsense"}, "bsd", "firewall", 90},
@@ -281,7 +294,9 @@ func (f *Fingerprinter) parseOSFromServer(server string) *OSFingerprint {
 	// Windows indicators (special case for IIS version extraction)
 	if strings.Contains(server, "microsoft") || strings.Contains(server, "iis") {
 		fp.OSFamily = osWindows
-		if match := regexp.MustCompile(`iis[/\s]*([\d.]+)`).FindStringSubmatch(server); len(match) > 1 {
+		if match := regexp.MustCompile(`iis[/\s]*([\d.]+)`).FindStringSubmatch(server); len(
+			match,
+		) > 1 {
 			fp.OSVersion = "IIS " + match[1]
 		}
 		fp.Confidence = 85
@@ -292,7 +307,8 @@ func (f *Fingerprinter) parseOSFromServer(server string) *OSFingerprint {
 	f.matchOSPatterns(server, serverOSMatchers, fp)
 
 	// Fallback for generic web servers
-	if fp.OSFamily == "" && (strings.Contains(server, "lighttpd") || strings.Contains(server, "nginx")) {
+	if fp.OSFamily == "" &&
+		(strings.Contains(server, "lighttpd") || strings.Contains(server, "nginx")) {
 		fp.OSFamily = "unix"
 		fp.Confidence = 50
 	}
@@ -334,7 +350,9 @@ func (*Fingerprinter) detectSSHVersion(port int, banner string, sv *ServiceVersi
 		return
 	}
 	sv.Service = "ssh"
-	if match := regexp.MustCompile(`openssh[_\s]*([\d.p]+)`).FindStringSubmatch(banner); len(match) > 1 {
+	if match := regexp.MustCompile(`openssh[_\s]*([\d.p]+)`).FindStringSubmatch(banner); len(
+		match,
+	) > 1 {
 		sv.Product = "OpenSSH"
 		sv.Version = match[1]
 		sv.Confidence = 95
@@ -354,13 +372,17 @@ func (*Fingerprinter) detectFTPVersion(port int, banner string, sv *ServiceVersi
 	switch {
 	case strings.Contains(banner, "vsftpd"):
 		sv.Product = "vsftpd"
-		if match := regexp.MustCompile(`vsftpd\s*([\d.]+)`).FindStringSubmatch(banner); len(match) > 1 {
+		if match := regexp.MustCompile(`vsftpd\s*([\d.]+)`).FindStringSubmatch(banner); len(
+			match,
+		) > 1 {
 			sv.Version = match[1]
 		}
 		sv.Confidence = 90
 	case strings.Contains(banner, "proftpd"):
 		sv.Product = "ProFTPD"
-		if match := regexp.MustCompile(`proftpd\s*([\d.]+)`).FindStringSubmatch(banner); len(match) > 1 {
+		if match := regexp.MustCompile(`proftpd\s*([\d.]+)`).FindStringSubmatch(banner); len(
+			match,
+		) > 1 {
 			sv.Version = match[1]
 		}
 		sv.Confidence = 90
@@ -388,7 +410,9 @@ func (*Fingerprinter) detectSMTPVersion(port int, banner string, sv *ServiceVers
 		sv.Confidence = 90
 	case strings.Contains(banner, "exim"):
 		sv.Product = "Exim"
-		if match := regexp.MustCompile(`exim\s*([\d.]+)`).FindStringSubmatch(banner); len(match) > 1 {
+		if match := regexp.MustCompile(`exim\s*([\d.]+)`).FindStringSubmatch(banner); len(
+			match,
+		) > 1 {
 			sv.Version = match[1]
 		}
 		sv.Confidence = 90

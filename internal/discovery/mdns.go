@@ -145,7 +145,11 @@ func (r *MDNSResolver) ResolveName(ctx context.Context, name string) (string, er
 }
 
 // sendMDNSQuery sends an mDNS multicast query and waits for a response.
-func (r *MDNSResolver) sendMDNSQuery(ctx context.Context, query []byte, targetIP net.IP) (string, error) {
+func (r *MDNSResolver) sendMDNSQuery(
+	ctx context.Context,
+	query []byte,
+	targetIP net.IP,
+) (string, error) {
 	timeout := r.timeout
 	if deadline, ok := ctx.Deadline(); ok {
 		remaining := time.Until(deadline)
@@ -446,7 +450,8 @@ func (l *MDNSListener) listen() {
 	if l.interfaceName != "" {
 		iface, err = net.InterfaceByName(l.interfaceName)
 		if err != nil {
-			logging.GetLogger().Warn("mDNS: interface not found, using default", "interface", l.interfaceName, "error", err)
+			logging.GetLogger().
+				Warn("mDNS: interface not found, using default", "interface", l.interfaceName, "error", err)
 		}
 	}
 

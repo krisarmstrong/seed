@@ -71,7 +71,8 @@ func extractEmbeddedBinary() (string, error) {
 
 	// Check if already extracted with correct version
 	if isValidExtractedBinary(destPath, versionFile) {
-		logging.GetLogger().Debug("Using cached iperf3 binary", "path", destPath, "version", EmbeddedVersion)
+		logging.GetLogger().
+			Debug("Using cached iperf3 binary", "path", destPath, "version", EmbeddedVersion)
 		return destPath, nil
 	}
 
@@ -96,7 +97,8 @@ func extractEmbeddedBinary() (string, error) {
 		logging.GetLogger().Warn("Failed to write version marker", "error", versionErr)
 	}
 
-	logging.GetLogger().Info("Extracted embedded iperf3 binary", "path", destPath, "version", EmbeddedVersion)
+	logging.GetLogger().
+		Info("Extracted embedded iperf3 binary", "path", destPath, "version", EmbeddedVersion)
 	return destPath, nil
 }
 

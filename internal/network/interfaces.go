@@ -75,7 +75,10 @@ func NewManager(defaultInterface string) (*Manager, error) {
 		detector:         detection.NewDetector(),
 	}
 	if err := m.RefreshInterfaces(); err != nil {
-		return nil, fmt.Errorf("failed to refresh interfaces during manager initialization: %w", err)
+		return nil, fmt.Errorf(
+			"failed to refresh interfaces during manager initialization: %w",
+			err,
+		)
 	}
 	return m, nil
 }
@@ -380,7 +383,18 @@ func detectInterfaceType(name string) InterfaceType {
 	}
 
 	// Virtual interfaces (docker, bridge, veth, tun, tap, virbr, etc.)
-	virtualPrefixes := []string{"docker", "br-", "veth", "virbr", "tun", "tap", "vnet", "vmnet", "vboxnet", "utun"}
+	virtualPrefixes := []string{
+		"docker",
+		"br-",
+		"veth",
+		"virbr",
+		"tun",
+		"tap",
+		"vnet",
+		"vmnet",
+		"vboxnet",
+		"utun",
+	}
 	for _, prefix := range virtualPrefixes {
 		if strings.HasPrefix(name, prefix) {
 			return InterfaceTypeVirtual

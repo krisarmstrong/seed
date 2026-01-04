@@ -65,7 +65,12 @@ func (s *PortScanner) Close() error {
 }
 
 // ScanWithBanners performs a port scan with service banner detection.
-func (s *PortScanner) ScanWithBanners(ctx context.Context, target string, ports []int, workers int) *PortScanResult {
+func (s *PortScanner) ScanWithBanners(
+	ctx context.Context,
+	target string,
+	ports []int,
+	workers int,
+) *PortScanResult {
 	start := time.Now()
 	result := &PortScanResult{
 		IP:       target,

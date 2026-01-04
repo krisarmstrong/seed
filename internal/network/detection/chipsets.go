@@ -122,7 +122,8 @@ func loadChipsetsFromFile() ([]ChipsetInfo, error) {
 		if data, err := os.ReadFile(path); err == nil {
 			chipsets, parseErr := parseChipsetYAML(data)
 			if parseErr == nil {
-				logging.GetLogger().Info("Loaded chipset database", "path", path, "entries", len(chipsets))
+				logging.GetLogger().
+					Info("Loaded chipset database", "path", path, "entries", len(chipsets))
 				return chipsets, nil
 			}
 		}

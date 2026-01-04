@@ -1105,7 +1105,8 @@ func Load(path string) (*Config, error) {
 	// Handle unversioned configs (version 0 means unversioned)
 	if cfg.Version == 0 {
 		cfg.Version = ConfigVersion
-		logging.GetLogger().Info("Upgraded unversioned config to current version", "version", ConfigVersion)
+		logging.GetLogger().
+			Info("Upgraded unversioned config to current version", "version", ConfigVersion)
 	}
 
 	return cfg, nil
@@ -1148,7 +1149,8 @@ func LoadWithMigration(path string, migrator *MigrationManager) (*Config, bool, 
 		}
 		data = migratedData
 		migrated = true
-		logging.GetLogger().Info("Migrated config", "from_version", partial.Version, "to_version", ConfigVersion)
+		logging.GetLogger().
+			Info("Migrated config", "from_version", partial.Version, "to_version", ConfigVersion)
 	}
 
 	if unmarshalErr := yaml.Unmarshal(data, cfg); unmarshalErr != nil {

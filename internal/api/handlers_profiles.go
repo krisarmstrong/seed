@@ -343,12 +343,24 @@ func (s *Server) handleGetActiveProfile(w http.ResponseWriter, r *http.Request) 
 		profile, defaultErr := s.db.Profiles().GetDefault(ctx)
 		if defaultErr != nil {
 			if errors.Is(defaultErr, database.ErrProfileNotFound) {
-				sendErrorResponseWithDetails(w, logger, http.StatusNotFound,
-					ErrCodeNotFound, localizer.T("errors.profile.noActiveOrDefault"), "") // fixes #694
+				sendErrorResponseWithDetails(
+					w,
+					logger,
+					http.StatusNotFound,
+					ErrCodeNotFound,
+					localizer.T("errors.profile.noActiveOrDefault"),
+					"",
+				) // fixes #694
 				return
 			}
-			sendErrorResponseWithDetails(w, logger, http.StatusInternalServerError,
-				ErrCodeInternal, localizer.T("errors.profile.getDefaultFailed"), "") // fixes #694, #H7
+			sendErrorResponseWithDetails(
+				w,
+				logger,
+				http.StatusInternalServerError,
+				ErrCodeInternal,
+				localizer.T("errors.profile.getDefaultFailed"),
+				"",
+			) // fixes #694, #H7
 			return
 		}
 		sendJSONResponse(w, logger, http.StatusOK, profileToResponse(profile))
@@ -424,7 +436,13 @@ func (s *Server) handleSetActiveProfile(w http.ResponseWriter, r *http.Request) 
 	if profile.ConfigJSON != "" {
 		profileSettings, parseErr := config.ParseProfileSettings(profile.ConfigJSON)
 		if parseErr != nil {
-			logger.Warn("Failed to parse profile settings, using defaults", "error", parseErr, "profile_id", profile.ID)
+			logger.Warn(
+				"Failed to parse profile settings, using defaults",
+				"error",
+				parseErr,
+				"profile_id",
+				profile.ID,
+			)
 		} else {
 			// NOTE: Must unlock before Save() - Save() acquires RLock internally (fixes #783)
 			s.config.Lock()
@@ -524,7 +542,11 @@ func (s *Server) handleDuplicateProfile(w http.ResponseWriter, r *http.Request) 
 	if createErr := s.db.Profiles().Create(ctx, duplicate); createErr != nil {
 		if errors.Is(createErr, database.ErrProfileNameExists) {
 			// Try with timestamp suffix
-			duplicate.Name = fmt.Sprintf("%s (%s)", source.Name, time.Now().Format("2006-01-02 15:04"))
+			duplicate.Name = fmt.Sprintf(
+				"%s (%s)",
+				source.Name,
+				time.Now().Format("2006-01-02 15:04"),
+			)
 			if retryErr := s.db.Profiles().Create(ctx, duplicate); retryErr != nil {
 				sendErrorResponseWithDetails(w, logger, http.StatusConflict,
 					ErrCodeConflict, localizer.T("errors.profile.nameExists"), "") // fixes #694
@@ -616,7 +638,10 @@ func (s *Server) handleImportProfiles(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := s.db.Profiles().Create(ctx, profile); err != nil {
-			result.Errors = append(result.Errors, fmt.Sprintf("Profile '%s': failed to create - %v", p.Name, err))
+			result.Errors = append(
+				result.Errors,
+				fmt.Sprintf("Profile '%s': failed to create - %v", p.Name, err),
+			)
 			result.Skipped++
 		} else {
 			result.Created++

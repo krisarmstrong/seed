@@ -466,7 +466,11 @@ func (s *PerformanceService) Speedtest(ctx context.Context) (*SpeedtestResult, e
 }
 
 // IPerf runs an iPerf test.
-func (s *PerformanceService) IPerf(ctx context.Context, host string, options map[string]any) (*IPerfResult, error) {
+func (s *PerformanceService) IPerf(
+	ctx context.Context,
+	host string,
+	options map[string]any,
+) (*IPerfResult, error) {
 	// Build client config
 	clientCfg := &iperf.ClientConfig{
 		Server:   host,

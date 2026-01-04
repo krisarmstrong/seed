@@ -48,8 +48,11 @@ func (s *Server) registerTestingTools(isAllowed func(string) bool) {
 			mcp.WithDescription(
 				"Run an internet speed test to measure download speed, upload speed, and latency. Uses speedtest.net infrastructure. Takes 10-30 seconds to complete.",
 			),
-			mcp.WithString("server_id",
-				mcp.Description("Specific speedtest server ID (optional, auto-selects nearest if not specified)"),
+			mcp.WithString(
+				"server_id",
+				mcp.Description(
+					"Specific speedtest server ID (optional, auto-selects nearest if not specified)",
+				),
 			),
 		),
 		s.handleSpeedtest,
@@ -75,8 +78,11 @@ func (s *Server) registerTestingTools(isAllowed func(string) bool) {
 			mcp.WithString("protocol",
 				mcp.Description("Protocol to use: tcp or udp (default: tcp)"),
 			),
-			mcp.WithString("direction",
-				mcp.Description("Test direction: download, upload, or bidirectional (default: download)"),
+			mcp.WithString(
+				"direction",
+				mcp.Description(
+					"Test direction: download, upload, or bidirectional (default: download)",
+				),
 			),
 		),
 		s.handleIperfTest,
@@ -84,7 +90,10 @@ func (s *Server) registerTestingTools(isAllowed func(string) bool) {
 }
 
 // handleDNSTest handles the dns_test tool.
-func (s *Server) handleDNSTest(ctx context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleDNSTest(
+	ctx context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	tester := s.services.GetDNSTester()
 	if tester == nil {
 		return mcp.NewToolResultError("DNS tester not available"), nil
@@ -99,7 +108,10 @@ func (s *Server) handleDNSTest(ctx context.Context, _ mcp.CallToolRequest) (*mcp
 }
 
 // handleGatewayPing handles the gateway_ping tool.
-func (s *Server) handleGatewayPing(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGatewayPing(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	tester := s.services.GetGatewayTester()
 	if tester == nil {
 		return mcp.NewToolResultError("Gateway tester not available"), nil
@@ -121,7 +133,10 @@ func (s *Server) handleGatewayPing(_ context.Context, _ mcp.CallToolRequest) (*m
 }
 
 // handleSpeedtest handles the speedtest tool.
-func (s *Server) handleSpeedtest(ctx context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleSpeedtest(
+	ctx context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	tester := s.services.GetSpeedtestTester()
 	if tester == nil {
 		return mcp.NewToolResultError("Speedtest tester not available"), nil
@@ -185,7 +200,10 @@ func parseIperfConfig(serverAddr string, args map[string]any) (*iperf.ClientConf
 }
 
 // handleIperfTest handles the iperf_test tool.
-func (s *Server) handleIperfTest(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleIperfTest(
+	ctx context.Context,
+	request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	serverAddr, err := request.RequireString("server")
 	if err != nil {
 		return mcp.NewToolResultError("server parameter is required"), nil

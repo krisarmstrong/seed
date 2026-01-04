@@ -52,7 +52,11 @@ type PhysicalEntity struct {
 
 // GetPhysicalEntities retrieves all physical entities from ENTITY-MIB.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func GetPhysicalEntities(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]PhysicalEntity, error) {
+func GetPhysicalEntities(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]PhysicalEntity, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}
@@ -77,7 +81,11 @@ func GetPhysicalEntities(ctx context.Context, ip string, cfg *config.SNMPConfig)
 }
 
 // walkEntityTable walks the entPhysicalTable using SNMPv2c.
-func walkEntityTable(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]PhysicalEntity, error) {
+func walkEntityTable(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]PhysicalEntity, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -126,43 +134,83 @@ func walkPhysicalEntities(params *gosnmp.GoSNMP) ([]PhysicalEntity, error) {
 	}
 
 	// Walk other attributes.
-	walkEntityAttribute(params, OIDEntPhysicalVendorType, entities, func(e *PhysicalEntity, v string) {
-		e.VendorType = v
-	})
-	walkEntityAttribute(params, OIDEntPhysicalContainedIn, entities, func(e *PhysicalEntity, v string) {
-		if idx, parseErr := strconv.Atoi(v); parseErr == nil {
-			e.ContainedIn = idx
-		}
-	})
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalVendorType,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			e.VendorType = v
+		},
+	)
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalContainedIn,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			if idx, parseErr := strconv.Atoi(v); parseErr == nil {
+				e.ContainedIn = idx
+			}
+		},
+	)
 	walkEntityAttribute(params, OIDEntPhysicalClass, entities, func(e *PhysicalEntity, v string) {
 		e.Class = parseEntityClass(v)
 	})
-	walkEntityAttribute(params, OIDEntPhysicalParentRelPos, entities, func(e *PhysicalEntity, v string) {
-		if pos, parseErr := strconv.Atoi(v); parseErr == nil {
-			e.ParentRelPos = pos
-		}
-	})
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalParentRelPos,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			if pos, parseErr := strconv.Atoi(v); parseErr == nil {
+				e.ParentRelPos = pos
+			}
+		},
+	)
 	walkEntityAttribute(params, OIDEntPhysicalName, entities, func(e *PhysicalEntity, v string) {
 		e.Name = v
 	})
-	walkEntityAttribute(params, OIDEntPhysicalHardwareRev, entities, func(e *PhysicalEntity, v string) {
-		e.HardwareRev = v
-	})
-	walkEntityAttribute(params, OIDEntPhysicalFirmwareRev, entities, func(e *PhysicalEntity, v string) {
-		e.FirmwareRev = v
-	})
-	walkEntityAttribute(params, OIDEntPhysicalSoftwareRev, entities, func(e *PhysicalEntity, v string) {
-		e.SoftwareRev = v
-	})
-	walkEntityAttribute(params, OIDEntPhysicalSerialNum, entities, func(e *PhysicalEntity, v string) {
-		e.SerialNum = v
-	})
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalHardwareRev,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			e.HardwareRev = v
+		},
+	)
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalFirmwareRev,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			e.FirmwareRev = v
+		},
+	)
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalSoftwareRev,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			e.SoftwareRev = v
+		},
+	)
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalSerialNum,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			e.SerialNum = v
+		},
+	)
 	walkEntityAttribute(params, OIDEntPhysicalMfgName, entities, func(e *PhysicalEntity, v string) {
 		e.MfgName = v
 	})
-	walkEntityAttribute(params, OIDEntPhysicalModelName, entities, func(e *PhysicalEntity, v string) {
-		e.ModelName = v
-	})
+	walkEntityAttribute(
+		params,
+		OIDEntPhysicalModelName,
+		entities,
+		func(e *PhysicalEntity, v string) {
+			e.ModelName = v
+		},
+	)
 	walkEntityAttribute(params, OIDEntPhysicalIsFRU, entities, func(e *PhysicalEntity, v string) {
 		e.IsFRU = (v == "1" || v == "true")
 	})
@@ -255,7 +303,11 @@ func parseEntityClass(value string) string {
 }
 
 // GetChassisInfo retrieves the main chassis entity (class=chassis).
-func GetChassisInfo(ctx context.Context, ip string, cfg *config.SNMPConfig) (*PhysicalEntity, error) {
+func GetChassisInfo(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) (*PhysicalEntity, error) {
 	entities, err := GetPhysicalEntities(ctx, ip, cfg)
 	if err != nil {
 		return nil, err
@@ -294,7 +346,11 @@ func GetModules(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]Physi
 }
 
 // GetPowerSupplies retrieves all power supply entities.
-func GetPowerSupplies(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]PhysicalEntity, error) {
+func GetPowerSupplies(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]PhysicalEntity, error) {
 	entities, err := GetPhysicalEntities(ctx, ip, cfg)
 	if err != nil {
 		return nil, err

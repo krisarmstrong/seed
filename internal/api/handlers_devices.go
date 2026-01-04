@@ -102,7 +102,11 @@ func (s *Server) handleDevicesScan(w http.ResponseWriter, r *http.Request) {
 		bgLogger.Info("Starting background device scan")
 		start := time.Now()
 		defer func() {
-			bgLogger.Info("Background device scan finished", "duration_ms", time.Since(start).Milliseconds())
+			bgLogger.Info(
+				"Background device scan finished",
+				"duration_ms",
+				time.Since(start).Milliseconds(),
+			)
 		}()
 
 		if err := s.deviceDiscovery.Scan(ctx); err != nil {
@@ -136,7 +140,11 @@ func (s *Server) postScanVulnerabilityCheck(logger *slog.Logger) {
 		return
 	}
 
-	logger.Info("Auto-scan: triggering vulnerability scan", "device_count", s.deviceDiscovery.Count())
+	logger.Info(
+		"Auto-scan: triggering vulnerability scan",
+		"device_count",
+		s.deviceDiscovery.Count(),
+	)
 	devices := s.deviceDiscovery.GetDevices()
 
 	vulnCtx, vulnCancel := context.WithTimeout(context.Background(), 5*time.Minute)
@@ -382,7 +390,9 @@ func (s *Server) applyDiscoveryOptions(req *NetworkDiscoverySettingsResponse) {
 		opts.PortScan.UDPPorts = req.Options.PortScan.UDPPorts
 	}
 	if req.Options.PortScan.BannerTimeoutMs > 0 {
-		opts.PortScan.BannerTimeout = time.Duration(req.Options.PortScan.BannerTimeoutMs) * time.Millisecond
+		opts.PortScan.BannerTimeout = time.Duration(
+			req.Options.PortScan.BannerTimeoutMs,
+		) * time.Millisecond
 	}
 
 	// TCP probe config
@@ -398,10 +408,14 @@ func (s *Server) applyDiscoveryOptions(req *NetworkDiscoverySettingsResponse) {
 func (s *Server) applyAdvancedDiscoverySettings(req *NetworkDiscoverySettingsResponse) {
 	// Timing config
 	if req.Timing.ProbeIntervalMs > 0 {
-		s.config.NetworkDiscovery.Timing.ProbeInterval = time.Duration(req.Timing.ProbeIntervalMs) * time.Millisecond
+		s.config.NetworkDiscovery.Timing.ProbeInterval = time.Duration(
+			req.Timing.ProbeIntervalMs,
+		) * time.Millisecond
 	}
 	if req.Timing.RescanIntervalMs > 0 {
-		s.config.NetworkDiscovery.Timing.RescanInterval = time.Duration(req.Timing.RescanIntervalMs) * time.Millisecond
+		s.config.NetworkDiscovery.Timing.RescanInterval = time.Duration(
+			req.Timing.RescanIntervalMs,
+		) * time.Millisecond
 	}
 	if req.Timing.Workers > 0 {
 		s.config.NetworkDiscovery.Timing.Workers = req.Timing.Workers
@@ -410,7 +424,9 @@ func (s *Server) applyAdvancedDiscoverySettings(req *NetworkDiscoverySettingsRes
 	// Profiler config
 	s.config.NetworkDiscovery.Profiler.Enabled = req.Profiler.Enabled
 	if req.Profiler.TimeoutMs > 0 {
-		s.config.NetworkDiscovery.Profiler.Timeout = time.Duration(req.Profiler.TimeoutMs) * time.Millisecond
+		s.config.NetworkDiscovery.Profiler.Timeout = time.Duration(
+			req.Profiler.TimeoutMs,
+		) * time.Millisecond
 	}
 	if req.Profiler.MaxConcurrent > 0 {
 		s.config.NetworkDiscovery.Profiler.MaxConcurrent = req.Profiler.MaxConcurrent
@@ -433,7 +449,14 @@ func (s *Server) updateDevicesSettings(w http.ResponseWriter, r *http.Request) {
 	var req NetworkDiscoverySettingsResponse
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Warn("Invalid request body", "error", err)
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Invalid request body", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Invalid request body",
+			"",
+		)
 		return
 	}
 
@@ -522,7 +545,14 @@ func (s *Server) addDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 	var req SubnetRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Warn("Invalid request body", "error", err)
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Invalid request body", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Invalid request body",
+			"",
+		)
 		return
 	}
 
@@ -530,7 +560,14 @@ func (s *Server) addDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 	_, _, err := net.ParseCIDR(req.CIDR)
 	if err != nil {
 		logger.Warn("Invalid CIDR format", "error", err, "cidr", req.CIDR)
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Invalid CIDR format", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Invalid CIDR format",
+			"",
+		)
 		return
 	}
 
@@ -592,14 +629,28 @@ func (s *Server) updateDevicesSubnet(w http.ResponseWriter, r *http.Request) {
 	var req SubnetRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Warn("Invalid request body", "error", err)
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Invalid request body", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Invalid request body",
+			"",
+		)
 		return
 	}
 
 	// Validate CIDR format
 	if _, _, err := net.ParseCIDR(req.CIDR); err != nil {
 		logger.Warn("Invalid CIDR format", "error", err, "cidr", req.CIDR)
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Invalid CIDR format", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Invalid CIDR format",
+			"",
+		)
 		return
 	}
 

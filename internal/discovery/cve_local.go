@@ -176,7 +176,10 @@ func (p *LocalProvider) SearchByCPE(ctx context.Context, cpe string) ([]Vulnerab
 }
 
 // SearchByProduct searches for vulnerabilities by vendor/product/version.
-func (p *LocalProvider) SearchByProduct(ctx context.Context, vendor, product, version string) ([]Vulnerability, error) {
+func (p *LocalProvider) SearchByProduct(
+	ctx context.Context,
+	vendor, product, version string,
+) ([]Vulnerability, error) {
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
@@ -187,7 +190,12 @@ func (p *LocalProvider) SearchByProduct(ctx context.Context, vendor, product, ve
 	defer p.mu.RUnlock()
 
 	// Try exact match first
-	key := fmt.Sprintf("%s:%s:%s", strings.ToLower(vendor), strings.ToLower(product), strings.ToLower(version))
+	key := fmt.Sprintf(
+		"%s:%s:%s",
+		strings.ToLower(vendor),
+		strings.ToLower(product),
+		strings.ToLower(version),
+	)
 	if vulns, ok := p.vulnerabilities[key]; ok {
 		result := make([]Vulnerability, len(vulns))
 		copy(result, vulns)
@@ -218,7 +226,10 @@ func (p *LocalProvider) UpdateDatabase(ctx context.Context) error {
 	info, err := os.Stat(p.dbPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("CVE database file not found: %s (download from NVD or create manually)", p.dbPath)
+			return fmt.Errorf(
+				"CVE database file not found: %s (download from NVD or create manually)",
+				p.dbPath,
+			)
 		}
 		return fmt.Errorf("failed to stat database file: %w", err)
 	}

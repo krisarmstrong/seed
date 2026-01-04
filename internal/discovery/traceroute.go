@@ -270,7 +270,11 @@ func (t *Tracer) TraceICMP(ctx context.Context, target string) *TracerouteResult
 
 // TraceICMPStreaming performs an ICMP-based traceroute with per-hop callbacks.
 // This enables real-time UI updates as each hop is discovered.
-func (t *Tracer) TraceICMPStreaming(ctx context.Context, target string, onHop HopCallback) *TracerouteResult {
+func (t *Tracer) TraceICMPStreaming(
+	ctx context.Context,
+	target string,
+	onHop HopCallback,
+) *TracerouteResult {
 	result := &TracerouteResult{
 		Target:   target,
 		Protocol: "icmp",
@@ -591,7 +595,11 @@ func (t *Tracer) TraceTCP(ctx context.Context, target string, port int) *Tracero
 			connCh := make(chan net.Conn, 1)
 			errCh := make(chan error, 1)
 			go func() {
-				conn, dialErr := dialer.DialContext(ctx, "tcp4", fmt.Sprintf("%s:%d", targetIP, port))
+				conn, dialErr := dialer.DialContext(
+					ctx,
+					"tcp4",
+					fmt.Sprintf("%s:%d", targetIP, port),
+				)
 				if dialErr != nil {
 					errCh <- dialErr
 				} else {

@@ -73,7 +73,12 @@ func Query(ctx context.Context, ip, oid string, cfg *config.SNMPConfig) (string,
 
 // QueryMultiple performs multiple SNMP GET queries in a single request.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func QueryMultiple(ctx context.Context, ip string, oids []string, cfg *config.SNMPConfig) (map[string]string, error) {
+func QueryMultiple(
+	ctx context.Context,
+	ip string,
+	oids []string,
+	cfg *config.SNMPConfig,
+) (map[string]string, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}
@@ -125,7 +130,11 @@ func GetSystemInfo(ctx context.Context, ip string, cfg *config.SNMPConfig) (*Sys
 }
 
 // queryWithCommunity performs SNMP v1/v2c query with community string.
-func queryWithCommunity(ctx context.Context, ip, oid, community string, cfg *config.SNMPConfig) (string, error) {
+func queryWithCommunity(
+	ctx context.Context,
+	ip, oid, community string,
+	cfg *config.SNMPConfig,
+) (string, error) {
 	// Fixes #936: Check context cancellation before establishing connection
 	select {
 	case <-ctx.Done():
@@ -227,25 +236,28 @@ func queryWithV3(
 		return "", fmt.Errorf("SNMPv3 credential '%s' has empty username", cred.Name)
 	}
 	if cred.AuthProtocol != "" && cred.AuthProtocol != "NoAuth" && cred.AuthPassword == "" {
-		logging.GetLogger().Warn("SNMPv3 credential has auth protocol but empty password - authentication will likely fail",
-			"credential_name", cred.Name,
-			"auth_protocol", cred.AuthProtocol,
-			"target", ip)
+		logging.GetLogger().
+			Warn("SNMPv3 credential has auth protocol but empty password - authentication will likely fail",
+				"credential_name", cred.Name,
+				"auth_protocol", cred.AuthProtocol,
+				"target", ip)
 	}
 	if cred.PrivProtocol != "" && cred.PrivProtocol != "NoPriv" && cred.PrivPassword == "" {
-		logging.GetLogger().Warn("SNMPv3 credential has privacy protocol but empty password - encryption will likely fail",
-			"credential_name", cred.Name,
-			"priv_protocol", cred.PrivProtocol,
-			"target", ip)
+		logging.GetLogger().
+			Warn("SNMPv3 credential has privacy protocol but empty password - encryption will likely fail",
+				"credential_name", cred.Name,
+				"priv_protocol", cred.PrivProtocol,
+				"target", ip)
 	}
 
 	// Warn if MD5 authentication is being used.
 	// MD5 is cryptographically broken and will be removed in the next major version.
 	if cred.AuthProtocol == AuthProtocolMD5 {
-		logging.GetLogger().Warn("SNMP MD5 authentication is deprecated and will be removed in the next major version",
-			"target", ip,
-			"credential_name", cred.Name,
-			"recommendation", "Use SHA256 or SHA512 for secure authentication")
+		logging.GetLogger().
+			Warn("SNMP MD5 authentication is deprecated and will be removed in the next major version",
+				"target", ip,
+				"credential_name", cred.Name,
+				"recommendation", "Use SHA256 or SHA512 for secure authentication")
 	}
 
 	params := &gosnmp.GoSNMP{
@@ -305,25 +317,28 @@ func queryMultipleWithV3(
 		return nil, fmt.Errorf("SNMPv3 credential '%s' has empty username", cred.Name)
 	}
 	if cred.AuthProtocol != "" && cred.AuthProtocol != "NoAuth" && cred.AuthPassword == "" {
-		logging.GetLogger().Warn("SNMPv3 credential has auth protocol but empty password - authentication will likely fail",
-			"credential_name", cred.Name,
-			"auth_protocol", cred.AuthProtocol,
-			"target", ip)
+		logging.GetLogger().
+			Warn("SNMPv3 credential has auth protocol but empty password - authentication will likely fail",
+				"credential_name", cred.Name,
+				"auth_protocol", cred.AuthProtocol,
+				"target", ip)
 	}
 	if cred.PrivProtocol != "" && cred.PrivProtocol != "NoPriv" && cred.PrivPassword == "" {
-		logging.GetLogger().Warn("SNMPv3 credential has privacy protocol but empty password - encryption will likely fail",
-			"credential_name", cred.Name,
-			"priv_protocol", cred.PrivProtocol,
-			"target", ip)
+		logging.GetLogger().
+			Warn("SNMPv3 credential has privacy protocol but empty password - encryption will likely fail",
+				"credential_name", cred.Name,
+				"priv_protocol", cred.PrivProtocol,
+				"target", ip)
 	}
 
 	// Warn if MD5 authentication is being used.
 	// MD5 is cryptographically broken and will be removed in the next major version.
 	if cred.AuthProtocol == AuthProtocolMD5 {
-		logging.GetLogger().Warn("SNMP MD5 authentication is deprecated and will be removed in the next major version",
-			"target", ip,
-			"credential_name", cred.Name,
-			"recommendation", "Use SHA256 or SHA512 for secure authentication")
+		logging.GetLogger().
+			Warn("SNMP MD5 authentication is deprecated and will be removed in the next major version",
+				"target", ip,
+				"credential_name", cred.Name,
+				"recommendation", "Use SHA256 or SHA512 for secure authentication")
 	}
 
 	params := &gosnmp.GoSNMP{

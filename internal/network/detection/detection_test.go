@@ -87,7 +87,11 @@ func TestScoreInterface(t *testing.T) {
 
 		// Virtual interfaces should have negative score.
 		if score.Type == "virtual" && score.Score >= 0 {
-			t.Errorf("Virtual interface %s should have negative score, got %d", score.Name, score.Score)
+			t.Errorf(
+				"Virtual interface %s should have negative score, got %d",
+				score.Name,
+				score.Score,
+			)
 		}
 
 		t.Logf("Interface %s: type=%s, score=%d, link=%v, ip=%v",

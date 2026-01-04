@@ -250,7 +250,10 @@ func NewAnalysisService(cfg *config.Config, db *database.DB) *AnalysisService {
 }
 
 // AnalyzePath performs quality analysis on a traceroute result.
-func (s *AnalysisService) AnalyzePath(_ context.Context, result *TracerouteResult) (*PathAnalysis, error) {
+func (s *AnalysisService) AnalyzePath(
+	_ context.Context,
+	result *TracerouteResult,
+) (*PathAnalysis, error) {
 	if result == nil {
 		return nil, errors.New("traceroute result is nil")
 	}

@@ -76,7 +76,10 @@ var (
 		MinVal: 0,
 		MaxVal: 10,
 		Stops: []ColorStop{
-			{Value: 0, Color: color.RGBA{R: 40, G: 167, B: 69, A: 255}},   // Green (no interference)
+			{
+				Value: 0,
+				Color: color.RGBA{R: 40, G: 167, B: 69, A: 255},
+			}, // Green (no interference)
 			{Value: 2, Color: color.RGBA{R: 144, G: 238, B: 144, A: 255}}, // Light green
 			{Value: 4, Color: color.RGBA{R: 255, G: 193, B: 7, A: 255}},   // Yellow
 			{Value: 6, Color: color.RGBA{R: 255, G: 128, B: 0, A: 255}},   // Orange

@@ -135,7 +135,10 @@ func (nvd *NVDProvider) SearchByCPE(ctx context.Context, cpe string) ([]Vulnerab
 }
 
 // SearchByProduct searches for vulnerabilities by vendor/product/version.
-func (nvd *NVDProvider) SearchByProduct(ctx context.Context, vendor, product, version string) ([]Vulnerability, error) {
+func (nvd *NVDProvider) SearchByProduct(
+	ctx context.Context,
+	vendor, product, version string,
+) ([]Vulnerability, error) {
 	// Construct CPE 2.3 string
 	// Format: cpe:2.3:part:vendor:product:version:update:edition:language:sw_edition:target_sw:target_hw:other
 	// For software: cpe:2.3:a:vendor:product:version:*:*:*:*:*:*:*
@@ -161,7 +164,10 @@ func (nvd *NVDProvider) GetLastUpdate() time.Time {
 }
 
 // makeRequest makes an HTTP request to the NVD API with proper headers.
-func (nvd *NVDProvider) makeRequest(ctx context.Context, requestURL string) (*nvdCVEResponse, error) {
+func (nvd *NVDProvider) makeRequest(
+	ctx context.Context,
+	requestURL string,
+) (*nvdCVEResponse, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -183,7 +189,11 @@ func (nvd *NVDProvider) makeRequest(ctx context.Context, requestURL string) (*nv
 	if resp.StatusCode != http.StatusOK {
 		body, readErr := io.ReadAll(resp.Body)
 		if readErr != nil {
-			return nil, fmt.Errorf("NVD API returned status %d (failed to read body: %w)", resp.StatusCode, readErr)
+			return nil, fmt.Errorf(
+				"NVD API returned status %d (failed to read body: %w)",
+				resp.StatusCode,
+				readErr,
+			)
 		}
 		return nil, fmt.Errorf("NVD API returned status %d: %s", resp.StatusCode, string(body))
 	}
@@ -315,7 +325,11 @@ func ValidateNVDAPIKey(ctx context.Context, apiKey string) (bool, error) {
 		// Unexpected status
 		body, readErr := io.ReadAll(resp.Body)
 		if readErr != nil {
-			return false, fmt.Errorf("unexpected status %d (failed to read body: %w)", resp.StatusCode, readErr)
+			return false, fmt.Errorf(
+				"unexpected status %d (failed to read body: %w)",
+				resp.StatusCode,
+				readErr,
+			)
 		}
 		return false, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
 	}

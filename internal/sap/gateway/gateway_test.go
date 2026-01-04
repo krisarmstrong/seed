@@ -128,18 +128,33 @@ func TestTesterDetermineStatus(t *testing.T) {
 			expected: gateway.StatusError,
 		},
 		{
-			name:     "critical packet loss",
-			stats:    &gateway.PingStats{Reachable: true, Received: 1, LossPercent: 25.0, AvgTime: 10},
+			name: "critical packet loss",
+			stats: &gateway.PingStats{
+				Reachable:   true,
+				Received:    1,
+				LossPercent: 25.0,
+				AvgTime:     10,
+			},
 			expected: gateway.StatusError,
 		},
 		{
-			name:     "warning packet loss",
-			stats:    &gateway.PingStats{Reachable: true, Received: 1, LossPercent: 10.0, AvgTime: 10},
+			name: "warning packet loss",
+			stats: &gateway.PingStats{
+				Reachable:   true,
+				Received:    1,
+				LossPercent: 10.0,
+				AvgTime:     10,
+			},
 			expected: gateway.StatusWarning,
 		},
 		{
-			name:     "critical latency",
-			stats:    &gateway.PingStats{Reachable: true, Received: 1, LossPercent: 0, AvgTime: 250},
+			name: "critical latency",
+			stats: &gateway.PingStats{
+				Reachable:   true,
+				Received:    1,
+				LossPercent: 0,
+				AvgTime:     250,
+			},
 			expected: gateway.StatusError,
 		},
 		{

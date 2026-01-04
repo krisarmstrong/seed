@@ -109,7 +109,10 @@ func TestLinkMonitorSetInterface(t *testing.T) {
 
 	// State should be reset to unknown.
 	if helper.GetLastState() != network.LinkStateUnknown {
-		t.Errorf("lastState = %v, want LinkStateUnknown after interface change", helper.GetLastState())
+		t.Errorf(
+			"lastState = %v, want LinkStateUnknown after interface change",
+			helper.GetLastState(),
+		)
 	}
 }
 
@@ -326,7 +329,8 @@ func TestLinkEvent(t *testing.T) {
 
 func TestLinkStateConstants(t *testing.T) {
 	// Verify state constants are distinct.
-	if network.LinkStateUnknown == network.LinkStateDown || network.LinkStateUnknown == network.LinkStateUp {
+	if network.LinkStateUnknown == network.LinkStateDown ||
+		network.LinkStateUnknown == network.LinkStateUp {
 		t.Error("LinkStateUnknown overlaps with other states")
 	}
 

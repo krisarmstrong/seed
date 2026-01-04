@@ -33,7 +33,10 @@ func (s *Server) registerWiFiTools(isAllowed func(string) bool) {
 }
 
 // handleWiFiScan handles the wifi_scan tool.
-func (s *Server) handleWiFiScan(ctx context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleWiFiScan(
+	ctx context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	scanner := s.services.GetWiFiScanner()
 	if scanner == nil {
 		return mcp.NewToolResultError("WiFi scanner not available"), nil
@@ -45,14 +48,19 @@ func (s *Server) handleWiFiScan(ctx context.Context, _ mcp.CallToolRequest) (*mc
 	}
 
 	if len(networks) == 0 {
-		return mcp.NewToolResultText("No WiFi networks found. Ensure WiFi interface is available and enabled."), nil
+		return mcp.NewToolResultText(
+			"No WiFi networks found. Ensure WiFi interface is available and enabled.",
+		), nil
 	}
 
 	return formatJSONResult(networks)
 }
 
 // handleWiFiInfo handles the wifi_info tool.
-func (s *Server) handleWiFiInfo(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleWiFiInfo(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	manager := s.services.GetWiFiManager()
 	if manager == nil {
 		return mcp.NewToolResultError("WiFi manager not available"), nil

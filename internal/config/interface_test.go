@@ -30,7 +30,9 @@ func TestDetectActiveInterface(t *testing.T) {
 
 	// Should detect at least one interface on any system with networking
 	if detected == "" {
-		t.Log("Warning: no active interface detected - this is expected in isolated test environments")
+		t.Log(
+			"Warning: no active interface detected - this is expected in isolated test environments",
+		)
 		return
 	}
 
@@ -98,7 +100,11 @@ func TestGetActiveInterface(t *testing.T) {
 
 			// Check fallback flag
 			if usedFallback != tt.expectFallback {
-				t.Errorf("GetActiveInterface usedFallback = %v, want %v", usedFallback, tt.expectFallback)
+				t.Errorf(
+					"GetActiveInterface usedFallback = %v, want %v",
+					usedFallback,
+					tt.expectFallback,
+				)
 			}
 		})
 	}

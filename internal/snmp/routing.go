@@ -65,7 +65,11 @@ func GetRoutes(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]RouteE
 }
 
 // getInetCidrRoutes retrieves routes from the modern inetCidrRouteTable.
-func getInetCidrRoutes(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]RouteEntry, error) {
+func getInetCidrRoutes(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]RouteEntry, error) {
 	// Try SNMPv3 credentials first (more secure).
 	for i := range cfg.V3Credentials {
 		routes, err := walkInetCidrRoutesV3(ctx, ip, &cfg.V3Credentials[i], cfg)
@@ -107,7 +111,11 @@ func getIPCidrRoutes(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]
 }
 
 // walkInetCidrRoutes walks the modern inetCidrRouteTable using SNMPv2c.
-func walkInetCidrRoutes(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]RouteEntry, error) {
+func walkInetCidrRoutes(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]RouteEntry, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -184,7 +192,11 @@ func walkInetCidrRouteTable(params *gosnmp.GoSNMP) ([]RouteEntry, error) {
 }
 
 // walkIPCidrRoutes walks the legacy ipCidrRouteTable using SNMPv2c.
-func walkIPCidrRoutes(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]RouteEntry, error) {
+func walkIPCidrRoutes(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]RouteEntry, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -236,9 +248,14 @@ func walkIPCidrRouteTable(params *gosnmp.GoSNMP) ([]RouteEntry, error) {
 	}
 
 	// Walk ipCidrRouteIfIndex.
-	walkIPCidrRouteAttribute(params, OIDIpCidrRouteIfIndex, routes, func(r *RouteEntry, value string) {
-		r.IfIndex, _ = strconv.Atoi(value)
-	})
+	walkIPCidrRouteAttribute(
+		params,
+		OIDIpCidrRouteIfIndex,
+		routes,
+		func(r *RouteEntry, value string) {
+			r.IfIndex, _ = strconv.Atoi(value)
+		},
+	)
 
 	// Walk ipCidrRouteType.
 	walkIPCidrRouteAttribute(params, OIDIpCidrRouteType, routes, func(r *RouteEntry, value string) {
@@ -246,14 +263,24 @@ func walkIPCidrRouteTable(params *gosnmp.GoSNMP) ([]RouteEntry, error) {
 	})
 
 	// Walk ipCidrRouteProto.
-	walkIPCidrRouteAttribute(params, OIDIpCidrRouteProto, routes, func(r *RouteEntry, value string) {
-		r.Protocol = parseRouteProtocol(value)
-	})
+	walkIPCidrRouteAttribute(
+		params,
+		OIDIpCidrRouteProto,
+		routes,
+		func(r *RouteEntry, value string) {
+			r.Protocol = parseRouteProtocol(value)
+		},
+	)
 
 	// Walk ipCidrRouteMetric1.
-	walkIPCidrRouteAttribute(params, OIDIpCidrRouteMetric1, routes, func(r *RouteEntry, value string) {
-		r.Metric, _ = strconv.Atoi(value)
-	})
+	walkIPCidrRouteAttribute(
+		params,
+		OIDIpCidrRouteMetric1,
+		routes,
+		func(r *RouteEntry, value string) {
+			r.Metric, _ = strconv.Atoi(value)
+		},
+	)
 
 	// Convert map to slice.
 	result := make([]RouteEntry, 0, len(routes))
@@ -314,7 +341,8 @@ func walkIPCidrRouteAttribute(
 		return nil
 	})
 	if err != nil {
-		logging.GetLogger().Debug("Failed to walk IP CIDR route attribute", "oid", oid, "error", err)
+		logging.GetLogger().
+			Debug("Failed to walk IP CIDR route attribute", "oid", oid, "error", err)
 	}
 }
 

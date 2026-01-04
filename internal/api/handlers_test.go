@@ -149,10 +149,20 @@ func TestParseIPAddress(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := api.ParseIPAddress(tt.addr)
 			if result.IsIPv4 != tt.isIPv4 {
-				t.Errorf("ParseIPAddress(%q).IsIPv4 = %v, want %v", tt.addr, result.IsIPv4, tt.isIPv4)
+				t.Errorf(
+					"ParseIPAddress(%q).IsIPv4 = %v, want %v",
+					tt.addr,
+					result.IsIPv4,
+					tt.isIPv4,
+				)
 			}
 			if !tt.isIPv4 && result.Prefix != tt.prefix {
-				t.Errorf("ParseIPAddress(%q).Prefix = %d, want %d", tt.addr, result.Prefix, tt.prefix)
+				t.Errorf(
+					"ParseIPAddress(%q).Prefix = %d, want %d",
+					tt.addr,
+					result.Prefix,
+					tt.prefix,
+				)
 			}
 			if !tt.isIPv4 && result.Scope != tt.scope {
 				t.Errorf("ParseIPAddress(%q).Scope = %q, want %q", tt.addr, result.Scope, tt.scope)
@@ -204,7 +214,12 @@ func TestGetTLSVersionString(t *testing.T) {
 		t.Run(tt.expected, func(t *testing.T) {
 			result := api.GetTLSVersionString(tt.version)
 			if result != tt.expected {
-				t.Errorf("GetTLSVersionString(0x%04X) = %q, want %q", tt.version, result, tt.expected)
+				t.Errorf(
+					"GetTLSVersionString(0x%04X) = %q, want %q",
+					tt.version,
+					result,
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -409,7 +424,8 @@ func TestCustomTestResult(t *testing.T) {
 	if result.Latency <= 0 {
 		t.Error("expected latency to be positive")
 	}
-	if result.TestStatus != "success" && result.TestStatus != "warning" && result.TestStatus != "error" {
+	if result.TestStatus != "success" && result.TestStatus != "warning" &&
+		result.TestStatus != "error" {
 		t.Errorf("invalid test status: %s", result.TestStatus)
 	}
 

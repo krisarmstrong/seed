@@ -349,7 +349,11 @@ func (db *DB) WithTx(ctx context.Context, fn func(*sql.Tx) error) error {
 
 	if fnErr := fn(tx); fnErr != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return fmt.Errorf("failed to rollback transaction: %w (original error: %w)", rbErr, fnErr)
+			return fmt.Errorf(
+				"failed to rollback transaction: %w (original error: %w)",
+				rbErr,
+				fnErr,
+			)
 		}
 		return fnErr
 	}

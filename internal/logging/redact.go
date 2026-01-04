@@ -50,7 +50,9 @@ var sensitivePatterns = []*regexp.Regexp{
 	regexp.MustCompile(`(?i)(oauth[_-]?token|refresh[_-]?token)\s*[=:]\s*[a-zA-Z0-9_\-\.]+`),
 
 	// AWS-style keys
-	regexp.MustCompile(`(?i)(aws[_-]?access[_-]?key[_-]?id|aws[_-]?secret[_-]?access[_-]?key)\s*[=:]\s*[A-Z0-9]+`),
+	regexp.MustCompile(
+		`(?i)(aws[_-]?access[_-]?key[_-]?id|aws[_-]?secret[_-]?access[_-]?key)\s*[=:]\s*[A-Z0-9]+`,
+	),
 	regexp.MustCompile(`AKIA[0-9A-Z]{16}`), // AWS Access Key ID pattern
 
 	// GitHub/GitLab tokens
@@ -58,7 +60,9 @@ var sensitivePatterns = []*regexp.Regexp{
 	regexp.MustCompile(`(?i)(gitlab[_-]?token|glpat-[a-zA-Z0-9_\-]{20,})`),
 
 	// Private keys
-	regexp.MustCompile(`-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----[^-]*-----END\s+(RSA\s+)?PRIVATE\s+KEY-----`),
+	regexp.MustCompile(
+		`-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----[^-]*-----END\s+(RSA\s+)?PRIVATE\s+KEY-----`,
+	),
 	regexp.MustCompile(`(?i)(private[_-]?key|privatekey)\s*[=:]\s*[^\s&]+`),
 
 	// Social Security Numbers (US) - XXX-XX-XXXX format

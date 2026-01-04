@@ -89,7 +89,12 @@ type MACEntry struct {
 }
 
 // GetInterfaceInfo retrieves detailed information for a specific interface by ifIndex.
-func GetInterfaceInfo(ctx context.Context, ip string, ifIndex int, cfg *config.SNMPConfig) (*InterfaceInfo, error) {
+func GetInterfaceInfo(
+	ctx context.Context,
+	ip string,
+	ifIndex int,
+	cfg *config.SNMPConfig,
+) (*InterfaceInfo, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}
@@ -151,7 +156,11 @@ func GetInterfaceInfo(ctx context.Context, ip string, ifIndex int, cfg *config.S
 // GetAllInterfaces retrieves information for all interfaces on a device.
 // It performs a bulk walk of the interface table for efficiency.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func GetAllInterfaces(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]InterfaceInfo, error) {
+func GetAllInterfaces(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]InterfaceInfo, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}
@@ -176,7 +185,11 @@ func GetAllInterfaces(ctx context.Context, ip string, cfg *config.SNMPConfig) ([
 }
 
 // walkInterfaces performs a bulk walk of interface table using SNMPv2c.
-func walkInterfaces(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]InterfaceInfo, error) {
+func walkInterfaces(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]InterfaceInfo, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -253,9 +266,14 @@ func walkInterfaceTable(params *gosnmp.GoSNMP) ([]InterfaceInfo, error) {
 	})
 
 	// Try to get duplex status for each interface.
-	walkIfAttribute(params, OIDDot3StatsDuplexStatus, interfaces, func(info *InterfaceInfo, value string) {
-		info.Duplex = parseDuplexStatus(value)
-	})
+	walkIfAttribute(
+		params,
+		OIDDot3StatsDuplexStatus,
+		interfaces,
+		func(info *InterfaceInfo, value string) {
+			info.Duplex = parseDuplexStatus(value)
+		},
+	)
 
 	// Convert map to slice.
 	result := make([]InterfaceInfo, 0, len(interfaces))
@@ -322,7 +340,11 @@ func GetMACTable(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]MACE
 
 // getMACTableQBridge retrieves MAC table using Q-BRIDGE-MIB (VLAN-aware).
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func getMACTableQBridge(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]MACEntry, error) {
+func getMACTableQBridge(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]MACEntry, error) {
 	// Try SNMPv3 credentials first (more secure).
 	for i := range cfg.V3Credentials {
 		entries, err := walkMACTableQBridgeV3(ctx, ip, &cfg.V3Credentials[i], cfg)
@@ -365,7 +387,11 @@ func getMACTableBridge(ctx context.Context, ip string, cfg *config.SNMPConfig) (
 }
 
 // walkMACTableQBridge walks Q-BRIDGE-MIB MAC table using SNMPv2c.
-func walkMACTableQBridge(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]MACEntry, error) {
+func walkMACTableQBridge(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]MACEntry, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -484,7 +510,11 @@ func walkQBridgeMACTable(params *gosnmp.GoSNMP) ([]MACEntry, error) {
 }
 
 // walkMACTableBridge walks BRIDGE-MIB MAC table using SNMPv2c.
-func walkMACTableBridge(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]MACEntry, error) {
+func walkMACTableBridge(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]MACEntry, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -596,7 +626,12 @@ func walkBridgeMACTable(params *gosnmp.GoSNMP) ([]MACEntry, error) {
 // GetPortVLANs retrieves VLAN membership for a specific port.
 // Returns a list of VLAN IDs that the port is a member of.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func GetPortVLANs(ctx context.Context, ip string, ifIndex int, cfg *config.SNMPConfig) ([]int, error) {
+func GetPortVLANs(
+	ctx context.Context,
+	ip string,
+	ifIndex int,
+	cfg *config.SNMPConfig,
+) ([]int, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}

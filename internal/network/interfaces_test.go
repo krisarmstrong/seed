@@ -36,7 +36,11 @@ func TestNewManager(t *testing.T) {
 
 			helper := network.NewManagerTestHelper(mgr)
 			if helper.GetCurrentInterface() != tt.defaultInterface {
-				t.Errorf("currentInterface = %v, want %v", helper.GetCurrentInterface(), tt.defaultInterface)
+				t.Errorf(
+					"currentInterface = %v, want %v",
+					helper.GetCurrentInterface(),
+					tt.defaultInterface,
+				)
 			}
 
 			if helper.GetInterfaces() == nil {
@@ -900,7 +904,11 @@ func TestFindFirstAvailableLogic(t *testing.T) {
 			// Note: Order in map iteration may vary, so we check that
 			// it's one of the expected interfaces (eth0 or wlan0).
 			if got != "eth0" && got != "wlan0" {
-				t.Errorf("FindFirstAvailable(%v) = %v, want eth0 or wlan0 (got neither)", tt.preferred, got)
+				t.Errorf(
+					"FindFirstAvailable(%v) = %v, want eth0 or wlan0 (got neither)",
+					tt.preferred,
+					got,
+				)
 			}
 			t.Logf("FindFirstAvailable(%v) = %v", tt.preferred, got)
 		})

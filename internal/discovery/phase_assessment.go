@@ -81,7 +81,10 @@ func DefaultAssessmentConfig() *AssessmentConfig {
 }
 
 // NewAssessmentPhase creates a new Phase 4 implementation.
-func NewAssessmentPhase(config *AssessmentConfig, broadcaster EventBroadcaster) (*AssessmentPhase, error) {
+func NewAssessmentPhase(
+	config *AssessmentConfig,
+	broadcaster EventBroadcaster,
+) (*AssessmentPhase, error) {
 	if config == nil {
 		config = DefaultAssessmentConfig()
 	}

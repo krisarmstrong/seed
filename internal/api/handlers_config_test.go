@@ -201,7 +201,11 @@ func TestHandleConfigBackupDelete(t *testing.T) {
 	s.SetConfigPath(configPath)
 
 	// Test DELETE /api/config/backup/delete?name=...
-	req := httptest.NewRequest(http.MethodDelete, "/api/config/backup/delete?name="+backup.Name, http.NoBody)
+	req := httptest.NewRequest(
+		http.MethodDelete,
+		"/api/config/backup/delete?name="+backup.Name,
+		http.NoBody,
+	)
 	w := httptest.NewRecorder()
 	s.HandleConfigBackupDelete(w, req)
 
@@ -227,7 +231,11 @@ func TestHandleConfigVersion_MethodNotAllowed(t *testing.T) {
 	s.HandleConfigVersion(w, req)
 
 	if w.Code != http.StatusMethodNotAllowed {
-		t.Errorf("HandleConfigVersion(POST) status = %d, want %d", w.Code, http.StatusMethodNotAllowed)
+		t.Errorf(
+			"HandleConfigVersion(POST) status = %d, want %d",
+			w.Code,
+			http.StatusMethodNotAllowed,
+		)
 	}
 }
 

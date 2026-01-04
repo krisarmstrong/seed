@@ -237,7 +237,12 @@ func TestValidateServerAddress(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validation.ValidateServerAddress(tt.server)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ValidateServerAddress(%q) error = %v, wantErr %v", tt.server, err, tt.wantErr)
+				t.Errorf(
+					"ValidateServerAddress(%q) error = %v, wantErr %v",
+					tt.server,
+					err,
+					tt.wantErr,
+				)
 			}
 		})
 	}

@@ -183,7 +183,9 @@ func (c *LLDPCapture) processPacket(packet gopacket.Packet) {
 			neighbor.SystemDescription = lldpInfo.SysDescription
 
 			// System Capabilities
-			neighbor.SystemCapabilities = parseSystemCapabilities(lldpInfo.SysCapabilities.SystemCap)
+			neighbor.SystemCapabilities = parseSystemCapabilities(
+				lldpInfo.SysCapabilities.SystemCap,
+			)
 
 			// Management Address
 			if len(lldpInfo.MgmtAddress.Address) > 0 {

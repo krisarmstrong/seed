@@ -62,18 +62,22 @@ func NewTestServerWithConfig(cfg *config.Config) *Server {
 		endpointRateLimiter: NewEndpointRateLimiter(DefaultEndpointRateLimitConfig()),
 		linkMonitor:         network.NewLinkMonitor(cfg.Interface.Default),
 		deviceDiscovery:     discovery.NewDeviceDiscovery(cfg.Interface.Default),
-		discoveryService:    discovery.NewService(cfg, cfg.Interface.Default, nil), // nil profiler = use internal
-		dnsTester:           dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
-		dhcpMonitor:         dhcp.NewMonitor(cfg.Interface.Default),
-		gatewayTester:       gateway.NewTester(gateway.DefaultThresholds()),
-		vlanManager:         vlan.NewManager(cfg.Interface.Default),
-		vlanTrafficMonitor:  vlan.NewTrafficMonitor(cfg.Interface.Default),
-		wifiManager:         wifi.NewManager(cfg.Interface.Default),
-		cableTester:         cable.NewTester(cfg.Interface.Default),
-		speedtestTester:     speedtest.NewTesterWithConfig(cfg.Speedtest.ServerID),
-		iperfManager:        iperf.NewManager(),
-		publicipChecker:     publicip.NewChecker(),
-		setupTokenManager:   NewSetupTokenManager(), // Fixes test initialization
+		discoveryService: discovery.NewService(
+			cfg,
+			cfg.Interface.Default,
+			nil,
+		), // nil profiler = use internal
+		dnsTester:          dns.NewTester("", cfg.DNS.TestHostname, dns.DefaultThresholds()),
+		dhcpMonitor:        dhcp.NewMonitor(cfg.Interface.Default),
+		gatewayTester:      gateway.NewTester(gateway.DefaultThresholds()),
+		vlanManager:        vlan.NewManager(cfg.Interface.Default),
+		vlanTrafficMonitor: vlan.NewTrafficMonitor(cfg.Interface.Default),
+		wifiManager:        wifi.NewManager(cfg.Interface.Default),
+		cableTester:        cable.NewTester(cfg.Interface.Default),
+		speedtestTester:    speedtest.NewTesterWithConfig(cfg.Speedtest.ServerID),
+		iperfManager:       iperf.NewManager(),
+		publicipChecker:    publicip.NewChecker(),
+		setupTokenManager:  NewSetupTokenManager(), // Fixes test initialization
 	}
 
 	// Initialize WebSocket hub

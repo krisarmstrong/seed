@@ -63,7 +63,13 @@ func TestDetectChannelWidth(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := wifi.DetectChannelWidth(tt.freq, tt.htMode)
 			if got != tt.want {
-				t.Errorf("DetectChannelWidth(%d, %q) = %d, want %d", tt.freq, tt.htMode, got, tt.want)
+				t.Errorf(
+					"DetectChannelWidth(%d, %q) = %d, want %d",
+					tt.freq,
+					tt.htMode,
+					got,
+					tt.want,
+				)
 			}
 		})
 	}
@@ -247,18 +253,34 @@ func TestGetChannelGraphData(t *testing.T) {
 
 			// Check counts
 			if len(got.Networks2_4GHz) != tt.wantNum2_4 {
-				t.Errorf("GetChannelGraphData() 2.4GHz count = %d, want %d", len(got.Networks2_4GHz), tt.wantNum2_4)
+				t.Errorf(
+					"GetChannelGraphData() 2.4GHz count = %d, want %d",
+					len(got.Networks2_4GHz),
+					tt.wantNum2_4,
+				)
 			}
 			if len(got.Networks5GHz) != tt.wantNum5 {
-				t.Errorf("GetChannelGraphData() 5GHz count = %d, want %d", len(got.Networks5GHz), tt.wantNum5)
+				t.Errorf(
+					"GetChannelGraphData() 5GHz count = %d, want %d",
+					len(got.Networks5GHz),
+					tt.wantNum5,
+				)
 			}
 			if len(got.Networks6GHz) != tt.wantNum6 {
-				t.Errorf("GetChannelGraphData() 6GHz count = %d, want %d", len(got.Networks6GHz), tt.wantNum6)
+				t.Errorf(
+					"GetChannelGraphData() 6GHz count = %d, want %d",
+					len(got.Networks6GHz),
+					tt.wantNum6,
+				)
 			}
 
 			// Check connected BSSID
 			if got.ConnectedBSSID != tt.wantConnected {
-				t.Errorf("GetChannelGraphData() ConnectedBSSID = %q, want %q", got.ConnectedBSSID, tt.wantConnected)
+				t.Errorf(
+					"GetChannelGraphData() ConnectedBSSID = %q, want %q",
+					got.ConnectedBSSID,
+					tt.wantConnected,
+				)
 			}
 
 			// Check ScanTime is recent
@@ -282,7 +304,10 @@ func TestGetChannelGraphData(t *testing.T) {
 				for _, cn := range allNetworks {
 					if cn.BSSID == tt.connectedBSSID {
 						if !cn.IsConnected {
-							t.Errorf("Network with BSSID %s should be marked as connected", tt.connectedBSSID)
+							t.Errorf(
+								"Network with BSSID %s should be marked as connected",
+								tt.connectedBSSID,
+							)
 						}
 						foundConnected = true
 					} else if cn.IsConnected {
@@ -290,7 +315,10 @@ func TestGetChannelGraphData(t *testing.T) {
 					}
 				}
 				if !foundConnected && len(allNetworks) > 0 {
-					t.Errorf("Connected network with BSSID %s not found in results", tt.connectedBSSID)
+					t.Errorf(
+						"Connected network with BSSID %s not found in results",
+						tt.connectedBSSID,
+					)
 				}
 			}
 		})

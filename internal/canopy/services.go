@@ -341,7 +341,11 @@ func (s *AIService) AnalyzeCoverage(_ context.Context, _ *Survey) (*CoverageAnal
 }
 
 // SuggestAPPlacement suggests optimal AP placement.
-func (s *AIService) SuggestAPPlacement(_ context.Context, _ *FloorPlan, _ map[string]any) ([]Recommendation, error) {
+func (s *AIService) SuggestAPPlacement(
+	_ context.Context,
+	_ *FloorPlan,
+	_ map[string]any,
+) ([]Recommendation, error) {
 	// AI-based AP placement requires ML models not yet implemented
 	return nil, ErrNotImplemented
 }

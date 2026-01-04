@@ -141,7 +141,10 @@ type MetricQueryOptions struct {
 }
 
 // GetLatest retrieves the most recent metric of the given type.
-func (r *MetricsRepository) GetLatest(ctx context.Context, interfaceName, metricType string) (*Metric, error) {
+func (r *MetricsRepository) GetLatest(
+	ctx context.Context,
+	interfaceName, metricType string,
+) (*Metric, error) {
 	row := r.db.QueryRow(ctx, `
 		SELECT id, interface_name, metric_type, value, unit, timestamp, metadata_json
 		FROM metrics
@@ -174,7 +177,10 @@ func (r *MetricsRepository) GetLatest(ctx context.Context, interfaceName, metric
 // GetAggregates returns aggregated metrics over a time range.
 //
 
-func (r *MetricsRepository) GetAggregates(ctx context.Context, opts MetricAggregateOptions) (*MetricAggregate, error) {
+func (r *MetricsRepository) GetAggregates(
+	ctx context.Context,
+	opts MetricAggregateOptions,
+) (*MetricAggregate, error) {
 	query := `
 		SELECT
 			COUNT(*) as count,
@@ -259,7 +265,10 @@ func (r *MetricsRepository) Count(ctx context.Context) (int64, error) {
 
 // GetDistinctInterfaces returns all unique interface names with metrics.
 func (r *MetricsRepository) GetDistinctInterfaces(ctx context.Context) ([]string, error) {
-	rows, err := r.db.Query(ctx, `SELECT DISTINCT interface_name FROM metrics ORDER BY interface_name`)
+	rows, err := r.db.Query(
+		ctx,
+		`SELECT DISTINCT interface_name FROM metrics ORDER BY interface_name`,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get distinct interfaces: %w", err)
 	}
@@ -410,12 +419,22 @@ func (r *MetricsRepository) RecordDNSResult(ctx context.Context, result *DNSResu
 		result.Timestamp = time.Now().UTC()
 	}
 
-	res, err := r.db.Exec(ctx, `
+	res, err := r.db.Exec(
+		ctx,
+		`
 		INSERT INTO dns_results
 		(interface_name, server, hostname, response_time_ms, resolved_ip, status, error_message, timestamp)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-	`, result.InterfaceName, result.Server, result.Hostname, result.ResponseTimeMs,
-		result.ResolvedIP, result.Status, result.ErrorMessage, result.Timestamp.Format(time.RFC3339))
+	`,
+		result.InterfaceName,
+		result.Server,
+		result.Hostname,
+		result.ResponseTimeMs,
+		result.ResolvedIP,
+		result.Status,
+		result.ErrorMessage,
+		result.Timestamp.Format(time.RFC3339),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to record DNS result: %w", err)
 	}

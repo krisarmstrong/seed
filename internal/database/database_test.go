@@ -869,9 +869,24 @@ func TestDeviceRepositoryExtended(t *testing.T) {
 
 	// Create test devices
 	devices := []*database.Device{
-		{IPAddress: "192.168.1.1", MACAddress: "aa:bb:cc:dd:ee:01", Vendor: "Cisco", DeviceType: "router"},
-		{IPAddress: "192.168.1.2", MACAddress: "aa:bb:cc:dd:ee:02", Vendor: "Cisco", DeviceType: "switch"},
-		{IPAddress: "192.168.1.3", MACAddress: "aa:bb:cc:dd:ee:03", Vendor: "HP", DeviceType: "router"},
+		{
+			IPAddress:  "192.168.1.1",
+			MACAddress: "aa:bb:cc:dd:ee:01",
+			Vendor:     "Cisco",
+			DeviceType: "router",
+		},
+		{
+			IPAddress:  "192.168.1.2",
+			MACAddress: "aa:bb:cc:dd:ee:02",
+			Vendor:     "Cisco",
+			DeviceType: "switch",
+		},
+		{
+			IPAddress:  "192.168.1.3",
+			MACAddress: "aa:bb:cc:dd:ee:03",
+			Vendor:     "HP",
+			DeviceType: "router",
+		},
 	}
 
 	for _, d := range devices {
@@ -964,7 +979,10 @@ func TestAlertRepositoryExtended(t *testing.T) {
 
 	t.Run("GetUnacknowledgedCount", func(t *testing.T) {
 		// Create one more unacknowledged
-		err := repo.Create(ctx, &database.Alert{Title: "New Alert", Severity: "info", Source: "test"})
+		err := repo.Create(
+			ctx,
+			&database.Alert{Title: "New Alert", Severity: "info", Source: "test"},
+		)
 		require.NoError(t, err)
 
 		count, err := repo.GetUnacknowledgedCount(ctx)
@@ -1064,9 +1082,15 @@ func TestMetricsRepositoryExtended(t *testing.T) {
 
 	t.Run("GetDistinctInterfaces", func(t *testing.T) {
 		// Record some metrics with different interfaces
-		err := repo.Record(ctx, &database.Metric{InterfaceName: "eth0", MetricType: "bandwidth", Value: 100})
+		err := repo.Record(
+			ctx,
+			&database.Metric{InterfaceName: "eth0", MetricType: "bandwidth", Value: 100},
+		)
 		require.NoError(t, err)
-		err = repo.Record(ctx, &database.Metric{InterfaceName: "eth1", MetricType: "bandwidth", Value: 200})
+		err = repo.Record(
+			ctx,
+			&database.Metric{InterfaceName: "eth1", MetricType: "bandwidth", Value: 200},
+		)
 		require.NoError(t, err)
 
 		interfaces, err := repo.GetDistinctInterfaces(ctx)
@@ -1078,7 +1102,10 @@ func TestMetricsRepositoryExtended(t *testing.T) {
 
 	t.Run("GetDistinctTypes", func(t *testing.T) {
 		// Record metrics with different types
-		err := repo.Record(ctx, &database.Metric{InterfaceName: "eth0", MetricType: "latency", Value: 10})
+		err := repo.Record(
+			ctx,
+			&database.Metric{InterfaceName: "eth0", MetricType: "latency", Value: 10},
+		)
 		require.NoError(t, err)
 
 		types, err := repo.GetDistinctTypes(ctx)
@@ -1372,9 +1399,24 @@ func TestDeviceListWithFilters(t *testing.T) {
 
 	// Create devices with different vendors and types
 	devices := []*database.Device{
-		{IPAddress: "10.0.0.1", MACAddress: "11:22:33:44:55:01", Vendor: "Cisco", DeviceType: "router"},
-		{IPAddress: "10.0.0.2", MACAddress: "11:22:33:44:55:02", Vendor: "Cisco", DeviceType: "switch"},
-		{IPAddress: "10.0.0.3", MACAddress: "11:22:33:44:55:03", Vendor: "HP", DeviceType: "printer"},
+		{
+			IPAddress:  "10.0.0.1",
+			MACAddress: "11:22:33:44:55:01",
+			Vendor:     "Cisco",
+			DeviceType: "router",
+		},
+		{
+			IPAddress:  "10.0.0.2",
+			MACAddress: "11:22:33:44:55:02",
+			Vendor:     "Cisco",
+			DeviceType: "switch",
+		},
+		{
+			IPAddress:  "10.0.0.3",
+			MACAddress: "11:22:33:44:55:03",
+			Vendor:     "HP",
+			DeviceType: "printer",
+		},
 	}
 	for _, d := range devices {
 		err := repo.Create(ctx, d)
