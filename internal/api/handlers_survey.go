@@ -39,6 +39,43 @@ func isValidSurveyID(id string) bool {
 	return validation.ValidateSurveyID(id) == nil
 }
 
+// surveyHandlerContext bundles common handler dependencies for cleaner code.
+type surveyHandlerContext struct {
+	w         http.ResponseWriter
+	logger    *slog.Logger
+	localizer *i18n.Localizer
+}
+
+// sendValidationError sends a validation error response and returns true.
+func (c *surveyHandlerContext) sendValidationError(msgKey string) bool {
+	sendErrorResponseWithDetails(c.w, c.logger, http.StatusBadRequest, ErrCodeValidation, c.localizer.T(msgKey), "")
+	return true
+}
+
+// sendBadRequestError sends a bad request error response and returns true.
+func (c *surveyHandlerContext) sendBadRequestError(msgKey string) bool {
+	sendErrorResponseWithDetails(c.w, c.logger, http.StatusBadRequest, ErrCodeBadRequest, c.localizer.T(msgKey), "")
+	return true
+}
+
+// sendInternalError sends an internal server error response and returns true.
+func (c *surveyHandlerContext) sendInternalError(msgKey string) bool {
+	sendErrorResponseWithDetails(c.w, c.logger, http.StatusInternalServerError, ErrCodeInternal, c.localizer.T(msgKey), "")
+	return true
+}
+
+// sendMethodNotAllowed sends a method not allowed error response and returns true.
+func (c *surveyHandlerContext) sendMethodNotAllowed() bool {
+	sendErrorResponseWithDetails(c.w, c.logger, http.StatusMethodNotAllowed, ErrCodeMethodNotAllowed, c.localizer.T("errors.api.methodNotAllowed"), "")
+	return true
+}
+
+// sendRateLimitError sends a rate limit error response and returns true.
+func (c *surveyHandlerContext) sendRateLimitError() bool {
+	sendErrorResponseWithDetails(c.w, c.logger, http.StatusTooManyRequests, ErrCodeRateLimit, c.localizer.T("errors.survey.rateLimitExceeded"), "")
+	return true
+}
+
 func (s *Server) createSurvey(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
@@ -537,29 +574,16 @@ type UpdateSurveySettingsRequest struct {
 func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
+	ctx := &surveyHandlerContext{w, logger, localizer}
 
 	if r.Method != http.MethodPut {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusMethodNotAllowed,
-			ErrCodeMethodNotAllowed,
-			localizer.T("errors.api.methodNotAllowed"),
-			"",
-		)
+		ctx.sendMethodNotAllowed()
 		return
 	}
 
 	id := r.URL.Query().Get("id")
 	if !isValidSurveyID(id) {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidId"),
-			"",
-		)
+		ctx.sendValidationError("errors.survey.invalidId")
 		return
 	}
 
@@ -567,88 +591,40 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 	var req UpdateSurveySettingsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Warn("Invalid request body", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.api.invalidRequestBody"),
-			"",
-		)
+		ctx.sendBadRequestError("errors.api.invalidRequestBody")
 		return
 	}
 
 	// Validate survey type
 	surveyType := survey.Type(req.SurveyType)
-	if !slices.Contains(
-		[]survey.Type{survey.TypePassive, survey.TypeActive, survey.TypeThroughput},
-		surveyType,
-	) {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidType"),
-			"",
-		)
+	validTypes := []survey.Type{survey.TypePassive, survey.TypeActive, survey.TypeThroughput}
+	if !slices.Contains(validTypes, surveyType) {
+		ctx.sendValidationError("errors.survey.invalidType")
 		return
 	}
 
 	// Validate optional fields
-	if req.IperfServer != "" {
-		if err := validation.ValidateServerAddress(req.IperfServer); err != nil {
-			logger.Warn("Survey validation failed", "error", err)
-			sendErrorResponseWithDetails(
-				w,
-				logger,
-				http.StatusBadRequest,
-				ErrCodeValidation,
-				localizer.T("errors.survey.validationFailed"),
-				"",
-			)
-			return
-		}
+	if req.IperfServer != "" && validation.ValidateServerAddress(req.IperfServer) != nil {
+		logger.Warn("Survey validation failed: invalid iperf server")
+		ctx.sendValidationError("errors.survey.validationFailed")
+		return
 	}
-	if req.TestDuration != 0 {
-		if err := validation.ValidateIntRange(req.TestDuration, "testDuration", 1, 300); err != nil {
-			logger.Warn("Survey validation failed", "error", err)
-			sendErrorResponseWithDetails(
-				w,
-				logger,
-				http.StatusBadRequest,
-				ErrCodeValidation,
-				localizer.T("errors.survey.validationFailed"),
-				"",
-			)
-			return
-		}
+	if req.TestDuration != 0 && validation.ValidateIntRange(req.TestDuration, "testDuration", 1, 300) != nil {
+		logger.Warn("Survey validation failed: invalid test duration")
+		ctx.sendValidationError("errors.survey.validationFailed")
+		return
 	}
 
 	if err := s.surveyManager.UpdateSurveySettings(id, surveyType, req.IperfServer, req.TestDuration); err != nil {
 		logger.Error("Failed to update survey", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.survey.updateFailed"),
-			"",
-		)
+		ctx.sendBadRequestError("errors.survey.updateFailed")
 		return
 	}
 
 	settingsUpdatedSurvey, err := s.surveyManager.GetSurvey(id)
 	if err != nil {
 		logger.Error("Failed to get survey", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusInternalServerError,
-			ErrCodeInternal,
-			localizer.T("errors.survey.getSurveyFailed"),
-			"",
-		)
+		ctx.sendInternalError("errors.survey.getSurveyFailed")
 		return
 	}
 	sendJSONResponse(w, logger, http.StatusOK, settingsUpdatedSurvey)
@@ -660,124 +636,62 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 func (s *Server) importAirMapper(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
+	ctx := &surveyHandlerContext{w, logger, localizer}
 
 	if r.Method != http.MethodPost {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusMethodNotAllowed,
-			ErrCodeMethodNotAllowed,
-			localizer.T("errors.api.methodNotAllowed"),
-			"",
-		)
+		ctx.sendMethodNotAllowed()
 		return
 	}
 
 	if !s.endpointRateLimiter.Allow(s.getClientIP(r)) {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusTooManyRequests,
-			ErrCodeRateLimit,
-			localizer.T("errors.survey.rateLimitExceeded"),
-			"",
-		)
+		ctx.sendRateLimitError()
 		return
 	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeAirMapper)
 	if err := r.ParseMultipartForm(MaxBodySizeAirMapper); err != nil {
 		logger.Warn("Survey file too large", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.survey.fileTooLarge"),
-			"",
-		)
+		ctx.sendBadRequestError("errors.survey.fileTooLarge")
 		return
 	}
 
 	file, handler, err := r.FormFile("file")
 	if err != nil {
 		logger.Warn("No file provided for survey", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.survey.noFileProvided"),
-			"",
-		)
+		ctx.sendBadRequestError("errors.survey.noFileProvided")
 		return
 	}
 	defer func() { _ = file.Close() }()
 
-	if validateErr := validation.ValidateFilename(handler.Filename, "filename"); validateErr != nil {
-		logger.Warn("Survey validation failed", "error", validateErr)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.validationFailed"),
-			"",
-		)
+	if validation.ValidateFilename(handler.Filename, "filename") != nil {
+		logger.Warn("Survey validation failed: invalid filename")
+		ctx.sendValidationError("errors.survey.validationFailed")
 		return
 	}
 
 	if !strings.HasSuffix(strings.ToLower(handler.Filename), ".amp") {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidFileType"),
-			"",
-		)
+		ctx.sendValidationError("errors.survey.invalidFileType")
 		return
 	}
 
 	data, err := io.ReadAll(file)
 	if err != nil {
 		logger.Error("Failed to read survey file", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusInternalServerError,
-			ErrCodeInternal,
-			localizer.T("errors.survey.readFileFailed"),
-			"",
-		)
+		ctx.sendInternalError("errors.survey.readFileFailed")
 		return
 	}
 
 	ampFile, err := survey.ParseAirMapperFile(data)
 	if err != nil {
 		logger.Warn("Failed to parse survey file", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.survey.parseFileFailed"),
-			"",
-		)
+		ctx.sendBadRequestError("errors.survey.parseFileFailed")
 		return
 	}
 
 	result, err := ampFile.ToImportResult()
 	if err != nil {
 		logger.Error("Failed to process survey file", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusInternalServerError,
-			ErrCodeInternal,
-			localizer.T("errors.survey.processFileFailed"),
-			"",
-		)
+		ctx.sendInternalError("errors.survey.processFileFailed")
 		return
 	}
 	sendJSONResponse(w, logger, http.StatusOK, result)
@@ -1193,115 +1107,53 @@ type UpdateFloorRequest struct {
 func (s *Server) updateFloor(w http.ResponseWriter, r *http.Request) {
 	logger := logging.FromContext(r.Context())
 	localizer := i18n.FromRequest(r)
+	ctx := &surveyHandlerContext{w, logger, localizer}
 
 	surveyID := r.URL.Query().Get("id")
 	floorID := r.URL.Query().Get("floorId")
 
 	if !isValidSurveyID(surveyID) {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidId"),
-			"",
-		) // fixes #694
+		ctx.sendValidationError("errors.survey.invalidId")
 		return
 	}
 	if !isValidFloorID(floorID) {
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.invalidId"),
-			"",
-		) // fixes #694
+		ctx.sendValidationError("errors.survey.invalidId")
 		return
 	}
 
-	// Limit request body size
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
 
 	var req UpdateFloorRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Warn("Invalid request body", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeBadRequest,
-			localizer.T("errors.api.invalidRequestBody"),
-			"",
-		) // fixes #694, #H7
+		ctx.sendBadRequestError("errors.api.invalidRequestBody")
 		return
 	}
 
-	// Validate floor name
-	if err := validation.ValidateStringLength(req.Name, "name", 1, 50); err != nil {
-		logger.Warn("Survey validation failed", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.validationFailed"),
-			"",
-		) // fixes #694, #H7
+	// Validate floor name and level
+	if validation.ValidateStringLength(req.Name, "name", 1, 50) != nil {
+		logger.Warn("Survey validation failed: invalid floor name")
+		ctx.sendValidationError("errors.survey.validationFailed")
 		return
 	}
-
-	// Validate floor level
-	if err := validation.ValidateIntRange(req.Level, "level", -10, 200); err != nil {
-		logger.Warn("Survey validation failed", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusBadRequest,
-			ErrCodeValidation,
-			localizer.T("errors.survey.validationFailed"),
-			"",
-		) // fixes #694, #H7
+	if validation.ValidateIntRange(req.Level, "level", -10, 200) != nil {
+		logger.Warn("Survey validation failed: invalid floor level")
+		ctx.sendValidationError("errors.survey.validationFailed")
 		return
 	}
 
 	if err := s.surveyManager.UpdateFloor(surveyID, floorID, req.Name, req.Level); err != nil {
-		logger.Error(
-			"Failed to update floor",
-			"survey_id",
-			surveyID,
-			"floor_id",
-			floorID,
-			"error",
-			err,
-		)
-		logger.Error("Failed to update survey metadata", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusInternalServerError,
-			ErrCodeInternal,
-			localizer.T("errors.survey.updateFailed"),
-			"",
-		) // fixes #694, #H7
+		logger.Error("Failed to update floor", "survey_id", surveyID, "floor_id", floorID, "error", err)
+		ctx.sendInternalError("errors.survey.updateFailed")
 		return
 	}
 
-	// Return updated floor
 	floor, err := s.surveyManager.GetFloor(surveyID, floorID)
 	if err != nil {
-		logger.Error("Failed to get survey", "error", err)
-		sendErrorResponseWithDetails(
-			w,
-			logger,
-			http.StatusInternalServerError,
-			ErrCodeInternal,
-			localizer.T("errors.survey.getSurveyFailed"),
-			"",
-		) // fixes #694, #H7
+		logger.Error("Failed to get floor", "error", err)
+		ctx.sendInternalError("errors.survey.getSurveyFailed")
 		return
 	}
-
 	sendJSONResponse(w, logger, http.StatusOK, floor)
 }
 
