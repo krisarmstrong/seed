@@ -17,7 +17,10 @@ func TestNewRogueDetector(t *testing.T) {
 		t.Fatal("config should not be nil")
 	}
 	if rd.RogueConfig().Interface != "" {
-		t.Errorf("expected default interface to be empty (must be set by caller), got %s", rd.RogueConfig().Interface)
+		t.Errorf(
+			"expected default interface to be empty (must be set by caller), got %s",
+			rd.RogueConfig().Interface,
+		)
 	}
 
 	// Test with custom config

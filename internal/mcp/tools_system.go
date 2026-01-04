@@ -15,8 +15,11 @@ import (
 func (s *Server) registerSystemTools(isAllowed func(string) bool) {
 	// get_interfaces - List network interfaces
 	s.addTool("get_interfaces", isAllowed,
-		mcp.NewTool("get_interfaces",
-			mcp.WithDescription("List all network interfaces with their type, status, speed, and capabilities."),
+		mcp.NewTool(
+			"get_interfaces",
+			mcp.WithDescription(
+				"List all network interfaces with their type, status, speed, and capabilities.",
+			),
 		),
 		s.handleGetInterfaces,
 	)
@@ -67,8 +70,11 @@ func (s *Server) registerSystemTools(isAllowed func(string) bool) {
 
 	// system_health - Get system health metrics
 	s.addTool("system_health", isAllowed,
-		mcp.NewTool("system_health",
-			mcp.WithDescription("Get system health metrics including CPU usage, memory usage, disk space, and uptime."),
+		mcp.NewTool(
+			"system_health",
+			mcp.WithDescription(
+				"Get system health metrics including CPU usage, memory usage, disk space, and uptime.",
+			),
 		),
 		s.handleSystemHealth,
 	)
@@ -86,7 +92,10 @@ func (s *Server) registerSystemTools(isAllowed func(string) bool) {
 }
 
 // handleGetInterfaces handles the get_interfaces tool.
-func (s *Server) handleGetInterfaces(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGetInterfaces(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	manager := s.services.GetNetManager()
 	if manager == nil {
 		return mcp.NewToolResultError("Network manager not available"), nil
@@ -97,7 +106,10 @@ func (s *Server) handleGetInterfaces(_ context.Context, _ mcp.CallToolRequest) (
 }
 
 // handleGetLinkStatus handles the get_link_status tool.
-func (s *Server) handleGetLinkStatus(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGetLinkStatus(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	monitor := s.services.GetLinkMonitor()
 	if monitor == nil {
 		return mcp.NewToolResultError("Link monitor not available"), nil
@@ -111,7 +123,10 @@ func (s *Server) handleGetLinkStatus(_ context.Context, _ mcp.CallToolRequest) (
 }
 
 // handleGetIPConfig handles the get_ip_config tool.
-func (s *Server) handleGetIPConfig(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGetIPConfig(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	manager := s.services.GetNetManager()
 	if manager == nil {
 		return mcp.NewToolResultError("Network manager not available"), nil
@@ -132,7 +147,10 @@ func (s *Server) handleGetIPConfig(_ context.Context, _ mcp.CallToolRequest) (*m
 }
 
 // handleGetPublicIP handles the get_public_ip tool.
-func (s *Server) handleGetPublicIP(ctx context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGetPublicIP(
+	ctx context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	checker := s.services.GetPublicIPChecker()
 	if checker == nil {
 		return mcp.NewToolResultError("Public IP checker not available"), nil
@@ -143,7 +161,10 @@ func (s *Server) handleGetPublicIP(ctx context.Context, _ mcp.CallToolRequest) (
 }
 
 // handleGetVLANInfo handles the get_vlan_info tool.
-func (s *Server) handleGetVLANInfo(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGetVLANInfo(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	manager := s.services.GetVLANManager()
 	if manager == nil {
 		return mcp.NewToolResultError("VLAN manager not available"), nil
@@ -154,7 +175,10 @@ func (s *Server) handleGetVLANInfo(_ context.Context, _ mcp.CallToolRequest) (*m
 }
 
 // handleSystemHealth handles the system_health tool.
-func (s *Server) handleSystemHealth(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleSystemHealth(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
@@ -188,7 +212,10 @@ func (s *Server) handleSystemHealth(_ context.Context, _ mcp.CallToolRequest) (*
 }
 
 // handleGetDiscoveryStatus handles the get_discovery_status tool.
-func (s *Server) handleGetDiscoveryStatus(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleGetDiscoveryStatus(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	svc := s.services.GetDiscoveryService()
 	if svc == nil {
 		return mcp.NewToolResultError("Discovery service not available"), nil

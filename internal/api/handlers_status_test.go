@@ -24,7 +24,13 @@ func TestHandleStatus(t *testing.T) {
 
 	// Verify response contains expected fields
 	body := w.Body.String()
-	expectedFields := []string{`"status"`, `"version"`, `"interface"`, `"isWireless"`, `"icmpAvailable"`}
+	expectedFields := []string{
+		`"status"`,
+		`"version"`,
+		`"interface"`,
+		`"isWireless"`,
+		`"icmpAvailable"`,
+	}
 	for _, field := range expectedFields {
 		if !strings.Contains(body, field) {
 			t.Errorf("Expected response to contain %s, got: %s", field, body)

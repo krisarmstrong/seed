@@ -136,7 +136,10 @@ func runInstall(cmd *cobra.Command, _ []string) {
 	// Check root for system mode
 	if mode == paths.ModeSystem || (mode == paths.ModeAuto && os.Getuid() == 0) {
 		if os.Getuid() != 0 {
-			fmt.Fprintf(os.Stderr, "Error: system installation requires root privileges (use sudo)\n")
+			fmt.Fprintf(
+				os.Stderr,
+				"Error: system installation requires root privileges (use sudo)\n",
+			)
 			os.Exit(1)
 		}
 		mode = paths.ModeSystem

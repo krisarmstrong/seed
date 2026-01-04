@@ -621,7 +621,8 @@ func (p *Pipeline) run(ctx context.Context) {
 		p.mu.Lock()
 		now := time.Now()
 		p.currentRun.CompletedAt = &now
-		if p.currentRun.Status != PipelineStateCanceled && p.currentRun.Status != PipelineStateFailed {
+		if p.currentRun.Status != PipelineStateCanceled &&
+			p.currentRun.Status != PipelineStateFailed {
 			p.currentRun.Status = PipelineStateComplete
 		}
 		// Copy values under lock to avoid race after unlock (fixes #824)
@@ -707,7 +708,10 @@ func (p *Pipeline) logPipelineCompletion(deviceCount int) {
 }
 
 // runEnumerationPhase executes the device enumeration phase.
-func (p *Pipeline) runEnumerationPhase(ctx context.Context, phaseNumber int) ([]*DiscoveredDevice, error) {
+func (p *Pipeline) runEnumerationPhase(
+	ctx context.Context,
+	phaseNumber int,
+) ([]*DiscoveredDevice, error) {
 	start := time.Now()
 	totalPhases := p.countEnabledPhases()
 

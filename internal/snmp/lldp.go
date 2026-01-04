@@ -52,7 +52,11 @@ type LLDPNeighbor struct {
 
 // GetLLDPNeighbors retrieves all LLDP neighbors from a device.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func GetLLDPNeighbors(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]LLDPNeighbor, error) {
+func GetLLDPNeighbors(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]LLDPNeighbor, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}
@@ -77,7 +81,11 @@ func GetLLDPNeighbors(ctx context.Context, ip string, cfg *config.SNMPConfig) ([
 }
 
 // walkLLDP walks the LLDP-MIB tables using SNMPv2c.
-func walkLLDP(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]LLDPNeighbor, error) {
+func walkLLDP(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]LLDPNeighbor, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -128,9 +136,14 @@ func walkLLDPTable(params *gosnmp.GoSNMP) ([]LLDPNeighbor, error) {
 	}
 
 	// Walk lldpRemChassisIdSubtype.
-	walkLLDPAttribute(params, OIDLldpRemChassisIDSubtype, neighbors, func(n *LLDPNeighbor, value string) {
-		n.ChassisIDType = parseChassisIDSubtype(value)
-	})
+	walkLLDPAttribute(
+		params,
+		OIDLldpRemChassisIDSubtype,
+		neighbors,
+		func(n *LLDPNeighbor, value string) {
+			n.ChassisIDType = parseChassisIDSubtype(value)
+		},
+	)
 
 	// Walk lldpRemPortId.
 	walkLLDPAttribute(params, OIDLldpRemPortID, neighbors, func(n *LLDPNeighbor, value string) {
@@ -138,9 +151,14 @@ func walkLLDPTable(params *gosnmp.GoSNMP) ([]LLDPNeighbor, error) {
 	})
 
 	// Walk lldpRemPortIdSubtype.
-	walkLLDPAttribute(params, OIDLldpRemPortIDSubtype, neighbors, func(n *LLDPNeighbor, value string) {
-		n.PortIDType = parsePortIDSubtype(value)
-	})
+	walkLLDPAttribute(
+		params,
+		OIDLldpRemPortIDSubtype,
+		neighbors,
+		func(n *LLDPNeighbor, value string) {
+			n.PortIDType = parsePortIDSubtype(value)
+		},
+	)
 
 	// Walk lldpRemPortDesc.
 	walkLLDPAttribute(params, OIDLldpRemPortDesc, neighbors, func(n *LLDPNeighbor, value string) {

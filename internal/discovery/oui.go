@@ -403,7 +403,9 @@ func (db *OUIDatabase) LoadFromIEEEFormat(path string) error {
 
 	// IEEE format regex: "AA-BB-CC   (hex)\t\tVendor Name"
 	// or "AABBCC     (base 16)\t\tVendor Name"
-	hexPattern := regexp.MustCompile(`^([0-9A-Fa-f]{2}-[0-9A-Fa-f]{2}-[0-9A-Fa-f]{2})\s+\(hex\)\s+(.+)$`)
+	hexPattern := regexp.MustCompile(
+		`^([0-9A-Fa-f]{2}-[0-9A-Fa-f]{2}-[0-9A-Fa-f]{2})\s+\(hex\)\s+(.+)$`,
+	)
 	base16Pattern := regexp.MustCompile(`^([0-9A-Fa-f]{6})\s+\(base 16\)\s+(.+)$`)
 
 	scanner := bufio.NewScanner(file)
@@ -452,7 +454,11 @@ func (db *OUIDatabase) NeedsUpdate(path string, maxAge time.Duration) bool {
 
 // UpdateIfNeeded downloads a fresh OUI database if the existing one is stale.
 // maxAge specifies how old the file can be before updating (e.g., 30*24*time.Hour for monthly).
-func (db *OUIDatabase) UpdateIfNeeded(ctx context.Context, path string, maxAge time.Duration) error {
+func (db *OUIDatabase) UpdateIfNeeded(
+	ctx context.Context,
+	path string,
+	maxAge time.Duration,
+) error {
 	if !db.NeedsUpdate(path, maxAge) {
 		// File is fresh, just load it
 		return db.LoadFromIEEEFormat(path)

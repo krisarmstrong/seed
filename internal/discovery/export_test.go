@@ -113,7 +113,9 @@ func (v *VulnerabilityScannerTestAccessor) GetDeviceResults() map[string]*Device
 }
 
 // SetDeviceResults sets the scanner's deviceResults map.
-func (v *VulnerabilityScannerTestAccessor) SetDeviceResults(results map[string]*DeviceVulnerabilities) {
+func (v *VulnerabilityScannerTestAccessor) SetDeviceResults(
+	results map[string]*DeviceVulnerabilities,
+) {
 	v.Scanner.deviceResults = results
 }
 

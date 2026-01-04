@@ -389,7 +389,15 @@ func splitSubnetIntoChunks(subnet *net.IPNet, maxChunks int) []*net.IPNet {
 	}
 
 	// Convert base IP to uint32 for proper arithmetic
-	baseUint := uint32(baseIP[0])<<24 | uint32(baseIP[1])<<16 | uint32(baseIP[2])<<8 | uint32(baseIP[3])
+	baseUint := uint32(
+		baseIP[0],
+	)<<24 | uint32(
+		baseIP[1],
+	)<<16 | uint32(
+		baseIP[2],
+	)<<8 | uint32(
+		baseIP[3],
+	)
 
 	for i := range numChunks {
 		// Calculate the starting IP for this /24 chunk

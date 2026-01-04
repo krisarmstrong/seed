@@ -67,7 +67,10 @@ func (s *DiscoveryService) Stop() {
 }
 
 // Discover performs an on-demand discovery scan.
-func (s *DiscoveryService) Discover(ctx context.Context, _ *DiscoveryOptions) (*DiscoveryResult, error) {
+func (s *DiscoveryService) Discover(
+	ctx context.Context,
+	_ *DiscoveryOptions,
+) (*DiscoveryResult, error) {
 	if s.deviceDiscovery == nil {
 		return nil, ErrNotInitialized
 	}
@@ -175,7 +178,10 @@ func (s *VulnerabilityService) Stop() {
 }
 
 // Scan performs a vulnerability scan on specified targets.
-func (s *VulnerabilityService) Scan(ctx context.Context, targets []string) (*VulnerabilityScan, error) {
+func (s *VulnerabilityService) Scan(
+	ctx context.Context,
+	targets []string,
+) (*VulnerabilityScan, error) {
 	if s.scanner == nil {
 		return nil, ErrNotInitialized
 	}
@@ -247,7 +253,10 @@ func (s *VulnerabilityService) GetVulnerabilities(_ context.Context) ([]Vulnerab
 }
 
 // GetDeviceVulnerabilities returns vulnerabilities for a specific device.
-func (s *VulnerabilityService) GetDeviceVulnerabilities(_ context.Context, deviceIP string) ([]Vulnerability, error) {
+func (s *VulnerabilityService) GetDeviceVulnerabilities(
+	_ context.Context,
+	deviceIP string,
+) ([]Vulnerability, error) {
 	if s.scanner == nil {
 		return nil, ErrNotInitialized
 	}

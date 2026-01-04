@@ -19,7 +19,10 @@ func TestStatusConstants(t *testing.T) {
 		t.Errorf("expected StatusShort = 'short', got %q", cable.StatusShort)
 	}
 	if cable.StatusImpedanceMismatch != "impedance_mismatch" {
-		t.Errorf("expected StatusImpedanceMismatch = 'impedance_mismatch', got %q", cable.StatusImpedanceMismatch)
+		t.Errorf(
+			"expected StatusImpedanceMismatch = 'impedance_mismatch', got %q",
+			cable.StatusImpedanceMismatch,
+		)
 	}
 	if cable.StatusUnknown != "unknown" {
 		t.Errorf("expected StatusUnknown = 'unknown', got %q", cable.StatusUnknown)

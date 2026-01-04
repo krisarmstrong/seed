@@ -253,7 +253,11 @@ func determineSeverity(avgRSSI float64) string {
 }
 
 // generateRecommendations provides actionable recommendations based on analysis results.
-func generateRecommendations(deadZones []DeadZone, coverageScore float64, totalSamples int) []string {
+func generateRecommendations(
+	deadZones []DeadZone,
+	coverageScore float64,
+	totalSamples int,
+) []string {
 	recommendations := make([]string, 0)
 
 	// Coverage-based recommendations

@@ -26,7 +26,10 @@ func TestDefaultConfig(t *testing.T) {
 
 	// Test interface defaults - empty means auto-detect (#572)
 	if cfg.Interface.Default != "" {
-		t.Errorf("expected default interface to be empty (auto-detect), got %s", cfg.Interface.Default)
+		t.Errorf(
+			"expected default interface to be empty (auto-detect), got %s",
+			cfg.Interface.Default,
+		)
 	}
 
 	// Test VLAN defaults
@@ -153,10 +156,16 @@ func TestThresholdDefaults(t *testing.T) {
 
 	// Certificate expiry thresholds
 	if cfg.Thresholds.CustomTests.CertExpiry.Warning != 30 {
-		t.Errorf("expected cert expiry warning 30 days, got %d", cfg.Thresholds.CustomTests.CertExpiry.Warning)
+		t.Errorf(
+			"expected cert expiry warning 30 days, got %d",
+			cfg.Thresholds.CustomTests.CertExpiry.Warning,
+		)
 	}
 	if cfg.Thresholds.CustomTests.CertExpiry.Critical != 7 {
-		t.Errorf("expected cert expiry critical 7 days, got %d", cfg.Thresholds.CustomTests.CertExpiry.Critical)
+		t.Errorf(
+			"expected cert expiry critical 7 days, got %d",
+			cfg.Thresholds.CustomTests.CertExpiry.Critical,
+		)
 	}
 }
 
@@ -339,7 +348,10 @@ func TestCredentialsPersistence(t *testing.T) {
 		t.Errorf("expected persisted username 'persistuser', got %q", loaded.Auth.DefaultUsername)
 	}
 	if loaded.Auth.DefaultPasswordHash != "persisted-hash" {
-		t.Errorf("expected persisted hash 'persisted-hash', got %q", loaded.Auth.DefaultPasswordHash)
+		t.Errorf(
+			"expected persisted hash 'persisted-hash', got %q",
+			loaded.Auth.DefaultPasswordHash,
+		)
 	}
 	if loaded.Auth.JWTSecret != "persisted-jwt-secret" {
 		t.Errorf("expected persisted JWT secret, got %q", loaded.Auth.JWTSecret)
@@ -824,7 +836,10 @@ func TestPortPresetConstants(t *testing.T) {
 		t.Errorf("config.PortPresetSecure should be 'secure', got %q", config.PortPresetSecure)
 	}
 	if config.PortPresetInsecure != "insecure" {
-		t.Errorf("config.PortPresetInsecure should be 'insecure', got %q", config.PortPresetInsecure)
+		t.Errorf(
+			"config.PortPresetInsecure should be 'insecure', got %q",
+			config.PortPresetInsecure,
+		)
 	}
 	if config.PortPresetCustom != "custom" {
 		t.Errorf("config.PortPresetCustom should be 'custom', got %q", config.PortPresetCustom)
@@ -835,7 +850,10 @@ func TestDefaultPortScanConfig(t *testing.T) {
 	cfg := config.DefaultConfig()
 
 	if cfg.NetworkDiscovery.Options.PortScan.Preset != config.PortPresetCommon {
-		t.Errorf("expected default port preset 'common', got %q", cfg.NetworkDiscovery.Options.PortScan.Preset)
+		t.Errorf(
+			"expected default port preset 'common', got %q",
+			cfg.NetworkDiscovery.Options.PortScan.Preset,
+		)
 	}
 }
 
@@ -855,17 +873,31 @@ func TestGetEffectivePorts(t *testing.T) {
 			cfg := config.PortScanConfig{Preset: tt.preset}
 			tcp, udp := cfg.GetEffectivePorts()
 			if len(tcp) != tt.wantTCPLen {
-				t.Errorf("preset %s: expected TCP ports length %d, got %d", tt.preset, tt.wantTCPLen, len(tcp))
+				t.Errorf(
+					"preset %s: expected TCP ports length %d, got %d",
+					tt.preset,
+					tt.wantTCPLen,
+					len(tcp),
+				)
 			}
 			if len(udp) != tt.wantUDPLen {
-				t.Errorf("preset %s: expected UDP ports length %d, got %d", tt.preset, tt.wantUDPLen, len(udp))
+				t.Errorf(
+					"preset %s: expected UDP ports length %d, got %d",
+					tt.preset,
+					tt.wantUDPLen,
+					len(udp),
+				)
 			}
 		})
 	}
 
 	// Test custom preset
 	t.Run("custom", func(t *testing.T) {
-		cfg := config.PortScanConfig{Preset: config.PortPresetCustom, TCPPorts: "22,80", UDPPorts: "53"}
+		cfg := config.PortScanConfig{
+			Preset:   config.PortPresetCustom,
+			TCPPorts: "22,80",
+			UDPPorts: "53",
+		}
 		tcp, udp := cfg.GetEffectivePorts()
 		if tcp != "22,80" {
 			t.Errorf("expected custom TCP ports '22,80', got %q", tcp)
@@ -1083,10 +1115,16 @@ func TestVulnerabilityScanConfig(t *testing.T) {
 		t.Error("expected vulnerability scanning enabled by default")
 	}
 	if cfg.Security.VulnerabilityScanning.CVEDatabase != "nvd" {
-		t.Errorf("expected CVE database 'nvd', got %q", cfg.Security.VulnerabilityScanning.CVEDatabase)
+		t.Errorf(
+			"expected CVE database 'nvd', got %q",
+			cfg.Security.VulnerabilityScanning.CVEDatabase,
+		)
 	}
 	if cfg.Security.VulnerabilityScanning.SeverityThreshold != "medium" {
-		t.Errorf("expected severity threshold 'medium', got %q", cfg.Security.VulnerabilityScanning.SeverityThreshold)
+		t.Errorf(
+			"expected severity threshold 'medium', got %q",
+			cfg.Security.VulnerabilityScanning.SeverityThreshold,
+		)
 	}
 }
 
@@ -1121,7 +1159,10 @@ func TestDefaultDisplayOptions(t *testing.T) {
 		t.Error("expected ShowPublicIP enabled by default")
 	}
 	if cfg.DisplayOptions.UnitSystem != "sae" {
-		t.Errorf("expected UnitSystem to be 'sae' by default, got %q", cfg.DisplayOptions.UnitSystem)
+		t.Errorf(
+			"expected UnitSystem to be 'sae' by default, got %q",
+			cfg.DisplayOptions.UnitSystem,
+		)
 	}
 }
 

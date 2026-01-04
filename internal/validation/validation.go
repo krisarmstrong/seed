@@ -85,7 +85,9 @@ func ValidateInterface(iface string) error {
 		return errors.New("interface name too long (max 16 characters)")
 	}
 	if !validInterfaceRegex.MatchString(iface) {
-		return errors.New("invalid interface name: must contain only alphanumeric characters, hyphens, and underscores")
+		return errors.New(
+			"invalid interface name: must contain only alphanumeric characters, hyphens, and underscores",
+		)
 	}
 	return nil
 }
@@ -373,7 +375,9 @@ func ValidateSurveyID(id string) error {
 			(r >= '0' && r <= '9') ||
 			r == '-' || r == '_'
 		if !isValid {
-			return errors.New("survey ID contains invalid characters (use only letters, numbers, hyphens, underscores)")
+			return errors.New(
+				"survey ID contains invalid characters (use only letters, numbers, hyphens, underscores)",
+			)
 		}
 	}
 
@@ -455,7 +459,12 @@ func SafeTransport() *http.Transport {
 			// Check ALL resolved IPs for private addresses
 			for _, ip := range ips {
 				if IsPrivateIP(ip.IP) {
-					return nil, fmt.Errorf("%w: %s resolved to %s", ErrPrivateIPBlocked, host, ip.IP)
+					return nil, fmt.Errorf(
+						"%w: %s resolved to %s",
+						ErrPrivateIPBlocked,
+						host,
+						ip.IP,
+					)
 				}
 			}
 

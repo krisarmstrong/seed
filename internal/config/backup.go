@@ -237,7 +237,8 @@ func (m *BackupManager) PruneOldBackups() error {
 	for _, backup := range backups[m.maxBackups:] {
 		if removeErr := os.Remove(backup.Path); removeErr != nil {
 			// Continue trying to delete others
-			logging.GetLogger().Warn("Failed to delete old backup", "name", backup.Name, "error", removeErr)
+			logging.GetLogger().
+				Warn("Failed to delete old backup", "name", backup.Name, "error", removeErr)
 		}
 	}
 

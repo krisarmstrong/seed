@@ -105,7 +105,8 @@ func (d *Detector) ScoreInterface(iface net.Interface) InterfaceScore {
 	score.LinkStatus = iface.Flags&net.FlagRunning != 0
 	addrs, err := iface.Addrs()
 	if err != nil {
-		logging.GetLogger().Warn("failed to get addresses for interface", "interface", iface.Name, "error", err)
+		logging.GetLogger().
+			Warn("failed to get addresses for interface", "interface", iface.Name, "error", err)
 	}
 	for _, addr := range addrs {
 		score.Addresses = append(score.Addresses, addr.String())
@@ -252,7 +253,18 @@ func (d *Detector) generateDescription(s *InterfaceScore) string {
 // detectType determines interface type from name patterns.
 func detectType(name string) string {
 	// Virtual interfaces
-	virtualPrefixes := []string{"docker", "br-", "veth", "virbr", "tun", "tap", "vnet", "vmnet", "vboxnet", "utun"}
+	virtualPrefixes := []string{
+		"docker",
+		"br-",
+		"veth",
+		"virbr",
+		"tun",
+		"tap",
+		"vnet",
+		"vmnet",
+		"vboxnet",
+		"utun",
+	}
 	for _, prefix := range virtualPrefixes {
 		if strings.HasPrefix(name, prefix) {
 			return ifTypeVirtual

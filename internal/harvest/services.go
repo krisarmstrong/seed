@@ -188,7 +188,8 @@ func (s *GeneratorService) generatePDF(report *Report, data *AggregatedData) ([]
 	}
 
 	// Performance section
-	if report.Type == ReportTypePerformance || report.Type == ReportTypeExecutive || report.Type == ReportTypeDetailed {
+	if report.Type == ReportTypePerformance || report.Type == ReportTypeExecutive ||
+		report.Type == ReportTypeDetailed {
 		pdf.AddPage()
 		s.addPDFPerformanceSection(pdf, data)
 	}
@@ -237,7 +238,14 @@ func (s *GeneratorService) addPDFExecutiveSummary(pdf *fpdf.Fpdf, data *Aggregat
 		label string
 		value string
 	}{
-		{"Report Period", fmt.Sprintf("%s to %s", data.StartDate.Format("Jan 2"), data.EndDate.Format("Jan 2, 2006"))},
+		{
+			"Report Period",
+			fmt.Sprintf(
+				"%s to %s",
+				data.StartDate.Format("Jan 2"),
+				data.EndDate.Format("Jan 2, 2006"),
+			),
+		},
 		{"Total Devices", strconv.Itoa(data.DeviceCount)},
 		{"Total Vulnerabilities", strconv.Itoa(data.VulnCount.Total)},
 		{"Critical Issues", strconv.Itoa(data.VulnCount.Critical)},
@@ -258,7 +266,17 @@ func (s *GeneratorService) addPDFDeviceSection(pdf *fpdf.Fpdf, data *AggregatedD
 
 	pdf.SetFont("Arial", "", 10)
 	pdf.SetTextColor(0, 0, 0)
-	pdf.CellFormat(0, 8, fmt.Sprintf("Total devices discovered: %d", data.DeviceCount), "", 1, "L", false, 0, "")
+	pdf.CellFormat(
+		0,
+		8,
+		fmt.Sprintf("Total devices discovered: %d", data.DeviceCount),
+		"",
+		1,
+		"L",
+		false,
+		0,
+		"",
+	)
 }
 
 func (s *GeneratorService) addPDFVulnerabilitySection(pdf *fpdf.Fpdf, data *AggregatedData) {
@@ -352,7 +370,8 @@ func (s *GeneratorService) addPDFSectionHeader(pdf *fpdf.Fpdf, title string) {
 //
 //nolint:unparam // error return kept for interface consistency with other generators
 func (s *GeneratorService) generateHTML(report *Report, data *AggregatedData) ([]byte, error) {
-	html := fmt.Sprintf(`<!DOCTYPE html>
+	html := fmt.Sprintf(
+		`<!DOCTYPE html>
 <html>
 <head>
     <title>%s</title>
@@ -392,13 +411,22 @@ func (s *GeneratorService) generateHTML(report *Report, data *AggregatedData) ([
     <div class="metric"><span class="metric-label">Bandwidth</span><span class="metric-value">%.2f Mbps</span></div>
 </body>
 </html>`,
-		report.Name, report.Name,
+		report.Name,
+		report.Name,
 		time.Now().Format("January 2, 2006 15:04"),
-		data.StartDate.Format("Jan 2"), data.EndDate.Format("Jan 2, 2006"),
-		data.DeviceCount, data.VulnCount.Total,
-		data.Performance.AvgLatencyMs, data.Performance.UptimePercent,
-		data.VulnCount.Critical, data.VulnCount.High, data.VulnCount.Medium, data.VulnCount.Low,
-		data.Performance.AvgLatencyMs, data.Performance.AvgPacketLoss, data.Performance.AvgBandwidthMbps,
+		data.StartDate.Format("Jan 2"),
+		data.EndDate.Format("Jan 2, 2006"),
+		data.DeviceCount,
+		data.VulnCount.Total,
+		data.Performance.AvgLatencyMs,
+		data.Performance.UptimePercent,
+		data.VulnCount.Critical,
+		data.VulnCount.High,
+		data.VulnCount.Medium,
+		data.VulnCount.Low,
+		data.Performance.AvgLatencyMs,
+		data.Performance.AvgPacketLoss,
+		data.Performance.AvgBandwidthMbps,
 	)
 
 	return []byte(html), nil
@@ -594,7 +622,9 @@ func (s *GeneratorService) scanReport(row interface{ Scan(...any) error }) (*Rep
 	return &r, nil
 }
 
-func (s *GeneratorService) scanReportFromRows(rows interface{ Scan(...any) error }) (*Report, error) {
+func (s *GeneratorService) scanReportFromRows(
+	rows interface{ Scan(...any) error },
+) (*Report, error) {
 	return s.scanReport(rows)
 }
 
@@ -734,7 +764,10 @@ func (s *GeneratorService) exportDevices(ctx context.Context, _ *ExportRequest) 
 	return devices, len(devices), nil
 }
 
-func (s *GeneratorService) exportVulnerabilities(ctx context.Context, _ *ExportRequest) (any, int, error) {
+func (s *GeneratorService) exportVulnerabilities(
+	ctx context.Context,
+	_ *ExportRequest,
+) (any, int, error) {
 	rows, err := s.db.Query(ctx, `
 		SELECT dv.id, dv.device_id, dv.cve_id, dv.severity, dv.description, dv.discovered_at, d.ip_address
 		FROM device_vulnerabilities dv
@@ -870,7 +903,13 @@ func (s *TemplateService) loadBuiltInTemplates() {
 		Sections: []TemplateSection{
 			{ID: "summary", Name: "Summary", Title: "Inventory Summary", Order: 1},
 			{ID: "devices", Name: "Devices", Title: "Device List", Order: 2},
-			{ID: "software", Name: "Software", Title: "Software Inventory", Order: 3, Optional: true},
+			{
+				ID:       "software",
+				Name:     "Software",
+				Title:    "Software Inventory",
+				Order:    3,
+				Optional: true,
+			},
 			{ID: "changes", Name: "Changes", Title: "Recent Changes", Order: 4, Optional: true},
 		},
 		IsBuiltIn: true,
@@ -993,7 +1032,11 @@ type SchedulerService struct {
 }
 
 // NewSchedulerService creates a new scheduler service.
-func NewSchedulerService(cfg *config.Config, db *database.DB, generator *GeneratorService) *SchedulerService {
+func NewSchedulerService(
+	cfg *config.Config,
+	db *database.DB,
+	generator *GeneratorService,
+) *SchedulerService {
 	return &SchedulerService{
 		cfg:       cfg,
 		db:        db,
@@ -1106,7 +1149,12 @@ func (s *SchedulerService) checkSchedules(ctx context.Context) {
 
 func (s *SchedulerService) runScheduledReport(ctx context.Context, schedule *ScheduledReport) {
 	// Generate report
-	_, _ = s.generator.GenerateFromTemplate(ctx, schedule.Template, schedule.Format, &schedule.Parameters)
+	_, _ = s.generator.GenerateFromTemplate(
+		ctx,
+		schedule.Template,
+		schedule.Format,
+		&schedule.Parameters,
+	)
 
 	// Update last run and calculate next run
 	s.mu.Lock()
@@ -1131,7 +1179,16 @@ func calculateNextRun(schedule *Schedule) *time.Time {
 	var next time.Time
 	switch schedule.Frequency {
 	case FrequencyDaily:
-		next = time.Date(now.Year(), now.Month(), now.Day()+1, schedule.Hour, schedule.Minute, 0, 0, loc)
+		next = time.Date(
+			now.Year(),
+			now.Month(),
+			now.Day()+1,
+			schedule.Hour,
+			schedule.Minute,
+			0,
+			0,
+			loc,
+		)
 	case FrequencyWeekly:
 		next = now
 		if schedule.DayOfWeek != nil {
@@ -1141,7 +1198,16 @@ func calculateNextRun(schedule *Schedule) *time.Time {
 			}
 			next = next.AddDate(0, 0, daysUntil)
 		}
-		next = time.Date(next.Year(), next.Month(), next.Day(), schedule.Hour, schedule.Minute, 0, 0, loc)
+		next = time.Date(
+			next.Year(),
+			next.Month(),
+			next.Day(),
+			schedule.Hour,
+			schedule.Minute,
+			0,
+			0,
+			loc,
+		)
 	case FrequencyMonthly:
 		day := 1
 		if schedule.DayOfMonth != nil {
@@ -1199,11 +1265,25 @@ func (s *SchedulerService) saveSchedule(ctx context.Context, sr *ScheduledReport
 		nextRun = &t
 	}
 
-	_, err := s.db.Exec(ctx, `
+	_, err := s.db.Exec(
+		ctx,
+		`
 		INSERT OR REPLACE INTO scheduled_reports (id, name, template, format, schedule_json, parameters_json, recipients_json, enabled, last_run, next_run, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, sr.ID, sr.Name, sr.Template, sr.Format, string(scheduleJSON), string(paramsJSON), string(recipientsJSON),
-		sr.Enabled, lastRun, nextRun, sr.CreatedAt.Format(time.RFC3339), sr.UpdatedAt.Format(time.RFC3339))
+	`,
+		sr.ID,
+		sr.Name,
+		sr.Template,
+		sr.Format,
+		string(scheduleJSON),
+		string(paramsJSON),
+		string(recipientsJSON),
+		sr.Enabled,
+		lastRun,
+		nextRun,
+		sr.CreatedAt.Format(time.RFC3339),
+		sr.UpdatedAt.Format(time.RFC3339),
+	)
 	if err != nil {
 		return fmt.Errorf("saving scheduled report: %w", err)
 	}
@@ -1287,7 +1367,10 @@ func NewAggregatorService(cfg *config.Config, db *database.DB) *AggregatorServic
 }
 
 // Aggregate collects and aggregates data for a time period.
-func (s *AggregatorService) Aggregate(ctx context.Context, period, _, _ string) (*AggregatedData, error) {
+func (s *AggregatorService) Aggregate(
+	ctx context.Context,
+	period, _, _ string,
+) (*AggregatedData, error) {
 	// Calculate date range based on period
 	now := time.Now()
 	var startDate time.Time
@@ -1325,7 +1408,11 @@ func (s *AggregatorService) Aggregate(ctx context.Context, period, _, _ string) 
 	return data, nil
 }
 
-func (s *AggregatorService) aggregateVulnerabilities(ctx context.Context, data *AggregatedData, since time.Time) {
+func (s *AggregatorService) aggregateVulnerabilities(
+	ctx context.Context,
+	data *AggregatedData,
+	since time.Time,
+) {
 	rows, err := s.db.Query(ctx, `
 		SELECT severity, COUNT(*) as count
 		FROM device_vulnerabilities
@@ -1358,7 +1445,11 @@ func (s *AggregatorService) aggregateVulnerabilities(ctx context.Context, data *
 	}
 }
 
-func (s *AggregatorService) aggregatePerformance(ctx context.Context, data *AggregatedData, since time.Time) {
+func (s *AggregatorService) aggregatePerformance(
+	ctx context.Context,
+	data *AggregatedData,
+	since time.Time,
+) {
 	// Get average latency from gateway results
 	row := s.db.QueryRow(ctx, `
 		SELECT AVG(latency_ms), AVG(packet_loss)
@@ -1437,7 +1528,10 @@ func (s *AggregatorService) aggregateTopIssues(ctx context.Context, data *Aggreg
 }
 
 // GetTrends retrieves trend data for a metric.
-func (s *AggregatorService) GetTrends(ctx context.Context, metric, period string) ([]DataPoint, error) {
+func (s *AggregatorService) GetTrends(
+	ctx context.Context,
+	metric, period string,
+) ([]DataPoint, error) {
 	// Determine time range and grouping
 	now := time.Now()
 	var startDate time.Time

@@ -53,7 +53,10 @@ func (r *SettingsRepository) GetValue(ctx context.Context, key string) (string, 
 }
 
 // GetWithDefault retrieves the value for a key, returning the default if not found.
-func (r *SettingsRepository) GetWithDefault(ctx context.Context, key, defaultValue string) (string, error) {
+func (r *SettingsRepository) GetWithDefault(
+	ctx context.Context,
+	key, defaultValue string,
+) (string, error) {
 	setting, err := r.Get(ctx, key)
 	if err != nil {
 		if errors.Is(err, ErrSettingNotFound) {

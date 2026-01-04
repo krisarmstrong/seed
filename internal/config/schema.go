@@ -55,14 +55,18 @@ func (v *SchemaValidator) ValidateConfig(cfg *Config) []ValidationError {
 	// First marshal to YAML (which respects the yaml tags)
 	yamlBytes, err := cfg.marshalForValidation()
 	if err != nil {
-		return []ValidationError{{Path: "", Message: fmt.Sprintf("failed to marshal config: %v", err)}}
+		return []ValidationError{
+			{Path: "", Message: fmt.Sprintf("failed to marshal config: %v", err)},
+		}
 	}
 
 	// Then unmarshal the YAML as JSON-compatible data
 	// YAML is a superset of JSON, so this works
 	var data any
 	if unmarshalErr := json.Unmarshal(yamlBytes, &data); unmarshalErr != nil {
-		return []ValidationError{{Path: "", Message: fmt.Sprintf("failed to unmarshal config: %v", unmarshalErr)}}
+		return []ValidationError{
+			{Path: "", Message: fmt.Sprintf("failed to unmarshal config: %v", unmarshalErr)},
+		}
 	}
 
 	// Validate

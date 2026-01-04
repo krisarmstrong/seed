@@ -31,11 +31,22 @@ func (r *ProfileRepository) Create(ctx context.Context, profile *Profile) error 
 	profile.CreatedAt = now
 	profile.UpdatedAt = now
 
-	_, err := r.db.Exec(ctx, `
+	_, err := r.db.Exec(
+		ctx,
+		`
 		INSERT INTO profiles (id, name, description, config_json, is_default, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?)
-	`, profile.ID, profile.Name, profile.Description, profile.ConfigJSON,
-		boolToInt(profile.IsDefault), profile.CreatedAt.Format(time.RFC3339), profile.UpdatedAt.Format(time.RFC3339))
+	`,
+		profile.ID,
+		profile.Name,
+		profile.Description,
+		profile.ConfigJSON,
+		boolToInt(
+			profile.IsDefault,
+		),
+		profile.CreatedAt.Format(time.RFC3339),
+		profile.UpdatedAt.Format(time.RFC3339),
+	)
 	if err != nil {
 		if isUniqueConstraintError(err) {
 			return ErrProfileNameExists
@@ -190,7 +201,15 @@ func (r *ProfileRepository) scanProfile(row *sql.Row) (*Profile, error) {
 	var createdAt, updatedAt string
 	var isDefault int
 
-	err := row.Scan(&p.ID, &p.Name, &p.Description, &p.ConfigJSON, &isDefault, &createdAt, &updatedAt)
+	err := row.Scan(
+		&p.ID,
+		&p.Name,
+		&p.Description,
+		&p.ConfigJSON,
+		&isDefault,
+		&createdAt,
+		&updatedAt,
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrProfileNotFound
@@ -215,7 +234,15 @@ func (r *ProfileRepository) scanProfileFromRows(rows *sql.Rows) (*Profile, error
 	var createdAt, updatedAt string
 	var isDefault int
 
-	err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.ConfigJSON, &isDefault, &createdAt, &updatedAt)
+	err := rows.Scan(
+		&p.ID,
+		&p.Name,
+		&p.Description,
+		&p.ConfigJSON,
+		&isDefault,
+		&createdAt,
+		&updatedAt,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to scan profile: %w", err)
 	}

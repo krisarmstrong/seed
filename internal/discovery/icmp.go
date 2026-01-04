@@ -336,7 +336,11 @@ func (p *ICMPPinger) PingSweep(ctx context.Context, ips []net.IP, workers int) [
 }
 
 // PingSweepWithConfig pings multiple hosts with configurable jitter for IDS-aware scanning.
-func (p *ICMPPinger) PingSweepWithConfig(ctx context.Context, ips []net.IP, cfg *SweepConfig) []PingResult {
+func (p *ICMPPinger) PingSweepWithConfig(
+	ctx context.Context,
+	ips []net.IP,
+	cfg *SweepConfig,
+) []PingResult {
 	if cfg == nil {
 		cfg = DefaultSweepConfig()
 	}
@@ -411,7 +415,11 @@ func (p *ICMPPinger) PingSweepWithConfig(ctx context.Context, ips []net.IP, cfg 
 }
 
 // PingSweepReachable is a convenience method that returns only reachable hosts.
-func (p *ICMPPinger) PingSweepReachable(ctx context.Context, ips []net.IP, workers int) []PingResult {
+func (p *ICMPPinger) PingSweepReachable(
+	ctx context.Context,
+	ips []net.IP,
+	workers int,
+) []PingResult {
 	all := p.PingSweep(ctx, ips, workers)
 	reachable := make([]PingResult, 0, len(all))
 	for _, r := range all {
@@ -457,7 +465,11 @@ var ErrICMPPrivileges = errors.New("raw ICMP socket privileges unavailable")
 // Returns nil if privileged, a descriptive error otherwise.
 func CheckICMPPrivilegesWithMessage() error {
 	if err := CheckICMPPrivileges(); err != nil {
-		return fmt.Errorf("%w: %w (run with sudo or grant CAP_NET_RAW capability)", ErrICMPPrivileges, err)
+		return fmt.Errorf(
+			"%w: %w (run with sudo or grant CAP_NET_RAW capability)",
+			ErrICMPPrivileges,
+			err,
+		)
 	}
 	return nil
 }

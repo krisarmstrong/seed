@@ -75,7 +75,15 @@ func GetBundle() *i18n.Bundle {
 							ID:    key,
 							Other: strValue,
 						}); addErr != nil {
-							slog.Warn("failed to add i18n message", "key", key, "lang", lang, "error", addErr)
+							slog.Warn(
+								"failed to add i18n message",
+								"key",
+								key,
+								"lang",
+								lang,
+								"error",
+								addErr,
+							)
 						}
 					}
 				}

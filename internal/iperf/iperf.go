@@ -264,7 +264,8 @@ func findIperf3Binary() (string, error) {
 			// Validate the extracted binary works
 			if validateBinary(path) {
 				iperfBinaryPath = path
-				logging.GetLogger().Info("Using embedded iperf3 binary", "path", path, "version", EmbeddedVersion)
+				logging.GetLogger().
+					Info("Using embedded iperf3 binary", "path", path, "version", EmbeddedVersion)
 				return path, nil
 			}
 			logging.GetLogger().Warn("Extracted iperf3 binary failed validation", "path", path)
@@ -400,7 +401,11 @@ func ValidateVersion() error {
 
 	// Compare version strings (simple lexicographic comparison works for x.y format)
 	if compareVersions(version, minSupportedVersion) < 0 {
-		return fmt.Errorf("iperf3 version %s is below minimum supported version %s", version, minSupportedVersion)
+		return fmt.Errorf(
+			"iperf3 version %s is below minimum supported version %s",
+			version,
+			minSupportedVersion,
+		)
 	}
 
 	return nil
@@ -556,7 +561,8 @@ func (m *Manager) StopServer() error {
 		if err := m.serverCmd.Process.Kill(); err != nil {
 			// Log the error, but don't fail, as we are trying to stop the server
 			// and it might already be dead or unreachable.
-			logging.GetLogger().Warn("Error killing iperf3 server process", "pid", m.serverCmd.Process.Pid, "error", err)
+			logging.GetLogger().
+				Warn("Error killing iperf3 server process", "pid", m.serverCmd.Process.Pid, "error", err)
 		}
 	}
 

@@ -105,7 +105,10 @@ func TestProfileSettingsFromConfig(t *testing.T) {
 		t.Errorf("expected 2 ping targets, got %d", len(ps.HealthChecks.PingTargets))
 	}
 	if ps.HealthChecks.PingTargets[0].Name != "Google" {
-		t.Errorf("expected first ping target name 'Google', got %s", ps.HealthChecks.PingTargets[0].Name)
+		t.Errorf(
+			"expected first ping target name 'Google', got %s",
+			ps.HealthChecks.PingTargets[0].Name,
+		)
 	}
 	if len(ps.HealthChecks.TCPPorts) != 1 {
 		t.Errorf("expected 1 TCP port, got %d", len(ps.HealthChecks.TCPPorts))
@@ -381,7 +384,11 @@ func TestParseProfileSettings(t *testing.T) {
 
 	// After parsing, v1 profiles are migrated to current version.
 	if ps.Version != config.ProfileSettingsVersion {
-		t.Errorf("expected version %d (migrated from v1), got %d", config.ProfileSettingsVersion, ps.Version)
+		t.Errorf(
+			"expected version %d (migrated from v1), got %d",
+			config.ProfileSettingsVersion,
+			ps.Version,
+		)
 	}
 	if ps.Thresholds.DNS.Warning != 60 {
 		t.Errorf("expected DNS warning 60, got %d", ps.Thresholds.DNS.Warning)
@@ -400,7 +407,11 @@ func TestParseProfileSettingsEmptyString(t *testing.T) {
 		t.Fatalf("ParseProfileSettings with empty string should not error: %v", err)
 	}
 	if ps.Version != config.ProfileSettingsVersion {
-		t.Errorf("expected version %d for empty string, got %d", config.ProfileSettingsVersion, ps.Version)
+		t.Errorf(
+			"expected version %d for empty string, got %d",
+			config.ProfileSettingsVersion,
+			ps.Version,
+		)
 	}
 }
 
@@ -420,7 +431,11 @@ func TestProfileSettingsMigration(t *testing.T) {
 	}
 
 	if ps.Version != config.ProfileSettingsVersion {
-		t.Errorf("expected version %d after migration, got %d", config.ProfileSettingsVersion, ps.Version)
+		t.Errorf(
+			"expected version %d after migration, got %d",
+			config.ProfileSettingsVersion,
+			ps.Version,
+		)
 	}
 
 	// Notes should be preserved after migration.
@@ -650,10 +665,16 @@ func TestMultipleProfilesWithDifferentSettings(t *testing.T) {
 	ps1Again.ApplyTo(cfg)
 
 	if cfg.Thresholds.DNS.Warning != 50*time.Millisecond {
-		t.Errorf("Profile 1 (restored): expected DNS warning 50ms, got %v", cfg.Thresholds.DNS.Warning)
+		t.Errorf(
+			"Profile 1 (restored): expected DNS warning 50ms, got %v",
+			cfg.Thresholds.DNS.Warning,
+		)
 	}
 	if cfg.DNS.TestHostname != "profile1.test" {
-		t.Errorf("Profile 1 (restored): expected hostname 'profile1.test', got %s", cfg.DNS.TestHostname)
+		t.Errorf(
+			"Profile 1 (restored): expected hostname 'profile1.test', got %s",
+			cfg.DNS.TestHostname,
+		)
 	}
 }
 
@@ -737,6 +758,9 @@ func TestSNMPv3CredentialsRoundTrip(t *testing.T) {
 		t.Errorf("expected username 'admin', got %s", newCfg.SNMP.V3Credentials[0].Username)
 	}
 	if newCfg.SNMP.V3Credentials[1].SecurityLevel != "authNoPriv" {
-		t.Errorf("expected security level 'authNoPriv', got %s", newCfg.SNMP.V3Credentials[1].SecurityLevel)
+		t.Errorf(
+			"expected security level 'authNoPriv', got %s",
+			newCfg.SNMP.V3Credentials[1].SecurityLevel,
+		)
 	}
 }

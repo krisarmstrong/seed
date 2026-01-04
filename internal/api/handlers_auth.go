@@ -36,7 +36,13 @@ func (s *Server) handleLoginRateLimited(
 	if !s.loginRateLimiter.IsBlocked(clientIP) {
 		return false
 	}
-	logger.Warn("Login blocked due to rate limiting", "client_ip", clientIP, "event", "auth.login.blocked")
+	logger.Warn(
+		"Login blocked due to rate limiting",
+		"client_ip",
+		clientIP,
+		"event",
+		"auth.login.blocked",
+	)
 	w.Header().Set("Retry-After", "900")
 	sendJSONResponse(w, logger, http.StatusTooManyRequests, map[string]any{
 		"error":              localizer.T("errors.auth.tooManyAttempts"),
@@ -64,7 +70,9 @@ func (s *Server) handleLoginFailure(
 			"username", username, "client_ip", clientIP, "event", "auth.account.locked")
 		w.Header().Set("Retry-After", "900")
 		sendJSONResponse(w, logger, http.StatusTooManyRequests, map[string]any{
-			"error": localizer.T("errors.auth.accountLocked"), "retry_after": 900, "remaining_attempts": 0,
+			"error": localizer.T(
+				"errors.auth.accountLocked",
+			), "retry_after": 900, "remaining_attempts": 0,
 		})
 		return
 	}
@@ -130,7 +138,15 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Info("Login successful", "username", req.Username, "client_ip", clientIP, "event", "auth.login.success")
+	logger.Info(
+		"Login successful",
+		"username",
+		req.Username,
+		"client_ip",
+		clientIP,
+		"event",
+		"auth.login.success",
+	)
 	s.loginRateLimiter.RecordAttempt(clientIP, true)
 
 	accessToken, err := s.generateAndSetLoginTokens(w, r, req.Username)

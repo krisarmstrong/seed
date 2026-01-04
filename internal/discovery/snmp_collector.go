@@ -346,7 +346,10 @@ func (c *SNMPCollector) collectInterfaces(ctx context.Context, ip string) ([]SNM
 }
 
 // collectIPAddresses retrieves IP addresses from IP-MIB.
-func (c *SNMPCollector) collectIPAddresses(ctx context.Context, ip string) ([]SNMPIPAddress, error) {
+func (c *SNMPCollector) collectIPAddresses(
+	ctx context.Context,
+	ip string,
+) ([]SNMPIPAddress, error) {
 	entries, err := snmp.GetIPAddresses(ctx, ip, c.config)
 	if err != nil {
 		return nil, fmt.Errorf("get IP addresses: %w", err)
@@ -438,7 +441,10 @@ func (c *SNMPCollector) collectInventory(ctx context.Context, ip string) ([]SNMP
 }
 
 // collectLLDPNeighbors retrieves LLDP neighbor information.
-func (c *SNMPCollector) collectLLDPNeighbors(ctx context.Context, ip string) ([]SNMPLLDPNeighbor, error) {
+func (c *SNMPCollector) collectLLDPNeighbors(
+	ctx context.Context,
+	ip string,
+) ([]SNMPLLDPNeighbor, error) {
 	neighbors, err := snmp.GetLLDPNeighbors(ctx, ip, c.config)
 	if err != nil {
 		return nil, fmt.Errorf("get LLDP neighbors: %w", err)
@@ -493,7 +499,11 @@ type CollectorResult struct {
 // CollectBatch collects SNMP data from multiple devices concurrently.
 //
 
-func (c *SNMPCollector) CollectBatch(ctx context.Context, ips []string, maxConcurrent int) []CollectorResult {
+func (c *SNMPCollector) CollectBatch(
+	ctx context.Context,
+	ips []string,
+	maxConcurrent int,
+) []CollectorResult {
 	if maxConcurrent <= 0 {
 		maxConcurrent = 10
 	}

@@ -147,7 +147,10 @@ func NewDeviceDiscovery(interfaceName string) *DeviceDiscovery {
 // NewDeviceDiscoveryWithOUI creates a new device discovery aggregator with OUI configuration.
 // ouiPath specifies the path to store/load the OUI database file.
 // ouiMaxAge specifies how old the file can be before auto-downloading (0 = never auto-update).
-func NewDeviceDiscoveryWithOUI(interfaceName, ouiPath string, ouiMaxAge time.Duration) *DeviceDiscovery {
+func NewDeviceDiscoveryWithOUI(
+	interfaceName, ouiPath string,
+	ouiMaxAge time.Duration,
+) *DeviceDiscovery {
 	oui := NewOUIDatabase()
 
 	// Try to load/update OUI database
@@ -214,7 +217,9 @@ func (d *DeviceDiscovery) Start() error {
 	// Start protocol manager (LLDP/CDP/EDP captures)
 	// This may fail without root/CAP_NET_RAW, but we continue with other features
 	if err := d.protoManager.Start(); err != nil {
-		logging.GetLogger().Warn("Failed to start protocol manager (passive discovery disabled)", "error", err)
+		logging.GetLogger().
+			Warn("Failed to start protocol manager (passive discovery disabled)", "error", err)
+
 		// Return nil to allow ARP scanning, port scanning, and profiling to continue
 	}
 
@@ -357,7 +362,8 @@ func (d *DeviceDiscovery) aggregateResults() {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 		if err := dbWriter.PersistDevices(ctx, deviceList); err != nil {
-			logging.GetLogger().Warn("Failed to persist devices to database", "error", err, "count", len(deviceList))
+			logging.GetLogger().
+				Warn("Failed to persist devices to database", "error", err, "count", len(deviceList))
 		}
 	}
 }
@@ -835,7 +841,10 @@ func copyDevice(device *DiscoveredDevice) *DiscoveredDevice {
 	if device.Vulnerabilities != nil {
 		vulnCopy := *device.Vulnerabilities
 		if device.Vulnerabilities.Vulnerabilities != nil {
-			vulnCopy.Vulnerabilities = make([]Vulnerability, len(device.Vulnerabilities.Vulnerabilities))
+			vulnCopy.Vulnerabilities = make(
+				[]Vulnerability,
+				len(device.Vulnerabilities.Vulnerabilities),
+			)
 			copy(vulnCopy.Vulnerabilities, device.Vulnerabilities.Vulnerabilities)
 		}
 		deviceCopy.Vulnerabilities = &vulnCopy
@@ -948,7 +957,8 @@ func (d *DeviceDiscovery) ResolveNetBIOSNames(ctx context.Context) {
 			if device, ok := d.devices[result.IP]; ok {
 				device.NetBIOSName = result.Name
 				device.DisplayName = device.ComputeDisplayName()
-				logging.GetLogger().Debug("NetBIOS: resolved name", "ip", result.IP, "name", result.Name)
+				logging.GetLogger().
+					Debug("NetBIOS: resolved name", "ip", result.IP, "name", result.Name)
 			}
 		}
 	}
@@ -995,7 +1005,8 @@ func (d *DeviceDiscovery) ResolveMDNSNames(ctx context.Context) {
 				if !containsMethod(device.DiscoveryMethod, MethodMDNS) {
 					device.DiscoveryMethod = append(device.DiscoveryMethod, MethodMDNS)
 				}
-				logging.GetLogger().Debug("mDNS: resolved name", "ip", result.IP, "name", result.Name)
+				logging.GetLogger().
+					Debug("mDNS: resolved name", "ip", result.IP, "name", result.Name)
 			}
 		}
 	}

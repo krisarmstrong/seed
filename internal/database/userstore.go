@@ -62,12 +62,18 @@ func (a *UserStoreAdapter) IsLocked(ctx context.Context, username string) (bool,
 
 // MigrateUserFromConfig migrates a user from config to the database.
 // This is called on startup to ensure config users exist in the database.
-func (a *UserStoreAdapter) MigrateUserFromConfig(ctx context.Context, username, passwordHash string) error {
+func (a *UserStoreAdapter) MigrateUserFromConfig(
+	ctx context.Context,
+	username, passwordHash string,
+) error {
 	return a.db.MigrateUserFromConfig(ctx, username, passwordHash)
 }
 
 // CreateUser creates a new user in the database.
-func (a *UserStoreAdapter) CreateUser(ctx context.Context, username, passwordHash, role string) error {
+func (a *UserStoreAdapter) CreateUser(
+	ctx context.Context,
+	username, passwordHash, role string,
+) error {
 	_, err := a.db.CreateUser(ctx, username, passwordHash, role)
 	return err
 }

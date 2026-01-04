@@ -204,7 +204,8 @@ func isAllowedWSOrigin(origin string) bool {
 				}
 				// Fixes #940: For IP prefixes ending in '.', validate octet format
 				// Ensure remainder starts with a valid octet (1-3 digits) followed by valid boundary
-				if allowed[len(allowed)-1] == '.' && len(remainder) > 0 && remainder[0] >= '0' && remainder[0] <= '9' {
+				if allowed[len(allowed)-1] == '.' && len(remainder) > 0 && remainder[0] >= '0' &&
+					remainder[0] <= '9' {
 					// Find end of potential octet (first non-digit)
 					octetEnd := 0
 					for ; octetEnd < len(remainder) && octetEnd < 3; octetEnd++ {
@@ -214,7 +215,8 @@ func isAllowedWSOrigin(origin string) bool {
 					}
 					// Valid octet is 1-3 digits; next char must be valid boundary (. : / or end)
 					if octetEnd > 0 && octetEnd <= 3 {
-						if octetEnd == len(remainder) || remainder[octetEnd] == '.' || remainder[octetEnd] == ':' ||
+						if octetEnd == len(remainder) || remainder[octetEnd] == '.' ||
+							remainder[octetEnd] == ':' ||
 							remainder[octetEnd] == '/' {
 							return true
 						}
@@ -479,7 +481,8 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 			h.mu.Unlock()
-			logging.GetLogger().Debug("WebSocket client disconnected", "total_clients", len(h.clients))
+			logging.GetLogger().
+				Debug("WebSocket client disconnected", "total_clients", len(h.clients))
 
 		case message := <-h.broadcast:
 			// Collect slow clients under read lock, then remove them under write lock
@@ -692,7 +695,10 @@ type dbDeviceWriterAdapter struct {
 }
 
 // PersistDevices implements discovery.DBDeviceWriter interface.
-func (a *dbDeviceWriterAdapter) PersistDevices(ctx context.Context, devices []*discovery.DiscoveredDevice) error {
+func (a *dbDeviceWriterAdapter) PersistDevices(
+	ctx context.Context,
+	devices []*discovery.DiscoveredDevice,
+) error {
 	if a.db == nil || len(devices) == 0 {
 		return nil
 	}
@@ -791,7 +797,8 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logging.GetLogger().Debug("WebSocket authenticated", "username", claims.Username, "source", source)
+	logging.GetLogger().
+		Debug("WebSocket authenticated", "username", claims.Username, "source", source)
 
 	// No response header needed for cookie auth
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -911,7 +918,11 @@ func (c *Client) readPump() {
 	for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsUnexpectedCloseError(
+				err,
+				websocket.CloseGoingAway,
+				websocket.CloseAbnormalClosure,
+			) {
 				logging.GetLogger().Warn("WebSocket error", "error", err)
 			}
 			break
@@ -921,9 +932,13 @@ func (c *Client) readPump() {
 		if !c.limiter.Allow() {
 			logging.GetLogger().Warn("WebSocket rate limit exceeded, closing connection")
 			// Send close message with policy violation code (1008)
-			closeMsg := websocket.FormatCloseMessage(websocket.ClosePolicyViolation, "rate limit exceeded")
+			closeMsg := websocket.FormatCloseMessage(
+				websocket.ClosePolicyViolation,
+				"rate limit exceeded",
+			)
 			if writeErr := c.conn.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(writeWait)); writeErr != nil {
-				logging.GetLogger().Error("Failed to send rate limit close message", "error", writeErr)
+				logging.GetLogger().
+					Error("Failed to send rate limit close message", "error", writeErr)
 			}
 			break
 		}

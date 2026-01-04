@@ -122,7 +122,10 @@ func (s *SecurityScanner) GetResult(server string) *SecurityScanResult {
 }
 
 // ScanServer performs a security scan on a single DNS server.
-func (s *SecurityScanner) ScanServer(ctx context.Context, server string) (*SecurityScanResult, error) {
+func (s *SecurityScanner) ScanServer(
+	ctx context.Context,
+	server string,
+) (*SecurityScanResult, error) {
 	s.mu.Lock()
 	s.running = true
 	s.mu.Unlock()
@@ -209,7 +212,11 @@ func (s *SecurityScanner) checkOpenResolver(
 		if err == nil && len(ips) > 0 {
 			// Server responded to our query - it's an open resolver.
 			result.IsOpenResolver = true
-			result.OpenResolverDetails = fmt.Sprintf("Resolved %s to %d addresses", domain, len(ips))
+			result.OpenResolverDetails = fmt.Sprintf(
+				"Resolved %s to %d addresses",
+				domain,
+				len(ips),
+			)
 			result.Vulnerabilities = append(result.Vulnerabilities, "Open DNS resolver detected")
 			result.Recommendations = append(result.Recommendations,
 				"Configure DNS server to only respond to authorized clients",
@@ -265,8 +272,15 @@ func (s *SecurityScanner) checkDNSRebinding(
 				continue
 			}
 			result.RebindingVulnerable = true
-			result.RebindingDetails = fmt.Sprintf("Public domain %s resolved to private IP %s", domain, ip.IP)
-			result.Vulnerabilities = append(result.Vulnerabilities, "DNS rebinding vulnerability detected")
+			result.RebindingDetails = fmt.Sprintf(
+				"Public domain %s resolved to private IP %s",
+				domain,
+				ip.IP,
+			)
+			result.Vulnerabilities = append(
+				result.Vulnerabilities,
+				"DNS rebinding vulnerability detected",
+			)
 			result.Recommendations = append(result.Recommendations,
 				"Configure DNS server to block private IP responses for public domains",
 				"Implement DNS rebinding protection",

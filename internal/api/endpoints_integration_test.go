@@ -412,7 +412,11 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 		}
 
 		body, _ := json.Marshal(settings)
-		req, _ := http.NewRequest(http.MethodPut, ts.URL+"/api/health-checks/settings", bytes.NewReader(body))
+		req, _ := http.NewRequest(
+			http.MethodPut,
+			ts.URL+"/api/health-checks/settings",
+			bytes.NewReader(body),
+		)
 		req.Header.Set("Content-Type", "application/json")
 
 		client := &http.Client{Timeout: 15 * time.Second}

@@ -44,7 +44,8 @@ func startCPUSampler() {
 			case <-cpuSamplerStop:
 				return
 			case <-ticker.C:
-				if pct, err := cpu.Percent(100*time.Millisecond, false); err == nil && len(pct) > 0 {
+				if pct, err := cpu.Percent(100*time.Millisecond, false); err == nil &&
+					len(pct) > 0 {
 					cpuCacheMu.Lock()
 					cpuCachePercent = pct[0]
 					cpuCacheMu.Unlock()

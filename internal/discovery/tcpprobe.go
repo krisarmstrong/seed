@@ -199,7 +199,12 @@ func (p *TCPProber) ProbeTCP(ctx context.Context, ipStr string, port int) TCPPro
 }
 
 // ScanPorts probes multiple ports on a single IP concurrently.
-func (p *TCPProber) ScanPorts(ctx context.Context, ipStr string, ports []int, workers int) []TCPProbeResult {
+func (p *TCPProber) ScanPorts(
+	ctx context.Context,
+	ipStr string,
+	ports []int,
+	workers int,
+) []TCPProbeResult {
 	if workers <= 0 {
 		workers = 20
 	}
@@ -254,7 +259,17 @@ func (p *TCPProber) ScanPorts(ctx context.Context, ipStr string, ports []int, wo
 			filtered++
 		}
 	}
-	slog.Info("Port scan complete", "ip", ipStr, "open", open, "closed", closed, "filtered", filtered)
+	slog.Info(
+		"Port scan complete",
+		"ip",
+		ipStr,
+		"open",
+		open,
+		"closed",
+		closed,
+		"filtered",
+		filtered,
+	)
 
 	return results
 }

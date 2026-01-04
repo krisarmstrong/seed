@@ -271,7 +271,17 @@ func (g *ReportGenerator) addFloorSection(floor *Floor) {
 			"",
 		)
 		if floor.FloorPlan.ScaleM > 0 {
-			g.pdf.CellFormat(0, 6, fmt.Sprintf("Scale: %.2f m/px", floor.FloorPlan.ScaleM), "", 1, "L", false, 0, "")
+			g.pdf.CellFormat(
+				0,
+				6,
+				fmt.Sprintf("Scale: %.2f m/px", floor.FloorPlan.ScaleM),
+				"",
+				1,
+				"L",
+				false,
+				0,
+				"",
+			)
 		}
 	}
 
@@ -339,7 +349,17 @@ func (g *ReportGenerator) addFloorHeatmapNote(_ *Floor) {
 	g.pdf.Ln(10)
 	g.pdf.SetFont("Arial", "I", 10)
 	g.pdf.SetTextColor(80, 80, 80)
-	g.pdf.CellFormat(0, 6, "Heatmap visualization available in the web interface.", "", 1, "L", false, 0, "")
+	g.pdf.CellFormat(
+		0,
+		6,
+		"Heatmap visualization available in the web interface.",
+		"",
+		1,
+		"L",
+		false,
+		0,
+		"",
+	)
 }
 
 // addRecommendations adds the recommendations section.
@@ -486,7 +506,10 @@ func (g *ReportGenerator) addRawDataAppendix() {
 		g.pdf.CellFormat(
 			0,
 			6,
-			fmt.Sprintf("... and %d more samples (truncated for readability)", len(allSamples)-maxSamples),
+			fmt.Sprintf(
+				"... and %d more samples (truncated for readability)",
+				len(allSamples)-maxSamples,
+			),
 			"",
 			1,
 			"L",

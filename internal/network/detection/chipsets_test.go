@@ -216,7 +216,11 @@ func TestChipsetData(t *testing.T) {
 			}
 		}
 		if !found {
-			t.Errorf("Expected chipset %s %s not found in database", expected.vendor, expected.model)
+			t.Errorf(
+				"Expected chipset %s %s not found in database",
+				expected.vendor,
+				expected.model,
+			)
 		}
 	}
 }

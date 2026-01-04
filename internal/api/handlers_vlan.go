@@ -268,7 +268,15 @@ func (s *Server) createVLANInterface(
 	}
 
 	if err := vlan.CreateVlanInterface(iface, vlanID); err != nil {
-		logger.Error("Failed to create VLAN interface", "error", err, "interface", iface, "vlanID", vlanID)
+		logger.Error(
+			"Failed to create VLAN interface",
+			"error",
+			err,
+			"interface",
+			iface,
+			"vlanID",
+			vlanID,
+		)
 		sendErrorResponseWithDetails(
 			w,
 			logger,
@@ -303,7 +311,15 @@ func (s *Server) deleteVLANInterface(
 	}
 
 	if err := vlan.DeleteVlanInterface(iface, vlanID); err != nil {
-		logger.Error("Failed to delete VLAN interface", "error", err, "interface", iface, "vlanID", vlanID)
+		logger.Error(
+			"Failed to delete VLAN interface",
+			"error",
+			err,
+			"interface",
+			iface,
+			"vlanID",
+			vlanID,
+		)
 		sendErrorResponseWithDetails(
 			w,
 			logger,

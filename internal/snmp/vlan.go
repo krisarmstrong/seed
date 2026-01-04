@@ -64,7 +64,11 @@ func GetVLANs(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]VLANInf
 }
 
 // walkVLANs walks the Q-BRIDGE VLAN tables using SNMPv2c.
-func walkVLANs(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]VLANInfo, error) {
+func walkVLANs(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]VLANInfo, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -112,7 +116,8 @@ func walkVLANTable(params *gosnmp.GoSNMP) []VLANInfo {
 	})
 	if err != nil {
 		// If static table fails, try current table
-		logging.GetLogger().Debug("Failed to walk dot1qVlanStaticName, trying current table", "error", err)
+		logging.GetLogger().
+			Debug("Failed to walk dot1qVlanStaticName, trying current table", "error", err)
 	}
 
 	// Walk dot1qVlanStaticEgressPorts to get port membership.

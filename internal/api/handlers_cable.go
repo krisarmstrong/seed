@@ -73,7 +73,10 @@ func (s *Server) handleCable(w http.ResponseWriter, r *http.Request) {
 			logger,
 			http.StatusServiceUnavailable,
 			ErrCodeServiceUnavail,
-			localizer.TWithData("errors.service.notAvailable", map[string]any{"service": "Cable tester"}),
+			localizer.TWithData(
+				"errors.service.notAvailable",
+				map[string]any{"service": "Cable tester"},
+			),
 			"",
 		)
 		return

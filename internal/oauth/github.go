@@ -74,7 +74,11 @@ type GitHubEmailResponse struct {
 
 // GetGitHubUserInfo fetches user information from GitHub.
 // GitHub requires separate API calls for user info and emails.
-func GetGitHubUserInfo(ctx context.Context, config *oauth2.Config, token *oauth2.Token) (*UserInfo, error) {
+func GetGitHubUserInfo(
+	ctx context.Context,
+	config *oauth2.Config,
+	token *oauth2.Token,
+) (*UserInfo, error) {
 	client := config.Client(ctx, token)
 
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -153,7 +157,12 @@ func getGitHubPrimaryEmail(ctx context.Context, client *http.Client) (string, bo
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return "", false, fmt.Errorf("%w: status %d: %s", ErrUserInfo, resp.StatusCode, string(body))
+		return "", false, fmt.Errorf(
+			"%w: status %d: %s",
+			ErrUserInfo,
+			resp.StatusCode,
+			string(body),
+		)
 	}
 
 	body, readErr := io.ReadAll(resp.Body)

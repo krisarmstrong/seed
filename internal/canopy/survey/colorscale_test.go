@@ -183,7 +183,12 @@ func TestGetColorScaleByName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := survey.GetColorScaleByName(tt.input)
 			if got.Name != tt.expected.Name {
-				t.Errorf("GetColorScaleByName(%q) = %s, want %s", tt.input, got.Name, tt.expected.Name)
+				t.Errorf(
+					"GetColorScaleByName(%q) = %s, want %s",
+					tt.input,
+					got.Name,
+					tt.expected.Name,
+				)
 			}
 		})
 	}
@@ -247,7 +252,11 @@ func TestColorScaleProperties(t *testing.T) {
 				t.Errorf("MinVal %v > first stop %v", scale.MinVal, scale.Stops[0].Value)
 			}
 			if scale.MaxVal < scale.Stops[len(scale.Stops)-1].Value {
-				t.Errorf("MaxVal %v < last stop %v", scale.MaxVal, scale.Stops[len(scale.Stops)-1].Value)
+				t.Errorf(
+					"MaxVal %v < last stop %v",
+					scale.MaxVal,
+					scale.Stops[len(scale.Stops)-1].Value,
+				)
 			}
 		})
 	}

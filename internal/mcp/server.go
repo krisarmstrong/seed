@@ -137,7 +137,12 @@ func (s *Server) GetMCPServer() *server.MCPServer {
 // addTool is a helper to add a tool if it's allowed by config.
 //
 
-func (s *Server) addTool(name string, isAllowed func(string) bool, tool mcp.Tool, handler server.ToolHandlerFunc) {
+func (s *Server) addTool(
+	name string,
+	isAllowed func(string) bool,
+	tool mcp.Tool,
+	handler server.ToolHandlerFunc,
+) {
 	if !isAllowed(name) {
 		logging.GetLogger().Debug("Tool not in allowed list, skipping", "tool", name)
 		return

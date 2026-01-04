@@ -268,7 +268,11 @@ func TestHandleSetupComplete(t *testing.T) {
 				SetupToken: setupToken,
 			}
 			body, _ := json.Marshal(reqBody)
-			req := httptest.NewRequest(http.MethodPost, "/api/setup/complete", bytes.NewReader(body))
+			req := httptest.NewRequest(
+				http.MethodPost,
+				"/api/setup/complete",
+				bytes.NewReader(body),
+			)
 			req.Header.Set("Content-Type", "application/json")
 
 			w := httptest.NewRecorder()

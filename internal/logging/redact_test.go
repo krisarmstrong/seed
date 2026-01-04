@@ -176,7 +176,12 @@ func TestRedactMap(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := logging.RedactMap(tt.input)
 			if result[tt.checkKey] != tt.expected {
-				t.Errorf("RedactMap()[%q] = %v, want %v", tt.checkKey, result[tt.checkKey], tt.expected)
+				t.Errorf(
+					"RedactMap()[%q] = %v, want %v",
+					tt.checkKey,
+					result[tt.checkKey],
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -433,7 +438,11 @@ func TestSensitiveHeaders(t *testing.T) {
 			headers := http.Header{headerName: []string{"secret-value"}}
 			result := logging.RedactHeaders(headers)
 			if result[headerName] != "[REDACTED]" {
-				t.Errorf("RedactHeaders()[%q] = %q, want [REDACTED]", headerName, result[headerName])
+				t.Errorf(
+					"RedactHeaders()[%q] = %q, want [REDACTED]",
+					headerName,
+					result[headerName],
+				)
 			}
 		})
 	}

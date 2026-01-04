@@ -112,9 +112,19 @@ func detectLinuxPackageManager() *PackageManagerInfo {
 		{"apt", "apt", []string{"apt", "install", "-y", "iperf3"}, []string{"apt", "update"}},
 		{"dnf", "dnf", []string{"dnf", "install", "-y", "iperf3"}, nil},
 		{"yum", "yum", []string{"yum", "install", "-y", "iperf3"}, nil},
-		{"pacman", "pacman", []string{"pacman", "-S", "--noconfirm", "iperf3"}, []string{"pacman", "-Sy"}},
+		{
+			"pacman",
+			"pacman",
+			[]string{"pacman", "-S", "--noconfirm", "iperf3"},
+			[]string{"pacman", "-Sy"},
+		},
 		{"apk", "apk", []string{"apk", "add", "iperf3"}, []string{"apk", "update"}},
-		{"zypper", "zypper", []string{"zypper", "install", "-y", "iperf3"}, []string{"zypper", "refresh"}},
+		{
+			"zypper",
+			"zypper",
+			[]string{"zypper", "install", "-y", "iperf3"},
+			[]string{"zypper", "refresh"},
+		},
 	}
 
 	for _, m := range managers {
@@ -232,7 +242,8 @@ func InstallViaPackageManager(opts InstallOptions) *InstallResult {
 		if opts.UseSudo && needsSudo(pm.Name) {
 			updateCmd = append([]string{"sudo"}, updateCmd...)
 		}
-		logging.GetLogger().Debug("Running package manager update", "command", strings.Join(updateCmd, " "))
+		logging.GetLogger().
+			Debug("Running package manager update", "command", strings.Join(updateCmd, " "))
 
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 		//nolint:gosec // G204: commands are from controlled sources
@@ -320,7 +331,10 @@ func InstallFromGitHub(opts InstallOptions) *InstallResult {
 
 	if opts.Version != "" {
 		version = opts.Version
-		tarballURL = fmt.Sprintf("https://github.com/esnet/iperf/archive/refs/tags/%s.tar.gz", version)
+		tarballURL = fmt.Sprintf(
+			"https://github.com/esnet/iperf/archive/refs/tags/%s.tar.gz",
+			version,
+		)
 	}
 
 	logging.GetLogger().Info("Downloading iperf3", "version", version, "url", tarballURL)
@@ -606,7 +620,8 @@ func AutoInstall(useSudo, verbose bool) *InstallResult {
 		if result.Success {
 			return result
 		}
-		logging.GetLogger().Warn("Package manager installation failed, trying GitHub", "error", result.Error)
+		logging.GetLogger().
+			Warn("Package manager installation failed, trying GitHub", "error", result.Error)
 	}
 
 	// Fall back to GitHub

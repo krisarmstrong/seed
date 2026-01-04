@@ -83,7 +83,11 @@ func DefaultResolutionConfig() *ResolutionConfig {
 }
 
 // NewResolutionPhase creates a new Phase 2 implementation.
-func NewResolutionPhase(interfaceName string, config *ResolutionConfig, broadcaster EventBroadcaster) *ResolutionPhase {
+func NewResolutionPhase(
+	interfaceName string,
+	config *ResolutionConfig,
+	broadcaster EventBroadcaster,
+) *ResolutionPhase {
 	if config == nil {
 		config = DefaultResolutionConfig()
 	}

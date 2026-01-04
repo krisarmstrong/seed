@@ -52,7 +52,11 @@ func TestGetTestDefaults(t *testing.T) {
 		}
 
 		if defaults.DNS.TestHostname != cfg.DNS.TestHostname {
-			t.Errorf("DNS hostname mismatch: test=%s, default=%s", defaults.DNS.TestHostname, cfg.DNS.TestHostname)
+			t.Errorf(
+				"DNS hostname mismatch: test=%s, default=%s",
+				defaults.DNS.TestHostname,
+				cfg.DNS.TestHostname,
+			)
 		}
 
 		if defaults.NetworkDiscovery.ARPScanWorkers != cfg.NetworkDiscovery.ARPScanWorkers {
@@ -154,7 +158,11 @@ func TestConfigBuilder(t *testing.T) {
 			Build()
 
 		if cfg.NetworkDiscovery.Options.PortScan.TCPPorts != ports {
-			t.Errorf("expected ports %q, got %q", ports, cfg.NetworkDiscovery.Options.PortScan.TCPPorts)
+			t.Errorf(
+				"expected ports %q, got %q",
+				ports,
+				cfg.NetworkDiscovery.Options.PortScan.TCPPorts,
+			)
 		}
 	})
 }

@@ -446,7 +446,12 @@ func (db *DB) migrate() error {
 		}
 
 		if runErr := db.runMigration(ctx, m); runErr != nil {
-			return fmt.Errorf("failed to run migration %d (%s): %w", m.Version, m.Description, runErr)
+			return fmt.Errorf(
+				"failed to run migration %d (%s): %w",
+				m.Version,
+				m.Description,
+				runErr,
+			)
 		}
 	}
 

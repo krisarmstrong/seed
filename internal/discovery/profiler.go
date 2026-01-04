@@ -174,7 +174,9 @@ func NewDeviceProfiler(cfg *ProfilerConfig, snmpCfg *config.SNMPConfig) *DeviceP
 	}
 
 	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // #nosec G402 -- Profiling internal network devices
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		}, // #nosec G402 -- Profiling internal network devices
 		DialContext: (&net.Dialer{
 			Timeout: cfg.Timeout,
 		}).DialContext,
@@ -200,7 +202,11 @@ func NewDeviceProfiler(cfg *ProfilerConfig, snmpCfg *config.SNMPConfig) *DeviceP
 // UpdateScanConfig updates the port scanning configuration.
 // This allows Pipeline to set the scan intensity without recreating the profiler.
 // Thread-safe: can be called while profiler is running.
-func (p *DeviceProfiler) UpdateScanConfig(intensity PortScanIntensity, customPorts []int, timing ScanTimingProfile) {
+func (p *DeviceProfiler) UpdateScanConfig(
+	intensity PortScanIntensity,
+	customPorts []int,
+	timing ScanTimingProfile,
+) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.config.PortScanIntensity = intensity
@@ -512,7 +518,12 @@ func (p *DeviceProfiler) checkPortWithConfig(ctx context.Context, ip string, por
 }
 
 // probeHTTP probes an HTTP/HTTPS endpoint.
-func (p *DeviceProfiler) probeHTTP(ctx context.Context, ip string, port int, isHTTPS bool) *HTTPInfo {
+func (p *DeviceProfiler) probeHTTP(
+	ctx context.Context,
+	ip string,
+	port int,
+	isHTTPS bool,
+) *HTTPInfo {
 	scheme := "http"
 	if isHTTPS {
 		scheme = "https"
@@ -647,7 +658,11 @@ func (p *DeviceProfiler) inferDeviceType(profile *DeviceProfile) {
 }
 
 // inferFromPorts infers device type and icons from open ports.
-func (p *DeviceProfiler) inferFromPorts(ports []OpenPort, icons map[string]bool, deviceType string) string {
+func (p *DeviceProfiler) inferFromPorts(
+	ports []OpenPort,
+	icons map[string]bool,
+	deviceType string,
+) string {
 	for _, op := range ports {
 		deviceType = p.setIconsForPort(op.Port, icons, deviceType)
 		deviceType = p.inferFromBanner(op.Banner, deviceType)
@@ -656,7 +671,11 @@ func (p *DeviceProfiler) inferFromPorts(ports []OpenPort, icons map[string]bool,
 }
 
 // setIconsForPort sets icons based on port number and returns updated device type.
-func (p *DeviceProfiler) setIconsForPort(port int, icons map[string]bool, deviceType string) string {
+func (p *DeviceProfiler) setIconsForPort(
+	port int,
+	icons map[string]bool,
+	deviceType string,
+) string {
 	switch port {
 	case 22:
 		icons["ssh"] = true
@@ -701,7 +720,11 @@ func (p *DeviceProfiler) inferFromBanner(banner, deviceType string) string {
 }
 
 // inferFromHTTPInfo infers device type and icons from HTTP response.
-func (p *DeviceProfiler) inferFromHTTPInfo(httpInfo *HTTPInfo, icons map[string]bool, deviceType string) string {
+func (p *DeviceProfiler) inferFromHTTPInfo(
+	httpInfo *HTTPInfo,
+	icons map[string]bool,
+	deviceType string,
+) string {
 	if httpInfo == nil {
 		return deviceType
 	}
