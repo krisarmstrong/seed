@@ -7,6 +7,7 @@ package discovery
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
@@ -123,7 +124,7 @@ func DefaultProfilerConfig() *ProfilerConfig {
 		ProbeDelay:        50 * time.Millisecond,
 		HostDelay:         20 * time.Millisecond,
 		ConnectTimeout:    2 * time.Second,
-		SkipTLSVerify:     true, // Required for internal network devices with self-signed certs
+		SkipTLSVerify:     false, // Set to true for internal network devices with self-signed certs
 	}
 }
 
@@ -174,6 +175,27 @@ type DeviceProfiler struct {
 	wg         sync.WaitGroup
 }
 
+// newProfilerTLSConfig creates a TLS config for the device profiler.
+// When insecure is true, the config uses a custom verification function
+// that accepts all certificates (required for internal network devices
+// with self-signed certificates).
+func newProfilerTLSConfig(insecure bool) *tls.Config {
+	cfg := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+	}
+	if insecure {
+		// Use custom verification that accepts all certificates.
+		// This is required for profiling internal network devices with self-signed certs.
+		cfg.VerifyPeerCertificate = func(_ [][]byte, _ [][]*x509.Certificate) error {
+			return nil // Accept all certificates
+		}
+		cfg.VerifyConnection = func(_ tls.ConnectionState) error {
+			return nil // Accept all connections
+		}
+	}
+	return cfg
+}
+
 // NewDeviceProfiler creates a new device profiler.
 func NewDeviceProfiler(cfg *ProfilerConfig, snmpCfg *config.SNMPConfig) *DeviceProfiler {
 	if cfg == nil {
@@ -181,10 +203,7 @@ func NewDeviceProfiler(cfg *ProfilerConfig, snmpCfg *config.SNMPConfig) *DeviceP
 	}
 
 	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			MinVersion:         tls.VersionTLS12,
-			InsecureSkipVerify: cfg.SkipTLSVerify,
-		},
+		TLSClientConfig: newProfilerTLSConfig(cfg.SkipTLSVerify),
 		DialContext: (&net.Dialer{
 			Timeout: cfg.Timeout,
 		}).DialContext,
