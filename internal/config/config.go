@@ -11,8 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/krisarmstrong/seed/internal/logging"
 	"gopkg.in/yaml.v3"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // IP configuration mode constants.
