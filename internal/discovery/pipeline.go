@@ -8,12 +8,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
 	"maps"
 	"sync"
 	"time"
 
 	"github.com/google/uuid"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // PipelineState represents the current state of the discovery pipeline.
@@ -517,7 +518,7 @@ func (p *Pipeline) Cancel() error {
 	p.currentRun.CompletedAt = &now
 	p.mu.Unlock()
 
-	slog.Info("Pipeline cancelled", "runId", runID)
+	logging.GetLogger().Info("Pipeline cancelled", "runId", runID)
 	p.broadcastEvent(EventPipelineCanceled, nil)
 
 	return nil
@@ -601,7 +602,7 @@ func (p *Pipeline) UpdateConfig(config *PipelineConfig) error {
 		}
 		p.resolutionPhase = NewResolutionPhase(interfaceName, resConfig, p.broadcaster)
 
-		slog.Info("Resolution phase config updated",
+		logging.GetLogger().Info("Resolution phase config updated",
 			"dns", config.Resolution.DNS,
 			"netbios", config.Resolution.NetBIOS,
 			"mdns", config.Resolution.MDNS)
@@ -701,7 +702,7 @@ func (p *Pipeline) logPipelineCompletion(deviceCount int) {
 	startedAt := p.currentRun.StartedAt
 	p.mu.Unlock()
 
-	slog.Info("Pipeline completed",
+	logging.GetLogger().Info("Pipeline completed",
 		"runId", runID,
 		"devicesFound", deviceCount,
 		"duration", time.Since(startedAt))
@@ -727,7 +728,7 @@ func (p *Pipeline) runEnumerationPhase(
 		// ErrScanInProgress is a soft error - just means another scan was running
 		// Continue with existing device data rather than failing the pipeline
 		if errors.Is(err, ErrScanInProgress) {
-			slog.Warn("Pipeline enumeration: scan skipped - using existing device data")
+			logging.GetLogger().Warn("Pipeline enumeration: scan skipped - using existing device data")
 		} else {
 			return nil, fmt.Errorf("enumeration failed: %w", err)
 		}
@@ -749,7 +750,7 @@ func (p *Pipeline) runEnumerationPhase(
 		Duration:     duration,
 	})
 
-	slog.Info("Enumeration phase completed",
+	logging.GetLogger().Info("Enumeration phase completed",
 		"devices", len(devices),
 		"duration", duration)
 
@@ -814,7 +815,7 @@ func (p *Pipeline) runResolutionPhase(
 		Duration:      duration,
 	})
 
-	slog.Info("Resolution phase completed",
+	logging.GetLogger().Info("Resolution phase completed",
 		"namesResolved", namesResolved,
 		"duration", duration)
 
@@ -851,7 +852,7 @@ func (p *Pipeline) runScanningPhase(
 	ports := p.getPortsForIntensity()
 
 	if len(ports) == 0 {
-		slog.Info("Port scanning disabled, skipping service discovery")
+		logging.GetLogger().Info("Port scanning disabled, skipping service discovery")
 	} else {
 		// Queue devices for profiling
 		for _, device := range devices {
@@ -882,9 +883,9 @@ func (p *Pipeline) runScanningPhase(
 			case <-waitCtx.Done():
 				// Fixes #938: Distinguish between timeout and intentional cancellation
 				if ctx.Err() != nil {
-					slog.Info("Scanning phase cancelled", "reason", ctx.Err())
+					logging.GetLogger().Info("Scanning phase cancelled", "reason", ctx.Err())
 				} else if waitCtx.Err() == context.DeadlineExceeded {
-					slog.Warn("Scanning phase timed out", "timeout", timeout)
+					logging.GetLogger().Warn("Scanning phase timed out", "timeout", timeout)
 				}
 				break waitLoop
 			case <-ticker.C:
@@ -953,7 +954,7 @@ func (p *Pipeline) runScanningPhase(
 		Duration:  duration,
 	})
 
-	slog.Info("Scanning phase completed",
+	logging.GetLogger().Info("Scanning phase completed",
 		"openPorts", openPorts,
 		"duration", duration)
 
@@ -992,7 +993,7 @@ func (p *Pipeline) runAssessmentPhase(
 		Duration:   duration,
 	})
 
-	slog.Info("Assessment phase completed",
+	logging.GetLogger().Info("Assessment phase completed",
 		"duration", duration)
 
 	return devices, nil
@@ -1021,7 +1022,7 @@ const maxPipelineErrors = 100
 // handlePhaseError handles errors during phase execution.
 // Fixes #880: Limit error array to maxPipelineErrors to prevent unbounded growth.
 func (p *Pipeline) handlePhaseError(phase string, err error) {
-	slog.Error("Pipeline phase failed",
+	logging.GetLogger().Error("Pipeline phase failed",
 		"phase", phase,
 		"error", err)
 

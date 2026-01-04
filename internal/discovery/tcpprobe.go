@@ -5,12 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // PortState represents the state of a TCP port.
@@ -259,7 +260,7 @@ func (p *TCPProber) ScanPorts(
 			filtered++
 		}
 	}
-	slog.Info(
+	logging.GetLogger().Info(
 		"Port scan complete",
 		"ip",
 		ipStr,

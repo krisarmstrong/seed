@@ -6,11 +6,11 @@ package discovery
 import (
 	"context"
 	"errors"
-	"log/slog"
 	"sync"
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // Service is the unified discovery orchestrator that applies direct
@@ -121,7 +121,7 @@ func (s *Service) Start() error {
 	s.stopCh = make(chan struct{})
 	opts := &s.cfg.NetworkDiscovery.Options
 
-	slog.Info("Starting discovery service", "methods", s.getActiveMethods())
+	logging.GetLogger().Info("Starting discovery service", "methods", s.getActiveMethods())
 
 	// Apply discovery settings
 	if err := s.applyOptions(opts); err != nil {
@@ -164,7 +164,7 @@ func (s *Service) Stop() {
 	s.deviceDiscovery.Stop()
 	s.profiler.Stop()
 	s.running = false
-	slog.Info("Discovery service stopped")
+	logging.GetLogger().Info("Discovery service stopped")
 }
 
 // applyOptions configures discovery methods based on the direct settings.
@@ -188,7 +188,7 @@ func (s *Service) applyOptions(opts *config.DiscoveryOptions) error {
 			}
 		}
 		if err := s.deviceDiscovery.SetAdditionalSubnets(cidrs); err != nil {
-			slog.Warn("Failed to set additional subnets", "error", err)
+			logging.GetLogger().Warn("Failed to set additional subnets", "error", err)
 		}
 	}
 
@@ -217,13 +217,13 @@ func (s *Service) rescanLoop() {
 		case <-s.stopCh:
 			return
 		case <-ticker.C:
-			slog.Debug("Discovery: starting scheduled rescan")
+			logging.GetLogger().Debug("Discovery: starting scheduled rescan")
 			ctx, cancel := context.WithTimeout(
 				context.Background(),
 				s.cfg.NetworkDiscovery.ScanTimeout,
 			)
 			if err := s.Scan(ctx); err != nil {
-				slog.Warn("Discovery: scheduled rescan failed", "error", err)
+				logging.GetLogger().Warn("Discovery: scheduled rescan failed", "error", err)
 			}
 			cancel()
 		}
@@ -242,7 +242,7 @@ func (s *Service) Scan(ctx context.Context) error {
 	}
 
 	if !s.shouldDoActiveScan() {
-		slog.Debug("Discovery: active scanning disabled in options")
+		logging.GetLogger().Debug("Discovery: active scanning disabled in options")
 		return nil
 	}
 
@@ -251,7 +251,7 @@ func (s *Service) Scan(ctx context.Context) error {
 	if err := s.deviceDiscovery.Scan(ctx); err != nil {
 		// ErrScanInProgress is not a failure - just means scan was already running
 		if errors.Is(err, ErrScanInProgress) {
-			slog.Debug("Discovery: scan skipped - already in progress")
+			logging.GetLogger().Debug("Discovery: scan skipped - already in progress")
 			return err // Return error so callers know it was skipped
 		}
 		s.mu.Lock()
@@ -273,7 +273,7 @@ func (s *Service) Scan(ctx context.Context) error {
 		s.lastDeltaTime = time.Now()
 
 		if len(s.lastDelta.NewDevices) > 0 || len(s.lastDelta.RemovedDevices) > 0 {
-			slog.Info("Discovery scan delta",
+			logging.GetLogger().Info("Discovery scan delta",
 				"new", len(s.lastDelta.NewDevices),
 				"updated", len(s.lastDelta.UpdatedDevices),
 				"removed", len(s.lastDelta.RemovedDevices))
@@ -302,7 +302,7 @@ func (s *Service) queueDevicesForProfiling() {
 	if pipeline != nil {
 		status := pipeline.GetStatus()
 		if isRunningPipelineState(status.Status) {
-			slog.Debug("Skipping device profiling - pipeline is running")
+			logging.GetLogger().Debug("Skipping device profiling - pipeline is running")
 			return
 		}
 	}
@@ -317,7 +317,7 @@ func (s *Service) queueDevicesForProfiling() {
 		}
 	}
 	if queued > 0 {
-		slog.Info("Queued devices for profiling after scan", "count", queued)
+		logging.GetLogger().Info("Queued devices for profiling after scan", "count", queued)
 	}
 }
 
@@ -350,7 +350,7 @@ func (s *Service) Reload() error {
 	}
 
 	opts := &s.cfg.NetworkDiscovery.Options
-	slog.Info("Discovery: reloading options", "methods", s.getActiveMethods())
+	logging.GetLogger().Info("Discovery: reloading options", "methods", s.getActiveMethods())
 
 	if wasRunning {
 		// Create new stopCh for the new rescanLoop goroutine
@@ -574,7 +574,7 @@ func (s *Service) StartPipeline(ctx context.Context, trigger string) error {
 		return err
 	}
 
-	slog.Info("Discovery pipeline started from service",
+	logging.GetLogger().Info("Discovery pipeline started from service",
 		"run_id", run.ID,
 		"trigger", trigger,
 		"phases", len(run.PhaseDurations))
@@ -636,7 +636,7 @@ func (s *Service) syncPipelineResults(devices []*DiscoveredDevice) {
 		s.lastDeltaTime = time.Now()
 
 		if len(s.lastDelta.NewDevices) > 0 || len(s.lastDelta.RemovedDevices) > 0 {
-			slog.Info("Pipeline completed - synced devices",
+			logging.GetLogger().Info("Pipeline completed - synced devices",
 				"total", len(devices),
 				"new", len(s.lastDelta.NewDevices),
 				"updated", len(s.lastDelta.UpdatedDevices),

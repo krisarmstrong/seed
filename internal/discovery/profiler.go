@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"maps"
 	"net"
 	"net/http"
@@ -21,6 +20,7 @@ import (
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/config"
+	"github.com/krisarmstrong/seed/internal/logging"
 	"github.com/krisarmstrong/seed/internal/snmp"
 )
 
@@ -239,7 +239,7 @@ func (p *DeviceProfiler) UpdateScanConfig(
 	p.config.PortScanIntensity = intensity
 	p.config.CustomPorts = customPorts
 	p.config.TimingProfile = timing
-	slog.Info("Updated profiler scan config", "intensity", intensity, "timing", timing)
+	logging.GetLogger().Info("Updated profiler scan config", "intensity", intensity, "timing", timing)
 }
 
 // Start begins the profiler worker pool.
@@ -260,7 +260,7 @@ func (p *DeviceProfiler) Start() {
 		go p.worker()
 	}
 
-	slog.Info("Device profiler started", "workers", p.config.MaxConcurrent)
+	logging.GetLogger().Info("Device profiler started", "workers", p.config.MaxConcurrent)
 }
 
 // Stop stops the profiler.
@@ -281,7 +281,7 @@ func (p *DeviceProfiler) Stop() {
 		p.transport.CloseIdleConnections()
 	}
 
-	slog.Info("Device profiler stopped")
+	logging.GetLogger().Info("Device profiler stopped")
 }
 
 // worker processes profile requests from the queue.
@@ -319,7 +319,7 @@ func (p *DeviceProfiler) worker() {
 // Fixes #930: Check if profiler is started before accepting queue items.
 func (p *DeviceProfiler) QueueProfile(ip string) error {
 	if !p.config.Enabled {
-		slog.Debug("QueueProfile skipped - profiler disabled", "ip", ip)
+		logging.GetLogger().Debug("QueueProfile skipped - profiler disabled", "ip", ip)
 		return errors.New("profiler disabled")
 	}
 	if ip == "" {
@@ -330,18 +330,18 @@ func (p *DeviceProfiler) QueueProfile(ip string) error {
 	// Fixes #930: Check if profiler is started
 	if p.stopCh == nil {
 		p.mu.Unlock()
-		slog.Debug("QueueProfile skipped - profiler not started", "ip", ip)
+		logging.GetLogger().Debug("QueueProfile skipped - profiler not started", "ip", ip)
 		return errors.New("profiler not started")
 	}
 	// Skip if already profiled or in progress
 	if _, exists := p.profiles[ip]; exists {
 		p.mu.Unlock()
-		slog.Debug("QueueProfile skipped - already profiled", "ip", ip)
+		logging.GetLogger().Debug("QueueProfile skipped - already profiled", "ip", ip)
 		return nil // Not an error, just already done
 	}
 	if p.profiling[ip] {
 		p.mu.Unlock()
-		slog.Debug("QueueProfile skipped - in progress", "ip", ip)
+		logging.GetLogger().Debug("QueueProfile skipped - in progress", "ip", ip)
 		return nil // Not an error, already in progress
 	}
 	p.profiling[ip] = true
@@ -349,14 +349,14 @@ func (p *DeviceProfiler) QueueProfile(ip string) error {
 
 	select {
 	case p.queue <- ip:
-		slog.Info("Queued device for profiling", "ip", ip)
+		logging.GetLogger().Info("Queued device for profiling", "ip", ip)
 		return nil
 	default:
 		// Queue full, skip (fixes #888)
 		p.mu.Lock()
 		delete(p.profiling, ip)
 		p.mu.Unlock()
-		slog.Warn("Profile queue full, skipped", "ip", ip)
+		logging.GetLogger().Warn("Profile queue full, skipped", "ip", ip)
 		return errors.New("profile queue full")
 	}
 }
@@ -471,7 +471,7 @@ func (p *DeviceProfiler) profileDevice(ip string) {
 	// so we can't detect it via TCP port scanning. Just try to query.
 	if info := p.probeSNMP(ctx, ip); info != nil {
 		profile.SNMPInfo = info
-		slog.Debug("Got SNMP info from device", "ip", ip, "sysName", info.SysName)
+		logging.GetLogger().Debug("Got SNMP info from device", "ip", ip, "sysName", info.SysName)
 	}
 
 	// Infer device type and icons from profile
@@ -481,7 +481,7 @@ func (p *DeviceProfiler) profileDevice(ip string) {
 	p.profiles[ip] = profile
 	p.mu.Unlock()
 
-	slog.Info(
+	logging.GetLogger().Info(
 		"Profiled device",
 		"ip",
 		ip,
@@ -588,15 +588,15 @@ func (p *DeviceProfiler) probeHTTP(
 // probeSNMP attempts to retrieve SNMP information from the device.
 func (p *DeviceProfiler) probeSNMP(ctx context.Context, ip string) *SNMPInfo {
 	if p.snmpConfig == nil {
-		slog.Debug("SNMP probe skipped - no SNMP config", "ip", ip)
+		logging.GetLogger().Debug("SNMP probe skipped - no SNMP config", "ip", ip)
 		return nil
 	}
 	if len(p.snmpConfig.Communities) == 0 && len(p.snmpConfig.V3Credentials) == 0 {
-		slog.Debug("SNMP probe skipped - no communities or v3 credentials configured", "ip", ip)
+		logging.GetLogger().Debug("SNMP probe skipped - no communities or v3 credentials configured", "ip", ip)
 		return nil
 	}
 
-	slog.Debug(
+	logging.GetLogger().Debug(
 		"Attempting SNMP probe",
 		"ip",
 		ip,
@@ -609,11 +609,11 @@ func (p *DeviceProfiler) probeSNMP(ctx context.Context, ip string) *SNMPInfo {
 	// Query system information
 	sysInfo, err := snmp.GetSystemInfo(ctx, ip, p.snmpConfig)
 	if err != nil {
-		slog.Debug("SNMP probe failed", "ip", ip, "error", err)
+		logging.GetLogger().Debug("SNMP probe failed", "ip", ip, "error", err)
 		return nil
 	}
 
-	slog.Info(
+	logging.GetLogger().Info(
 		"SNMP probe succeeded",
 		"ip",
 		ip,
