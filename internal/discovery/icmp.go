@@ -16,9 +16,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/krisarmstrong/seed/internal/logging"
 	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 const (

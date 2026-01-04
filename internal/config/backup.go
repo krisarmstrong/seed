@@ -10,8 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/krisarmstrong/seed/internal/logging"
 	"gopkg.in/yaml.v3"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // BackupManager handles configuration file backups.
