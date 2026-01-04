@@ -16,8 +16,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/krisarmstrong/seed/internal/logging"
 	"golang.org/x/net/dns/dnsmessage"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 const (
