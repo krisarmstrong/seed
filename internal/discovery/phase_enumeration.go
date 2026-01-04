@@ -220,7 +220,7 @@ func (p *EnumerationPhase) Run(
 		}
 	}
 
-	logging.GetLogger().Info("Enumeration phase completed",
+	logging.GetLogger().InfoContext(ctx, "Enumeration phase completed",
 		"devices", len(devices),
 		"duration", time.Since(start))
 
@@ -499,7 +499,7 @@ func (e *EnhancedEnumerator) retryUnresponsive(ctx context.Context, hosts []net.
 		return
 	}
 
-	logging.GetLogger().Debug("Retrying unresponsive hosts",
+	logging.GetLogger().DebugContext(ctx, "Retrying unresponsive hosts",
 		"count", len(unresponsive),
 		"retries", e.config.RetryCount)
 

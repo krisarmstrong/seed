@@ -4,9 +4,10 @@ package discovery
 
 import (
 	"context"
-	"log/slog"
 	"math/rand/v2"
 	"time"
+
+	"github.com/krisarmstrong/seed/internal/logging"
 )
 
 // RetryConfig configures retry behavior for network operations.
@@ -102,7 +103,7 @@ func RetryWithBackoff(ctx context.Context, cfg RetryConfig, operation func() err
 
 		// Check if error is retryable
 		if !isRetryableError(err, cfg.RetryableErrors) {
-			slog.Debug("Error not retryable, stopping",
+			logging.GetLogger().Debug("Error not retryable, stopping",
 				"error", err,
 				"attempt", attempt+1)
 			break
@@ -111,7 +112,7 @@ func RetryWithBackoff(ctx context.Context, cfg RetryConfig, operation func() err
 		// Calculate delay with exponential backoff
 		delay := calculateDelay(cfg, attempt)
 
-		slog.Debug("Retrying operation",
+		logging.GetLogger().Debug("Retrying operation",
 			"attempt", attempt+1,
 			"maxRetries", cfg.MaxRetries,
 			"delay", delay,
