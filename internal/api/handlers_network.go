@@ -409,7 +409,8 @@ func (s *Server) handleLink(w http.ResponseWriter, r *http.Request) {
 
 	linkStatus, err := s.netManager.GetLinkStatus(currentIface)
 	if err != nil {
-		logging.GetLogger().Warn("Failed to get link status", "interface", currentIface, "error", err)
+		logging.GetLogger().
+			Warn("Failed to get link status", "interface", currentIface, "error", err)
 	}
 
 	resp := LinkResponse{Interface: currentIface, LinkUp: false, MTU: ifaceInfo.MTU}
@@ -786,7 +787,8 @@ func (s *Server) getInterfaceFromRequest(r *http.Request) string {
 	if iface := r.URL.Query().Get("interface"); iface != "" {
 		// Validate interface name to prevent path traversal/injection
 		if err := validation.ValidateInterface(iface); err != nil {
-			logging.GetLogger().Warn("Invalid interface name in request", "interface", iface, "error", err)
+			logging.GetLogger().
+				Warn("Invalid interface name in request", "interface", iface, "error", err)
 			// Fall back to current interface instead of returning invalid input
 			if s.netManager != nil {
 				return s.netManager.GetCurrentInterface()

@@ -265,7 +265,10 @@ func (s *Server) handleLogsQuery(w http.ResponseWriter, r *http.Request) {
 }
 
 // queryLogsFromDB queries logs from the database with filters.
-func (s *Server) queryLogsFromDB(ctx context.Context, params logQueryParams) ([]*logging.LogEntry, error) {
+func (s *Server) queryLogsFromDB(
+	ctx context.Context,
+	params logQueryParams,
+) ([]*logging.LogEntry, error) {
 	opts := database.LogListOptions{
 		Search: params.search,
 		Limit:  params.limit,

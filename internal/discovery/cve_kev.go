@@ -102,7 +102,10 @@ func (kev *KEVProvider) SearchByCPE(_ context.Context, _ string) ([]Vulnerabilit
 
 // SearchByProduct searches for vulnerabilities by vendor/product.
 // Note: KEV catalog uses different vendor/product naming than CPE.
-func (kev *KEVProvider) SearchByProduct(_ context.Context, vendor, product, _ string) ([]Vulnerability, error) {
+func (kev *KEVProvider) SearchByProduct(
+	_ context.Context,
+	vendor, product, _ string,
+) ([]Vulnerability, error) {
 	kev.mu.RLock()
 	defer kev.mu.RUnlock()
 
@@ -237,7 +240,10 @@ func (kev *KEVProvider) GetCatalogStats() map[string]any {
 	// Count ransomware-related entries
 	ransomwareCount := 0
 	for i := range kev.catalog.Vulnerabilities {
-		if strings.EqualFold(kev.catalog.Vulnerabilities[i].KnownRansomwareCampaign, kevRansomwareKnown) {
+		if strings.EqualFold(
+			kev.catalog.Vulnerabilities[i].KnownRansomwareCampaign,
+			kevRansomwareKnown,
+		) {
 			ransomwareCount++
 		}
 	}
@@ -263,7 +269,10 @@ func (kev *KEVProvider) EnrichVulnerabilities(vulns []Vulnerability) []Vulnerabi
 		if entry != nil {
 			// Mark as actively exploited
 			vulns[i].ActivelyExploited = true
-			vulns[i].RansomwareRelated = strings.EqualFold(entry.KnownRansomwareCampaign, kevRansomwareKnown)
+			vulns[i].RansomwareRelated = strings.EqualFold(
+				entry.KnownRansomwareCampaign,
+				kevRansomwareKnown,
+			)
 			vulns[i].RequiredAction = entry.RequiredAction
 			vulns[i].DueDate = entry.DueDate
 
@@ -347,12 +356,14 @@ func (kev *KEVProvider) entryToVulnerability(entry *KEVEntry) Vulnerability {
 	}
 
 	return Vulnerability{
-		CVEID:             entry.CVEID,
-		Description:       entry.ShortDescription,
-		Severity:          "CRITICAL", // All KEV entries are critical priority
-		Score:             10.0,       // Max score for actively exploited
-		Published:         dateAdded,
-		References:        []string{fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", entry.CVEID)},
+		CVEID:       entry.CVEID,
+		Description: entry.ShortDescription,
+		Severity:    "CRITICAL", // All KEV entries are critical priority
+		Score:       10.0,       // Max score for actively exploited
+		Published:   dateAdded,
+		References: []string{
+			fmt.Sprintf("https://nvd.nist.gov/vuln/detail/%s", entry.CVEID),
+		},
 		ActivelyExploited: true,
 		RansomwareRelated: strings.EqualFold(entry.KnownRansomwareCampaign, kevRansomwareKnown),
 		RequiredAction:    entry.RequiredAction,

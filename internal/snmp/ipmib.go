@@ -44,7 +44,11 @@ type IPAddressEntry struct {
 
 // GetIPAddresses retrieves all IP addresses from a device using IP-MIB.
 // It tries the modern ipAddressTable first, then falls back to legacy ipAddrTable.
-func GetIPAddresses(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]IPAddressEntry, error) {
+func GetIPAddresses(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]IPAddressEntry, error) {
 	if cfg == nil {
 		return nil, errors.New("SNMP config is nil")
 	}
@@ -62,7 +66,11 @@ func GetIPAddresses(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]I
 // getIPAddrTable retrieves IP addresses from the legacy ipAddrTable (RFC 1213).
 // This is widely supported but only provides IPv4 addresses.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func getIPAddrTable(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]IPAddressEntry, error) {
+func getIPAddrTable(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]IPAddressEntry, error) {
 	// Try SNMPv3 credentials first (more secure).
 	for i := range cfg.V3Credentials {
 		entries, err := walkIPAddrTableV3(ctx, ip, &cfg.V3Credentials[i], cfg)
@@ -83,7 +91,11 @@ func getIPAddrTable(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]I
 }
 
 // walkIPAddrTable walks the legacy ipAddrTable using SNMPv2c.
-func walkIPAddrTable(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]IPAddressEntry, error) {
+func walkIPAddrTable(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]IPAddressEntry, error) {
 	params, err := newV2cWalkClient(ctx, ip, community, cfg)
 	if err != nil {
 		return nil, err
@@ -188,7 +200,11 @@ func walkLegacyIPTable(params *gosnmp.GoSNMP) ([]IPAddressEntry, error) {
 // getIPAddressTable retrieves IP addresses from the modern ipAddressTable (RFC 4293).
 // This table supports both IPv4 and IPv6 addresses.
 // Security: SNMPv3 is preferred over v2c when both are configured.
-func getIPAddressTable(ctx context.Context, ip string, cfg *config.SNMPConfig) ([]IPAddressEntry, error) {
+func getIPAddressTable(
+	ctx context.Context,
+	ip string,
+	cfg *config.SNMPConfig,
+) ([]IPAddressEntry, error) {
 	// Try SNMPv3 credentials first (more secure).
 	for i := range cfg.V3Credentials {
 		entries, err := walkIPAddressTableV3(ctx, ip, &cfg.V3Credentials[i], cfg)
@@ -209,7 +225,11 @@ func getIPAddressTable(ctx context.Context, ip string, cfg *config.SNMPConfig) (
 }
 
 // walkIPAddressTable walks the modern ipAddressTable using SNMPv2c.
-func walkIPAddressTable(ctx context.Context, ip, community string, cfg *config.SNMPConfig) ([]IPAddressEntry, error) {
+func walkIPAddressTable(
+	ctx context.Context,
+	ip, community string,
+	cfg *config.SNMPConfig,
+) ([]IPAddressEntry, error) {
 	params := &gosnmp.GoSNMP{
 		Target:         ip,
 		Port:           uint16(cfg.Port), // #nosec G115 -- Port validated by config (1-65535)
@@ -302,19 +322,34 @@ func walkModernIPTable(params *gosnmp.GoSNMP) ([]IPAddressEntry, error) {
 	}
 
 	// Walk ipAddressType.
-	walkIPAddressAttribute(params, OIDIpAddressType, entries, func(entry *IPAddressEntry, value string) {
-		entry.Type = parseIPAddressType(value)
-	})
+	walkIPAddressAttribute(
+		params,
+		OIDIpAddressType,
+		entries,
+		func(entry *IPAddressEntry, value string) {
+			entry.Type = parseIPAddressType(value)
+		},
+	)
 
 	// Walk ipAddressOrigin.
-	walkIPAddressAttribute(params, OIDIpAddressOrigin, entries, func(entry *IPAddressEntry, value string) {
-		entry.Origin = parseIPAddressOrigin(value)
-	})
+	walkIPAddressAttribute(
+		params,
+		OIDIpAddressOrigin,
+		entries,
+		func(entry *IPAddressEntry, value string) {
+			entry.Origin = parseIPAddressOrigin(value)
+		},
+	)
 
 	// Walk ipAddressStatus.
-	walkIPAddressAttribute(params, OIDIpAddressStatus, entries, func(entry *IPAddressEntry, value string) {
-		entry.Status = parseIPAddressStatus(value)
-	})
+	walkIPAddressAttribute(
+		params,
+		OIDIpAddressStatus,
+		entries,
+		func(entry *IPAddressEntry, value string) {
+			entry.Status = parseIPAddressStatus(value)
+		},
+	)
 
 	// Convert map to slice.
 	result := make([]IPAddressEntry, 0, len(entries))

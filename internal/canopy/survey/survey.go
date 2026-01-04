@@ -450,7 +450,12 @@ func (m *Manager) CompleteSurvey(id string) error {
 }
 
 // UpdateSurveySettings updates survey settings (only when survey is in created state).
-func (m *Manager) UpdateSurveySettings(id string, surveyType Type, iperfServer string, testDuration int) error {
+func (m *Manager) UpdateSurveySettings(
+	id string,
+	surveyType Type,
+	iperfServer string,
+	testDuration int,
+) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -736,9 +741,10 @@ func (m *Manager) LoadSurveys() error {
 	for _, file := range files {
 		// Check timeout to prevent hanging on slow/unresponsive filesystem (fixes #872)
 		if time.Since(startTime) > loadTimeout {
-			logging.GetLogger().Warn("Survey loading timeout reached, some surveys may not be loaded",
-				"loaded_count", len(m.surveys),
-				"elapsed", time.Since(startTime))
+			logging.GetLogger().
+				Warn("Survey loading timeout reached, some surveys may not be loaded",
+					"loaded_count", len(m.surveys),
+					"elapsed", time.Since(startTime))
 			break
 		}
 
@@ -757,7 +763,8 @@ func (m *Manager) LoadSurveys() error {
 		if MigrateToMultiFloor(&survey) {
 			// Save the migrated survey back to disk
 			if saveErr := m.saveSurveyUnlocked(&survey); saveErr != nil {
-				logging.GetLogger().Warn("Failed to save migrated survey", "survey_id", survey.ID, "error", saveErr)
+				logging.GetLogger().
+					Warn("Failed to save migrated survey", "survey_id", survey.ID, "error", saveErr)
 			}
 		}
 

@@ -151,7 +151,10 @@ type iperfManagerAdapter struct {
 	mgr *iperf.Manager
 }
 
-func (a *iperfManagerAdapter) RunClient(ctx context.Context, cfg *iperf.ClientConfig) (*iperf.Result, error) {
+func (a *iperfManagerAdapter) RunClient(
+	ctx context.Context,
+	cfg *iperf.ClientConfig,
+) (*iperf.Result, error) {
 	result, err := a.mgr.RunClient(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("run iperf client: %w", err)
@@ -220,7 +223,10 @@ type vulnScannerAdapter struct {
 	scanner *discovery.VulnerabilityScanner
 }
 
-func (a *vulnScannerAdapter) ScanDevice(ctx context.Context, device *discovery.DiscoveredDevice) (any, error) {
+func (a *vulnScannerAdapter) ScanDevice(
+	ctx context.Context,
+	device *discovery.DiscoveredDevice,
+) (any, error) {
 	result, err := a.scanner.ScanDevice(ctx, device)
 	if err != nil {
 		return nil, fmt.Errorf("scan device vulnerabilities: %w", err)

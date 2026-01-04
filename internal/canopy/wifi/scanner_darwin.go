@@ -77,7 +77,9 @@ func parseAirportLine(line string) *ScannedNetwork {
 	// Use regex to extract fields including HT flag
 	// Example: "           MyNetwork      aa:bb:cc:dd:ee:ff -45  6       Y  -- WPA2(PSK/AES/AES)"
 	// Fields: SSID, BSSID, RSSI, CHANNEL, HT, CC, SECURITY
-	re := regexp.MustCompile(`^\s*(\S.*?)\s+([0-9a-f:]{17})\s+(-?\d+)\s+(\d+)\s+([YN-])\s+.*?(Open|WEP|WPA|WPA2|WPA3)`)
+	re := regexp.MustCompile(
+		`^\s*(\S.*?)\s+([0-9a-f:]{17})\s+(-?\d+)\s+(\d+)\s+([YN-])\s+.*?(Open|WEP|WPA|WPA2|WPA3)`,
+	)
 	matches := re.FindStringSubmatch(line)
 
 	if len(matches) < 7 {

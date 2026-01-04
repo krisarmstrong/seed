@@ -174,7 +174,10 @@ func (s *Server) exportDiscoveryCard(cards map[string]any) {
 			"portDescription": n.PortDescription, "managementAddress": n.ManagementAddress,
 		})
 	}
-	cards["switch"] = map[string]any{"running": s.discoveryService.IsRunning(), "neighbors": neighborList}
+	cards["switch"] = map[string]any{
+		"running":   s.discoveryService.IsRunning(),
+		"neighbors": neighborList,
+	}
 }
 
 func (s *Server) exportDNSCard(ctx context.Context, cards map[string]any) {

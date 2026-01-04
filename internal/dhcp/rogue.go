@@ -258,7 +258,8 @@ func (rd *RogueDetector) processPacket(packet gopacket.Packet) {
 	if !exists {
 		// Fixes #907: Hard limit - don't add more servers if at capacity
 		if len(rd.detectedServers) >= maxDetectedServers {
-			logging.GetLogger().Warn("Detected servers limit reached, skipping new server", "ip", serverIP)
+			logging.GetLogger().
+				Warn("Detected servers limit reached, skipping new server", "ip", serverIP)
 			return
 		}
 

@@ -195,7 +195,8 @@ func (s *Server) collectLinkData() map[string]any {
 
 	linkStatus, err := s.netManager.GetLinkStatus(currentIface)
 	if err != nil {
-		logging.GetLogger().Warn("Failed to get link status", "interface", currentIface, "error", err)
+		logging.GetLogger().
+			Warn("Failed to get link status", "interface", currentIface, "error", err)
 		return nil
 	}
 

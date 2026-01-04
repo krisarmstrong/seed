@@ -424,7 +424,10 @@ func NewEnhancedEnumerator(
 }
 
 // EnumerateSubnet performs comprehensive enumeration of a subnet.
-func (e *EnhancedEnumerator) EnumerateSubnet(ctx context.Context, cidr string) ([]*DiscoveredDevice, error) {
+func (e *EnhancedEnumerator) EnumerateSubnet(
+	ctx context.Context,
+	cidr string,
+) ([]*DiscoveredDevice, error) {
 	_, subnet, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return nil, fmt.Errorf("parsing CIDR %s: %w", cidr, err)
@@ -452,7 +455,10 @@ func (e *EnhancedEnumerator) EnumerateSubnet(ctx context.Context, cidr string) (
 				select {
 				case <-time.After(2 * time.Second):
 				case <-ctx.Done():
-					return nil, fmt.Errorf("enumeration cancelled during slow scan delay: %w", ctx.Err())
+					return nil, fmt.Errorf(
+						"enumeration cancelled during slow scan delay: %w",
+						ctx.Err(),
+					)
 				}
 			}
 

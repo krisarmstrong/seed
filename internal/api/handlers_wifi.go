@@ -174,7 +174,10 @@ func (s *Server) handleWiFi(w http.ResponseWriter, r *http.Request) {
 			logger,
 			http.StatusServiceUnavailable,
 			ErrCodeServiceUnavail,
-			localizer.TWithData("errors.service.notAvailable", map[string]any{"service": "Wi-Fi manager"}),
+			localizer.TWithData(
+				"errors.service.notAvailable",
+				map[string]any{"service": "Wi-Fi manager"},
+			),
 			"",
 		)
 		return

@@ -519,7 +519,12 @@ func TestValidateDNSTimeout(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := dns.ValidateDNSTimeout(tt.timeout)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ValidateDNSTimeout(%v) error = %v, wantErr %v", tt.timeout, err, tt.wantErr)
+				t.Errorf(
+					"ValidateDNSTimeout(%v) error = %v, wantErr %v",
+					tt.timeout,
+					err,
+					tt.wantErr,
+				)
 			}
 		})
 	}
@@ -753,15 +758,24 @@ func TestServerTestResultStatusCalculation(t *testing.T) {
 
 			// Verify the result was created with the expected values.
 			if result.Forward.Status != tt.forwardStatus {
-				t.Errorf("Forward status mismatch: got %v, want %v", result.Forward.Status, tt.forwardStatus)
+				t.Errorf(
+					"Forward status mismatch: got %v, want %v",
+					result.Forward.Status,
+					tt.forwardStatus,
+				)
 			}
 			if result.ForwardIPv6.Status != tt.ipv6Status {
-				t.Errorf("ForwardIPv6 status mismatch: got %v, want %v", result.ForwardIPv6.Status, tt.ipv6Status)
+				t.Errorf(
+					"ForwardIPv6 status mismatch: got %v, want %v",
+					result.ForwardIPv6.Status,
+					tt.ipv6Status,
+				)
 			}
 
 			// Manually calculate status like TestServer does.
 			hasError := tt.forwardStatus == dns.StatusError || tt.ipv6Status == dns.StatusError
-			hasWarning := tt.forwardStatus == dns.StatusWarning || tt.ipv6Status == dns.StatusWarning
+			hasWarning := tt.forwardStatus == dns.StatusWarning ||
+				tt.ipv6Status == dns.StatusWarning
 
 			var calculatedStatus dns.Status
 			switch {

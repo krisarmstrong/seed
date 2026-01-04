@@ -312,7 +312,10 @@ func parseEthtoolCableTestOutput(output []byte, result *TestResult) {
 		// Determine overall status (worst case)
 		if pair.Status != StatusOK {
 			overallStatus = pair.Status
-			result.Faults = append(result.Faults, "Pair "+pair.PairLetter+" ("+pair.Pair+"): "+string(pair.Status))
+			result.Faults = append(
+				result.Faults,
+				"Pair "+pair.PairLetter+" ("+pair.Pair+"): "+string(pair.Status),
+			)
 		}
 
 		// Track minimum length (to fault)

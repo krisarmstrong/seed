@@ -13,14 +13,16 @@ import (
 // Verifies BodyLimitMiddleware applies to GET requests (regression for #766).
 func TestBodyLimitMiddleware_GETEnforced(t *testing.T) {
 	// Handler that reads the entire body and surfaces the read error
-	handler := api.BodyLimitMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusRequestEntityTooLarge)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-	}))
+	handler := api.BodyLimitMiddleware(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusRequestEntityTooLarge)
+				return
+			}
+			w.WriteHeader(http.StatusOK)
+		}),
+	)
 
 	// Build a GET request with a body larger than the default 1MB limit
 	largeBody := bytes.Repeat([]byte("a"), 2*1024*1024) // 2MB

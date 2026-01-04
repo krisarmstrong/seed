@@ -94,9 +94,14 @@ func TestValidateConfig_InvalidVLANID(t *testing.T) {
 		{"disabled vlan id 0", false, 0, false},
 		{"disabled vlan id 100", false, 100, false},
 		{"disabled vlan id too high", false, 5000, true}, // > 4094 is invalid
-		{"enabled vlan id 0", true, 0, false},            // Schema allows 0, business logic rejects it
-		{"enabled vlan id -1", true, -1, true},           // negative is invalid
-		{"enabled vlan id 4095", true, 4095, true},       // > 4094 is invalid
+		{
+			"enabled vlan id 0",
+			true,
+			0,
+			false,
+		}, // Schema allows 0, business logic rejects it
+		{"enabled vlan id -1", true, -1, true},     // negative is invalid
+		{"enabled vlan id 4095", true, 4095, true}, // > 4094 is invalid
 		{"enabled vlan id 1", true, 1, false},
 		{"enabled vlan id 4094", true, 4094, false},
 		{"enabled vlan id 100", true, 100, false},

@@ -135,7 +135,11 @@ DDEEFF     (base 16)		Another Corp
 
 	// Should have added entries from the file
 	if db.Count() <= initialCount {
-		t.Errorf("Expected more entries after loading IEEE format, got %d (was %d)", db.Count(), initialCount)
+		t.Errorf(
+			"Expected more entries after loading IEEE format, got %d (was %d)",
+			db.Count(),
+			initialCount,
+		)
 	}
 
 	// Verify lookups work - IEEE format converts AA-BB-CC to AA:BB:CC

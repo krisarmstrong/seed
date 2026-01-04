@@ -556,7 +556,11 @@ func createPassiveSamplePoint(x, y, rssi int) *survey.SamplePoint {
 	}
 }
 
-func detectDeadZonesHelper(t *testing.T, s *survey.Survey, threshold int) (*survey.DeadZoneAnalysis, error) {
+func detectDeadZonesHelper(
+	t *testing.T,
+	s *survey.Survey,
+	threshold int,
+) (*survey.DeadZoneAnalysis, error) {
 	t.Helper()
 	analysis, err := survey.DetectDeadZones(s, threshold)
 	if err != nil {

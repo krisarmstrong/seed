@@ -234,7 +234,10 @@ func (t *Tester) getStatusWith(th Thresholds, duration time.Duration, hasError b
 
 // forwardLookupIP performs a forward DNS lookup for the specified network type.
 // network should be "ip4" for A records or "ip6" for AAAA records.
-func (t *Tester) forwardLookupIP(ctx context.Context, hostname, network, noRecordMsg string) *LookupResult {
+func (t *Tester) forwardLookupIP(
+	ctx context.Context,
+	hostname, network, noRecordMsg string,
+) *LookupResult {
 	t.mu.RLock()
 	if hostname == "" {
 		hostname = t.testHostname

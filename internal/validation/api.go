@@ -247,7 +247,10 @@ func ValidateInterfaceSettings(iface *InterfaceRequest) []FieldError {
 	var errors []FieldError
 
 	if iface.Default == "" {
-		errors = append(errors, FieldError{Field: "default", Message: "default interface is required"})
+		errors = append(
+			errors,
+			FieldError{Field: "default", Message: "default interface is required"},
+		)
 	} else if !IsValidInterface(iface.Default) {
 		errors = append(errors, FieldError{Field: "default", Message: "invalid interface name"})
 	}

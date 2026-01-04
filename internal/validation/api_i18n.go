@@ -35,7 +35,11 @@ func TranslateFieldErrors(localizer *i18n.Localizer, errors []FieldErrorWithKey)
 }
 
 // WriteValidationErrorI18n writes a localized validation error response.
-func WriteValidationErrorI18n(w http.ResponseWriter, localizer *i18n.Localizer, errors []FieldErrorWithKey) {
+func WriteValidationErrorI18n(
+	w http.ResponseWriter,
+	localizer *i18n.Localizer,
+	errors []FieldErrorWithKey,
+) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusBadRequest)
 
@@ -51,12 +55,22 @@ func WriteValidationErrorI18n(w http.ResponseWriter, localizer *i18n.Localizer, 
 }
 
 // WriteJSONErrorI18n writes a localized JSON error response.
-func WriteJSONErrorI18n(w http.ResponseWriter, localizer *i18n.Localizer, status int, messageKey string) {
+func WriteJSONErrorI18n(
+	w http.ResponseWriter,
+	localizer *i18n.Localizer,
+	status int,
+	messageKey string,
+) {
 	WriteJSONErrorI18nWithCode(w, localizer, status, messageKey, "")
 }
 
 // WriteJSONErrorI18nWithCode writes a localized JSON error response with an error code.
-func WriteJSONErrorI18nWithCode(w http.ResponseWriter, localizer *i18n.Localizer, status int, messageKey, code string) {
+func WriteJSONErrorI18nWithCode(
+	w http.ResponseWriter,
+	localizer *i18n.Localizer,
+	status int,
+	messageKey, code string,
+) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	resp := APIError{

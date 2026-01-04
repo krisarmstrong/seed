@@ -115,11 +115,25 @@ func (s *Server) handlePath(w http.ResponseWriter, r *http.Request) {
 
 	// Validate request
 	if req.Source == "" {
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Source is required", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Source is required",
+			"",
+		)
 		return
 	}
 	if req.Destination == "" {
-		sendErrorResponseWithDetails(w, logger, http.StatusBadRequest, ErrCodeBadRequest, "Destination is required", "")
+		sendErrorResponseWithDetails(
+			w,
+			logger,
+			http.StatusBadRequest,
+			ErrCodeBadRequest,
+			"Destination is required",
+			"",
+		)
 		return
 	}
 	if req.Method == "" {
@@ -279,7 +293,10 @@ func (s *Server) performL3Trace(ctx context.Context, req PathRequest) *discovery
 }
 
 // performL2Trace performs Layer 2 path discovery using LLDP/CDP.
-func (s *Server) performL2Trace(ctx context.Context, req PathRequest) (*discovery.L2PathResult, error) {
+func (s *Server) performL2Trace(
+	ctx context.Context,
+	req PathRequest,
+) (*discovery.L2PathResult, error) {
 	if s.deviceDiscovery == nil {
 		return nil, errors.New("device discovery not available")
 	}

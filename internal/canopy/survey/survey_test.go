@@ -592,11 +592,19 @@ func TestUpdateFloorPlan(t *testing.T) {
 			}
 
 			if activeFloor.FloorPlan.Width != floorPlan.Width {
-				t.Errorf("FloorPlan Width = %v, want %v", activeFloor.FloorPlan.Width, floorPlan.Width)
+				t.Errorf(
+					"FloorPlan Width = %v, want %v",
+					activeFloor.FloorPlan.Width,
+					floorPlan.Width,
+				)
 			}
 
 			if activeFloor.FloorPlan.Height != floorPlan.Height {
-				t.Errorf("FloorPlan Height = %v, want %v", activeFloor.FloorPlan.Height, floorPlan.Height)
+				t.Errorf(
+					"FloorPlan Height = %v, want %v",
+					activeFloor.FloorPlan.Height,
+					floorPlan.Height,
+				)
 			}
 		})
 	}
@@ -947,7 +955,13 @@ func TestPassiveSampleAggregations(t *testing.T) {
 		{
 			name: "single 2.4GHz network",
 			networks: []*wifi.ScannedNetwork{
-				{SSID: "TestNet", BSSID: "00:11:22:33:44:55", Channel: 6, Frequency: 2437, Signal: -50},
+				{
+					SSID:      "TestNet",
+					BSSID:     "00:11:22:33:44:55",
+					Channel:   6,
+					Frequency: 2437,
+					Signal:    -50,
+				},
 			},
 			want: survey.PassiveSample{
 				UniqueSSIDs:   1,
@@ -963,18 +977,60 @@ func TestPassiveSampleAggregations(t *testing.T) {
 			name: "multiple bands and channels",
 			networks: []*wifi.ScannedNetwork{
 				// Strongest AP on channel 36 (5GHz).
-				{SSID: "Net5G", BSSID: "00:11:22:33:44:55", Channel: 36, Frequency: 5180, Signal: -40},
+				{
+					SSID:      "Net5G",
+					BSSID:     "00:11:22:33:44:55",
+					Channel:   36,
+					Frequency: 5180,
+					Signal:    -40,
+				},
 				// Co-channel AP.
-				{SSID: "Net5G-2", BSSID: "00:11:22:33:44:66", Channel: 36, Frequency: 5180, Signal: -50},
+				{
+					SSID:      "Net5G-2",
+					BSSID:     "00:11:22:33:44:66",
+					Channel:   36,
+					Frequency: 5180,
+					Signal:    -50,
+				},
 				// Adjacent channel (+-1).
-				{SSID: "Net5G-3", BSSID: "00:11:22:33:44:77", Channel: 37, Frequency: 5185, Signal: -55},
+				{
+					SSID:      "Net5G-3",
+					BSSID:     "00:11:22:33:44:77",
+					Channel:   37,
+					Frequency: 5185,
+					Signal:    -55,
+				},
 				// Adjacent channel (+-2).
-				{SSID: "Net5G-4", BSSID: "00:11:22:33:44:88", Channel: 38, Frequency: 5190, Signal: -60},
+				{
+					SSID:      "Net5G-4",
+					BSSID:     "00:11:22:33:44:88",
+					Channel:   38,
+					Frequency: 5190,
+					Signal:    -60,
+				},
 				// 2.4GHz networks.
-				{SSID: "Net2.4", BSSID: "AA:BB:CC:DD:EE:FF", Channel: 1, Frequency: 2412, Signal: -65},
-				{SSID: "Net2.4-2", BSSID: "AA:BB:CC:DD:EE:AA", Channel: 6, Frequency: 2437, Signal: -70},
+				{
+					SSID:      "Net2.4",
+					BSSID:     "AA:BB:CC:DD:EE:FF",
+					Channel:   1,
+					Frequency: 2412,
+					Signal:    -65,
+				},
+				{
+					SSID:      "Net2.4-2",
+					BSSID:     "AA:BB:CC:DD:EE:AA",
+					Channel:   6,
+					Frequency: 2437,
+					Signal:    -70,
+				},
 				// 6GHz network.
-				{SSID: "Net6G", BSSID: "FF:EE:DD:CC:BB:AA", Channel: 1, Frequency: 5955, Signal: -45},
+				{
+					SSID:      "Net6G",
+					BSSID:     "FF:EE:DD:CC:BB:AA",
+					Channel:   1,
+					Frequency: 5955,
+					Signal:    -45,
+				},
 			},
 			want: survey.PassiveSample{
 				UniqueSSIDs:   7,
@@ -989,9 +1045,27 @@ func TestPassiveSampleAggregations(t *testing.T) {
 		{
 			name: "duplicate SSIDs different BSSIDs",
 			networks: []*wifi.ScannedNetwork{
-				{SSID: "SameNet", BSSID: "00:11:22:33:44:55", Channel: 1, Frequency: 2412, Signal: -50},
-				{SSID: "SameNet", BSSID: "00:11:22:33:44:66", Channel: 1, Frequency: 2412, Signal: -55},
-				{SSID: "SameNet", BSSID: "00:11:22:33:44:77", Channel: 1, Frequency: 2412, Signal: -60},
+				{
+					SSID:      "SameNet",
+					BSSID:     "00:11:22:33:44:55",
+					Channel:   1,
+					Frequency: 2412,
+					Signal:    -50,
+				},
+				{
+					SSID:      "SameNet",
+					BSSID:     "00:11:22:33:44:66",
+					Channel:   1,
+					Frequency: 2412,
+					Signal:    -55,
+				},
+				{
+					SSID:      "SameNet",
+					BSSID:     "00:11:22:33:44:77",
+					Channel:   1,
+					Frequency: 2412,
+					Signal:    -60,
+				},
 			},
 			want: survey.PassiveSample{
 				UniqueSSIDs:   1, // Only one unique SSID.
@@ -1007,7 +1081,13 @@ func TestPassiveSampleAggregations(t *testing.T) {
 			name: "hidden SSID handling",
 			networks: []*wifi.ScannedNetwork{
 				{SSID: "", BSSID: "00:11:22:33:44:55", Channel: 6, Frequency: 2437, Signal: -50},
-				{SSID: "VisibleNet", BSSID: "00:11:22:33:44:66", Channel: 6, Frequency: 2437, Signal: -55},
+				{
+					SSID:      "VisibleNet",
+					BSSID:     "00:11:22:33:44:66",
+					Channel:   6,
+					Frequency: 2437,
+					Signal:    -55,
+				},
 			},
 			want: survey.PassiveSample{
 				UniqueSSIDs:   1, // Hidden SSID not counted.

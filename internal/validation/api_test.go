@@ -72,13 +72,19 @@ func TestValidateLoginRequest(t *testing.T) {
 			wantCount: 2,
 		},
 		{
-			name:      "username too long",
-			req:       validation.LoginRequest{Username: string(make([]byte, 65)), Password: "password"},
+			name: "username too long",
+			req: validation.LoginRequest{
+				Username: string(make([]byte, 65)),
+				Password: "password",
+			},
 			wantCount: 1,
 		},
 		{
-			name:      "password too long",
-			req:       validation.LoginRequest{Username: "admin", Password: string(make([]byte, 129))},
+			name: "password too long",
+			req: validation.LoginRequest{
+				Username: "admin",
+				Password: string(make([]byte, 129)),
+			},
 			wantCount: 1,
 		},
 	}
@@ -87,7 +93,11 @@ func TestValidateLoginRequest(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			errors := validation.ValidateLoginRequest(&tt.req)
 			if len(errors) != tt.wantCount {
-				t.Errorf("ValidateLoginRequest() returned %d errors, want %d", len(errors), tt.wantCount)
+				t.Errorf(
+					"ValidateLoginRequest() returned %d errors, want %d",
+					len(errors),
+					tt.wantCount,
+				)
 			}
 		})
 	}
@@ -142,7 +152,12 @@ func TestValidateThreshold(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			errors := validation.ValidateThreshold("test", tt.warning, tt.critical)
 			if len(errors) != tt.wantCount {
-				t.Errorf("ValidateThreshold() returned %d errors, want %d: %v", len(errors), tt.wantCount, errors)
+				t.Errorf(
+					"ValidateThreshold() returned %d errors, want %d: %v",
+					len(errors),
+					tt.wantCount,
+					errors,
+				)
 			}
 		})
 	}
@@ -206,7 +221,12 @@ func TestValidateHTTPEndpoint(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			errors := validation.ValidateHTTPEndpoint(&tt.endpoint)
 			if len(errors) != tt.wantCount {
-				t.Errorf("ValidateHTTPEndpoint() returned %d errors, want %d: %v", len(errors), tt.wantCount, errors)
+				t.Errorf(
+					"ValidateHTTPEndpoint() returned %d errors, want %d: %v",
+					len(errors),
+					tt.wantCount,
+					errors,
+				)
 			}
 		})
 	}
@@ -249,7 +269,12 @@ func TestValidatePingTarget(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			errors := validation.ValidatePingTarget(&tt.target)
 			if len(errors) != tt.wantCount {
-				t.Errorf("ValidatePingTarget() returned %d errors, want %d: %v", len(errors), tt.wantCount, errors)
+				t.Errorf(
+					"ValidatePingTarget() returned %d errors, want %d: %v",
+					len(errors),
+					tt.wantCount,
+					errors,
+				)
 			}
 		})
 	}
@@ -287,7 +312,12 @@ func TestValidateTCPPort(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			errors := validation.ValidateTCPPort(&tt.target)
 			if len(errors) != tt.wantCount {
-				t.Errorf("ValidateTCPPort() returned %d errors, want %d: %v", len(errors), tt.wantCount, errors)
+				t.Errorf(
+					"ValidateTCPPort() returned %d errors, want %d: %v",
+					len(errors),
+					tt.wantCount,
+					errors,
+				)
 			}
 		})
 	}
@@ -325,7 +355,12 @@ func TestValidateDNSServer(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			errors := validation.ValidateDNSServer(&tt.server)
 			if len(errors) != tt.wantCount {
-				t.Errorf("ValidateDNSServer() returned %d errors, want %d: %v", len(errors), tt.wantCount, errors)
+				t.Errorf(
+					"ValidateDNSServer() returned %d errors, want %d: %v",
+					len(errors),
+					tt.wantCount,
+					errors,
+				)
 			}
 		})
 	}
@@ -338,8 +373,11 @@ func TestValidateInterfaceSettings(t *testing.T) {
 		wantCount int
 	}{
 		{
-			name:      "valid",
-			iface:     validation.InterfaceRequest{Default: "eth0", Fallbacks: []string{"enp0s3", "wlan0"}},
+			name: "valid",
+			iface: validation.InterfaceRequest{
+				Default:   "eth0",
+				Fallbacks: []string{"enp0s3", "wlan0"},
+			},
 			wantCount: 0,
 		},
 		{
@@ -353,8 +391,11 @@ func TestValidateInterfaceSettings(t *testing.T) {
 			wantCount: 1,
 		},
 		{
-			name:      "invalid fallback",
-			iface:     validation.InterfaceRequest{Default: "eth0", Fallbacks: []string{"valid0", "inv@lid!"}},
+			name: "invalid fallback",
+			iface: validation.InterfaceRequest{
+				Default:   "eth0",
+				Fallbacks: []string{"valid0", "inv@lid!"},
+			},
 			wantCount: 1,
 		},
 	}

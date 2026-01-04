@@ -127,7 +127,10 @@ func runReset(cmd *cobra.Command, _ []string) {
 
 	fmt.Fprintf(os.Stdout, "Configuration reset to defaults at: %s\n", configPath)
 	if !preserveAuth {
-		fmt.Fprintln(os.Stdout, "\nNOTE: You will need to re-run the setup wizard to set your password.")
+		fmt.Fprintln(
+			os.Stdout,
+			"\nNOTE: You will need to re-run the setup wizard to set your password.",
+		)
 		fmt.Fprintln(os.Stdout, "Start the server and visit the web UI to complete setup.")
 	}
 }

@@ -42,7 +42,10 @@ func MicrosoftEndpoint(tenantID string) oauth2.Endpoint {
 	}
 
 	return oauth2.Endpoint{
-		AuthURL:  fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/v2.0/authorize", tenantID),
+		AuthURL: fmt.Sprintf(
+			"https://login.microsoftonline.com/%s/oauth2/v2.0/authorize",
+			tenantID,
+		),
 		TokenURL: fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/v2.0/token", tenantID),
 	}
 }
@@ -63,7 +66,10 @@ func MicrosoftEndpoint(tenantID string) oauth2.Endpoint {
 // - "organizations" - Work/school accounts only
 // - "consumers" - Personal Microsoft accounts only
 // - Specific tenant ID - Only accounts from that Azure AD tenant.
-func NewMicrosoftProvider(clientID, clientSecret, redirectURL, tenantID string, scopes []string) *Provider {
+func NewMicrosoftProvider(
+	clientID, clientSecret, redirectURL, tenantID string,
+	scopes []string,
+) *Provider {
 	if len(scopes) == 0 {
 		scopes = MicrosoftDefaultScopes
 	}

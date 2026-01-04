@@ -154,7 +154,8 @@ func GenerateHeatmap(survey *Survey, config HeatmapConfig) (*HeatmapResult, erro
 func getHeatmapDimensions(survey *Survey) (int, int) {
 	// Check active floor first (multi-floor support)
 	if activeFloor := survey.GetActiveFloor(); activeFloor != nil {
-		if activeFloor.FloorPlan != nil && activeFloor.FloorPlan.Width > 0 && activeFloor.FloorPlan.Height > 0 {
+		if activeFloor.FloorPlan != nil && activeFloor.FloorPlan.Width > 0 &&
+			activeFloor.FloorPlan.Height > 0 {
 			return activeFloor.FloorPlan.Width, activeFloor.FloorPlan.Height
 		}
 	}
@@ -187,7 +188,12 @@ func getHeatmapDimensions(survey *Survey) (int, int) {
 // mapHeatmapTypeToValueType converts heatmap type to value extraction key.
 func mapHeatmapTypeToValueType(ht HeatmapType) string {
 	switch ht {
-	case HeatmapRSSI, HeatmapSNR, HeatmapDensity, HeatmapInterference, HeatmapDownload, HeatmapUpload:
+	case HeatmapRSSI,
+		HeatmapSNR,
+		HeatmapDensity,
+		HeatmapInterference,
+		HeatmapDownload,
+		HeatmapUpload:
 		return string(ht)
 	default:
 		return string(HeatmapRSSI)
@@ -226,7 +232,13 @@ func getColorScaleForType(ht HeatmapType) *ColorScale {
 }
 
 // renderHeatmapToImage fills the image with interpolated heatmap colors.
-func renderHeatmapToImage(img *image.RGBA, grid [][]float64, cellSize int, scale *ColorScale, opacity uint8) {
+func renderHeatmapToImage(
+	img *image.RGBA,
+	grid [][]float64,
+	cellSize int,
+	scale *ColorScale,
+	opacity uint8,
+) {
 	rows := len(grid)
 	if rows == 0 {
 		return

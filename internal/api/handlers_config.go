@@ -205,7 +205,12 @@ func (s *Server) handleConfigRestore(w http.ResponseWriter, r *http.Request) {
 		"backup_name", req.BackupName,
 		"event", "config.backup.restore")
 
-	sendJSONResponse(w, logger, http.StatusOK, map[string]string{"status": "restored", "backup": req.BackupName})
+	sendJSONResponse(
+		w,
+		logger,
+		http.StatusOK,
+		map[string]string{"status": "restored", "backup": req.BackupName},
+	)
 }
 
 // handleConfigBackupDelete handles DELETE /api/config/backup - delete a backup.
@@ -277,7 +282,12 @@ func (s *Server) handleConfigBackupDelete(w http.ResponseWriter, r *http.Request
 		"backup_name", backupName,
 		"event", "config.backup.delete")
 
-	sendJSONResponse(w, logger, http.StatusOK, map[string]string{"status": "deleted", "backup": backupName})
+	sendJSONResponse(
+		w,
+		logger,
+		http.StatusOK,
+		map[string]string{"status": "deleted", "backup": backupName},
+	)
 }
 
 // handleConfigVersion handles GET /api/config/version - get config version info.

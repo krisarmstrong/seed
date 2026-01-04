@@ -106,7 +106,11 @@ func (s *Server) handleRogueDHCPAction(
 }
 
 // handleRogueDHCPStart starts the rogue DHCP detector.
-func (s *Server) handleRogueDHCPStart(w http.ResponseWriter, logger *slog.Logger, resp *RogueDHCPResponse) {
+func (s *Server) handleRogueDHCPStart(
+	w http.ResponseWriter,
+	logger *slog.Logger,
+	resp *RogueDHCPResponse,
+) {
 	if !s.config.DHCP.RogueDetection.Enabled {
 		resp.Error = "Rogue DHCP detection is disabled in configuration"
 		sendJSONResponse(w, logger, http.StatusBadRequest, *resp)
@@ -130,7 +134,11 @@ func (s *Server) handleRogueDHCPStart(w http.ResponseWriter, logger *slog.Logger
 }
 
 // handleRogueDHCPStop stops the rogue DHCP detector.
-func (s *Server) handleRogueDHCPStop(w http.ResponseWriter, logger *slog.Logger, resp *RogueDHCPResponse) {
+func (s *Server) handleRogueDHCPStop(
+	w http.ResponseWriter,
+	logger *slog.Logger,
+	resp *RogueDHCPResponse,
+) {
 	if !s.rogueDetector.IsRunning() {
 		resp.Running = false
 		resp.Message = "Rogue DHCP detector not running"
@@ -495,7 +503,13 @@ func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
 			// New password provided - encrypt it
 			encrypted, err := config.EncryptCredential(cred.AuthPassword, s.config.Auth.JWTSecret)
 			if err != nil {
-				logger.Error("Failed to encrypt auth password", "error", err, "credential_name", cred.Name)
+				logger.Error(
+					"Failed to encrypt auth password",
+					"error",
+					err,
+					"credential_name",
+					cred.Name,
+				)
 				sendErrorResponseWithDetails(
 					w,
 					logger,
@@ -517,7 +531,13 @@ func (s *Server) updateSNMPSettings(w http.ResponseWriter, r *http.Request) {
 			// New password provided - encrypt it
 			encrypted, err := config.EncryptCredential(cred.PrivPassword, s.config.Auth.JWTSecret)
 			if err != nil {
-				logger.Error("Failed to encrypt priv password", "error", err, "credential_name", cred.Name)
+				logger.Error(
+					"Failed to encrypt priv password",
+					"error",
+					err,
+					"credential_name",
+					cred.Name,
+				)
 				sendErrorResponseWithDetails(
 					w,
 					logger,

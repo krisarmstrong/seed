@@ -48,11 +48,17 @@ func (s *Server) registerSecurityTools(isAllowed func(string) bool) {
 				mcp.Required(),
 				mcp.Description("Target hostname or IP address"),
 			),
-			mcp.WithString("oid",
-				mcp.Description("SNMP OID to query (default: system info OIDs like sysDescr, sysName, sysUpTime)"),
+			mcp.WithString(
+				"oid",
+				mcp.Description(
+					"SNMP OID to query (default: system info OIDs like sysDescr, sysName, sysUpTime)",
+				),
 			),
-			mcp.WithString("community",
-				mcp.Description("SNMP community string (uses configured communities if not specified)"),
+			mcp.WithString(
+				"community",
+				mcp.Description(
+					"SNMP community string (uses configured communities if not specified)",
+				),
 			),
 		),
 		s.handleSNMPQuery,
@@ -107,7 +113,10 @@ func (s *Server) handleVulnerabilityScan(
 }
 
 // handleRogueDHCPCheck handles the rogue_dhcp_check tool.
-func (s *Server) handleRogueDHCPCheck(_ context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleRogueDHCPCheck(
+	_ context.Context,
+	_ mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	detector := s.services.GetRogueDetector()
 	if detector == nil {
 		return mcp.NewToolResultError("Rogue DHCP detector not available"), nil
@@ -127,7 +136,10 @@ func (s *Server) handleRogueDHCPCheck(_ context.Context, _ mcp.CallToolRequest) 
 }
 
 // handleSNMPQuery handles the snmp_query tool.
-func (s *Server) handleSNMPQuery(_ context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (s *Server) handleSNMPQuery(
+	_ context.Context,
+	request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	host, _ := request.RequireString("host")
 	if host == "" {
 		return mcp.NewToolResultError(

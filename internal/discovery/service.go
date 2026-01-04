@@ -218,7 +218,10 @@ func (s *Service) rescanLoop() {
 			return
 		case <-ticker.C:
 			slog.Debug("Discovery: starting scheduled rescan")
-			ctx, cancel := context.WithTimeout(context.Background(), s.cfg.NetworkDiscovery.ScanTimeout)
+			ctx, cancel := context.WithTimeout(
+				context.Background(),
+				s.cfg.NetworkDiscovery.ScanTimeout,
+			)
 			if err := s.Scan(ctx); err != nil {
 				slog.Warn("Discovery: scheduled rescan failed", "error", err)
 			}
@@ -307,7 +310,8 @@ func (s *Service) queueDevicesForProfiling() {
 	devices := s.deviceDiscovery.GetDevices()
 	queued := 0
 	for _, device := range devices {
-		if device.IP != "" && s.profiler.GetProfile(device.IP) == nil && !s.profiler.IsProfiling(device.IP) {
+		if device.IP != "" && s.profiler.GetProfile(device.IP) == nil &&
+			!s.profiler.IsProfiling(device.IP) {
 			_ = s.profiler.QueueProfile(device.IP)
 			queued++
 		}

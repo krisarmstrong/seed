@@ -247,7 +247,8 @@ func NewServer(
 	// Wire up database persistence for logs if database is available
 	if db != nil {
 		s.logBroadcaster.SetDBWriter(&dbLogWriterAdapter{db: db})
-		logging.GetLogger().Info("Log broadcaster initialized with database persistence", "buffer_size", 1000)
+		logging.GetLogger().
+			Info("Log broadcaster initialized with database persistence", "buffer_size", 1000)
 	} else {
 		logging.GetLogger().Info("Log broadcaster initialized (memory-only, no database)", "buffer_size", 1000)
 	}
@@ -347,7 +348,8 @@ func NewServer(
 
 // onLinkStateChange handles link up/down events.
 func (s *Server) onLinkStateChange(event network.LinkEvent) {
-	logging.GetLogger().Info("Link state change", "interface", event.Interface, "state", event.State)
+	logging.GetLogger().
+		Info("Link state change", "interface", event.Interface, "state", event.State)
 
 	switch event.State {
 	case network.LinkStateUp:
@@ -562,7 +564,8 @@ func (s *Server) setupWebSocketAndStatic() {
 	s.mux.HandleFunc("/ws", s.handleWebSocket)
 	frontendFS, err := ui.GetFS()
 	if err != nil {
-		logging.GetLogger().Warn("Failed to get embedded frontend FS, falling back to disk", "error", err)
+		logging.GetLogger().
+			Warn("Failed to get embedded frontend FS, falling back to disk", "error", err)
 		s.mux.Handle("/", http.FileServer(http.Dir("ui/dist")))
 	} else {
 		logging.GetLogger().Info("Serving frontend from embedded filesystem", "embedded", ui.IsEmbedded())
@@ -815,7 +818,8 @@ func (s *Server) Start() error {
 
 	// Start unified discovery service.
 	if err := s.discoveryService.Start(); err != nil {
-		logging.GetLogger().Warn("Discovery service failed to start (may require root)", "error", err)
+		logging.GetLogger().
+			Warn("Discovery service failed to start (may require root)", "error", err)
 	} else {
 		status := s.discoveryService.GetStatus()
 		logging.GetLogger().Info("Discovery service started",
@@ -824,7 +828,8 @@ func (s *Server) Start() error {
 
 	// Start VLAN traffic monitor (requires root/CAP_NET_RAW)
 	if err := s.vlanTrafficMonitor.Start(); err != nil {
-		logging.GetLogger().Warn("VLAN traffic monitor failed to start (may require root)", "error", err)
+		logging.GetLogger().
+			Warn("VLAN traffic monitor failed to start (may require root)", "error", err)
 	} else {
 		logging.GetLogger().Info("VLAN traffic monitor started")
 	}
@@ -930,7 +935,8 @@ func (s *Server) startHTTPS() error {
 	}
 	s.httpServer.TLSConfig = tlsConfig
 
-	logging.GetLogger().Info("Starting HTTPS server", "addr", s.httpServer.Addr, "tls_version", "1.3")
+	logging.GetLogger().
+		Info("Starting HTTPS server", "addr", s.httpServer.Addr, "tls_version", "1.3")
 	if err := s.httpServer.ListenAndServeTLS(certFile, keyFile); err != nil {
 		return fmt.Errorf("https server: %w", err)
 	}
@@ -961,7 +967,8 @@ func (s *Server) startHTTPSWithACME() error {
 		manager.Client = &acme.Client{
 			DirectoryURL: "https://acme-staging-v02.api.letsencrypt.org/directory",
 		}
-		logging.GetLogger().Warn("ACME: Using Let's Encrypt STAGING server (certificates will not be trusted)")
+		logging.GetLogger().
+			Warn("ACME: Using Let's Encrypt STAGING server (certificates will not be trusted)")
 	}
 
 	// Configure TLS with ACME
@@ -1082,7 +1089,8 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	if s.redirectServer != nil {
 		logging.GetLogger().InfoContext(ctx, "Shutting down HTTP redirect server...")
 		if err := s.redirectServer.Shutdown(ctx); err != nil {
-			logging.GetLogger().ErrorContext(ctx, "Error shutting down redirect server", "error", err)
+			logging.GetLogger().
+				ErrorContext(ctx, "Error shutting down redirect server", "error", err)
 		}
 	}
 
@@ -1090,7 +1098,8 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	if s.acmeChallengeServer != nil {
 		logging.GetLogger().InfoContext(ctx, "Shutting down ACME challenge server...")
 		if err := s.acmeChallengeServer.Shutdown(ctx); err != nil {
-			logging.GetLogger().ErrorContext(ctx, "Error shutting down ACME challenge server", "error", err)
+			logging.GetLogger().
+				ErrorContext(ctx, "Error shutting down ACME challenge server", "error", err)
 		}
 	}
 

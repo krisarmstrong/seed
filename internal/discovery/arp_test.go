@@ -113,7 +113,13 @@ func TestIncrementIP(t *testing.T) {
 			ip := net.ParseIP(tt.ip).To4()
 			result := discovery.IncrementIP(ip, tt.n)
 			if result.String() != tt.expected {
-				t.Errorf("incrementIP(%s, %d) = %s, want %s", tt.ip, tt.n, result.String(), tt.expected)
+				t.Errorf(
+					"incrementIP(%s, %d) = %s, want %s",
+					tt.ip,
+					tt.n,
+					result.String(),
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -427,7 +433,11 @@ func TestSplitSubnetIntoChunks(t *testing.T) {
 					t.Errorf("First chunk: expected %s, got %s", tt.firstChunk, chunks[0].String())
 				}
 				if chunks[len(chunks)-1].String() != tt.lastChunk {
-					t.Errorf("Last chunk: expected %s, got %s", tt.lastChunk, chunks[len(chunks)-1].String())
+					t.Errorf(
+						"Last chunk: expected %s, got %s",
+						tt.lastChunk,
+						chunks[len(chunks)-1].String(),
+					)
 				}
 			}
 
@@ -446,8 +456,24 @@ func TestSplitSubnetIntoChunks(t *testing.T) {
 				for i := 1; i < len(chunks); i++ {
 					prevIP := chunks[i-1].IP.To4()
 					currIP := chunks[i].IP.To4()
-					prevUint := uint32(prevIP[0])<<24 | uint32(prevIP[1])<<16 | uint32(prevIP[2])<<8 | uint32(prevIP[3])
-					currUint := uint32(currIP[0])<<24 | uint32(currIP[1])<<16 | uint32(currIP[2])<<8 | uint32(currIP[3])
+					prevUint := uint32(
+						prevIP[0],
+					)<<24 | uint32(
+						prevIP[1],
+					)<<16 | uint32(
+						prevIP[2],
+					)<<8 | uint32(
+						prevIP[3],
+					)
+					currUint := uint32(
+						currIP[0],
+					)<<24 | uint32(
+						currIP[1],
+					)<<16 | uint32(
+						currIP[2],
+					)<<8 | uint32(
+						currIP[3],
+					)
 					if currUint-prevUint != 256 {
 						t.Errorf("Chunks %d and %d are not contiguous: %s -> %s (gap: %d)",
 							i-1, i, chunks[i-1].IP, chunks[i].IP, currUint-prevUint)
@@ -486,7 +512,11 @@ func TestSplitSubnetIntoChunks_DefaultCap(t *testing.T) {
 	// With default cap, should get MaxChunksDefault chunks
 	chunks := discovery.SplitSubnetIntoChunks(subnet, 0)
 	if len(chunks) != discovery.MaxChunksDefault {
-		t.Errorf("/8 with default cap: expected %d chunks, got %d", discovery.MaxChunksDefault, len(chunks))
+		t.Errorf(
+			"/8 with default cap: expected %d chunks, got %d",
+			discovery.MaxChunksDefault,
+			len(chunks),
+		)
 	}
 
 	// First chunk should still be correct

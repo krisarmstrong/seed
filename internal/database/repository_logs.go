@@ -62,10 +62,21 @@ func (r *LogRepository) BatchCreate(ctx context.Context, entries []*LogEntry) er
 		defer func() { _ = stmt.Close() }()
 
 		for _, entry := range entries {
-			_, execErr := stmt.ExecContext(ctx,
-				entry.Timestamp.Format(time.RFC3339Nano), entry.Level, entry.Layer, entry.Message,
-				nullString(entry.Component), nullString(entry.RequestID), nullString(entry.SessionID),
-				entry.DurationMs, nullString(entry.Metadata), nullString(entry.Stack))
+			_, execErr := stmt.ExecContext(
+				ctx,
+				entry.Timestamp.Format(time.RFC3339Nano),
+				entry.Level,
+				entry.Layer,
+				entry.Message,
+				nullString(
+					entry.Component,
+				),
+				nullString(entry.RequestID),
+				nullString(entry.SessionID),
+				entry.DurationMs,
+				nullString(entry.Metadata),
+				nullString(entry.Stack),
+			)
 			if execErr != nil {
 				return fmt.Errorf("failed to insert log entry: %w", execErr)
 			}

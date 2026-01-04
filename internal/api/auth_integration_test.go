@@ -51,8 +51,20 @@ func TestEndpointAuthentication(t *testing.T) {
 		// Network diagnostics
 		{"Link", "GET", "/api/link", false, "Link status requires auth"},
 		{"IPConfig", "GET", "/api/ipconfig", false, "IP configuration requires auth"},
-		{"IPConfig Settings GET", "GET", "/api/ipconfig/settings", false, "IP settings require auth"},
-		{"IPConfig Settings PUT", "PUT", "/api/ipconfig/settings", false, "Changing IP settings requires auth"},
+		{
+			"IPConfig Settings GET",
+			"GET",
+			"/api/ipconfig/settings",
+			false,
+			"IP settings require auth",
+		},
+		{
+			"IPConfig Settings PUT",
+			"PUT",
+			"/api/ipconfig/settings",
+			false,
+			"Changing IP settings requires auth",
+		},
 		{"MTU", "PUT", "/api/network/mtu", false, "Setting MTU requires auth"},
 
 		// Discovery
@@ -60,10 +72,34 @@ func TestEndpointAuthentication(t *testing.T) {
 		{"TCP Probe", "POST", "/api/discovery/probe", false, "TCP probing requires auth"},
 		{"Traceroute", "POST", "/api/discovery/traceroute", false, "Traceroute requires auth"},
 		{"Port Scan", "POST", "/api/discovery/portscan", false, "Port scanning requires auth"},
-		{"Discovery Options GET", "GET", "/api/discovery/options", false, "Discovery options require auth"},
-		{"Discovery Options PUT", "PUT", "/api/discovery/options", false, "Changing options requires auth"},
-		{"Discovery Service Status", "GET", "/api/discovery/service/status", false, "Service status requires auth"},
-		{"Advanced Fingerprint", "POST", "/api/discovery/fingerprint", false, "Fingerprinting requires auth"},
+		{
+			"Discovery Options GET",
+			"GET",
+			"/api/discovery/options",
+			false,
+			"Discovery options require auth",
+		},
+		{
+			"Discovery Options PUT",
+			"PUT",
+			"/api/discovery/options",
+			false,
+			"Changing options requires auth",
+		},
+		{
+			"Discovery Service Status",
+			"GET",
+			"/api/discovery/service/status",
+			false,
+			"Service status requires auth",
+		},
+		{
+			"Advanced Fingerprint",
+			"POST",
+			"/api/discovery/fingerprint",
+			false,
+			"Fingerprinting requires auth",
+		},
 
 		// DNS and Gateway
 		{"DNS", "GET", "/api/dns", false, "DNS test results require auth"},
@@ -77,7 +113,13 @@ func TestEndpointAuthentication(t *testing.T) {
 		// WiFi
 		{"WiFi", "GET", "/api/wifi", false, "WiFi status requires auth"},
 		{"WiFi Settings GET", "GET", "/api/wifi/settings", false, "WiFi settings require auth"},
-		{"WiFi Settings PUT", "PUT", "/api/wifi/settings", false, "Changing WiFi settings requires auth"},
+		{
+			"WiFi Settings PUT",
+			"PUT",
+			"/api/wifi/settings",
+			false,
+			"Changing WiFi settings requires auth",
+		},
 
 		// Cable diagnostics
 		{"Cable", "GET", "/api/cable", false, "Cable diagnostics require auth"},
@@ -87,7 +129,13 @@ func TestEndpointAuthentication(t *testing.T) {
 
 		// Speed tests
 		{"Speedtest", "POST", "/api/speedtest", false, "Starting speedtest requires auth"},
-		{"Speedtest Status", "GET", "/api/speedtest/status", false, "Speedtest status requires auth"},
+		{
+			"Speedtest Status",
+			"GET",
+			"/api/speedtest/status",
+			false,
+			"Speedtest status requires auth",
+		},
 
 		// Health checks
 		{
@@ -104,24 +152,72 @@ func TestEndpointAuthentication(t *testing.T) {
 			false,
 			"Changing health check settings requires auth",
 		},
-		{"Run Health Checks", "GET", "/api/health-checks/run", false, "Running health checks requires auth"},
+		{
+			"Run Health Checks",
+			"GET",
+			"/api/health-checks/run",
+			false,
+			"Running health checks requires auth",
+		},
 
 		// iperf3
 		{"iperf Info", "GET", "/api/iperf/info", false, "iperf info requires auth"},
 		{"iperf Client", "POST", "/api/iperf/client", false, "Running iperf client requires auth"},
-		{"iperf Client Status", "GET", "/api/iperf/client/status", false, "iperf client status requires auth"},
+		{
+			"iperf Client Status",
+			"GET",
+			"/api/iperf/client/status",
+			false,
+			"iperf client status requires auth",
+		},
 		{"iperf Server", "POST", "/api/iperf/server", false, "Managing iperf server requires auth"},
-		{"iperf Server Status", "GET", "/api/iperf/server/status", false, "iperf server status requires auth"},
-		{"iperf Suggestions", "GET", "/api/iperf/suggestions", false, "iperf suggestions require auth"},
+		{
+			"iperf Server Status",
+			"GET",
+			"/api/iperf/server/status",
+			false,
+			"iperf server status requires auth",
+		},
+		{
+			"iperf Suggestions",
+			"GET",
+			"/api/iperf/suggestions",
+			false,
+			"iperf suggestions require auth",
+		},
 
 		// Network device discovery
 		{"Devices", "GET", "/api/devices", false, "Discovered devices require auth"},
 		{"Devices Scan", "POST", "/api/devices/scan", false, "Triggering scan requires auth"},
 		{"Devices Status", "GET", "/api/devices/status", false, "Scan status requires auth"},
-		{"Devices Settings GET", "GET", "/api/devices/settings", false, "Discovery settings require auth"},
-		{"Devices Settings PUT", "PUT", "/api/devices/settings", false, "Changing discovery settings requires auth"},
-		{"Devices Subnets GET", "GET", "/api/devices/subnets", false, "Subnet config requires auth"},
-		{"Devices Subnets PUT", "PUT", "/api/devices/subnets", false, "Changing subnets requires auth"},
+		{
+			"Devices Settings GET",
+			"GET",
+			"/api/devices/settings",
+			false,
+			"Discovery settings require auth",
+		},
+		{
+			"Devices Settings PUT",
+			"PUT",
+			"/api/devices/settings",
+			false,
+			"Changing discovery settings requires auth",
+		},
+		{
+			"Devices Subnets GET",
+			"GET",
+			"/api/devices/subnets",
+			false,
+			"Subnet config requires auth",
+		},
+		{
+			"Devices Subnets PUT",
+			"PUT",
+			"/api/devices/subnets",
+			false,
+			"Changing subnets requires auth",
+		},
 
 		// System health
 		{"System Health", "GET", "/api/system/health", false, "System health requires auth"},
@@ -137,7 +233,12 @@ func TestEndpointAuthentication(t *testing.T) {
 			if tt.shouldSkipAuth {
 				// Endpoints that skip auth should NOT return 401
 				if w.Code == http.StatusUnauthorized {
-					t.Errorf("%s %s should skip auth (%s) but returned 401", tt.method, tt.path, tt.reason)
+					t.Errorf(
+						"%s %s should skip auth (%s) but returned 401",
+						tt.method,
+						tt.path,
+						tt.reason,
+					)
 				}
 			} else {
 				// Endpoints that require auth MUST return 401 without token
@@ -227,7 +328,9 @@ func TestEndpointAuthWithExpiredToken(t *testing.T) {
 	// Create a token with 0 duration (immediately expired)
 	// Note: This requires access to the auth manager's GenerateTokenWithDuration method
 	// For now, we'll skip this test if the method doesn't exist
-	t.Skip("Expired token test requires GenerateTokenWithDuration method - implement in auth package")
+	t.Skip(
+		"Expired token test requires GenerateTokenWithDuration method - implement in auth package",
+	)
 }
 
 // TestWebSocketAuth verifies WebSocket authentication via query parameter.

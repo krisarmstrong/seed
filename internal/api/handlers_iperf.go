@@ -111,7 +111,8 @@ func validateIperfClientRequest(req *IperfClientRequest) error {
 			req.Direction = "upload"
 		}
 	}
-	if req.Direction != "upload" && req.Direction != "download" && req.Direction != "bidirectional" {
+	if req.Direction != "upload" && req.Direction != "download" &&
+		req.Direction != "bidirectional" {
 		return errors.New("direction must be upload, download, or bidirectional")
 	}
 
@@ -222,7 +223,10 @@ func (s *Server) handleIperfClient(w http.ResponseWriter, r *http.Request) {
 	// Run test in background and return immediately
 	go func(logger *slog.Logger) {
 		// Add timeout protection for iperf operations
-		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(req.Duration+30)*time.Second)
+		ctx, cancel := context.WithTimeout(
+			context.Background(),
+			time.Duration(req.Duration+30)*time.Second,
+		)
 		defer cancel()
 		if _, err := s.iperfManager.RunClient(ctx, &iperfConfig); err != nil {
 			logger.Error("iperf client failed", "error", err)

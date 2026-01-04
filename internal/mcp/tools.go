@@ -147,5 +147,10 @@ type TCPProbeResult struct {
 
 // TCPProber provides TCP port probing.
 type TCPProber interface {
-	Probe(ctx context.Context, host string, port int, timeout time.Duration) (*TCPProbeResult, error)
+	Probe(
+		ctx context.Context,
+		host string,
+		port int,
+		timeout time.Duration,
+	) (*TCPProbeResult, error)
 }

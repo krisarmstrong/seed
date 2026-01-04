@@ -122,9 +122,15 @@ func initializeModules(cfg *config.Config, db *database.DB) *api.Modules {
 func checkICMPCapabilities() bool {
 	if err := discovery.CheckICMPPrivilegesWithMessage(); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: ICMP features disabled - %v\n", err)
-		fmt.Fprintln(os.Stderr, "Warning: Running without ICMP privileges - ping features will be unavailable")
+		fmt.Fprintln(
+			os.Stderr,
+			"Warning: Running without ICMP privileges - ping features will be unavailable",
+		)
 		fmt.Fprintln(os.Stderr, "For full functionality, run with: sudo ./seed")
-		fmt.Fprintln(os.Stderr, "Or grant capability: sudo setcap cap_net_raw,cap_net_admin=+ep ./seed")
+		fmt.Fprintln(
+			os.Stderr,
+			"Or grant capability: sudo setcap cap_net_raw,cap_net_admin=+ep ./seed",
+		)
 		return false
 	}
 	return true
@@ -146,7 +152,11 @@ func setupLogging(cfg *config.Config) string {
 	if _, statErr := os.Stat(logPath); os.IsNotExist(statErr) {
 		f, openErr := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY, 0o600)
 		if openErr != nil {
-			fmt.Fprintf(os.Stderr, "Fatal: Failed to create log file with secure permissions: %v\n", openErr)
+			fmt.Fprintf(
+				os.Stderr,
+				"Fatal: Failed to create log file with secure permissions: %v\n",
+				openErr,
+			)
 			os.Exit(1)
 		}
 		_ = f.Close()
@@ -190,7 +200,10 @@ func loadAndConfigureConfig(configPath string, devMode bool) *config.Config {
 	ensureJWTSecret(cfg, configPath)
 
 	if errors.Is(err, config.ErrInsecureCredentials) {
-		fmt.Fprintln(os.Stderr, "Initial setup required - visit the web UI to set your admin password")
+		fmt.Fprintln(
+			os.Stderr,
+			"Initial setup required - visit the web UI to set your admin password",
+		)
 		printSetupBanner(cfg.Server.Port, cfg.Server.HTTPS)
 		// Set placeholder hash to pass validation - wizard will set the real password
 		cfg.Auth.DefaultPasswordHash = auth.SetupModePlaceholder
@@ -276,7 +289,8 @@ func setupNetworkInterface(cfg *config.Config, configPath string) *network.Manag
 
 	// Still require at least some interface to start with
 	if initialInterface == "" {
-		logging.GetLogger().Error("No network interface found - please ensure at least one interface is up with an IP address")
+		logging.GetLogger().
+			Error("No network interface found - please ensure at least one interface is up with an IP address")
 		os.Exit(1)
 	}
 
@@ -304,10 +318,16 @@ func setupNetworkInterface(cfg *config.Config, configPath string) *network.Manag
 }
 
 // findActiveInterface attempts to find an active network interface with retries.
-func findActiveInterface(netMgr *network.Manager, preferred []string, maxRetries int, retryWait time.Duration) string {
+func findActiveInterface(
+	netMgr *network.Manager,
+	preferred []string,
+	maxRetries int,
+	retryWait time.Duration,
+) string {
 	activeInterface := netMgr.FindFirstAvailable(preferred)
 	for retryCount := 0; activeInterface == "" && retryCount < maxRetries; retryCount++ {
-		logging.GetLogger().Warn("No active network interface found, retrying", "retry_wait", retryWait)
+		logging.GetLogger().
+			Warn("No active network interface found, retrying", "retry_wait", retryWait)
 		time.Sleep(retryWait)
 		activeInterface = netMgr.FindFirstAvailable(preferred)
 	}
@@ -317,7 +337,8 @@ func findActiveInterface(netMgr *network.Manager, preferred []string, maxRetries
 // logAvailableInterfaces logs available interfaces grouped by type and status.
 func logAvailableInterfaces(netMgr *network.Manager) {
 	logging.GetLogger().Error("No active network interface found after multiple attempts")
-	logging.GetLogger().Info("Please check your network configuration and ensure at least one interface is up")
+	logging.GetLogger().
+		Info("Please check your network configuration and ensure at least one interface is up")
 
 	type ifaceGroup struct{ Type, Status string }
 	grouped := make(map[ifaceGroup][]string)
@@ -330,12 +351,17 @@ func logAvailableInterfaces(netMgr *network.Manager) {
 		grouped[key] = append(grouped[key], iface.Name)
 	}
 	for group, names := range grouped {
-		logging.GetLogger().Info("Available interfaces", "type", group.Type, "status", group.Status, "names", names)
+		logging.GetLogger().
+			Info("Available interfaces", "type", group.Type, "status", group.Status, "names", names)
 	}
 }
 
 // applyActiveInterface sets the active interface as the default.
-func applyActiveInterface(cfg *config.Config, netMgr *network.Manager, activeInterface, configPath string) {
+func applyActiveInterface(
+	cfg *config.Config,
+	netMgr *network.Manager,
+	activeInterface, configPath string,
+) {
 	if activeInterface != cfg.Interface.Default {
 		logging.GetLogger().Info("Using detected active interface instead of configured default",
 			"active", activeInterface, "configured", cfg.Interface.Default)
@@ -347,7 +373,8 @@ func applyActiveInterface(cfg *config.Config, netMgr *network.Manager, activeInt
 		}
 	}
 	if err := netMgr.SetCurrentInterface(activeInterface); err != nil {
-		logging.GetLogger().Warn("Failed to set active interface", "interface", activeInterface, "error", err)
+		logging.GetLogger().
+			Warn("Failed to set active interface", "interface", activeInterface, "error", err)
 	}
 }
 
@@ -365,7 +392,8 @@ func runServerWithShutdown(server *api.Server, cfg *config.Config, modules *api.
 
 	serverErrors := make(chan error, 1)
 	go func() {
-		logging.GetLogger().Info("Starting server", "port", cfg.Server.Port, "https", cfg.Server.HTTPS)
+		logging.GetLogger().
+			Info("Starting server", "port", cfg.Server.Port, "https", cfg.Server.HTTPS)
 		serverErrors <- server.Start()
 	}()
 
@@ -379,7 +407,8 @@ func runServerWithShutdown(server *api.Server, cfg *config.Config, modules *api.
 			os.Exit(1)
 		}
 	case sig := <-sigChan:
-		logging.GetLogger().Info("Received signal, shutting down gracefully (press Ctrl+C again to force)", "signal", sig)
+		logging.GetLogger().
+			Info("Received signal, shutting down gracefully (press Ctrl+C again to force)", "signal", sig)
 
 		go func() {
 			<-sigChan

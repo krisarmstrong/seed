@@ -83,7 +83,9 @@ func parseEthtoolModuleInfo(output []byte, info *SFPInfo) {
 	tempRe := regexp.MustCompile(`Module temperature\s*:\s*([\d.+-]+)`)
 	voltageRe := regexp.MustCompile(`Module voltage\s*:\s*([\d.]+)`)
 	txPowerRe := regexp.MustCompile(`Laser output power\s*:\s*([\d.]+)\s*mW\s*/\s*([\d.-]+)\s*dBm`)
-	rxPowerRe := regexp.MustCompile(`Receiver signal.*power\s*:\s*([\d.]+)\s*mW\s*/\s*([\d.-]+)\s*dBm`)
+	rxPowerRe := regexp.MustCompile(
+		`Receiver signal.*power\s*:\s*([\d.]+)\s*mW\s*/\s*([\d.-]+)\s*dBm`,
+	)
 	biasRe := regexp.MustCompile(`Laser bias current\s*:\s*([\d.]+)`)
 
 	var ddm *DDMInfo
