@@ -11,11 +11,13 @@ const (
 	GoogleUserInfoURL = "https://www.googleapis.com/oauth2/v2/userinfo"
 )
 
-// GoogleDefaultScopes are the default scopes requested for Google OAuth.
-var GoogleDefaultScopes = []string{
-	"openid",
-	"email",
-	"profile",
+// GetGoogleDefaultScopes returns the default scopes for Google OAuth.
+func GetGoogleDefaultScopes() []string {
+	return []string{
+		"openid",
+		"email",
+		"profile",
+	}
 }
 
 // NewGoogleProvider creates a new Google OAuth2 provider.
@@ -30,7 +32,7 @@ var GoogleDefaultScopes = []string{
 // 7. Copy the Client ID and Client Secret.
 func NewGoogleProvider(clientID, clientSecret, redirectURL string, scopes []string) *Provider {
 	if len(scopes) == 0 {
-		scopes = GoogleDefaultScopes
+		scopes = GetGoogleDefaultScopes()
 	}
 
 	return &Provider{
