@@ -20,10 +20,12 @@ const (
 	GitHubUserEmailURL = "https://api.github.com/user/emails"
 )
 
-// GitHubDefaultScopes are the default scopes requested for GitHub OAuth.
-var GitHubDefaultScopes = []string{
-	"read:user",
-	"user:email",
+// GetGitHubDefaultScopes returns the default scopes for GitHub OAuth.
+func GetGitHubDefaultScopes() []string {
+	return []string{
+		"read:user",
+		"user:email",
+	}
 }
 
 // NewGitHubProvider creates a new GitHub OAuth2 provider.
@@ -38,7 +40,7 @@ var GitHubDefaultScopes = []string{
 // 7. Click "Generate a new client secret" and copy the secret.
 func NewGitHubProvider(clientID, clientSecret, redirectURL string, scopes []string) *Provider {
 	if len(scopes) == 0 {
-		scopes = GitHubDefaultScopes
+		scopes = GetGitHubDefaultScopes()
 	}
 
 	provider := &Provider{
