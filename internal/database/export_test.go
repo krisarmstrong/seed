@@ -8,7 +8,7 @@ import (
 
 // ExportMigrationsCount returns the count of migrations for testing.
 func ExportMigrationsCount() int {
-	return len(migrations)
+	return len(getMigrations())
 }
 
 // DeleteAuditLogsOlderThan exports deleteAuditLogsOlderThan for testing.

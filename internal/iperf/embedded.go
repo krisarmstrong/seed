@@ -219,12 +219,12 @@ func (e *NotFoundError) Error() string {
 // HasEmbeddedBinary returns true if an embedded binary exists for the current platform.
 func HasEmbeddedBinary() bool {
 	platform := fmt.Sprintf("%s-%s", runtime.GOOS, runtime.GOARCH)
-	_, ok := platformBinaryMap[platform]
+	platformMap := getPlatformBinaryMap()
+	binaryName, ok := platformMap[platform]
 	if !ok {
 		return false
 	}
 
-	binaryName := platformBinaryMap[platform]
 	_, err := embeddedBinaries.ReadFile("binaries/" + binaryName)
 	return err == nil
 }
