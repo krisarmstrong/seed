@@ -143,21 +143,23 @@ type speedThreshold struct {
 	bonus    int
 }
 
-// speedBonuses maps interface speeds to score bonuses (sorted highest first).
-var speedBonuses = []speedThreshold{
-	{100_000_000_000, 500}, // 100G
-	{40_000_000_000, 450},  // 40G
-	{25_000_000_000, 425},  // 25G
-	{10_000_000_000, 400},  // 10G
-	{5_000_000_000, 350},   // 5G
-	{2_500_000_000, 300},   // 2.5G
-	{1_000_000_000, 200},   // 1G
-	{100_000_000, 100},     // 100M
+// getSpeedBonuses returns the speed threshold bonuses (sorted highest first).
+func getSpeedBonuses() []speedThreshold {
+	return []speedThreshold{
+		{100_000_000_000, 500}, // 100G
+		{40_000_000_000, 450},  // 40G
+		{25_000_000_000, 425},  // 25G
+		{10_000_000_000, 400},  // 10G
+		{5_000_000_000, 350},   // 5G
+		{2_500_000_000, 300},   // 2.5G
+		{1_000_000_000, 200},   // 1G
+		{100_000_000, 100},     // 100M
+	}
 }
 
 // calculateSpeedBonus returns the score bonus for a given interface speed.
 func calculateSpeedBonus(speed int64) int {
-	for _, t := range speedBonuses {
+	for _, t := range getSpeedBonuses() {
 		if speed >= t.minSpeed {
 			return t.bonus
 		}
