@@ -22,12 +22,14 @@ const (
 	MicrosoftTenantConsumers = "consumers"
 )
 
-// MicrosoftDefaultScopes are the default scopes requested for Microsoft OAuth.
-var MicrosoftDefaultScopes = []string{
-	"openid",
-	"email",
-	"profile",
-	"User.Read",
+// GetMicrosoftDefaultScopes returns the default scopes for Microsoft OAuth.
+func GetMicrosoftDefaultScopes() []string {
+	return []string{
+		"openid",
+		"email",
+		"profile",
+		"User.Read",
+	}
 }
 
 // MicrosoftEndpoint returns the OAuth2 endpoint for Microsoft/Azure AD.
@@ -71,7 +73,7 @@ func NewMicrosoftProvider(
 	scopes []string,
 ) *Provider {
 	if len(scopes) == 0 {
-		scopes = MicrosoftDefaultScopes
+		scopes = GetMicrosoftDefaultScopes()
 	}
 
 	return &Provider{
