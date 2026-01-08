@@ -59,13 +59,3 @@ func ExportCalculateSeverity(result *SecurityScanResult) string {
 	scanner := NewSecurityScanner(DefaultSecurityScanConfig())
 	return scanner.calculateSeverity(result)
 }
-
-// ExportParseResolvConfDarwin is exported for testing (darwin only).
-func ExportParseResolvConfDarwin(path string) []string {
-	return parseResolvConfDarwin(path)
-}
-
-// ExportGetDNSFromInterfaces is exported for testing (darwin only).
-func ExportGetDNSFromInterfaces() []string {
-	return getDNSFromInterfaces()
-}
