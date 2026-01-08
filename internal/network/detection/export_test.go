@@ -45,16 +45,6 @@ func (d *Detector) ChipsetDBNil() bool {
 	return d.chipsetDB == nil
 }
 
-// ParseMediaSpeed exposes parseMediaSpeed for testing.
-func ParseMediaSpeed(output string) int64 {
-	return parseMediaSpeed(output)
-}
-
-// ParseIfconfigSpeed exposes parseIfconfigSpeed for testing.
-func ParseIfconfigSpeed(output string) int64 {
-	return parseIfconfigSpeed(output)
-}
-
 // CalculateSpeedBonus exposes calculateSpeedBonus for testing.
 func CalculateSpeedBonus(speed int64) int {
 	return calculateSpeedBonus(speed)

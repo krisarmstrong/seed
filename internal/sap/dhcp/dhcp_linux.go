@@ -173,7 +173,7 @@ func parseLeaseFileLine(line string, lease *LeaseInfo) {
 	switch key {
 	case "fixed-address":
 		lease.IPAddress = value
-	case "option", "fixed-address":
+	case "option":
 		if strings.HasPrefix(line, "option subnet-mask ") {
 			lease.SubnetMask = strings.TrimPrefix(value, "subnet-mask ")
 		} else if strings.HasPrefix(line, "option routers ") {
