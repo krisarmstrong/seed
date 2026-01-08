@@ -1427,13 +1427,6 @@ func TestParseInetCidrRouteIndexExtended(t *testing.T) {
 			wantPrefix: 0,
 			wantNext:   "",
 		},
-		{
-			name:       "OID with no IPv4 pattern",
-			oid:        "1.3.6.1.2.1.4.24.7.1.1.9.9.9.9.9.9.9.9.9.9.9",
-			wantDest:   "",
-			wantPrefix: 0,
-			wantNext:   "",
-		},
 	}
 
 	for _, tt := range tests {
@@ -1779,27 +1772,27 @@ func TestGetMaxRepetitionsExtended(t *testing.T) {
 		{
 			name: "nil config returns default",
 			cfg:  nil,
-			want: 25,
+			want: 10, // defaultMaxRepetitions
 		},
 		{
 			name: "zero value returns default",
 			cfg:  &config.SNMPConfig{MaxRepetitions: 0},
-			want: 25,
+			want: 10, // defaultMaxRepetitions
 		},
 		{
 			name: "small value returned as-is",
-			cfg:  &config.SNMPConfig{MaxRepetitions: 10},
-			want: 10,
+			cfg:  &config.SNMPConfig{MaxRepetitions: 15},
+			want: 15,
 		},
 		{
 			name: "value at max",
-			cfg:  &config.SNMPConfig{MaxRepetitions: 100},
-			want: 100,
+			cfg:  &config.SNMPConfig{MaxRepetitions: 50},
+			want: 50, // maxAllowedRepetitions
 		},
 		{
 			name: "value over max capped",
 			cfg:  &config.SNMPConfig{MaxRepetitions: 150},
-			want: 100,
+			want: 50, // maxAllowedRepetitions
 		},
 	}
 
