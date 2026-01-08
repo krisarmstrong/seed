@@ -4,7 +4,7 @@ Release:    1%{?dist}
 Summary:    The Seed - Network Diagnostic Tool by Mustard Seed Networks
 License:    BSL 1.1
 URL:        https://github.com/krisarmstrong/seed
-BuildArch:  __RPM_ARCH__
+BuildArch:  __ARCHITECTURE__
 
 Requires:   libpcap, systemd, libcap
 
@@ -27,11 +27,12 @@ Features:
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/lib/systemd/system
+mkdir -p %{buildroot}/etc/seed
 mkdir -p %{buildroot}/var/lib/seed
 mkdir -p %{buildroot}/var/log/seed
 
 # Copy binary (single binary with embedded assets)
-install -m 755 %{_repo_root}/dist/seed-linux-__ARCHITECTURE__ %{buildroot}/usr/bin/seed
+install -m 755 %{_repo_root}/seed %{buildroot}/usr/bin/seed
 
 # Copy systemd service file
 install -m 644 %{_repo_root}/packaging/seed.service %{buildroot}/usr/lib/systemd/system/seed.service
@@ -39,6 +40,7 @@ install -m 644 %{_repo_root}/packaging/seed.service %{buildroot}/usr/lib/systemd
 %files
 %attr(755, root, root) /usr/bin/seed
 %attr(644, root, root) /usr/lib/systemd/system/seed.service
+%dir %attr(750, seed, seed) /etc/seed
 %dir %attr(750, seed, seed) /var/lib/seed
 %dir %attr(750, seed, seed) /var/log/seed
 
@@ -52,7 +54,7 @@ exit 0
 
 %post
 # Set ownership of directories
-chown -R seed:seed /var/lib/seed /var/log/seed
+chown -R seed:seed /etc/seed /var/lib/seed /var/log/seed
 
 # Set capabilities for raw socket access
 # - CAP_NET_RAW: Required for ICMP ping, ARP scanning, packet capture
