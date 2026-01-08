@@ -175,3 +175,8 @@ func ExportGenerateHostIPs(subnet *net.IPNet) []net.IP {
 func ExportMethodsToStrings(methods []Method) []string {
 	return methodsToStrings(methods)
 }
+
+// ExportIsLocallyAdministeredMAC exposes isLocallyAdministeredMAC for testing.
+func ExportIsLocallyAdministeredMAC(mac string) bool {
+	return isLocallyAdministeredMAC(mac)
+}

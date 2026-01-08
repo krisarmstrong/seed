@@ -45,7 +45,7 @@ func (t *Tester) GetStatus(duration time.Duration, hasError bool) Status {
 
 // ExportIsContiguousMask is exported for testing.
 func ExportIsContiguousMask(mask []byte) bool {
-	if len(mask) != 4 {
+	if len(mask) != ipv4Len {
 		return false
 	}
 	return isContiguousMask(mask)
