@@ -239,3 +239,113 @@ func (s *Server) RecoveryManager() *auth.RecoveryTokenManager {
 func (s *Server) SetRecoveryManager(rm *auth.RecoveryTokenManager) {
 	s.recoveryManager = rm
 }
+
+// HandleSettings exports handleSettings for testing.
+func (s *Server) HandleSettings(w http.ResponseWriter, r *http.Request) {
+	s.handleSettings(w, r)
+}
+
+// HandleSettingsDefaults exports handleSettingsDefaults for testing.
+func (s *Server) HandleSettingsDefaults(w http.ResponseWriter, r *http.Request) {
+	s.handleSettingsDefaults(w, r)
+}
+
+// HandleLinkSettings exports handleLinkSettings for testing.
+func (s *Server) HandleLinkSettings(w http.ResponseWriter, r *http.Request) {
+	s.handleLinkSettings(w, r)
+}
+
+// HandleCableTestSettings exports handleCableTestSettings for testing.
+func (s *Server) HandleCableTestSettings(w http.ResponseWriter, r *http.Request) {
+	s.handleCableTestSettings(w, r)
+}
+
+// Config returns the server's config for testing.
+func (s *Server) Config() *config.Config {
+	return s.config
+}
+
+// ExportIsAllowedWSOrigin exposes isAllowedWSOrigin for testing.
+func ExportIsAllowedWSOrigin(origin string) bool {
+	return isAllowedWSOrigin(origin)
+}
+
+// ExportIsRFC1918Origin exposes isRFC1918Origin for testing.
+func ExportIsRFC1918Origin(origin string) bool {
+	return isRFC1918Origin(origin)
+}
+
+// ExportExtractHostFromOrigin exposes extractHostFromOrigin for testing.
+func ExportExtractHostFromOrigin(origin string) (string, bool) {
+	return extractHostFromOrigin(origin)
+}
+
+// ExportIsLocalhostAddress exposes isLocalhostAddress for testing.
+func ExportIsLocalhostAddress(host string) bool {
+	return isLocalhostAddress(host)
+}
+
+// ExportIsPrivateNetworkAddress exposes isPrivateNetworkAddress for testing.
+func ExportIsPrivateNetworkAddress(host string) bool {
+	return isPrivateNetworkAddress(host)
+}
+
+// ExportIsValidClassCAddress exposes isValidClassCAddress for testing.
+func ExportIsValidClassCAddress(host string) bool {
+	return isValidClassCAddress(host)
+}
+
+// ExportIsValidClassAAddress exposes isValidClassAAddress for testing.
+func ExportIsValidClassAAddress(host string) bool {
+	return isValidClassAAddress(host)
+}
+
+// ExportIsValidClassBAddress exposes isValidClassBAddress for testing.
+func ExportIsValidClassBAddress(host string) bool {
+	return isValidClassBAddress(host)
+}
+
+// ExportMatchesAllowedOrigin exposes matchesAllowedOrigin for testing.
+func ExportMatchesAllowedOrigin(origin, allowed string) bool {
+	return matchesAllowedOrigin(origin, allowed)
+}
+
+// ExportMatchesOriginPrefix exposes matchesOriginPrefix for testing.
+func ExportMatchesOriginPrefix(origin, allowed string) bool {
+	return matchesOriginPrefix(origin, allowed)
+}
+
+// ExportFindOctetEnd exposes findOctetEnd for testing.
+func ExportFindOctetEnd(s string) int {
+	return findOctetEnd(s)
+}
+
+// ExportIsValidOctetBoundary exposes isValidOctetBoundary for testing.
+func ExportIsValidOctetBoundary(c byte) bool {
+	return isValidOctetBoundary(c)
+}
+
+// ExportReadLastLines exposes readLastLines for testing.
+func ExportReadLastLines(path string, maxBytes int64, maxLines int) ([]string, error) {
+	return readLastLines(path, maxBytes, maxLines)
+}
+
+// ExportNormalizeSPAPath exposes normalizeSPAPath for testing.
+func ExportNormalizeSPAPath(path string) string {
+	return normalizeSPAPath(path)
+}
+
+// ExportIsAPIOrWSRoute exposes isAPIOrWSRoute for testing.
+func ExportIsAPIOrWSRoute(path string) bool {
+	return isAPIOrWSRoute(path)
+}
+
+// SetAllowedOrigins sets the allowed origins for WebSocket connections in testing.
+func SetAllowedOrigins(origins []string) {
+	getWSState().setAllowedOrigins(origins)
+}
+
+// ClearAllowedOrigins clears the allowed origins for testing.
+func ClearAllowedOrigins() {
+	getWSState().setAllowedOrigins(nil)
+}
