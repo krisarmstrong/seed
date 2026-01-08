@@ -94,8 +94,7 @@ func parseDNSServers(line string, result *TestResult) {
 	if bracedContent == "" {
 		return
 	}
-	servers := strings.Split(bracedContent, ",")
-	for _, s := range servers {
+	for s := range strings.SplitSeq(bracedContent, ",") {
 		s = strings.TrimSpace(s)
 		if s != "" {
 			result.DNSServers = append(result.DNSServers, s)
