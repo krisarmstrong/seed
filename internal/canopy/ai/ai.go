@@ -516,14 +516,14 @@ func countDeadZones(samples []SignalSample, threshold int) int {
 func generateRecommendations(coverage, avgRSSI float64, deadZones, sampleCount int) []string {
 	var recs []string
 
-	if coverage >= 95 && avgRSSI >= float64(ThresholdGood) {
+	switch {
+	case coverage >= 95 && avgRSSI >= float64(ThresholdGood):
 		recs = append(recs, "Excellent coverage achieved. Network is well-optimized.")
-	} else if coverage >= 80 {
+	case coverage >= 80:
 		recs = append(recs, "Good coverage overall. Minor improvements possible.")
-	} else if coverage >= 60 {
-		recs = append(recs,
-			"Moderate coverage. Consider adding access points in weak areas.")
-	} else {
+	case coverage >= 60:
+		recs = append(recs, "Moderate coverage. Consider adding access points in weak areas.")
+	default:
 		recs = append(recs, "Poor coverage detected. Significant network improvements needed.")
 	}
 

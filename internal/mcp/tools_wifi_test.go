@@ -378,7 +378,6 @@ func TestWiFiSecurityTypes(t *testing.T) {
 	for _, security := range securityTypes {
 		t.Run(security, func(t *testing.T) {
 			network := mcp.WiFiNetwork{
-				SSID:     "TestNetwork",
 				Security: security,
 			}
 			if network.Security != security {
@@ -506,7 +505,7 @@ func TestWiFiNetworksSorting(t *testing.T) {
 	expectedOrder := []string{"Network4", "Network2", "Network3", "Network1"}
 
 	// Sort networks by signal strength (descending - less negative is better)
-	for i := 0; i < len(networks)-1; i++ {
+	for i := range len(networks) - 1 {
 		for j := i + 1; j < len(networks); j++ {
 			if networks[j].Signal > networks[i].Signal {
 				networks[i], networks[j] = networks[j], networks[i]

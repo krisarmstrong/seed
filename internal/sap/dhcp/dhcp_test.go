@@ -331,6 +331,10 @@ func TestThresholdConstants(t *testing.T) {
 
 func TestLeaseInfoFields(t *testing.T) {
 	now := time.Now()
+	expiry := now.Add(86400 * time.Second)
+	renewTime := 43200 * time.Second
+	rebindTime := 75600 * time.Second
+
 	lease := dhcp.LeaseInfo{
 		Interface:    "eth0",
 		IPAddress:    "192.168.1.100",
@@ -341,9 +345,9 @@ func TestLeaseInfoFields(t *testing.T) {
 		DomainName:   "local",
 		LeaseTime:    86400 * time.Second,
 		LeaseTimeSec: 86400,
-		RenewTime:    43200 * time.Second,
-		RebindTime:   75600 * time.Second,
-		Expiry:       now.Add(86400 * time.Second),
+		RenewTime:    renewTime,
+		RebindTime:   rebindTime,
+		Expiry:       expiry,
 		ObtainedAt:   now,
 	}
 
@@ -374,10 +378,23 @@ func TestLeaseInfoFields(t *testing.T) {
 	if lease.LeaseTimeSec != 86400 {
 		t.Errorf("expected LeaseTimeSec 86400, got %d", lease.LeaseTimeSec)
 	}
+	if lease.RenewTime != renewTime {
+		t.Errorf("expected RenewTime %v, got %v", renewTime, lease.RenewTime)
+	}
+	if lease.RebindTime != rebindTime {
+		t.Errorf("expected RebindTime %v, got %v", rebindTime, lease.RebindTime)
+	}
+	if lease.Expiry != expiry {
+		t.Errorf("expected Expiry %v, got %v", expiry, lease.Expiry)
+	}
+	if lease.ObtainedAt != now {
+		t.Errorf("expected ObtainedAt %v, got %v", now, lease.ObtainedAt)
+	}
 }
 
 func TestTestResultFields(t *testing.T) {
 	now := time.Now()
+	dnsServers := []string{"8.8.8.8"}
 	result := dhcp.TestResult{
 		Interface:    "eth0",
 		Success:      true,
@@ -386,7 +403,7 @@ func TestTestResultFields(t *testing.T) {
 		OfferedIP:    "192.168.1.100",
 		SubnetMask:   "255.255.255.0",
 		Gateway:      "192.168.1.1",
-		DNSServers:   []string{"8.8.8.8"},
+		DNSServers:   dnsServers,
 		DomainName:   "local",
 		LeaseTime:    86400 * time.Second,
 		LeaseTimeSec: 86400,
@@ -411,11 +428,35 @@ func TestTestResultFields(t *testing.T) {
 	if result.OfferedIP != "192.168.1.100" {
 		t.Errorf("expected OfferedIP '192.168.1.100', got %q", result.OfferedIP)
 	}
+	if result.SubnetMask != "255.255.255.0" {
+		t.Errorf("expected SubnetMask '255.255.255.0', got %q", result.SubnetMask)
+	}
+	if result.Gateway != "192.168.1.1" {
+		t.Errorf("expected Gateway '192.168.1.1', got %q", result.Gateway)
+	}
+	if len(result.DNSServers) != 1 || result.DNSServers[0] != "8.8.8.8" {
+		t.Errorf("expected DNSServers [8.8.8.8], got %v", result.DNSServers)
+	}
+	if result.DomainName != "local" {
+		t.Errorf("expected DomainName 'local', got %q", result.DomainName)
+	}
+	if result.LeaseTime != 86400*time.Second {
+		t.Errorf("expected LeaseTime 86400s, got %v", result.LeaseTime)
+	}
+	if result.LeaseTimeSec != 86400 {
+		t.Errorf("expected LeaseTimeSec 86400, got %d", result.LeaseTimeSec)
+	}
 	if result.ResponseTime != 150*time.Millisecond {
 		t.Errorf("expected ResponseTime 150ms, got %v", result.ResponseTime)
 	}
 	if result.ResponseMs != 150.0 {
 		t.Errorf("expected ResponseMs 150.0, got %v", result.ResponseMs)
+	}
+	if result.Error != "" {
+		t.Errorf("expected empty Error, got %q", result.Error)
+	}
+	if result.TestedAt != now {
+		t.Errorf("expected TestedAt %v, got %v", now, result.TestedAt)
 	}
 }
 
@@ -619,6 +660,7 @@ func TestCalculateBroadcastAddress(t *testing.T) {
 }
 
 func TestConcurrentTesterAccess(t *testing.T) {
+	t.Parallel()
 	tester := dhcp.NewTester("eth0", dhcp.DefaultThresholds())
 
 	done := make(chan bool)
