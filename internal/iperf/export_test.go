@@ -1,5 +1,7 @@
 package iperf
 
+import "time"
+
 // This file is only compiled during testing.
 
 // IperfBinaryPath returns the current cached iperf binary path for testing.
@@ -104,3 +106,62 @@ func IsValidExtractedBinary(binaryPath, versionFile string) bool {
 func GetPlatformBinaryMap() map[string]string {
 	return getPlatformBinaryMap()
 }
+
+// WaitForPortReady exposes the internal waitForPortReady function for testing.
+func WaitForPortReady(port int, timeout time.Duration) error {
+	return waitForPortReady(port, timeout)
+}
+
+// ExtractEmbeddedBinary exposes the internal extractEmbeddedBinary function for testing.
+func ExtractEmbeddedBinary() (string, error) {
+	return extractEmbeddedBinary()
+}
+
+// FindSystemIperf3 exposes the internal findSystemIperf3 function for testing.
+func FindSystemIperf3() (string, error) {
+	return findSystemIperf3()
+}
+
+// DetectLinuxPackageManager exposes the internal detectLinuxPackageManager function for testing.
+func DetectLinuxPackageManager() *PackageManagerInfo {
+	return detectLinuxPackageManager()
+}
+
+// DetectMacOSPackageManager exposes the internal detectMacOSPackageManager function for testing.
+func DetectMacOSPackageManager() *PackageManagerInfo {
+	return detectMacOSPackageManager()
+}
+
+// DetectWindowsPackageManager exposes the internal detectWindowsPackageManager function for testing.
+func DetectWindowsPackageManager() *PackageManagerInfo {
+	return detectWindowsPackageManager()
+}
+
+// ClearIperfBinaryPath clears the cached binary path for testing.
+func ClearIperfBinaryPath() {
+	setIperfBinaryPath("")
+}
+
+// VersionCheckTimeout exposes the version check timeout constant for testing.
+const VersionCheckTimeout = versionCheckTimeout
+
+// ServerStartTimeout exposes the server start timeout constant for testing.
+const ServerStartTimeout = serverStartTimeout
+
+// PortCheckTimeout exposes the port check timeout constant for testing.
+const PortCheckTimeout = portCheckTimeout
+
+// MaxHostnameLength exposes the max hostname length constant for testing.
+const MaxHostnameLength = maxHostnameLength
+
+// DirectionDownload exposes the direction constant for testing.
+const DirectionDownload = directionDownload
+
+// DirectionUpload exposes the direction constant for testing.
+const DirectionUpload = directionUpload
+
+// DirectionBidirectional exposes the direction constant for testing.
+const DirectionBidirectional = directionBidirectional
+
+// BytesToMegabits exposes the conversion constant for testing.
+const BytesToMegabits = bytesToMegabits
