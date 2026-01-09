@@ -70,6 +70,7 @@ export {
   Grid3X3,
   HardDrive,
   HardDriveDownload,
+  Heart,
   HeartPulse,
   Info,
   Key,
