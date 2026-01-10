@@ -683,7 +683,7 @@ function App() {
     }
   }, [isWifi, currentInterface]);
 
-  // Fetch data on mount (initial load) and data not covered by WebSocket
+  // Fetch data on mount (initial load) and data not covered by SSE
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -722,26 +722,26 @@ function App() {
     setLoading,
   ]);
 
-  // Fallback REST polling when WebSocket is not connected (fixes #672)
-  // When WS is connected, backend pushes updates every 5 seconds via card_update messages
+  // Fallback REST polling when SSE is not connected (fixes #672)
+  // When SSE is connected, backend pushes updates every 5 seconds via card_update messages
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    // Only poll if WebSocket is not connected
+    // Only poll if SSE is not connected
     if (sseStatus === "connected") {
-      // WebSocket provides real-time updates, no need for aggressive polling
+      // SSE provides real-time updates, no need for aggressive polling
       // Still poll some endpoints that aren't broadcast (interfaces, wifi details)
       const slowInterval = setInterval(() => {
         fetchInterfaces();
-        fetchWifiData(); // WiFi details not broadcast via WS
-        fetchCableData(); // Cable test not broadcast via WS
+        fetchWifiData(); // WiFi details not broadcast via SSE
+        fetchCableData(); // Cable test not broadcast via SSE
         fetchChannelGraphData(); // Channel graph data for WiFi visualization
-      }, 60000); // 60 second interval for non-WS data (increased from 30s)
+      }, 60000); // 60 second interval for non-SSE data (increased from 30s)
 
       return () => clearInterval(slowInterval);
     }
 
-    // Fallback: Poll when WebSocket disconnected with exponential backoff
+    // Fallback: Poll when SSE disconnected with exponential backoff
     let attempts = 0;
     const maxAttempts = 5;
 
