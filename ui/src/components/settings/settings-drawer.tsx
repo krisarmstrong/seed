@@ -67,6 +67,7 @@ import { LinkSettings } from "./sections/link-settings";
 import { MtuControl } from "./sections/mtu-control";
 import { PerformanceSettings } from "./sections/performance-settings";
 import { ThresholdsSettings } from "./sections/thresholds-settings";
+import { UpdateSettings } from "./sections/update-settings";
 import { VlanControl } from "./sections/vlan-control";
 import { VulnerabilitySettings } from "./sections/vulnerability-settings";
 import { WiFiSettings } from "./sections/wifi-settings";
@@ -1656,6 +1657,9 @@ export const SettingsDrawer = memo(function SettingsDrawer({
 
           {/* Config Backups Section (implements #494) */}
           <ConfigBackupsSection />
+
+          {/* Updates Section (implements #862) */}
+          <UpdateSettings currentVersion={version} />
 
           {/* Logs (debug) */}
           <section className={cn(spacing.padding.top.section, "border-t border-surface-border")}>

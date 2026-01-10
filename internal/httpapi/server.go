@@ -678,6 +678,7 @@ func (s *Server) onLinkStateChange(event network.LinkEvent) {
 // setupRoutes configures all HTTP routes.
 func (s *Server) setupRoutes() {
 	s.setupCoreRoutes()
+	s.registerUpdateRoutes()
 	s.setupSAPRoutes()
 	s.setupShellRoutes()
 	s.setupRootsRoutes()

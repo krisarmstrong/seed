@@ -17,6 +17,7 @@ import (
 	"github.com/krisarmstrong/seed/internal/sap/gateway"
 	"github.com/krisarmstrong/seed/internal/sap/speedtest"
 	"github.com/krisarmstrong/seed/internal/sap/vlan"
+	"github.com/krisarmstrong/seed/internal/update"
 )
 
 // ServiceContainer holds all application services organized by domain.
@@ -32,6 +33,12 @@ type ServiceContainer struct {
 	Roots     *RootsServices
 	RealTime  *RealTimeServices
 	Database  *DatabaseServices
+	Update    *update.Service
+}
+
+// GetUpdateService returns the update service.
+func (sc *ServiceContainer) GetUpdateService() *update.Service {
+	return sc.Update
 }
 
 // AuthServices groups authentication and security-related services.
@@ -157,6 +164,11 @@ func (sc *ServiceContainer) Stop() {
 	// Stop SAP services
 	if sc.Sap.VLANTraffic != nil {
 		sc.Sap.VLANTraffic.Stop()
+	}
+
+	// Stop update service
+	if sc.Update != nil {
+		sc.Update.Stop()
 	}
 
 	// Stop database retention
