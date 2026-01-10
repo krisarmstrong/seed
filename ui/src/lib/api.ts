@@ -277,6 +277,43 @@ export const api = {
   },
 
   /**
+   * Performs a PATCH request with optional JSON body.
+   * Automatically includes CSRF token for authenticated requests.
+   *
+   * @param endpoint - API endpoint path
+   * @param body - Request body (will be JSON serialized)
+   * @returns Promise resolving to typed response data
+   * @example
+   * await api.patch('/api/settings', { theme: 'dark' });
+   */
+  async patch<T>(endpoint: string, body?: unknown, init?: RequestInit): Promise<T> {
+    const isAuthEndpoint = endpoint.includes("/api/v1/auth/");
+    // Get CSRF token for non-auth endpoints (state-changing requests)
+    const token = !isAuthEndpoint ? await getCsrfToken() : null;
+
+    const makeRequest = () => {
+      const headers = new Headers({ "Content-Type": "application/json" });
+      if (token) {
+        headers.set(CSRF_HEADER_NAME, token);
+      }
+      for (const [key, value] of new Headers(init?.headers).entries()) {
+        headers.set(key, value);
+      }
+
+      return fetch(`${API_BASE}${endpoint}`, {
+        ...init,
+        method: "PATCH",
+        credentials: "include", // Send httpOnly cookies
+        headers,
+        body: body === undefined ? undefined : JSON.stringify(body),
+      });
+    };
+
+    const response = await makeRequest();
+    return handleResponse<T>(response, isAuthEndpoint, makeRequest);
+  },
+
+  /**
    * Performs a DELETE request to the specified endpoint.
    * Automatically includes CSRF token for authenticated requests.
    *
