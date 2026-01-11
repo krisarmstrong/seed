@@ -73,11 +73,30 @@ interface TestResult {
   certIssuer?: string;
 }
 
+interface SQLTestResult {
+  name: string;
+  driver: string;
+  host: string;
+  port: number;
+  database: string;
+  success: boolean;
+  connectTimeMs: number;
+  queryTimeMs?: number;
+  totalTimeMs: number;
+  serverVersion?: string;
+  error?: string;
+}
+
+interface EnterpriseResults {
+  sqlResults?: SQLTestResult[];
+}
+
 interface HealthCheckData {
   pingResults: TestResult[];
   tcpResults: TestResult[];
   udpResults: TestResult[];
   httpResults: TestResult[];
+  enterpriseResults?: EnterpriseResults;
   hasTests: boolean;
 }
 
@@ -537,6 +556,62 @@ export const HealthCheckCard = memo(function HealthCheckCard({ loading }: Health
               }
             >
               {data.httpResults.map((r) => renderHttpResult(r))}
+            </CollapsibleSection>
+          )}
+
+          {/* SQL/Database Results */}
+          {data.enterpriseResults?.sqlResults && data.enterpriseResults.sqlResults.length > 0 && (
+            <CollapsibleSection
+              title={t("health.database")}
+              count={data.enterpriseResults.sqlResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.enterpriseResults.sqlResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.enterpriseResults.sqlResults.map((r) => (
+                <div
+                  key={`sql-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted">
+                        {r.driver} • {r.host}:{r.port}
+                      </span>
+                    </div>
+                    {r.success && r.serverVersion && (
+                      <span className="caption text-text-muted ml-6">
+                        {r.serverVersion}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && (
+                      <div className="caption text-text-muted">
+                        Connect: {r.connectTimeMs.toFixed(1)}ms
+                        {r.queryTimeMs !== undefined && ` • Query: ${r.queryTimeMs.toFixed(1)}ms`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </CollapsibleSection>
           )}
         </>

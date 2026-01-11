@@ -277,6 +277,7 @@
     "tcpPorts": "TCP Ports",
     "udpPorts": "UDP Ports",
     "http": "HTTP",
+    "database": "Database",
     "fail": "fail",
     "loss": "loss",
     "packetLoss": "{{percent}}% loss",
