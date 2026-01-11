@@ -208,7 +208,12 @@
     "anomalyDescription": "Detect unusual latency patterns statistically",
     "stdDevThreshold": "Std Dev threshold",
     "maxSamples": "Rolling window size",
-    "criticality": "Criticality (1-10)"
+    "criticality": "Criticality (1-10)",
+    "slaConfig": "SLA Configuration",
+    "enableSla": "Enable SLA Tracking",
+    "slaDescription": "Track uptime and latency compliance against targets",
+    "targetUptime": "Target Uptime",
+    "targetLatency": "Target Latency"
   },
   "dns": {
     "title": "DNS",
