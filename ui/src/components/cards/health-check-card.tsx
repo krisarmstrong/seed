@@ -87,8 +87,41 @@ interface SQLTestResult {
   error?: string;
 }
 
+interface FileShareTestResult {
+  name: string;
+  protocol: string;
+  host: string;
+  share: string;
+  success: boolean;
+  connectTimeMs: number;
+  readSpeedMBps?: number;
+  writeSpeedMBps?: number;
+  readLatencyMs?: number;
+  writeLatencyMs?: number;
+  testFileSizeMB?: number;
+  totalTimeMs: number;
+  error?: string;
+}
+
+interface LDAPTestResult {
+  name: string;
+  host: string;
+  port: number;
+  useTls: boolean;
+  success: boolean;
+  connectTimeMs: number;
+  bindTimeMs?: number;
+  searchTimeMs?: number;
+  totalTimeMs: number;
+  entriesFound?: number;
+  serverInfo?: string;
+  error?: string;
+}
+
 interface EnterpriseResults {
   sqlResults?: SQLTestResult[];
+  fileShareResults?: FileShareTestResult[];
+  ldapResults?: LDAPTestResult[];
 }
 
 interface HealthCheckData {
@@ -607,6 +640,114 @@ export const HealthCheckCard = memo(function HealthCheckCard({ loading }: Health
                       <div className="caption text-text-muted">
                         Connect: {r.connectTimeMs.toFixed(1)}ms
                         {r.queryTimeMs !== undefined && ` • Query: ${r.queryTimeMs.toFixed(1)}ms`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* File Share Results (SMB/NFS) */}
+          {data.enterpriseResults?.fileShareResults && data.enterpriseResults.fileShareResults.length > 0 && (
+            <CollapsibleSection
+              title={t("health.fileShares")}
+              count={data.enterpriseResults.fileShareResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.enterpriseResults.fileShareResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.enterpriseResults.fileShareResults.map((r) => (
+                <div
+                  key={`fileshare-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted">
+                        {r.protocol.toUpperCase()} • //{r.host}/{r.share}
+                      </span>
+                    </div>
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.connectTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && (r.readSpeedMBps !== undefined || r.writeSpeedMBps !== undefined) && (
+                      <div className="caption text-text-muted">
+                        {r.readSpeedMBps !== undefined && `R: ${r.readSpeedMBps.toFixed(1)} MB/s`}
+                        {r.readSpeedMBps !== undefined && r.writeSpeedMBps !== undefined && " • "}
+                        {r.writeSpeedMBps !== undefined && `W: ${r.writeSpeedMBps.toFixed(1)} MB/s`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* LDAP Results */}
+          {data.enterpriseResults?.ldapResults && data.enterpriseResults.ldapResults.length > 0 && (
+            <CollapsibleSection
+              title="LDAP"
+              count={data.enterpriseResults.ldapResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.enterpriseResults.ldapResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.enterpriseResults.ldapResults.map((r) => (
+                <div
+                  key={`ldap-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted">
+                        {r.useTls ? "LDAPS" : "LDAP"} • {r.host}:{r.port}
+                      </span>
+                    </div>
+                    {r.success && r.serverInfo && (
+                      <span className="caption text-text-muted ml-6">
+                        {r.serverInfo}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && (
+                      <div className="caption text-text-muted">
+                        Connect: {r.connectTimeMs.toFixed(1)}ms
+                        {r.bindTimeMs !== undefined && ` • Bind: ${r.bindTimeMs.toFixed(1)}ms`}
                       </div>
                     )}
                   </div>
