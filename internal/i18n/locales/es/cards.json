@@ -278,6 +278,7 @@
     "udpPorts": "Puertos UDP",
     "http": "HTTP",
     "database": "Base de datos",
+    "fileShares": "Recursos Compartidos",
     "fail": "fallo",
     "loss": "pérdida",
     "packetLoss": "{{percent}}% pérdida",
