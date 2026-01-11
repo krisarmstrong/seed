@@ -471,8 +471,130 @@ export const HealthChecksSettings = memo(function HealthChecksSettings({
                 placeholder="https://example.com/health"
                 className={cn(input.base, input.state.default, input.size.md, "bg-surface-raised")}
               />
+              {/* Criticality Slider */}
+              <div className={cn("flex items-center", spacing.gap.compact)}>
+                <label className="caption text-text-muted w-28">{t("health.criticality")}</label>
+                <input
+                  type="range"
+                  min={1}
+                  max={10}
+                  value={endpoint.criticality ?? 5}
+                  onChange={(e) =>
+                    updateHttpEndpoint(
+                      endpoint.id ?? "",
+                      "criticality",
+                      Number.parseInt(e.target.value, 10),
+                    )
+                  }
+                  className="flex-1 h-2 bg-surface-raised rounded-lg appearance-none cursor-pointer accent-brand-primary"
+                />
+                <span className="caption text-text-muted w-6 text-center">
+                  {endpoint.criticality ?? 5}
+                </span>
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* SLA Configuration */}
+        <div className={cn("border-t border-surface-border", spacing.padding.top.heading)}>
+          <div className={cn(layout.flex.between, spacing.margin.bottom.inline)}>
+            <span className="caption text-text-muted font-medium">{t("health.slaConfig")}</span>
+          </div>
+          <div className={spacing.stack.xs}>
+            <label
+              className={cn(
+                layout.flex.between,
+                spacing.pad.sm,
+                "bg-surface-base border border-surface-border",
+                radius.default,
+              )}
+            >
+              <div>
+                <span className="body-small text-text-primary font-medium">
+                  {t("health.enableSla")}
+                </span>
+                <p className="caption text-text-muted">{t("health.slaDescription")}</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={testsSettings.slaConfigs?.[0]?.enabled ?? false}
+                onChange={(e) =>
+                  setTestsSettings((prev) => ({
+                    ...prev,
+                    slaConfigs: [
+                      {
+                        ...(prev.slaConfigs?.[0] ?? {
+                          endpointName: "*",
+                          targetUptime: 99.9,
+                          targetLatencyP95: 500,
+                          reportingPeriod: "daily",
+                        }),
+                        enabled: e.target.checked,
+                      },
+                    ],
+                  }))
+                }
+                className={iconTokens.size.sm}
+              />
+            </label>
+            <div className={cn("flex items-center", spacing.gap.compact)}>
+              <label className="caption text-text-muted w-32">{t("health.targetUptime")}</label>
+              <input
+                type="number"
+                min={90}
+                max={100}
+                step={0.1}
+                value={testsSettings.slaConfigs?.[0]?.targetUptime ?? 99.9}
+                onChange={(e) =>
+                  setTestsSettings((prev) => ({
+                    ...prev,
+                    slaConfigs: [
+                      {
+                        ...(prev.slaConfigs?.[0] ?? {
+                          endpointName: "*",
+                          enabled: true,
+                          targetLatencyP95: 500,
+                          reportingPeriod: "daily",
+                        }),
+                        targetUptime: Number.parseFloat(e.target.value) || 99.9,
+                      },
+                    ],
+                  }))
+                }
+                className={cn(input.base, input.state.default, input.size.md, "w-24")}
+              />
+              <span className="caption text-text-muted">%</span>
+            </div>
+            <div className={cn("flex items-center", spacing.gap.compact)}>
+              <label className="caption text-text-muted w-32">{t("health.targetLatency")}</label>
+              <input
+                type="number"
+                min={10}
+                max={10000}
+                step={10}
+                value={testsSettings.slaConfigs?.[0]?.targetLatencyP95 ?? 500}
+                onChange={(e) =>
+                  setTestsSettings((prev) => ({
+                    ...prev,
+                    slaConfigs: [
+                      {
+                        ...(prev.slaConfigs?.[0] ?? {
+                          endpointName: "*",
+                          enabled: true,
+                          targetUptime: 99.9,
+                          reportingPeriod: "daily",
+                        }),
+                        targetLatencyP95: Number.parseInt(e.target.value, 10) || 500,
+                      },
+                    ],
+                  }))
+                }
+                className={cn(input.base, input.state.default, input.size.md, "w-24")}
+              />
+              <span className="caption text-text-muted">ms (P95)</span>
+            </div>
+          </div>
         </div>
 
         {/* Alert Configuration */}
