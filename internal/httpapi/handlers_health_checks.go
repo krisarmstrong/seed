@@ -314,16 +314,16 @@ func (s *Server) getHealthChecksSettings(w http.ResponseWriter, r *http.Request)
 		TCPPorts:           make([]TCPPortResponse, 0, len(s.config.HealthChecks.TCPPorts)),
 		UDPPorts:           make([]UDPPortResponse, 0, len(s.config.HealthChecks.UDPPorts)),
 		HTTPEndpoints:      make([]HTTPEndpointResponse, 0, len(s.config.HealthChecks.HTTPEndpoints)),
-		RTSPEndpoints:      make([]RTSPEndpointResponse, 0, len(s.config.HealthChecks.RTSPEndpoints)),       // Issue #778
-		DICOMEndpoints:     make([]DICOMEndpointResponse, 0, len(s.config.HealthChecks.DICOMEndpoints)),     // Issue #777
-		HL7Endpoints:       make([]HL7EndpointResponse, 0, len(s.config.HealthChecks.HL7Endpoints)),         // Health Checks 100x - Medical
-		FHIREndpoints:      make([]FHIREndpointResponse, 0, len(s.config.HealthChecks.FHIREndpoints)),       // Health Checks 100x - Medical
-		SQLEndpoints:       make([]SQLEndpointResponse, 0, len(s.config.HealthChecks.SQLEndpoints)),         // Health Checks 100x - Enterprise
+		RTSPEndpoints:      make([]RTSPEndpointResponse, 0, len(s.config.HealthChecks.RTSPEndpoints)),           // Issue #778
+		DICOMEndpoints:     make([]DICOMEndpointResponse, 0, len(s.config.HealthChecks.DICOMEndpoints)),         // Issue #777
+		HL7Endpoints:       make([]HL7EndpointResponse, 0, len(s.config.HealthChecks.HL7Endpoints)),             // Health Checks 100x - Medical
+		FHIREndpoints:      make([]FHIREndpointResponse, 0, len(s.config.HealthChecks.FHIREndpoints)),           // Health Checks 100x - Medical
+		SQLEndpoints:       make([]SQLEndpointResponse, 0, len(s.config.HealthChecks.SQLEndpoints)),             // Health Checks 100x - Enterprise
 		FileShareEndpoints: make([]FileShareEndpointResponse, 0, len(s.config.HealthChecks.FileShareEndpoints)), // Health Checks 100x - Enterprise
-		LDAPEndpoints:      make([]LDAPEndpointResponse, 0, len(s.config.HealthChecks.LDAPEndpoints)),       // Health Checks 100x - Enterprise
-		LTIEndpoints:       make([]LTIEndpointResponse, 0, len(s.config.HealthChecks.LTIEndpoints)),         // Health Checks 100x - Education
-		OPCUAEndpoints:     make([]OPCUAEndpointResponse, 0, len(s.config.HealthChecks.OPCUAEndpoints)),     // Health Checks 100x - Manufacturing
-		ModbusEndpoints:    make([]ModbusEndpointResponse, 0, len(s.config.HealthChecks.ModbusEndpoints)),   // Health Checks 100x - Manufacturing
+		LDAPEndpoints:      make([]LDAPEndpointResponse, 0, len(s.config.HealthChecks.LDAPEndpoints)),           // Health Checks 100x - Enterprise
+		LTIEndpoints:       make([]LTIEndpointResponse, 0, len(s.config.HealthChecks.LTIEndpoints)),             // Health Checks 100x - Education
+		OPCUAEndpoints:     make([]OPCUAEndpointResponse, 0, len(s.config.HealthChecks.OPCUAEndpoints)),         // Health Checks 100x - Manufacturing
+		ModbusEndpoints:    make([]ModbusEndpointResponse, 0, len(s.config.HealthChecks.ModbusEndpoints)),       // Health Checks 100x - Manufacturing
 		RunPerformance:     s.config.HealthChecks.RunPerformance,
 		RunSpeedtest:       s.config.HealthChecks.RunSpeedtest,
 		RunIperf:           s.config.HealthChecks.RunIperf,
@@ -757,6 +757,11 @@ type CustomTestsResult struct {
 	RTSPResults  []CustomTestResult `json:"rtspResults"`  // Issue #778
 	DICOMResults []CustomTestResult `json:"dicomResults"` // Issue #777
 	HasTests     bool               `json:"hasTests"`
+
+	// Health Checks 100x - Vertical-specific protocols
+	MedicalResults    *MedicalCheckResults    `json:"medicalResults,omitempty"`
+	EnterpriseResults *EnterpriseCheckResults `json:"enterpriseResults,omitempty"`
+	IndustryResults   *IndustryCheckResults   `json:"industryResults,omitempty"`
 }
 
 // ============================================================================
@@ -789,12 +794,23 @@ func (s *Server) handleHealthChecks(w http.ResponseWriter, r *http.Request) {
 		DICOMResults: s.runDICOMTests(r.Context()), // Issue #777
 	}
 
+	// Health Checks 100x - Run vertical-specific protocol checks
+	result.MedicalResults = s.RunMedicalChecks(r.Context())
+	result.EnterpriseResults = s.RunEnterpriseChecks(r.Context())
+	result.IndustryResults = s.RunIndustryChecks(r.Context())
+
 	result.HasTests = len(s.config.HealthChecks.PingTargets) > 0 ||
 		len(s.config.HealthChecks.TCPPorts) > 0 ||
 		len(s.config.HealthChecks.UDPPorts) > 0 ||
 		len(s.config.HealthChecks.HTTPEndpoints) > 0 ||
 		len(s.config.HealthChecks.RTSPEndpoints) > 0 ||
-		len(s.config.HealthChecks.DICOMEndpoints) > 0
+		len(s.config.HealthChecks.DICOMEndpoints) > 0 ||
+		len(s.config.HealthChecks.HL7Endpoints) > 0 ||
+		len(s.config.HealthChecks.FHIREndpoints) > 0 ||
+		len(s.config.HealthChecks.LDAPEndpoints) > 0 ||
+		len(s.config.HealthChecks.LTIEndpoints) > 0 ||
+		len(s.config.HealthChecks.OPCUAEndpoints) > 0 ||
+		len(s.config.HealthChecks.ModbusEndpoints) > 0
 
 	sendJSONResponse(w, logger, http.StatusOK, result)
 }
