@@ -73,7 +73,7 @@ interface TestResult {
   certIssuer?: string;
 }
 
-interface SQLTestResult {
+interface SqlTestResult {
   name: string;
   driver: string;
   host: string;
@@ -103,7 +103,7 @@ interface FileShareTestResult {
   error?: string;
 }
 
-interface LDAPTestResult {
+interface LdapTestResult {
   name: string;
   host: string;
   port: number;
@@ -118,10 +118,120 @@ interface LDAPTestResult {
   error?: string;
 }
 
+// Video protocol results
+interface RtspTestResult {
+  name: string;
+  url: string;
+  success: boolean;
+  connectTimeMs: number;
+  streamInfo?: string;
+  codec?: string;
+  resolution?: string;
+  error?: string;
+}
+
+// Medical protocol results
+interface DicomTestResult {
+  name: string;
+  host: string;
+  port: number;
+  aeTitle: string;
+  success: boolean;
+  connectTimeMs: number;
+  echoTimeMs?: number;
+  totalTimeMs: number;
+  serverAeTitle?: string;
+  error?: string;
+}
+
+interface Hl7TestResult {
+  name: string;
+  host: string;
+  port: number;
+  success: boolean;
+  connectTimeMs: number;
+  responseTimeMs?: number;
+  totalTimeMs: number;
+  ackCode?: string; // AA, AE, AR
+  serverVersion?: string;
+  error?: string;
+}
+
+interface FhirTestResult {
+  name: string;
+  baseUrl: string;
+  success: boolean;
+  connectTimeMs: number;
+  responseTimeMs?: number;
+  totalTimeMs: number;
+  fhirVersion?: string;
+  resourceCount?: number;
+  serverName?: string;
+  error?: string;
+}
+
+// Education protocol results
+interface LtiTestResult {
+  name: string;
+  launchUrl: string;
+  success: boolean;
+  connectTimeMs: number;
+  responseTimeMs?: number;
+  totalTimeMs: number;
+  ltiVersion?: string;
+  error?: string;
+}
+
+// Industrial protocol results
+interface OpcuaTestResult {
+  name: string;
+  endpointUrl: string;
+  success: boolean;
+  connectTimeMs: number;
+  browseTimeMs?: number;
+  totalTimeMs: number;
+  securityMode?: string;
+  serverState?: string;
+  productName?: string;
+  error?: string;
+}
+
+interface ModbusTestResult {
+  name: string;
+  host: string;
+  port: number;
+  unitId: number;
+  success: boolean;
+  connectTimeMs: number;
+  readTimeMs?: number;
+  totalTimeMs: number;
+  registerValue?: number;
+  error?: string;
+}
+
 interface EnterpriseResults {
-  sqlResults?: SQLTestResult[];
+  sqlResults?: SqlTestResult[];
   fileShareResults?: FileShareTestResult[];
-  ldapResults?: LDAPTestResult[];
+  ldapResults?: LdapTestResult[];
+}
+
+interface VideoResults {
+  rtspResults?: RtspTestResult[];
+}
+
+interface MedicalResults {
+  dicomResults?: DicomTestResult[];
+  hl7Results?: Hl7TestResult[];
+  fhirResults?: FhirTestResult[];
+}
+
+interface EducationResults {
+  ltiResults?: LtiTestResult[];
+}
+
+interface IndustrialResults {
+  opcuaResults?: OpcuaTestResult[];
+  modbusResults?: ModbusTestResult[];
 }
 
 interface HealthCheckData {
@@ -130,6 +240,10 @@ interface HealthCheckData {
   udpResults: TestResult[];
   httpResults: TestResult[];
   enterpriseResults?: EnterpriseResults;
+  videoResults?: VideoResults;
+  medicalResults?: MedicalResults;
+  educationResults?: EducationResults;
+  industrialResults?: IndustrialResults;
   hasTests: boolean;
 }
 
@@ -676,7 +790,8 @@ export const HealthCheckCard = memo(function HealthCheckCard({ loading }: Health
                       <StatusBadge status={r.success ? "success" : "error"} />
                       <span className="body-small font-medium">{r.name}</span>
                       <span className="caption text-text-muted">
-                        {r.protocol.toUpperCase()} • //{r.host}/{r.share}
+                        {r.protocol.toUpperCase()} • {"//"}
+                        {r.host}/{r.share}
                       </span>
                     </div>
                     {r.error && (
@@ -748,6 +863,384 @@ export const HealthCheckCard = memo(function HealthCheckCard({ loading }: Health
                       <div className="caption text-text-muted">
                         Connect: {r.connectTimeMs.toFixed(1)}ms
                         {r.bindTimeMs !== undefined && ` • Bind: ${r.bindTimeMs.toFixed(1)}ms`}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* RTSP Video Results */}
+          {data.videoResults?.rtspResults && data.videoResults.rtspResults.length > 0 && (
+            <CollapsibleSection
+              title={t("health.rtsp")}
+              count={data.videoResults.rtspResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.videoResults.rtspResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.videoResults.rtspResults.map((r) => (
+                <div
+                  key={`rtsp-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted truncate max-w-48" title={r.url}>
+                        {r.url}
+                      </span>
+                    </div>
+                    {r.success && (r.codec || r.resolution) && (
+                      <span className="caption text-text-muted ml-6">
+                        {r.codec && r.codec}
+                        {r.codec && r.resolution && " • "}
+                        {r.resolution && r.resolution}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.connectTimeMs.toFixed(1)}ms
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* DICOM Results */}
+          {data.medicalResults?.dicomResults && data.medicalResults.dicomResults.length > 0 && (
+            <CollapsibleSection
+              title="DICOM"
+              count={data.medicalResults.dicomResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.medicalResults.dicomResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.medicalResults.dicomResults.map((r) => (
+                <div
+                  key={`dicom-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted">
+                        {r.host}:{r.port} • AE: {r.aeTitle}
+                      </span>
+                    </div>
+                    {r.success && r.serverAeTitle && (
+                      <span className="caption text-text-muted ml-6">
+                        Server AE: {r.serverAeTitle}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && r.echoTimeMs !== undefined && (
+                      <div className="caption text-text-muted">
+                        C-ECHO: {r.echoTimeMs.toFixed(1)}ms
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* HL7 MLLP Results */}
+          {data.medicalResults?.hl7Results && data.medicalResults.hl7Results.length > 0 && (
+            <CollapsibleSection
+              title="HL7 MLLP"
+              count={data.medicalResults.hl7Results.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.medicalResults.hl7Results.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.medicalResults.hl7Results.map((r) => (
+                <div
+                  key={`hl7-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted">
+                        {r.host}:{r.port}
+                      </span>
+                    </div>
+                    {r.success && (r.ackCode || r.serverVersion) && (
+                      <span className="caption text-text-muted ml-6">
+                        {r.ackCode && `ACK: ${r.ackCode}`}
+                        {r.ackCode && r.serverVersion && " • "}
+                        {r.serverVersion && r.serverVersion}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && r.responseTimeMs !== undefined && (
+                      <div className="caption text-text-muted">
+                        Response: {r.responseTimeMs.toFixed(1)}ms
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* FHIR Results */}
+          {data.medicalResults?.fhirResults && data.medicalResults.fhirResults.length > 0 && (
+            <CollapsibleSection
+              title="FHIR R4"
+              count={data.medicalResults.fhirResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.medicalResults.fhirResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.medicalResults.fhirResults.map((r) => (
+                <div
+                  key={`fhir-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted truncate max-w-48" title={r.baseUrl}>
+                        {r.baseUrl}
+                      </span>
+                    </div>
+                    {r.success && (r.fhirVersion || r.serverName) && (
+                      <span className="caption text-text-muted ml-6">
+                        {r.fhirVersion && `v${r.fhirVersion}`}
+                        {r.fhirVersion && r.serverName && " • "}
+                        {r.serverName && r.serverName}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && r.resourceCount !== undefined && (
+                      <div className="caption text-text-muted">
+                        {r.resourceCount} resources
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* LTI/LMS Results */}
+          {data.educationResults?.ltiResults && data.educationResults.ltiResults.length > 0 && (
+            <CollapsibleSection
+              title="LTI/LMS"
+              count={data.educationResults.ltiResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.educationResults.ltiResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.educationResults.ltiResults.map((r) => (
+                <div
+                  key={`lti-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted truncate max-w-48" title={r.launchUrl}>
+                        {r.launchUrl}
+                      </span>
+                    </div>
+                    {r.success && r.ltiVersion && (
+                      <span className="caption text-text-muted ml-6">
+                        LTI {r.ltiVersion}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* OPC-UA Results */}
+          {data.industrialResults?.opcuaResults && data.industrialResults.opcuaResults.length > 0 && (
+            <CollapsibleSection
+              title="OPC-UA"
+              count={data.industrialResults.opcuaResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.industrialResults.opcuaResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.industrialResults.opcuaResults.map((r) => (
+                <div
+                  key={`opcua-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted truncate max-w-48" title={r.endpointUrl}>
+                        {r.endpointUrl}
+                      </span>
+                    </div>
+                    {r.success && (r.securityMode || r.productName) && (
+                      <span className="caption text-text-muted ml-6">
+                        {r.securityMode && r.securityMode}
+                        {r.securityMode && r.productName && " • "}
+                        {r.productName && r.productName}
+                      </span>
+                    )}
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && r.serverState && (
+                      <div className="caption text-text-muted">
+                        {r.serverState}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CollapsibleSection>
+          )}
+
+          {/* Modbus TCP Results */}
+          {data.industrialResults?.modbusResults && data.industrialResults.modbusResults.length > 0 && (
+            <CollapsibleSection
+              title="Modbus TCP"
+              count={data.industrialResults.modbusResults.length}
+              variant="compact"
+              defaultOpen={true}
+              status={
+                data.industrialResults.modbusResults.some((r) => !r.success)
+                  ? "error"
+                  : "success"
+              }
+            >
+              {data.industrialResults.modbusResults.map((r) => (
+                <div
+                  key={`modbus-${r.name}`}
+                  className={cn(
+                    layout.flex.between,
+                    spacing.pad.xs,
+                    radius.default,
+                    !r.success ? "bg-status-error/10" : "bg-surface-raised",
+                  )}
+                >
+                  <div className={layout.stack.compact}>
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={r.success ? "success" : "error"} />
+                      <span className="body-small font-medium">{r.name}</span>
+                      <span className="caption text-text-muted">
+                        {r.host}:{r.port} • Unit {r.unitId}
+                      </span>
+                    </div>
+                    {r.error && (
+                      <span className="caption text-status-error ml-6">{r.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="body-small font-mono">
+                      {r.totalTimeMs.toFixed(1)}ms
+                    </div>
+                    {r.success && r.registerValue !== undefined && (
+                      <div className="caption text-text-muted">
+                        Reg: 0x{r.registerValue.toString(16).toUpperCase().padStart(4, '0')}
                       </div>
                     )}
                   </div>

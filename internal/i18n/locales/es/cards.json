@@ -293,7 +293,8 @@
     "certExpiry1Day": "1 día",
     "certExpiryDays": "{{days}} días",
     "certExpiryMonths": "{{months}}m",
-    "certExpiryYears": "{{years}}a"
+    "certExpiryYears": "{{years}}a",
+    "rtsp": "RTSP Video"
   },
   "system": {
     "title": "Salud del sistema",
