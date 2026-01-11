@@ -133,6 +133,122 @@ export interface HttpEndpoint {
   criticality?: number; // 1-10 scale for health scoring
 }
 
+// ============================================================================
+// Extended Health Check Endpoint Types
+// ============================================================================
+
+/** RTSP video stream endpoint (surveillance/video systems) */
+export interface RtspEndpoint {
+  id?: string;
+  name: string;
+  url: string; // rtsp://host:554/path
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** DICOM medical imaging endpoint */
+export interface DicomEndpoint {
+  id?: string;
+  name: string;
+  host: string;
+  port: number; // Default: 104
+  aeTitle: string; // Application Entity Title
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** SQL database endpoint */
+export interface SqlEndpoint {
+  id?: string;
+  name: string;
+  driver: "postgres" | "mysql" | "mssql" | "oracle";
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** File share endpoint (SMB/NFS) */
+export interface FileShareEndpoint {
+  id?: string;
+  name: string;
+  protocol: "smb" | "nfs";
+  host: string;
+  sharePath: string;
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** LDAP/Active Directory endpoint */
+export interface LdapEndpoint {
+  id?: string;
+  name: string;
+  host: string;
+  port: number; // Default: 389, LDAPS: 636
+  useTls: boolean;
+  baseDn: string;
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** HL7 MLLP medical messaging endpoint */
+export interface Hl7Endpoint {
+  id?: string;
+  name: string;
+  host: string;
+  port: number; // Default: 2575
+  sendingApp: string;
+  sendingFacility: string;
+  receivingApp: string;
+  receivingFacility: string;
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** FHIR R4 healthcare API endpoint */
+export interface FhirEndpoint {
+  id?: string;
+  name: string;
+  baseUrl: string;
+  authType: "none" | "basic" | "oauth2";
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** LTI/LMS education endpoint */
+export interface LtiEndpoint {
+  id?: string;
+  name: string;
+  launchUrl: string;
+  consumerKey: string;
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** OPC-UA industrial endpoint */
+export interface OpcuaEndpoint {
+  id?: string;
+  name: string;
+  endpointUrl: string; // opc.tcp://host:4840
+  securityMode: "None" | "Sign" | "SignAndEncrypt";
+  enabled: boolean;
+  criticality?: number;
+}
+
+/** Modbus TCP industrial endpoint */
+export interface ModbusEndpoint {
+  id?: string;
+  name: string;
+  host: string;
+  port: number; // Default: 502
+  unitId: number;
+  testRegister: number;
+  enabled: boolean;
+  criticality?: number;
+}
+
 /** SLA configuration for an endpoint */
 export interface SlaConfig {
   endpointName: string;
@@ -164,6 +280,18 @@ export interface TestsSettings {
   tcpPorts: TcpPort[];
   udpPorts: UdpPort[];
   httpEndpoints: HttpEndpoint[];
+  // Extended health check endpoints
+  rtspEndpoints?: RtspEndpoint[];
+  dicomEndpoints?: DicomEndpoint[];
+  sqlEndpoints?: SqlEndpoint[];
+  fileShareEndpoints?: FileShareEndpoint[];
+  ldapEndpoints?: LdapEndpoint[];
+  hl7Endpoints?: Hl7Endpoint[];
+  fhirEndpoints?: FhirEndpoint[];
+  ltiEndpoints?: LtiEndpoint[];
+  opcuaEndpoints?: OpcuaEndpoint[];
+  modbusEndpoints?: ModbusEndpoint[];
+  // Performance test flags
   runPerformance: boolean;
   runSpeedtest: boolean;
   runIperf: boolean;
