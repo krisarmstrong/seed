@@ -1,5 +1,37 @@
-# Default owner for everything
+# =============================================================================
+# Code Owners - Seed Project
+# =============================================================================
+# Default owner for all files
 * @krisarmstrong
+
+# =============================================================================
+# CRITICAL FILES - Require explicit approval
+# =============================================================================
+# These files define code quality, security, and build standards.
+# Changes MUST be approved to prevent degradation of platinum standards.
+
+# Linting configurations (124 Go linters, 200+ JS/TS rules)
+/.golangci.yml @krisarmstrong
+/biome.json @krisarmstrong
+
+# CI/CD workflows (enforce all quality checks)
+/.github/workflows/*.yml @krisarmstrong
+
+# Dependency management
+/go.mod @krisarmstrong
+/go.sum @krisarmstrong
+/package.json @krisarmstrong
+/package-lock.json @krisarmstrong
+/ui/package.json @krisarmstrong
+/ui/package-lock.json @krisarmstrong
+
+# Version pinning
+/.node-version @krisarmstrong
+/.nvmrc @krisarmstrong
+
+# Security scanning
+/.gitleaks.toml @krisarmstrong
+/.pre-commit-config.yaml @krisarmstrong
 
 # Backend
 /cmd/ @krisarmstrong
