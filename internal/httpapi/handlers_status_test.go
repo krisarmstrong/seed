@@ -14,7 +14,7 @@ func TestHandleStatus(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/status", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/status", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleStatus(w, req)
@@ -47,7 +47,7 @@ func TestHandleStatusMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/status", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/status", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleStatus(w, req)
@@ -68,7 +68,7 @@ func TestHandleExportMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/export", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/export", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleExport(w, req)

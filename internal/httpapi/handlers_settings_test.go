@@ -17,7 +17,7 @@ func TestHandleSettingsDefaultsGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings/defaults", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings/defaults", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleSettingsDefaults(w, req)
@@ -47,7 +47,7 @@ func TestHandleSettingsDefaultsMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/settings/defaults", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/settings/defaults", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleSettingsDefaults(w, req)
@@ -65,7 +65,7 @@ func TestHandleSettingsGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleSettings(w, req)
@@ -96,7 +96,7 @@ func TestHandleSettingsMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodDelete, http.MethodPatch}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/settings", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/settings", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleSettings(w, req)
@@ -114,7 +114,7 @@ func TestHandleLinkSettingsGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings/link", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings/link", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleLinkSettings(w, req)
@@ -142,7 +142,7 @@ func TestHandleLinkSettingsMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodDelete, http.MethodPatch}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/settings/link", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/settings/link", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleLinkSettings(w, req)
@@ -165,7 +165,7 @@ func TestHandleLinkSettingsPUTInvalidMode(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPut, "/api/settings/link", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/settings/link", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -190,7 +190,7 @@ func TestHandleLinkSettingsPUTValidModes(t *testing.T) {
 			}
 			body, _ := json.Marshal(reqBody)
 
-			req := httptest.NewRequest(http.MethodPut, "/api/settings/link", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings/link", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -208,7 +208,7 @@ func TestHandleCableTestSettingsGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings/cable", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings/cable", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleCableTestSettings(w, req)
@@ -235,7 +235,7 @@ func TestHandleCableTestSettingsMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodDelete, http.MethodPatch}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/settings/cable", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/settings/cable", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleCableTestSettings(w, req)
@@ -258,7 +258,7 @@ func TestHandleCableTestSettingsPUT(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPut, "/api/settings/cable", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/settings/cable", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -329,7 +329,7 @@ func TestApplyThresholdUpdates(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -372,7 +372,7 @@ func TestApplyHealthChecksUpdates(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -418,7 +418,7 @@ func TestApplySpeedtestUpdates(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -464,7 +464,7 @@ func TestApplyIperfUpdates(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -512,7 +512,7 @@ func TestApplyDisplayOptionsUpdates(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -572,7 +572,7 @@ func TestApplyHTTPTimingThresholds(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -634,7 +634,7 @@ func TestApplyCustomTestThresholds(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -653,7 +653,7 @@ func TestSettingsUpdateInvalidJSON(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader([]byte("invalid json")))
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader([]byte("invalid json")))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -669,7 +669,7 @@ func TestBuildCardSettings(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleSettings(w, req)
@@ -697,7 +697,7 @@ func TestBuildThresholdSettings(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleSettings(w, req)
@@ -771,7 +771,7 @@ func TestApplyFABOptionsUpdates(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.payload)
-			req := httptest.NewRequest(http.MethodPut, "/api/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -795,7 +795,7 @@ func TestSettingsThresholdDurationConversion(t *testing.T) {
 	cfg.Thresholds.DNS.Warning = 100 * time.Millisecond
 	cfg.Thresholds.DNS.Critical = 500 * time.Millisecond
 
-	req := httptest.NewRequest(http.MethodGet, "/api/settings", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/settings", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleSettings(w, req)

@@ -18,7 +18,7 @@ func TestHandleInterfacesGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/interfaces", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/interfaces", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Mux().ServeHTTP(w, req)
@@ -45,7 +45,7 @@ func TestHandleInterfacesMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/interfaces", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/interfaces", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
@@ -65,7 +65,7 @@ func TestHandleInterfaceGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/interface", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/interface", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Mux().ServeHTTP(w, req)
@@ -74,7 +74,8 @@ func TestHandleInterfaceGET(t *testing.T) {
 		t.Errorf("Expected status %d, got %d: %s", http.StatusOK, w.Code, w.Body.String())
 	}
 
-	var resp map[string]string
+	// Response includes interface (string), isWireless (bool), available (bool), etc.
+	var resp map[string]any
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 		t.Fatalf("Failed to decode response: %v", err)
 	}
@@ -97,7 +98,7 @@ func TestHandleInterfacePUT(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPut, "/api/interface", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/interface", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -118,7 +119,7 @@ func TestHandleInterfacePUTInvalidJSON(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodPut, "/api/interface", bytes.NewReader([]byte("invalid json")))
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/interface", bytes.NewReader([]byte("invalid json")))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -140,7 +141,7 @@ func TestHandleInterfaceMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodDelete, http.MethodPatch}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/interface", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/interface", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
@@ -160,7 +161,7 @@ func TestHandleLinkGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/sap/link", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/sap/link", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Mux().ServeHTTP(w, req)
@@ -186,7 +187,7 @@ func TestHandleLinkGETWithInterface(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/sap/link?interface=lo", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/sap/link?interface=lo", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Mux().ServeHTTP(w, req)
@@ -209,7 +210,7 @@ func TestHandleLinkMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/sap/link", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/sap/link", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
@@ -229,7 +230,7 @@ func TestHandleIPConfigGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/sap/ipconfig", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/sap/ipconfig", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Mux().ServeHTTP(w, req)
@@ -263,7 +264,7 @@ func TestHandleIPConfigMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/sap/ipconfig", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/sap/ipconfig", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
@@ -283,7 +284,7 @@ func TestHandleIPSettingsGET(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/sap/ipconfig/settings", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/sap/ipconfig/settings", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.Mux().ServeHTTP(w, req)
@@ -336,7 +337,7 @@ func TestHandleIPSettingsPUT(t *testing.T) {
 			server.SetConfigPath("/tmp/test-config.yaml")
 
 			body, _ := json.Marshal(tt.request)
-			req := httptest.NewRequest(http.MethodPut, "/api/sap/ipconfig/settings", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPut, "/api/v1/sap/ipconfig/settings", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -366,7 +367,7 @@ func TestHandleIPSettingsMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodDelete, http.MethodPatch}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/sap/ipconfig/settings", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/sap/ipconfig/settings", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
@@ -420,7 +421,7 @@ func TestHandleSetMTU(t *testing.T) {
 			defer server.Close()
 
 			body, _ := json.Marshal(tt.request)
-			req := httptest.NewRequest(http.MethodPost, "/api/network/mtu", bytes.NewReader(body))
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/network/mtu", bytes.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -450,7 +451,7 @@ func TestHandleSetMTUMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/network/mtu", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/network/mtu", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
@@ -470,7 +471,7 @@ func TestHandleSetMTUInvalidJSON(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodPost, "/api/network/mtu", bytes.NewReader([]byte("invalid json")))
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/network/mtu", bytes.NewReader([]byte("invalid json")))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
