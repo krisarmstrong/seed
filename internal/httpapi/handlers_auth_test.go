@@ -104,7 +104,7 @@ func TestHandleRefreshToken(t *testing.T) {
 			defer server.Close()
 			refreshToken := prepareRefreshToken(t, server, tt)
 
-			req := httptest.NewRequest(http.MethodPost, "/api/auth/refresh", http.NoBody)
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/refresh", http.NoBody)
 			if tt.setupCookie {
 				req.AddCookie(&http.Cookie{
 					Name:  auth.CookieNameRefresh,
@@ -134,7 +134,7 @@ func TestHandleRefreshTokenMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/auth/refresh", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/auth/refresh", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleRefreshToken(w, req)
@@ -158,7 +158,7 @@ func TestHandleLogout(t *testing.T) {
 		t.Fatalf("Failed to generate token: %v", err)
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", http.NoBody)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/logout", http.NoBody)
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	w := httptest.NewRecorder()
@@ -200,7 +200,7 @@ func TestHandleLogoutMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/auth/logout", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/auth/logout", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleLogout(w, req)
@@ -274,7 +274,7 @@ func TestHandleSetupComplete(t *testing.T) {
 			body, _ := json.Marshal(reqBody)
 			req := httptest.NewRequest(
 				http.MethodPost,
-				"/api/setup/complete",
+				"/api/v1/setup/complete",
 				bytes.NewReader(body),
 			)
 			req.Header.Set("Content-Type", "application/json")
@@ -373,7 +373,7 @@ func TestHandleSetupStatus(t *testing.T) {
 			cfg := buildSetupStatusConfig(tt)
 			server := api.NewTestServerWithConfig(cfg)
 
-			req := httptest.NewRequest(http.MethodGet, "/api/setup/status", http.NoBody)
+			req := httptest.NewRequest(http.MethodGet, "/api/v1/setup/status", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleSetupStatus(w, req)

@@ -672,7 +672,7 @@ func TestGetInterfaceFromRequest(t *testing.T) {
 	t.Run("query param provided", func(t *testing.T) {
 		server := &api.Server{}
 		server.InitServices() // nil netManager
-		req, _ := http.NewRequest(http.MethodGet, "/api/link?interface=eth0", http.NoBody)
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/link?interface=eth0", http.NoBody)
 		result := server.GetInterfaceFromRequest(req)
 		if result != "eth0" {
 			t.Errorf("GetInterfaceFromRequest() = %q, want %q", result, "eth0")
@@ -683,7 +683,7 @@ func TestGetInterfaceFromRequest(t *testing.T) {
 	t.Run("no query param, nil netManager", func(t *testing.T) {
 		server := &api.Server{}
 		server.InitServices()
-		req, _ := http.NewRequest(http.MethodGet, "/api/link", http.NoBody)
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/link", http.NoBody)
 		result := server.GetInterfaceFromRequest(req)
 		if result != "" {
 			t.Errorf("GetInterfaceFromRequest() = %q, want empty string", result)
@@ -694,7 +694,7 @@ func TestGetInterfaceFromRequest(t *testing.T) {
 	t.Run("special interface name", func(t *testing.T) {
 		server := &api.Server{}
 		server.InitServices()
-		req, _ := http.NewRequest(http.MethodGet, "/api/link?interface=enp0s3", http.NoBody)
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/link?interface=enp0s3", http.NoBody)
 		result := server.GetInterfaceFromRequest(req)
 		if result != "enp0s3" {
 			t.Errorf("GetInterfaceFromRequest() = %q, want %q", result, "enp0s3")

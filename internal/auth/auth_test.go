@@ -299,7 +299,7 @@ func TestMiddleware(t *testing.T) {
 		},
 		{
 			name:           "skip auth for login",
-			path:           "/api/auth/login",
+			path:           "/api/v1/auth/login",
 			authHeader:     "",
 			expectedStatus: http.StatusOK,
 		},
@@ -801,9 +801,9 @@ func TestMiddlewareSkipSetupEndpoints(t *testing.T) {
 
 	// Test that setup endpoints skip auth
 	paths := []string{
-		"/api/setup/status",
-		"/api/setup/complete",
-		"/api/auth/refresh",
+		"/api/v1/setup/status",
+		"/api/v1/setup/complete",
+		"/api/v1/auth/refresh",
 	}
 
 	for _, path := range paths {
@@ -1410,7 +1410,7 @@ func TestCSRFMiddleware(t *testing.T) {
 	})
 
 	t.Run("login endpoint bypasses CSRF", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/api/auth/login", http.NoBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", http.NoBody)
 		rec := httptest.NewRecorder()
 		middleware.ServeHTTP(rec, req)
 
@@ -1420,7 +1420,7 @@ func TestCSRFMiddleware(t *testing.T) {
 	})
 
 	t.Run("setup endpoints bypass CSRF", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/api/setup/complete", http.NoBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/setup/complete", http.NoBody)
 		rec := httptest.NewRecorder()
 		middleware.ServeHTTP(rec, req)
 
@@ -1430,7 +1430,7 @@ func TestCSRFMiddleware(t *testing.T) {
 	})
 
 	t.Run("SSO endpoints bypass CSRF", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/api/sso/callback", http.NoBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/sso/callback", http.NoBody)
 		rec := httptest.NewRecorder()
 		middleware.ServeHTTP(rec, req)
 

@@ -94,7 +94,13 @@ func NewManager(defaultInterface string) (*Manager, error) {
 // RefreshInterfaces updates the list of available interfaces.
 // Enriches interface information with detection data including friendly names,
 // chipset info, TDR/DOM capabilities, and scoring for auto-selection.
+// For mock managers (detector is nil), this is a no-op to preserve pre-defined test data.
 func (m *Manager) RefreshInterfaces() error {
+	// Skip refresh for mock managers (detector is nil) to preserve pre-defined test data
+	if m.detector == nil {
+		return nil
+	}
+
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		return fmt.Errorf("failed to get interfaces: %w", err)

@@ -61,7 +61,7 @@ func (s *testEndpointServer) close() {
 
 func (s *testEndpointServer) testStatusEndpoint(t *testing.T) {
 	t.Helper()
-	resp, err := http.Get(s.ts.URL + "/api/status")
+	resp, err := http.Get(s.ts.URL + "/api/v1/status")
 	if err != nil {
 		t.Fatalf("GET /api/status failed: %v", err)
 	}
@@ -83,7 +83,7 @@ func (s *testEndpointServer) testStatusEndpoint(t *testing.T) {
 
 func (s *testEndpointServer) testSettingsEndpoint(t *testing.T) {
 	t.Helper()
-	resp, err := http.Get(s.ts.URL + "/api/settings")
+	resp, err := http.Get(s.ts.URL + "/api/v1/settings")
 	if err != nil {
 		t.Fatalf("GET /api/settings failed: %v", err)
 	}
@@ -101,7 +101,7 @@ func (s *testEndpointServer) testSettingsEndpoint(t *testing.T) {
 
 func (s *testEndpointServer) testInterfacesEndpoint(t *testing.T) {
 	t.Helper()
-	resp, err := http.Get(s.ts.URL + "/api/interfaces")
+	resp, err := http.Get(s.ts.URL + "/api/v1/interfaces")
 	if err != nil {
 		t.Fatalf("GET /api/interfaces failed: %v", err)
 	}
@@ -121,7 +121,7 @@ func (s *testEndpointServer) testSNMPSettingsEndpoint(t *testing.T) {
 	t.Helper()
 	client := &http.Client{Timeout: 15 * time.Second}
 
-	resp, err := client.Get(s.ts.URL + "/api/sap/snmp/settings")
+	resp, err := client.Get(s.ts.URL + "/api/v1/sap/snmp/settings")
 	if err != nil {
 		t.Fatalf("GET /api/sap/snmp/settings failed: %v", err)
 	}
@@ -146,7 +146,7 @@ func (s *testEndpointServer) testSNMPSettingsEndpoint(t *testing.T) {
 
 func (s *testEndpointServer) testWiFiSettingsEndpoint(t *testing.T) {
 	t.Helper()
-	resp, err := http.Get(s.ts.URL + "/api/canopy/wifi/settings")
+	resp, err := http.Get(s.ts.URL + "/api/v1/canopy/wifi/settings")
 	if err != nil {
 		t.Fatalf("GET /api/canopy/wifi/settings failed: %v", err)
 	}
@@ -159,7 +159,7 @@ func (s *testEndpointServer) testWiFiSettingsEndpoint(t *testing.T) {
 
 func (s *testEndpointServer) testIPConfigEndpoint(t *testing.T) {
 	t.Helper()
-	resp, err := http.Get(s.ts.URL + "/api/ipconfig")
+	resp, err := http.Get(s.ts.URL + "/api/v1/ipconfig")
 	if err != nil {
 		t.Fatalf("GET /api/ipconfig failed: %v", err)
 	}
@@ -182,7 +182,7 @@ func (s *testEndpointServer) testIPConfigEndpoint(t *testing.T) {
 
 func (s *testEndpointServer) testSystemHealthEndpoint(t *testing.T) {
 	t.Helper()
-	resp, err := http.Get(s.ts.URL + "/api/sap/system/health")
+	resp, err := http.Get(s.ts.URL + "/api/v1/sap/system/health")
 	if err != nil {
 		t.Fatalf("GET /api/sap/system/health failed: %v", err)
 	}
@@ -285,7 +285,7 @@ func TestWebSocketHub(t *testing.T) {
 // 	}
 //
 // 	body, _ := json.Marshal(thresholds)
-// 	req, _ := http.NewRequest(http.MethodPut, ts.URL+"/api/settings", bytes.NewReader(body))
+// 	req, _ := http.NewRequest(http.MethodPut, ts.URL+"/api/v1/settings", bytes.NewReader(body))
 // 	req.Header.Set("Content-Type", "application/json")
 //
 // 	client := &http.Client{Timeout: 15 * time.Second}
@@ -348,18 +348,18 @@ func (s *devicesTestServer) assertGetEndpointOK(t *testing.T, endpoint string) {
 
 func (s *devicesTestServer) testGetDevices(t *testing.T) {
 	t.Helper()
-	s.assertGetEndpointOK(t, "/api/shell/devices")
+	s.assertGetEndpointOK(t, "/api/v1/shell/devices")
 }
 
 func (s *devicesTestServer) testGetDevicesStatus(t *testing.T) {
 	t.Helper()
-	s.assertGetEndpointOK(t, "/api/shell/devices/status")
+	s.assertGetEndpointOK(t, "/api/v1/shell/devices/status")
 }
 
 func (s *devicesTestServer) testGetDevicesSettings(t *testing.T) {
 	t.Helper()
 
-	resp, err := http.Get(s.ts.URL + "/api/shell/devices/settings")
+	resp, err := http.Get(s.ts.URL + "/api/v1/shell/devices/settings")
 	if err != nil {
 		t.Fatalf("GET /api/shell/devices/settings failed: %v", err)
 	}
@@ -382,7 +382,7 @@ func (s *devicesTestServer) testGetDevicesSettings(t *testing.T) {
 func (s *devicesTestServer) testScanDevices(t *testing.T) {
 	t.Helper()
 
-	req, _ := http.NewRequest(http.MethodPost, s.ts.URL+"/api/shell/devices/scan", http.NoBody)
+	req, _ := http.NewRequest(http.MethodPost, s.ts.URL+"/api/v1/shell/devices/scan", http.NoBody)
 	client := &http.Client{Timeout: 15 * time.Second}
 
 	resp, err := client.Do(req)
@@ -433,7 +433,7 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 	defer ts.Close()
 
 	t.Run("GetHealthChecksSettings", func(t *testing.T) {
-		resp, err := http.Get(ts.URL + "/api/sap/health-checks/settings")
+		resp, err := http.Get(ts.URL + "/api/v1/sap/health-checks/settings")
 		if err != nil {
 			t.Fatalf("GET /api/sap/health-checks/settings failed: %v", err)
 		}
@@ -460,7 +460,7 @@ func TestTestsSettingsEndpoints(t *testing.T) {
 		body, _ := json.Marshal(settings)
 		req, _ := http.NewRequest(
 			http.MethodPut,
-			ts.URL+"/api/sap/health-checks/settings",
+			ts.URL+"/api/v1/sap/health-checks/settings",
 			bytes.NewReader(body),
 		)
 		req.Header.Set("Content-Type", "application/json")

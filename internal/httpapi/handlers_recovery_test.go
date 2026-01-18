@@ -18,7 +18,7 @@ func TestHandleRecoveryStatusNoManager(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/recovery/status", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/recovery/status", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleRecoveryStatus(w, req)
@@ -45,7 +45,7 @@ func TestHandleRecoveryStatusMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/recovery/status", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/recovery/status", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleRecoveryStatus(w, req)
@@ -70,7 +70,7 @@ func TestHandleRecoveryStatusWithManager(t *testing.T) {
 
 	// Test without trigger file
 	t.Run("no trigger file", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/api/recovery/status", http.NoBody)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/recovery/status", http.NoBody)
 		w := httptest.NewRecorder()
 
 		server.HandleRecoveryStatus(w, req)
@@ -98,7 +98,7 @@ func TestHandleRecoveryStatusWithManager(t *testing.T) {
 		}
 		defer os.Remove(triggerPath)
 
-		req := httptest.NewRequest(http.MethodGet, "/api/recovery/status", http.NoBody)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/recovery/status", http.NoBody)
 		w := httptest.NewRecorder()
 
 		server.HandleRecoveryStatus(w, req)
@@ -133,7 +133,7 @@ func TestHandleRecoveryCompleteNoManager(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPost, "/api/recovery/complete", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/recovery/complete", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -152,7 +152,7 @@ func TestHandleRecoveryCompleteMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/recovery/complete", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/recovery/complete", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleRecoveryComplete(w, req)
@@ -190,7 +190,7 @@ func TestHandleRecoveryCompleteInvalidToken(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPost, "/api/recovery/complete", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/recovery/complete", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -206,7 +206,7 @@ func TestHandleRecoveryInstructionsNoManager(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodGet, "/api/recovery/instructions", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/recovery/instructions", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleRecoveryInstructions(w, req)
@@ -224,7 +224,7 @@ func TestHandleRecoveryInstructionsMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodPost, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/recovery/instructions", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/recovery/instructions", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.HandleRecoveryInstructions(w, req)
@@ -247,7 +247,7 @@ func TestHandleRecoveryInstructionsWithManager(t *testing.T) {
 	recoveryManager := auth.NewRecoveryTokenManager(tmpDir)
 	server.SetRecoveryManager(recoveryManager)
 
-	req := httptest.NewRequest(http.MethodGet, "/api/recovery/instructions", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/recovery/instructions", http.NoBody)
 	w := httptest.NewRecorder()
 
 	server.HandleRecoveryInstructions(w, req)
@@ -290,7 +290,7 @@ func TestHandleRecoveryCompleteInvalidJSON(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/api/recovery/complete",
+		"/api/v1/recovery/complete",
 		bytes.NewReader([]byte("invalid json")),
 	)
 	req.Header.Set("Content-Type", "application/json")

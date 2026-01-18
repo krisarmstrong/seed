@@ -31,7 +31,7 @@ func TestHandleConfigVersion(t *testing.T) {
 	s.SetConfigPath(configPath)
 
 	// Test GET /api/config/version
-	req := httptest.NewRequest(http.MethodGet, "/api/config/version", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/config/version", http.NoBody)
 	w := httptest.NewRecorder()
 	s.HandleConfigVersion(w, req)
 
@@ -77,7 +77,7 @@ func TestHandleConfigBackups(t *testing.T) {
 	s.SetConfigPath(configPath)
 
 	// Test GET /api/config/backups
-	req := httptest.NewRequest(http.MethodGet, "/api/config/backups", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/config/backups", http.NoBody)
 	w := httptest.NewRecorder()
 	s.HandleConfigBackups(w, req)
 
@@ -111,7 +111,7 @@ func TestHandleConfigBackupCreate(t *testing.T) {
 	s.SetConfigPath(configPath)
 
 	// Test POST /api/config/backup
-	req := httptest.NewRequest(http.MethodPost, "/api/config/backup", http.NoBody)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/config/backup", http.NoBody)
 	w := httptest.NewRecorder()
 	s.HandleConfigBackupCreate(w, req)
 
@@ -168,7 +168,7 @@ func TestHandleConfigRestore(t *testing.T) {
 	// Test POST /api/config/restore
 	reqBody := api.RestoreRequest{BackupName: backup.Name}
 	body, _ := json.Marshal(reqBody)
-	req := httptest.NewRequest(http.MethodPost, "/api/config/restore", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/config/restore", bytes.NewReader(body))
 	w := httptest.NewRecorder()
 	s.HandleConfigRestore(w, req)
 
@@ -208,7 +208,7 @@ func TestHandleConfigBackupDelete(t *testing.T) {
 	// Test DELETE /api/config/backup/delete?name=...
 	req := httptest.NewRequest(
 		http.MethodDelete,
-		"/api/config/backup/delete?name="+backup.Name,
+		"/api/v1/config/backup/delete?name="+backup.Name,
 		http.NoBody,
 	)
 	w := httptest.NewRecorder()
@@ -232,7 +232,7 @@ func TestHandleConfigVersion_MethodNotAllowed(t *testing.T) {
 	s.SetConfig(testutil.NewConfigBuilder().Build())
 	s.SetConfigPath("/tmp/config.yaml")
 
-	req := httptest.NewRequest(http.MethodPost, "/api/config/version", http.NoBody)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/config/version", http.NoBody)
 	w := httptest.NewRecorder()
 	s.HandleConfigVersion(w, req)
 
@@ -253,7 +253,7 @@ func TestHandleConfigRestore_MissingBackupName(t *testing.T) {
 	s.SetConfigPath("/tmp/config.yaml")
 
 	body, _ := json.Marshal(api.RestoreRequest{BackupName: ""})
-	req := httptest.NewRequest(http.MethodPost, "/api/config/restore", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/config/restore", bytes.NewReader(body))
 	w := httptest.NewRecorder()
 	s.HandleConfigRestore(w, req)
 
