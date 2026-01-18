@@ -18,7 +18,7 @@ func TestNormalizeSPAPath(t *testing.T) {
 		{"", "/index.html"},
 		{"/index.html", "/index.html"},
 		{"/dashboard", "/dashboard"},
-		{"/api/status", "/api/status"},
+		{"/api/v1/status", "/api/v1/status"},
 		{"/settings/network", "/settings/network"},
 	}
 
@@ -41,10 +41,10 @@ func TestIsAPIOrWSRoute(t *testing.T) {
 		{"/api/v1/status", true},     // APIVersionPrefix matches
 		{"/api/v1/auth/login", true}, // APIVersionPrefix matches
 		{"/api/v1/settings", true},   // APIVersionPrefix matches
-		{"/api/events", true},        // APIBasePath+"/events" for SSE
+		{"/api/v1/events", true},     // APIBasePath+"/events" for SSE
 		{"/ws", true},
 		{"/ws/", true},
-		{"/api/status", false}, // Doesn't match /api/v1
+		{"/api/status", false}, // Doesn't match /api/v1 (missing version)
 		{"/websocket", false},
 		{"/dashboard", false},
 		{"/", false},
@@ -189,17 +189,17 @@ func TestBodyLimitMiddleware(t *testing.T) {
 	}{
 		{
 			name:      "auth endpoint",
-			path:      "/api/auth/login",
+			path:      "/api/v1/auth/login",
 			wantLimit: true,
 		},
 		{
 			name:      "config endpoint",
-			path:      "/api/config/restore",
+			path:      "/api/v1/config/restore",
 			wantLimit: true,
 		},
 		{
 			name:      "general API endpoint",
-			path:      "/api/status",
+			path:      "/api/v1/status",
 			wantLimit: true,
 		},
 		{
@@ -379,7 +379,7 @@ func TestGetAuthenticatedHandler(t *testing.T) {
 	}
 
 	// Make a request to verify the handler works
-	req := httptest.NewRequest(http.MethodGet, "/api/status", http.NoBody)
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/status", http.NoBody)
 	w := httptest.NewRecorder()
 
 	handler.ServeHTTP(w, req)

@@ -516,13 +516,14 @@ func extractTokenFromSubprotocol(protocols string) string {
 // Returns true for login, refresh, setup, recovery, SSO endpoints and static files.
 func shouldBypassAuth(path string) bool {
 	// Skip auth for login, refresh, setup, recovery, and SSO endpoints (fixes #478)
+	// Note: API routes use /api/v1/ prefix
 	switch path {
-	case "/api/auth/login", "/api/auth/refresh",
-		"/api/setup/status", "/api/setup/complete",
-		"/api/recovery/status", "/api/recovery/complete", "/api/recovery/instructions":
+	case "/api/v1/auth/login", "/api/v1/auth/refresh",
+		"/api/v1/setup/status", "/api/v1/setup/complete",
+		"/api/v1/recovery/status", "/api/v1/recovery/complete", "/api/v1/recovery/instructions":
 		return true
 	}
-	if strings.HasPrefix(path, "/api/sso/") {
+	if strings.HasPrefix(path, "/api/v1/sso/") {
 		return true
 	}
 	// Skip auth for static files (non-API, non-WebSocket paths)

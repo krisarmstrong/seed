@@ -78,11 +78,12 @@ func (s *Server) GetAuthenticatedHandler() http.Handler {
 
 // NewTestServerWithConfig creates a test server with a specific config.
 // This allows tests to customize the server configuration.
-// NOTE: Uses nil network manager to avoid slow hardware detection in tests.
+// Uses a mock network manager to avoid slow hardware detection while still
+// allowing handlers to work properly with realistic interface data.
 func NewTestServerWithConfig(cfg *config.Config) *Server {
-	// Skip network.NewManager() - it does slow hardware detection via networksetup.
-	// Most tests don't need a real network manager; handlers handle nil gracefully.
-	var netMgr *network.Manager // nil by default
+	// Use mock network manager to avoid slow hardware detection.
+	// The mock provides realistic interface data for handler testing.
+	netMgr := network.NewMockManager(network.DefaultMockConfig())
 
 	// Create server with ServiceContainer (#888)
 	s := &Server{

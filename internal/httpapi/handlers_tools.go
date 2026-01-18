@@ -480,10 +480,12 @@ func (s *Server) handleAdvancedFingerprint(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Get existing device profile if available
+	// Get existing device profile if available (discoveryService may be nil in test server)
 	var existingProfile *discovery.DeviceProfile
-	if device := s.discoveryService().GetDeviceByIP(req.IP); device != nil {
-		existingProfile = device.Profile
+	if svc := s.discoveryService(); svc != nil {
+		if device := svc.GetDeviceByIP(req.IP); device != nil {
+			existingProfile = device.Profile
+		}
 	}
 
 	// Create fingerprinter with config timeout

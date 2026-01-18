@@ -195,13 +195,14 @@ func (m *CSRFManager) CSRFMiddleware(next http.Handler) http.Handler {
 		// the user may not have a valid CSRF token when their access token expires.
 		// Client logs endpoint is exempted because the logger runs before CSRF tokens are
 		// available and logging doesn't change security-sensitive state.
-		if r.URL.Path == "/api/auth/login" ||
-			r.URL.Path == "/api/auth/refresh" ||
-			r.URL.Path == "/api/auth/logout" ||
-			r.URL.Path == "/api/setup/status" ||
-			r.URL.Path == "/api/setup/complete" ||
-			r.URL.Path == "/api/harvest/logs/client" ||
-			strings.HasPrefix(r.URL.Path, "/api/sso/") {
+		// Note: API routes use /api/v1/ prefix
+		if r.URL.Path == "/api/v1/auth/login" ||
+			r.URL.Path == "/api/v1/auth/refresh" ||
+			r.URL.Path == "/api/v1/auth/logout" ||
+			r.URL.Path == "/api/v1/setup/status" ||
+			r.URL.Path == "/api/v1/setup/complete" ||
+			r.URL.Path == "/api/v1/harvest/logs/client" ||
+			strings.HasPrefix(r.URL.Path, "/api/v1/sso/") {
 			next.ServeHTTP(w, r)
 			return
 		}

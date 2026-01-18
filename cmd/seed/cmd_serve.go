@@ -455,9 +455,9 @@ func runServerWithShutdown(server *api.Server, cfg *config.Config, modules *api.
 
 // printSetupBanner displays a message directing users to the web UI for setup.
 func printSetupBanner(port int, https bool) {
-	protocol := "http"
+	protocol := protocolHTTP
 	if https {
-		protocol = "https"
+		protocol = protocolHTTPS
 	}
 	banner := `
 ╔══════════════════════════════════════════════════════════════════╗

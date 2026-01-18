@@ -75,14 +75,23 @@ func TestHandleTCPProbe(t *testing.T) {
 			defer server.Close()
 
 			body, _ := json.Marshal(tt.request)
-			req := httptest.NewRequest(http.MethodPost, "/api/shell/discovery/probe", bytes.NewReader(body))
+			req := httptest.NewRequest(
+				http.MethodPost,
+				"/api/v1/shell/discovery/probe",
+				bytes.NewReader(body),
+			)
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != tt.expectedStatus {
-				t.Errorf("Expected status %d, got %d: %s", tt.expectedStatus, w.Code, w.Body.String())
+				t.Errorf(
+					"Expected status %d, got %d: %s",
+					tt.expectedStatus,
+					w.Code,
+					w.Body.String(),
+				)
 			}
 
 			if tt.expectedStatus == http.StatusOK {
@@ -109,13 +118,18 @@ func TestHandleTCPProbeMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/shell/discovery/probe", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/shell/discovery/probe", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != http.StatusMethodNotAllowed {
-				t.Errorf("Expected status %d for %s, got %d", http.StatusMethodNotAllowed, method, w.Code)
+				t.Errorf(
+					"Expected status %d for %s, got %d",
+					http.StatusMethodNotAllowed,
+					method,
+					w.Code,
+				)
 			}
 		})
 	}
@@ -129,7 +143,11 @@ func TestHandleTCPProbeInvalidJSON(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodPost, "/api/shell/discovery/probe", bytes.NewReader([]byte("invalid json")))
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/v1/shell/discovery/probe",
+		bytes.NewReader([]byte("invalid json")),
+	)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -161,7 +179,11 @@ func TestHandleTCPProbeTooManyPorts(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPost, "/api/shell/discovery/probe", bytes.NewReader(body))
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/v1/shell/discovery/probe",
+		bytes.NewReader(body),
+	)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -187,7 +209,11 @@ func TestHandleTCPProbeInvalidTarget(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest(http.MethodPost, "/api/shell/discovery/probe", bytes.NewReader(body))
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/v1/shell/discovery/probe",
+		bytes.NewReader(body),
+	)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -286,14 +312,23 @@ func TestHandleTraceroute(t *testing.T) {
 			defer server.Close()
 
 			body, _ := json.Marshal(tt.request)
-			req := httptest.NewRequest(http.MethodPost, "/api/roots/traceroute", bytes.NewReader(body))
+			req := httptest.NewRequest(
+				http.MethodPost,
+				"/api/v1/roots/traceroute",
+				bytes.NewReader(body),
+			)
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != tt.expectedStatus {
-				t.Errorf("Expected status %d, got %d: %s", tt.expectedStatus, w.Code, w.Body.String())
+				t.Errorf(
+					"Expected status %d, got %d: %s",
+					tt.expectedStatus,
+					w.Code,
+					w.Body.String(),
+				)
 			}
 		})
 	}
@@ -310,13 +345,18 @@ func TestHandleTracerouteMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/roots/traceroute", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/roots/traceroute", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != http.StatusMethodNotAllowed {
-				t.Errorf("Expected status %d for %s, got %d", http.StatusMethodNotAllowed, method, w.Code)
+				t.Errorf(
+					"Expected status %d for %s, got %d",
+					http.StatusMethodNotAllowed,
+					method,
+					w.Code,
+				)
 			}
 		})
 	}
@@ -330,7 +370,11 @@ func TestHandleTracerouteInvalidJSON(t *testing.T) {
 	server := api.NewTestServer()
 	defer server.Close()
 
-	req := httptest.NewRequest(http.MethodPost, "/api/roots/traceroute", bytes.NewReader([]byte("invalid json")))
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/api/v1/roots/traceroute",
+		bytes.NewReader([]byte("invalid json")),
+	)
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -395,14 +439,23 @@ func TestHandlePortScan(t *testing.T) {
 			defer server.Close()
 
 			body, _ := json.Marshal(tt.request)
-			req := httptest.NewRequest(http.MethodPost, "/api/shell/discovery/portscan", bytes.NewReader(body))
+			req := httptest.NewRequest(
+				http.MethodPost,
+				"/api/v1/shell/discovery/portscan",
+				bytes.NewReader(body),
+			)
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != tt.expectedStatus {
-				t.Errorf("Expected status %d, got %d: %s", tt.expectedStatus, w.Code, w.Body.String())
+				t.Errorf(
+					"Expected status %d, got %d: %s",
+					tt.expectedStatus,
+					w.Code,
+					w.Body.String(),
+				)
 			}
 		})
 	}
@@ -419,13 +472,18 @@ func TestHandlePortScanMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/shell/discovery/portscan", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/shell/discovery/portscan", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != http.StatusMethodNotAllowed {
-				t.Errorf("Expected status %d for %s, got %d", http.StatusMethodNotAllowed, method, w.Code)
+				t.Errorf(
+					"Expected status %d for %s, got %d",
+					http.StatusMethodNotAllowed,
+					method,
+					w.Code,
+				)
 			}
 		})
 	}
@@ -441,7 +499,7 @@ func TestHandlePortScanInvalidJSON(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/api/shell/discovery/portscan",
+		"/api/v1/shell/discovery/portscan",
 		bytes.NewReader([]byte("invalid json")),
 	)
 	req.Header.Set("Content-Type", "application/json")
@@ -495,14 +553,23 @@ func TestHandleAdvancedFingerprint(t *testing.T) {
 			defer server.Close()
 
 			body, _ := json.Marshal(tt.request)
-			req := httptest.NewRequest(http.MethodPost, "/api/shell/discovery/fingerprint", bytes.NewReader(body))
+			req := httptest.NewRequest(
+				http.MethodPost,
+				"/api/v1/shell/discovery/fingerprint",
+				bytes.NewReader(body),
+			)
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != tt.expectedStatus {
-				t.Errorf("Expected status %d, got %d: %s", tt.expectedStatus, w.Code, w.Body.String())
+				t.Errorf(
+					"Expected status %d, got %d: %s",
+					tt.expectedStatus,
+					w.Code,
+					w.Body.String(),
+				)
 			}
 		})
 	}
@@ -519,13 +586,18 @@ func TestHandleAdvancedFingerprintMethodNotAllowed(t *testing.T) {
 	methods := []string{http.MethodGet, http.MethodPut, http.MethodDelete}
 	for _, method := range methods {
 		t.Run(method, func(t *testing.T) {
-			req := httptest.NewRequest(method, "/api/shell/discovery/fingerprint", http.NoBody)
+			req := httptest.NewRequest(method, "/api/v1/shell/discovery/fingerprint", http.NoBody)
 			w := httptest.NewRecorder()
 
 			server.Mux().ServeHTTP(w, req)
 
 			if w.Code != http.StatusMethodNotAllowed {
-				t.Errorf("Expected status %d for %s, got %d", http.StatusMethodNotAllowed, method, w.Code)
+				t.Errorf(
+					"Expected status %d for %s, got %d",
+					http.StatusMethodNotAllowed,
+					method,
+					w.Code,
+				)
 			}
 		})
 	}
@@ -541,7 +613,7 @@ func TestHandleAdvancedFingerprintInvalidJSON(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/api/shell/discovery/fingerprint",
+		"/api/v1/shell/discovery/fingerprint",
 		bytes.NewReader([]byte("invalid json")),
 	)
 	req.Header.Set("Content-Type", "application/json")

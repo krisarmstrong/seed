@@ -26,7 +26,7 @@ func TestBodyLimitMiddleware_GETEnforced(t *testing.T) {
 
 	// Build a GET request with a body larger than the default 1MB limit
 	largeBody := bytes.Repeat([]byte("a"), 2*1024*1024) // 2MB
-	req := httptest.NewRequest(http.MethodGet, "/api/test", bytes.NewReader(largeBody))
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/test", bytes.NewReader(largeBody))
 	rr := httptest.NewRecorder()
 
 	handler.ServeHTTP(rr, req)

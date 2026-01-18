@@ -192,7 +192,7 @@ func TestGetClientIP(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodPost, "/api/auth/login", http.NoBody)
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", http.NoBody)
 			req.RemoteAddr = tt.remoteAddr
 			for k, v := range tt.headers {
 				req.Header.Set(k, v)
