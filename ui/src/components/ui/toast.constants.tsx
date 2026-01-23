@@ -12,7 +12,7 @@
  *
  * Usage:
  * ```typescript
- * import { typeStyles, icons, ToastType } from './Toast.constants';
+ * import { typeStyles, icons, ToastType } from './toast.constants';
  *
  * const className = typeStyles['success'];
  * const icon = icons['success'];

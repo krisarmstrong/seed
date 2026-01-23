@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { HelpCircle, Info, Settings } from 'lucide-react';
 import { cn, spacing } from '../../styles/theme';
-import { Tooltip } from './Tooltip';
+import { Tooltip } from './tooltip';
 
 /**
  * Tooltips provide contextual help text on hover or focus.

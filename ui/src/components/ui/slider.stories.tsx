@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type React from 'react';
 import { useState } from 'react';
-import { Slider } from './Slider';
+import { Slider } from './slider';
 
 /**
  * Slider component for numeric input with visual feedback.

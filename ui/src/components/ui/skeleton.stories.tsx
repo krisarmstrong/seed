@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { cn, layout, spacing } from '../../styles/theme';
-import { CardSkeleton, Skeleton, TextSkeleton } from './Skeleton';
+import { CardSkeleton, Skeleton, TextSkeleton } from './skeleton';
 
 /**
  * Skeleton components provide visual loading placeholders while content is being fetched.
