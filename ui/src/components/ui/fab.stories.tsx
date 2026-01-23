@@ -2,7 +2,7 @@ import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import type React from 'react';
 import { useEffect } from 'react';
 import { cn, spacing } from '../../styles/theme';
-import { Fab } from './Fab';
+import { Fab } from './fab';
 
 /**
  * The Floating Action Button (FAB) provides quick access to running all diagnostic tests.

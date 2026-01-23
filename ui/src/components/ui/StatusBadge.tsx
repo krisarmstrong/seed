@@ -30,7 +30,7 @@
 
 import type React from 'react';
 import { cn, layout, radius } from '../../styles/theme';
-import { getSizeConfig, getStatusConfig, type Status } from './StatusConfig';
+import { getSizeConfig, getStatusConfig, type Status } from './statusConfig';
 
 // Re-export Status type for convenience (types don't affect react-refresh)
 export type { Status };

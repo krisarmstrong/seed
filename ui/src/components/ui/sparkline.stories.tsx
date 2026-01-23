@@ -6,7 +6,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { HealthScoreBadge, Sparkline, SparklineWithLabel } from './Sparkline';
+import { HealthScoreBadge, Sparkline, SparklineWithLabel } from './sparkline';
 
 // Generate sample data with variations
 const generateAvailabilityData = (

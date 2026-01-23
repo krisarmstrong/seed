@@ -91,7 +91,7 @@ import {
   X,
   XCircle,
   Zap,
-} from './Icons';
+} from './icons';
 import { ICON_SIZES } from './iconConfig';
 
 /**

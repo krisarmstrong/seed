@@ -39,7 +39,7 @@ import {
   spacing,
   toast as toastTokens,
 } from '../../styles/theme';
-import { icons, typeStyles } from './Toast.constants.tsx';
+import { icons, typeStyles } from './toast.constants';
 import { ToastContext, type ToastType } from './toastContext';
 
 /**

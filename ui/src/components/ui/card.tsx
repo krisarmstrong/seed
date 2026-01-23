@@ -32,7 +32,7 @@ import type React from 'react';
 import type { ReactNode } from 'react';
 import { card, cn, icon as iconTokens, layout, spacing } from '../../styles/theme';
 import { StatusBadge } from './StatusBadge';
-import { getStatusConfig, type Status } from './StatusConfig';
+import { getStatusConfig, type Status } from './statusConfig';
 
 // Re-export Status type for convenience (types don't affect react-refresh)
 export type { Status };

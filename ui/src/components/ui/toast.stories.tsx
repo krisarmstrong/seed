@@ -1,7 +1,7 @@
 import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import type React from 'react';
 import { button, cn, layout, radius } from '../../styles/theme';
-import { ToastProvider } from './Toast';
+import { ToastProvider } from './toast';
 import { useToast } from './useToast';
 
 /**

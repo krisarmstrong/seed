@@ -24,7 +24,7 @@
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Slider } from './Slider';
+import { Slider } from './slider';
 
 describe('Slider', () => {
   it('renders with basic props', () => {
