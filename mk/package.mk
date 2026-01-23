@@ -20,7 +20,7 @@
 # =============================================================================
 
 PKG_ARCH=$(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
-PKG_VERSION=$(shell echo $(VERSION) | sed 's/^v//')
+PKG_VERSION=$(shell echo $(VERSION) | sed 's/^v//;s/-dirty$$//;s/-[0-9]*-g[0-9a-f]*$$//')
 DEB_ARCH=$(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
 RPM_ARCH=$(shell uname -m | sed 's/amd64/x86_64/;s/arm64/aarch64/')
 
@@ -35,7 +35,7 @@ deb: build ## Build Debian package (.deb)
 	@mkdir -p dist/deb/usr/lib/systemd/system
 	@mkdir -p dist/deb/var/lib/seed
 	@mkdir -p dist/deb/var/log/seed
-	@cp $(BINARY) dist/deb/usr/bin/seed
+	@cp $(BINARY_NAME) dist/deb/usr/bin/seed
 	@chmod 755 dist/deb/usr/bin/seed
 	@cp deploy/deb/seed.service dist/deb/usr/lib/systemd/system/
 	@sed 's/__VERSION__/$(PKG_VERSION)/g; s/__ARCHITECTURE__/$(DEB_ARCH)/g' \
@@ -80,7 +80,7 @@ rpm: build ## Build RPM package (.rpm)
 	@printf "$(BOLD)Building RPM package...$(RESET)\n"
 	@mkdir -p dist/rpm/BUILD dist/rpm/RPMS dist/rpm/SOURCES dist/rpm/SPECS dist/rpm/SRPMS
 	@mkdir -p dist/rpm/SOURCES/seed-$(PKG_VERSION)
-	@cp $(BINARY) dist/rpm/SOURCES/seed-$(PKG_VERSION)/seed
+	@cp $(BINARY_NAME) dist/rpm/SOURCES/seed-$(PKG_VERSION)/seed
 	@cp deploy/deb/seed.service dist/rpm/SOURCES/seed-$(PKG_VERSION)/
 	@sed 's/__VERSION__/$(PKG_VERSION)/g; s/__ARCHITECTURE__/$(RPM_ARCH)/g; s|%{_repo_root}|$(CURDIR)|g' \
 		deploy/rpm/seed.spec > dist/rpm/SPECS/seed.spec
@@ -121,7 +121,7 @@ pkg: build-darwin ## Build macOS installer package (.pkg)
 		exit 1; \
 	fi
 	@printf "$(BOLD)Building macOS .pkg package...$(RESET)\n"
-	@./deploy/macos/build-pkg.sh ./$(BINARY)-darwin-$$(uname -m) $(PKG_VERSION)
+	@./deploy/macos/build-pkg.sh ./$(BINARY_NAME)-darwin-$$(uname -m) $(PKG_VERSION)
 	@printf "$(GREEN)macOS package: dist/seed-$(PKG_VERSION)-$$(uname -m | sed 's/x86_64/amd64/').pkg$(RESET)\n"
 
 # =============================================================================
