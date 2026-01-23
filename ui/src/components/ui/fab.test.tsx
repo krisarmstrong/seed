@@ -25,7 +25,7 @@
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Fab } from './Fab';
+import { Fab } from './fab';
 
 describe('Fab', () => {
   beforeEach(() => {

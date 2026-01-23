@@ -7,7 +7,7 @@
 
 import type React from 'react';
 import { useState } from 'react';
-import { Slider } from './Slider';
+import { Slider } from './slider';
 
 /**
  * Example 1: Scanner Configuration Panel

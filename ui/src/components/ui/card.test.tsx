@@ -25,7 +25,7 @@
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Card, CardDivider, CardRow, CardValue } from './Card';
+import { Card, CardDivider, CardRow, CardValue } from './card';
 
 describe('Card', () => {
   it('renders with title and children', () => {
