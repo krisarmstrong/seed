@@ -57,7 +57,7 @@ import { ImprovedHelpModal } from './components/help/ImprovedHelpModal';
 import { ProfileManagement } from './components/profiles/ProfileManagement';
 import { SettingsDrawer } from './components/settings/SettingsDrawer';
 import { SetupWizard } from './components/setup/SetupWizard';
-import { Fab } from './components/ui/Fab';
+import { Fab } from './components/ui/fab';
 import { useProfileContext } from './contexts/profileContext';
 import { useSettings } from './contexts/useSettings';
 import { useAppDrawers } from './hooks/useAppDrawers';
