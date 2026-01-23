@@ -267,14 +267,14 @@ export const useProfileStore: UseBoundStore<StoreApi<ProfileState & ProfileActio
         })),
       ),
       {
-        name: 'seed-profile-store',
+        name: 'seed-profileStore',
         // Only persist the active profile ID, not the full data
         partialize: (state: ProfileState) => ({
           activeProfileId: state.activeProfile?.id,
         }),
       },
     ),
-    { name: 'profile-store' },
+    { name: 'profileStore' },
   ),
 );
 

@@ -12,14 +12,14 @@
  *
  * Usage:
  * ```typescript
- * import { renderReportToHtml, downloadReportAsHtml } from './report-renderer';
+ * import { renderReportToHtml, downloadReportAsHtml } from './reportRenderer';
  *
  * const html = renderReportToHtml(report, t);
  * downloadReportAsHtml(html, 'survey-report.html');
  * ```
  */
 
-import type { SurveyReport } from './report-generator';
+import type { SurveyReport } from './reportGenerator';
 
 /** Translation function type */
 type TranslateFunction = (key: string, options?: Record<string, unknown>) => string;

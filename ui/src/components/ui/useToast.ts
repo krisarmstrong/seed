@@ -6,7 +6,7 @@
  */
 
 import { useContext } from 'react';
-import { ToastContext, type ToastContextType } from './toast-context';
+import { ToastContext, type ToastContextType } from './toastContext';
 
 /**
  * Hook to access toast functions in any component.

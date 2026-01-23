@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProfileContext } from '../../contexts/profile-context';
+import { useProfileContext } from '../../contexts/profileContext';
 import { cn, icon as iconTokens, layout, radius, section, spacing } from '../../styles/theme';
 import type { Profile } from '../../types/profile';
 import type { NetworkInterface } from '../ui/InterfaceSelector';

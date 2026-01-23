@@ -20,7 +20,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useRef } from 'react';
 import { api } from '../api';
 import { LogComponents, logger } from '../lib/logger';
-import { getQueryClient } from '../lib/query-client';
+import { getQueryClient } from '../lib/queryClient';
 import {
   profileKeys,
   useActiveProfileQuery,
@@ -33,7 +33,7 @@ import {
   useSaveSettingsMutation,
   useSwitchProfileMutation,
   useUpdateProfileMutation,
-} from '../stores/profile-queries';
+} from '../stores/profileQueries';
 import {
   type SettingsSaveStatus,
   useAppearanceSettings,
@@ -51,7 +51,7 @@ import {
   useThresholds,
   useVulnerabilitySettings,
   useWifiSettings,
-} from '../stores/profile-store';
+} from '../stores/profileStore';
 import type {
   AppearanceConfig,
   CableTestConfig,

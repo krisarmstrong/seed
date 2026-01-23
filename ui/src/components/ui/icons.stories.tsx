@@ -92,7 +92,7 @@ import {
   XCircle,
   Zap,
 } from './Icons';
-import { ICON_SIZES } from './icon-config';
+import { ICON_SIZES } from './iconConfig';
 
 /**
  * Icon Library showcases all available icons re-exported from lucide-react.

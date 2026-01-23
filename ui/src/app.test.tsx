@@ -29,7 +29,7 @@ import type React from 'react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
-import { ProfileProvider } from './contexts/profile-context';
+import { ProfileProvider } from './contexts/profileContext';
 
 // Mock localStorage
 const mockLocalStorage: Storage = (() => {
