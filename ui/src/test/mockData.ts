@@ -7,7 +7,7 @@
  *
  * Usage:
  * ```tsx
- * import { mockLinkData, mockNetworkDiscoveryData } from '../../test/mock-data';
+ * import { mockLinkData, mockNetworkDiscoveryData } from '../../test/mockData';
  *
  * export const Default: Story = {
  *   args: {

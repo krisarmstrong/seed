@@ -17,8 +17,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { ProfileProvider } from './contexts/profile-context';
-import { getQueryClient } from './lib/query-client';
+import { ProfileProvider } from './contexts/profileContext';
+import { getQueryClient } from './lib/queryClient';
 import './index.css';
 
 // Mount the React application to the root DOM element
