@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { checkSetupStatus } from '../components/setup/setup-api';
+import { checkSetupStatus } from '../components/setup/setupApi';
 
 interface UseSetupStateReturn {
   /** Whether the system needs initial setup (null = loading) */

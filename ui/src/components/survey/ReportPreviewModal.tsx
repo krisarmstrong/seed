@@ -36,8 +36,8 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { button, cn, icon as iconTokens, layout, modal, radius, spacing } from '../../styles/theme';
-import type { SurveyReport } from '../../utils/report-generator';
-import { downloadReportAsHtml, openReportForPrint } from '../../utils/report-renderer';
+import type { SurveyReport } from '../../utils/reportGenerator';
+import { downloadReportAsHtml, openReportForPrint } from '../../utils/reportRenderer';
 
 interface ReportPreviewModalProps {
   isOpen: boolean;

@@ -12,7 +12,7 @@
  *
  * Usage:
  * ```typescript
- * import { validateSurvey, getDefaultCriteria } from './survey-validation';
+ * import { validateSurvey, getDefaultCriteria } from './surveyValidation';
  *
  * const criteria = getDefaultCriteria('passive');
  * const results = validateSurvey(survey, criteria);

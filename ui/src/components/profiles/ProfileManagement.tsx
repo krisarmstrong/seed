@@ -15,7 +15,7 @@
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProfileContext } from '../../contexts/profile-context';
+import { useProfileContext } from '../../contexts/profileContext';
 import { cn, icon as iconTokens, layout, modal, radius, spacing } from '../../styles/theme';
 import type { Profile, ProfileRequest } from '../../types/profile';
 import { ProfileEditor } from './ProfileEditor';

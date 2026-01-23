@@ -13,7 +13,7 @@
  *
  * Usage:
  * ```typescript
- * import { generateReport } from './report-generator';
+ * import { generateReport } from './reportGenerator';
  *
  * const report = generateReport(survey, validation, options);
  * // Access report.summary.overallStatus for overall status
@@ -28,7 +28,7 @@ import type {
   Survey,
   SurveyValidation,
 } from '../hooks/useSurvey';
-import { calculateMetricStatistics, getPercentageMeetingThreshold } from './survey-validation';
+import { calculateMetricStatistics, getPercentageMeetingThreshold } from './surveyValidation';
 
 /** Report metadata */
 export interface ReportMetadata {

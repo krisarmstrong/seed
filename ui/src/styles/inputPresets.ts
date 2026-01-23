@@ -7,7 +7,7 @@
  * repetition across settings and form components.
  *
  * USAGE:
- * import { INPUT_PRESETS, inputPreset } from '../styles/input-presets';
+ * import { INPUT_PRESETS, inputPreset } from '../styles/inputPresets';
  *
  * // Direct usage with cn:
  * <input className={cn(INPUT_PRESETS.compact, "additional-class")} />

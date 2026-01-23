@@ -20,7 +20,7 @@ import {
   type SettingsSaveStatus,
   useProfileContext,
   useProfileContextOptional,
-} from './profile-context';
+} from './profileContext';
 
 /**
  * Context value type for settings management (backward compatibility)

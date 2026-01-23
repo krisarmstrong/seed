@@ -31,7 +31,7 @@ import type {
   ProfileListResponse,
   ProfileRequest,
 } from '../types/profile';
-import { useProfileStore } from './profile-store';
+import { useProfileStore } from './profileStore';
 
 // ============================================================================
 // Query Keys

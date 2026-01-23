@@ -40,7 +40,7 @@ import {
   toast as toastTokens,
 } from '../../styles/theme';
 import { icons, typeStyles } from './Toast.constants.tsx';
-import { ToastContext, type ToastType } from './toast-context';
+import { ToastContext, type ToastType } from './toastContext';
 
 /**
  * Individual toast notification
