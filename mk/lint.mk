@@ -94,7 +94,7 @@ fix-backend: ## Auto-fix Go linting issues
 		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest; \
 	fi; \
 	$$GOLANGCI_LINT run --fix
-	@gofmt -w -s .
+	@git ls-files '*.go' | xargs gofmt -w -s
 	@printf "$(GREEN)✓ Go auto-fix complete$(RESET)\n"
 
 fix-backend-quiet:
@@ -103,7 +103,7 @@ fix-backend-quiet:
 		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest; \
 	fi; \
 	$$GOLANGCI_LINT run --fix 2>&1 | grep -E "^[0-9]+ issues" || printf "   No issues found\n"
-	@gofmt -w -s .
+	@git ls-files '*.go' | xargs gofmt -w -s
 
 fix-frontend: ## Auto-fix frontend linting issues
 	@printf "$(BOLD)🔧 Auto-fixing frontend code...$(RESET)\n"
@@ -126,7 +126,7 @@ fmt: ## Format Go code with gofumpt
 		echo "📦 Installing gofumpt..."; \
 		go install mvdan.cc/gofumpt@latest; \
 	fi
-	@gofumpt -w .
+	@git ls-files '*.go' | xargs gofumpt -w
 	@echo "✅ Go code formatted"
 
 fmt-frontend: ## Format frontend code with Biome
@@ -143,9 +143,10 @@ fmt-check: ## Check all formatting (Go + frontend + markdown) without fixing
 	@echo "🔍 Checking formatting..."
 	@FAILED=0; \
 	echo "Checking Go formatting..."; \
-	if [ -n "$$(gofmt -l .)" ]; then \
+	GOFMT_FILES="$$(git ls-files '*.go' | xargs gofmt -l)"; \
+	if [ -n "$$GOFMT_FILES" ]; then \
 		echo "❌ Go files need formatting:"; \
-		gofmt -l .; \
+		printf '%s\n' "$$GOFMT_FILES"; \
 		FAILED=1; \
 	else \
 		echo "✅ Go formatting OK"; \

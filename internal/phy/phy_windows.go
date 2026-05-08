@@ -22,16 +22,16 @@ const phyTimeoutSeconds = 15
 
 // PHYInfo contains PHY layer information.
 type PHYInfo struct {
-	Interface      string   `json:"interface"`
-	Speed          string   `json:"speed"`
-	Duplex         string   `json:"duplex"`
-	AutoNeg        bool     `json:"auto_neg"`
-	LinkStatus     bool     `json:"link_status"`
-	SupportedModes []string `json:"supported_modes,omitempty"`
+	Interface       string   `json:"interface"`
+	Speed           string   `json:"speed"`
+	Duplex          string   `json:"duplex"`
+	AutoNeg         bool     `json:"auto_neg"`
+	LinkStatus      bool     `json:"link_status"`
+	SupportedModes  []string `json:"supported_modes,omitempty"`
 	AdvertisedModes []string `json:"advertised_modes,omitempty"`
-	PhyAddress     int      `json:"phy_address,omitempty"`
-	Driver         string   `json:"driver,omitempty"`
-	Firmware       string   `json:"firmware,omitempty"`
+	PhyAddress      int      `json:"phy_address,omitempty"`
+	Driver          string   `json:"driver,omitempty"`
+	Firmware        string   `json:"firmware,omitempty"`
 }
 
 // GetPHYInfo retrieves PHY layer information for an interface on Windows.
