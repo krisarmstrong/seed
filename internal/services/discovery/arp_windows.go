@@ -38,9 +38,9 @@ type mibIPNetTable struct {
 }
 
 var (
-	iphlpapi             = windows.NewLazySystemDLL("iphlpapi.dll")
-	procGetIpNetTable    = iphlpapi.NewProc("GetIpNetTable")
-	procGetAdaptersInfo  = iphlpapi.NewProc("GetAdaptersInfo")
+	iphlpapi            = windows.NewLazySystemDLL("iphlpapi.dll")
+	procGetIpNetTable   = iphlpapi.NewProc("GetIpNetTable")
+	procGetAdaptersInfo = iphlpapi.NewProc("GetAdaptersInfo")
 )
 
 // readARPTablePlatform reads the ARP table on Windows using GetIpNetTable.

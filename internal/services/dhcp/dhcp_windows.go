@@ -235,9 +235,9 @@ func getCurrentLeasePlatform(interfaceName string) (*LeaseInfo, error) {
 	}
 
 	lease := &LeaseInfo{
-		Interface: interfaceName,
-		ServerIP:  info.Server,
-		Gateway:   info.Gateway,
+		Interface:  interfaceName,
+		ServerIP:   info.Server,
+		Gateway:    info.Gateway,
 		DNSServers: info.DNS,
 	}
 

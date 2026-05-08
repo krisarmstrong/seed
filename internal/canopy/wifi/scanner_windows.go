@@ -165,13 +165,13 @@ func ScanNetworks(iface string) ([]*Network, error) {
 
 // Network represents a discovered Wi-Fi network.
 type Network struct {
-	SSID       string `json:"ssid"`
-	BSSID      string `json:"bssid"`
-	Signal     int    `json:"signal"`      // dBm
-	Channel    int    `json:"channel"`
-	Frequency  int    `json:"frequency"`   // MHz
-	Security   string `json:"security"`
-	RadioType  string `json:"radioType"`
+	SSID      string `json:"ssid"`
+	BSSID     string `json:"bssid"`
+	Signal    int    `json:"signal"` // dBm
+	Channel   int    `json:"channel"`
+	Frequency int    `json:"frequency"` // MHz
+	Security  string `json:"security"`
+	RadioType string `json:"radioType"`
 }
 
 // parseNetworkList parses the output of "netsh wlan show networks mode=bssid".
