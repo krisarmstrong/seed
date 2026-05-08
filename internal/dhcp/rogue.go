@@ -123,7 +123,8 @@ func (rd *RogueDetector) startLocked() error {
 	rd.cancel = cancel
 
 	// Start packet capture goroutine
-	go rd.capturePackets(ctx)
+	linkType := handle.LinkType()
+	go rd.capturePackets(ctx, handle, linkType)
 
 	logging.GetLogger().Info("Rogue DHCP detector started", "interface", rd.config.Interface)
 	return nil
@@ -168,7 +169,7 @@ func (rd *RogueDetector) IsRunning() bool {
 }
 
 // capturePackets is the main packet capture loop.
-func (rd *RogueDetector) capturePackets(ctx context.Context) {
+func (rd *RogueDetector) capturePackets(ctx context.Context, handle *pcap.Handle, linkType layers.LinkType) {
 	// Ensure cleanup happens if capturePackets exits unexpectedly (fixes #831)
 	defer func() {
 		rd.mu.Lock()
@@ -185,7 +186,11 @@ func (rd *RogueDetector) capturePackets(ctx context.Context) {
 		rd.mu.Unlock()
 	}()
 
-	packetSource := gopacket.NewPacketSource(rd.handle, rd.handle.LinkType())
+	if handle == nil {
+		return
+	}
+
+	packetSource := gopacket.NewPacketSource(handle, linkType)
 
 	for {
 		select {

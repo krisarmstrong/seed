@@ -24,10 +24,10 @@
     "build-storybook": "cd ui && npm run build-storybook"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.2.0",
-    "@commitlint/config-conventional": "20.2.0",
+    "@commitlint/cli": "20.5.3",
+    "@commitlint/config-conventional": "20.5.3",
     "husky": "9.1.7",
-    "lint-staged": "16.2.7"
+    "lint-staged": "17.0.2"
   },
   "lint-staged": {
     "ui/src/**/*.{ts,tsx}": "cd ui && npx biome check --write",

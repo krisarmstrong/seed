@@ -107,9 +107,11 @@ func (c *EDPCapture) Start() error {
 	c.started = true
 	// Fixes #903: Create context here instead of in NewEDPCapture
 	c.ctx, c.cancel = context.WithCancel(context.Background())
+	linkType := handle.LinkType()
+	ctx := c.ctx
 	c.mu.Unlock()
 
-	go c.captureLoop()
+	go c.captureLoop(ctx, handle, linkType)
 	return nil
 }
 
@@ -151,12 +153,16 @@ func (c *EDPCapture) GetNeighbors() []*EDPNeighbor {
 }
 
 // captureLoop continuously captures and processes EDP frames.
-func (c *EDPCapture) captureLoop() {
-	packetSource := gopacket.NewPacketSource(c.handle, c.handle.LinkType())
+func (c *EDPCapture) captureLoop(ctx context.Context, handle *pcap.Handle, linkType layers.LinkType) {
+	if handle == nil {
+		return
+	}
+
+	packetSource := gopacket.NewPacketSource(handle, linkType)
 
 	for {
 		select {
-		case <-c.ctx.Done():
+		case <-ctx.Done():
 			return
 		case packet, ok := <-packetSource.Packets():
 			if !ok {
