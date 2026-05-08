@@ -248,14 +248,14 @@ func (ns *NDPScanner) CleanupStale(maxAge time.Duration) {
 // mibIPNetRow2 represents a single IPv6 neighbor entry from GetIpNetTable2.
 // Reserved for future use when proper Windows API bindings are available.
 type mibIPNetRow2 struct {
-	Address         [28]byte // SOCKADDR_INET (28 bytes)
-	InterfaceIndex  uint32
-	InterfaceLuid   uint64
-	PhysicalAddress [32]byte
-	PhysicalAddrLen uint32
-	State           uint32
-	Flags           uint8
-	_               [3]byte // padding
+	Address          [28]byte // SOCKADDR_INET (28 bytes)
+	InterfaceIndex   uint32
+	InterfaceLuid    uint64
+	PhysicalAddress  [32]byte
+	PhysicalAddrLen  uint32
+	State            uint32
+	Flags            uint8
+	_                [3]byte // padding
 	ReachabilityTime uint32
 }
 
