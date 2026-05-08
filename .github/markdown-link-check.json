@@ -14,6 +14,9 @@
     },
     {
       "pattern": "^http://<device-ip>"
+    },
+    {
+      "pattern": "^https://github.com/krisarmstrong/seed/(commit|commits|compare)"
     }
   ],
   "replacementPatterns": [
