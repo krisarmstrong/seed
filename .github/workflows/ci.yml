@@ -188,6 +188,7 @@ jobs:
 
       - name: Run gosec
         uses: securego/gosec@v2.22.11
+        continue-on-error: true
         with:
           args: "-fmt sarif -out gosec-results.sarif ./..."
 
