@@ -16,6 +16,8 @@ type Story = StoryObj<typeof meta>;
 export const Open: Story = {
   render: () => {
     const [open, setOpen] = useState(true);
-    return <ReportPreviewModal isOpen={open} onClose={() => setOpen(false)} report={sampleReport} />;
+    return (
+      <ReportPreviewModal isOpen={open} onClose={() => setOpen(false)} report={sampleReport} />
+    );
   },
 };

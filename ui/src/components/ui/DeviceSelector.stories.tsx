@@ -19,5 +19,5 @@ export const Default: Story = {
 };
 
 export const Disabled: Story = {
-  render: () => <DeviceSelector value="192.168.1.1" onChange={() => {}} disabled />,
+  render: () => <DeviceSelector value="192.168.1.1" onChange={() => {}} disabled={true} />,
 };

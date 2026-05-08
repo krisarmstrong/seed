@@ -1,4 +1,10 @@
-import type { SamplePoint, Floor, ApLocation, Survey, SurveyValidation } from '../../hooks/useSurvey';
+import type {
+  ApLocation,
+  Floor,
+  SamplePoint,
+  Survey,
+  SurveyValidation,
+} from '../../hooks/useSurvey';
 import type { SurveyReport } from '../../utils/reportGenerator';
 
 export const sampleFloors: Floor[] = [
@@ -45,7 +51,13 @@ export const samplePassiveSamples: SamplePoint[] = [
     sampleData: {
       networks: [
         { ssid: 'OfficeMain', bssid: 'AA:BB:CC:DD:EE:01', rssi: -52, channel: 6, frequency: 2437 },
-        { ssid: 'Neighbor_5G', bssid: '11:22:33:44:55:66', rssi: -72, channel: 36, frequency: 5180 },
+        {
+          ssid: 'Neighbor_5G',
+          bssid: '11:22:33:44:55:66',
+          rssi: -72,
+          channel: 36,
+          frequency: 5180,
+        },
       ],
     },
   },

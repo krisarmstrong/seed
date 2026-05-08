@@ -439,4 +439,4 @@ class ComponentLogger {
 export const logger: Logger = new Logger();
 
 // Export class for testing or custom instances
-export { Logger, ComponentLogger };
+export { ComponentLogger, Logger };

@@ -83,7 +83,8 @@ func (c *LLDPCapture) Start() error {
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 	c.mu.Unlock()
 
-	go c.captureLoop()
+	linkType := handle.LinkType()
+	go c.captureLoop(c.ctx, handle, linkType)
 	return nil
 }
 
@@ -121,12 +122,16 @@ func (c *LLDPCapture) GetNeighbors() []*LLDPNeighbor {
 }
 
 // captureLoop continuously captures and processes LLDP frames.
-func (c *LLDPCapture) captureLoop() {
-	packetSource := gopacket.NewPacketSource(c.handle, c.handle.LinkType())
+func (c *LLDPCapture) captureLoop(ctx context.Context, handle *pcap.Handle, linkType layers.LinkType) {
+	if handle == nil {
+		return
+	}
+
+	packetSource := gopacket.NewPacketSource(handle, linkType)
 
 	for {
 		select {
-		case <-c.ctx.Done():
+		case <-ctx.Done():
 			return
 		case packet, ok := <-packetSource.Packets():
 			if !ok {

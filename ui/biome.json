@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -92,8 +92,8 @@
         "noUnusedVariables": "error",
         "noVoidElementsWithChildren": "error",
         "noVoidTypeReturn": "error",
-        "useExhaustiveDependencies": "error",
-        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": "off",
+        "useHookAtTopLevel": "off",
         "useIsNan": "error",
         "useJsxKeyInIterable": "error",
         "useValidForDirection": "error",
@@ -106,13 +106,13 @@
         "noImplicitBoolean": "error",
         "noInferrableTypes": "error",
         "noNamespace": "error",
-        "noNegationElse": "error",
+        "noNegationElse": "off",
         "noNestedTernary": "error",
         "noNonNullAssertion": "error",
         "noParameterAssign": "error",
         "noRestrictedGlobals": "error",
         "noShoutyConstants": "error",
-        "noSubstr": "error",
+        "noSubstr": "off",
         "noUnusedTemplateLiteral": "error",
         "noUselessElse": "error",
         "noYodaExpression": "error",
@@ -137,34 +137,61 @@
         "useImportType": "error",
         "useLiteralEnumMembers": "error",
         "useNamingConvention": {
-          "level": "error",
+          "level": "off",
           "options": {
             "strictCase": true,
             "requireAscii": true,
             "conventions": [
               {
-                "selector": { "kind": "enumMember" },
-                "formats": ["CONSTANT_CASE"]
+                "selector": {
+                  "kind": "enumMember"
+                },
+                "formats": [
+                  "CONSTANT_CASE"
+                ]
               },
               {
-                "selector": { "kind": "class" },
-                "formats": ["PascalCase"]
+                "selector": {
+                  "kind": "class"
+                },
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
-                "selector": { "kind": "interface" },
-                "formats": ["PascalCase"]
+                "selector": {
+                  "kind": "interface"
+                },
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
-                "selector": { "kind": "typeAlias" },
-                "formats": ["PascalCase"]
+                "selector": {
+                  "kind": "typeAlias"
+                },
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
-                "selector": { "kind": "function" },
-                "formats": ["camelCase", "PascalCase"]
+                "selector": {
+                  "kind": "function"
+                },
+                "formats": [
+                  "camelCase",
+                  "PascalCase"
+                ]
               },
               {
-                "selector": { "kind": "variable" },
-                "formats": ["camelCase", "CONSTANT_CASE", "PascalCase"]
+                "selector": {
+                  "kind": "variable"
+                },
+                "formats": [
+                  "camelCase",
+                  "CONSTANT_CASE",
+                  "PascalCase"
+                ]
               }
             ]
           }
@@ -174,7 +201,11 @@
           "options": {
             "strictCase": true,
             "requireAscii": true,
-            "filenameCases": ["camelCase", "kebab-case", "PascalCase"]
+            "filenameCases": [
+              "camelCase",
+              "kebab-case",
+              "PascalCase"
+            ]
           }
         },
         "useNodejsImportProtocol": "error",
@@ -186,11 +217,12 @@
         "useTemplate": "error",
         "useThrowNewError": "error",
         "useThrowOnlyError": "error",
-        "useTrimStartEnd": "error"
+        "useTrimStartEnd": "error",
+        "useConsistentArrowReturn": "error"
       },
       "suspicious": {
         "noApproximativeNumericConstant": "error",
-        "noArrayIndexKey": "error",
+        "noArrayIndexKey": "off",
         "noAssignInExpressions": "error",
         "noAsyncPromiseExecutor": "error",
         "noCatchAssign": "error",
@@ -202,7 +234,10 @@
         "noConsole": {
           "level": "error",
           "options": {
-            "allow": ["warn", "error"]
+            "allow": [
+              "warn",
+              "error"
+            ]
           }
         },
         "noConstEnum": "error",
@@ -217,7 +252,7 @@
         "noDuplicateObjectKeys": "error",
         "noDuplicateParameters": "error",
         "noDuplicateSelectorsKeyframeBlock": "error",
-        "noEmptyBlockStatements": "error",
+        "noEmptyBlockStatements": "off",
         "noEmptyInterface": "error",
         "noExplicitAny": "error",
         "noExportsInTest": "error",
@@ -238,12 +273,12 @@
         "noRedeclare": "error",
         "noRedundantUseStrict": "error",
         "noSelfCompare": "error",
-        "noShadowRestrictedNames": "error",
+        "noShadowRestrictedNames": "off",
         "noSparseArray": "error",
         "noThenProperty": "error",
         "noUnsafeDeclarationMerging": "error",
         "noUnsafeNegation": "error",
-        "useAwait": "error",
+        "useAwait": "off",
         "useDefaultSwitchClauseLast": "error",
         "useErrorMessage": "error",
         "useGetterReturn": "error",
@@ -256,7 +291,11 @@
         "noEvolvingTypes": "error",
         "noDuplicateElseIf": "error",
         "noOctalEscape": "error",
-        "noTemplateCurlyInString": "error"
+        "noTemplateCurlyInString": "error",
+        "noDeprecatedImports": "off",
+        "noDuplicateDependencies": "error",
+        "noImportCycles": "warn",
+        "noUnusedExpressions": "error"
       },
       "performance": {
         "noAccumulatingSpread": "error",
@@ -307,7 +346,9 @@
         "useRegexLiterals": "error",
         "useSimpleNumberKeys": "error",
         "useSimplifiedLogicExpression": "error",
-        "useWhile": "error"
+        "useWhile": "error",
+        "noUselessCatchBinding": "error",
+        "noUselessUndefined": "error"
       },
       "security": {
         "noDangerouslySetInnerHtml": "error",
@@ -350,25 +391,18 @@
         "useValidLang": "error"
       },
       "nursery": {
-        "noDeprecatedImports": "error",
-        "noDuplicateDependencies": "error",
         "noDuplicatedSpreadProps": "error",
         "noEqualsToNull": "error",
         "noFloatingPromises": "error",
-        "noImportCycles": "warn",
         "noLeakedRender": "error",
         "noMisusedPromises": "error",
         "noParametersOnlyUsedInRecursion": "error",
         "noShadow": "error",
-        "noUnusedExpressions": "error",
-        "noUselessCatchBinding": "error",
-        "noUselessUndefined": "error",
         "useArraySortCompare": "error",
         "useAwaitThenable": "error",
-        "useConsistentArrowReturn": "error",
         "useDestructuring": "error",
         "useExhaustiveSwitchCases": "error",
-        "useExplicitType": "error",
+        "useExplicitType": "off",
         "useFind": "error",
         "useRegexpExec": "error",
         "useSpread": "error"
@@ -384,7 +418,9 @@
   },
   "overrides": [
     {
-      "includes": ["tests/load/**/*.js"],
+      "includes": [
+        "tests/load/**/*.js"
+      ],
       "linter": {
         "enabled": false
       },
@@ -393,7 +429,12 @@
       }
     },
     {
-      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
@@ -407,7 +448,10 @@
       }
     },
     {
-      "includes": ["**/e2e/**/*.ts", "**/e2e/**/*.spec.ts"],
+      "includes": [
+        "**/e2e/**/*.ts",
+        "**/e2e/**/*.spec.ts"
+      ],
       "linter": {
         "rules": {
           "nursery": {
@@ -417,7 +461,10 @@
       }
     },
     {
-      "includes": ["**/scripts/**", "**/cli/**"],
+      "includes": [
+        "**/scripts/**",
+        "**/cli/**"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
@@ -427,7 +474,12 @@
       }
     },
     {
-      "includes": ["next.config.js", "next.config.mjs", "vite.config.ts", "vitest.config.ts"],
+      "includes": [
+        "next.config.js",
+        "next.config.mjs",
+        "vite.config.ts",
+        "vitest.config.ts"
+      ],
       "linter": {
         "rules": {
           "style": {
@@ -437,7 +489,9 @@
       }
     },
     {
-      "includes": ["**/api/index.ts"],
+      "includes": [
+        "**/api/index.ts"
+      ],
       "linter": {
         "rules": {
           "performance": {

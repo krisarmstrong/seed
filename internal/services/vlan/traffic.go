@@ -78,9 +78,11 @@ func (m *TrafficMonitor) Start() error {
 	m.started = true
 	// Fixes #916: Create context here instead of in constructor
 	m.ctx, m.cancel = context.WithCancel(context.Background())
+	linkType := handle.LinkType()
+	ctx := m.ctx
 	m.mu.Unlock()
 
-	go m.captureLoop()
+	go m.captureLoop(ctx, handle, linkType)
 	return nil
 }
 
@@ -150,12 +152,16 @@ func (m *TrafficMonitor) Reset() {
 }
 
 // captureLoop continuously captures and processes VLAN-tagged frames.
-func (m *TrafficMonitor) captureLoop() {
-	packetSource := gopacket.NewPacketSource(m.handle, m.handle.LinkType())
+func (m *TrafficMonitor) captureLoop(ctx context.Context, handle *pcap.Handle, linkType layers.LinkType) {
+	if handle == nil {
+		return
+	}
+
+	packetSource := gopacket.NewPacketSource(handle, linkType)
 
 	for {
 		select {
-		case <-m.ctx.Done():
+		case <-ctx.Done():
 			return
 		case packet, ok := <-packetSource.Packets():
 			if !ok {
