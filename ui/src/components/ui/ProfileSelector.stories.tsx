@@ -57,7 +57,7 @@ export const Loading: Story = {
       profiles={profiles}
       activeProfile={profiles[0]}
       onSwitch={async () => true}
-      loading
+      loading={true}
     />
   ),
 };
@@ -68,7 +68,7 @@ export const Disabled: Story = {
       profiles={profiles}
       activeProfile={profiles[0]}
       onSwitch={async () => true}
-      disabled
+      disabled={true}
     />
   ),
 };

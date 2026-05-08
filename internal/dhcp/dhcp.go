@@ -189,17 +189,22 @@ func (m *Monitor) Start() error {
 	m.running = true
 
 	// Start capture goroutine
-	go m.capturePackets()
+	linkType := handle.LinkType()
+	go m.capturePackets(handle, linkType)
 
 	// Start stale transaction cleanup goroutine (fixes #841)
-	go m.cleanupStaleTransactions()
+	go m.cleanupStaleTransactions(m.stopChan, m.cleanupDone)
 
 	return nil
 }
 
 // capturePackets runs the packet capture loop.
-func (m *Monitor) capturePackets() {
-	packetSource := gopacket.NewPacketSource(m.handle, m.handle.LinkType())
+func (m *Monitor) capturePackets(handle *pcap.Handle, linkType layers.LinkType) {
+	if handle == nil {
+		return
+	}
+
+	packetSource := gopacket.NewPacketSource(handle, linkType)
 	packets := packetSource.Packets()
 
 	for {
@@ -368,14 +373,14 @@ func (m *Monitor) Stop() {
 
 // cleanupStaleTransactions periodically removes incomplete transactions older than 2 minutes.
 // This prevents unbounded memory growth from incomplete DHCP transactions (fixes #841).
-func (m *Monitor) cleanupStaleTransactions() {
+func (m *Monitor) cleanupStaleTransactions(stopChan <-chan struct{}, cleanupDone chan<- struct{}) {
 	ticker := time.NewTicker(transactionCleanupInterval)
 	defer ticker.Stop()
-	defer close(m.cleanupDone)
+	defer close(cleanupDone)
 
 	for {
 		select {
-		case <-m.stopChan:
+		case <-stopChan:
 			return
 		case <-ticker.C:
 			m.mu.Lock()

@@ -28,8 +28,8 @@ import type React from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { icon as iconTokens } from '../../styles/theme';
-import { CardDivider, CardRow, CardValue, type Status } from '../ui/card';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
+import { CardDivider, CardRow, CardValue, type Status } from '../ui/card';
 import { Globe } from '../ui/icons';
 import { BaseCard } from './BaseCard';
 

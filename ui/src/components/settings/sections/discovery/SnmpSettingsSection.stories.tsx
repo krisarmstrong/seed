@@ -16,6 +16,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => {
     const [settings, setSettings] = useState<SnmpSettings>(DEFAULT_SNMP_SETTINGS);
-    return <SnmpSettingsSection snmpSettings={settings} setSnmpSettings={setSettings} snmpStatus="saved" />;
+    return (
+      <SnmpSettingsSection
+        snmpSettings={settings}
+        setSnmpSettings={setSettings}
+        snmpStatus="saved"
+      />
+    );
   },
 };

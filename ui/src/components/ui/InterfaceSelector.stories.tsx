@@ -67,7 +67,7 @@ export const Wifi: Story = {
       <InterfaceSelector
         interfaces={sampleInterfaces}
         currentInterface={current}
-        isWifi
+        isWifi={true}
         onChange={setCurrent}
         recommendedWifi="wlan0"
       />

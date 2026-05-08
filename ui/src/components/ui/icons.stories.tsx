@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type React from 'react';
 import { button, cn, icon as iconTheme, layout, section, spacing } from '../../styles/theme';
+import { ICON_SIZES } from './iconConfig';
 import {
   // Card header icons
   Activity,
@@ -92,7 +93,6 @@ import {
   XCircle,
   Zap,
 } from './icons';
-import { ICON_SIZES } from './iconConfig';
 
 /**
  * Icon Library showcases all available icons re-exported from lucide-react.
