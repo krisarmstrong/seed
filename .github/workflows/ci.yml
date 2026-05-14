@@ -658,6 +658,7 @@ jobs:
         env:
           SEED_CONFIG_PATH: ${{ runner.temp }}/seed/config.yaml
         run: |
+          mkdir -p data
           sudo setcap cap_net_raw=+ep ./seed || true
           nohup ./seed --config "$SEED_CONFIG_PATH" > server.log 2>&1 &
           echo "Waiting for server to start..."
@@ -728,6 +729,7 @@ jobs:
         env:
           SEED_CONFIG_PATH: ${{ runner.temp }}/seed/config.yaml
         run: |
+          mkdir -p data
           sudo setcap cap_net_raw=+ep ./seed || true
           nohup ./seed --config "$SEED_CONFIG_PATH" > server.log 2>&1 &
           echo "Waiting for server to start..."
