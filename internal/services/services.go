@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/krisarmstrong/seed/internal/config"
@@ -201,13 +202,17 @@ func NewDHCPService(cfg *config.Config) *DHCPService {
 
 // Test performs a DHCP discovery test.
 func (s *DHCPService) Test(_ context.Context, iface string) (*DHCPTestResult, error) {
-	// Get DHCP lease info from the system
-	leaseInfo, err := dhcp.GetLeaseInfo(iface)
-
 	result := &DHCPTestResult{
 		TestedAt: time.Now(),
 	}
 
+	if _, err := net.InterfaceByName(iface); err != nil {
+		result.Error = fmt.Sprintf("interface not found: %v", err)
+		return result, nil
+	}
+
+	// Get DHCP lease info from the system
+	leaseInfo, err := dhcp.GetLeaseInfo(iface)
 	if err != nil {
 		result.Error = err.Error()
 	}
