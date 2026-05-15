@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.186.0](https://github.com/krisarmstrong/seed/compare/v0.185.13...v0.186.0) (2026-05-15)
+
+
+### Features
+
+* **ci:** restore Windows ARM64 in release matrix ([#944](https://github.com/krisarmstrong/seed/issues/944)) ([2a5a174](https://github.com/krisarmstrong/seed/commit/2a5a174bdea51e4b9dd803ee97d34d258627bc00))
+* implement Universal Build Contract for seed ([#946](https://github.com/krisarmstrong/seed/issues/946)) ([e94b215](https://github.com/krisarmstrong/seed/commit/e94b2155d485a620f5d2a671e6043f1cf9bff6e0))
+
+
+### Bug Fixes
+
+* **ci:** pre-commit hook masks failing tests ([#947](https://github.com/krisarmstrong/seed/issues/947)) ([133f703](https://github.com/krisarmstrong/seed/commit/133f7033ebd3fcb387090f8ec2cef588bf3c018b))
+
 ## [0.185.13](https://github.com/krisarmstrong/seed/compare/v0.185.12...v0.185.13) (2026-05-15)
 
 
