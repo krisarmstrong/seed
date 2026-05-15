@@ -1,10 +1,19 @@
 
 !certs/.gitkeep
-.claude/settings.local.json
+
+# AI tool artifacts — never tracked.
+.claude/
+**/.claude/
+.cursor/
+.gemini/
+.github/copilot-instructions.md
+_project_specs/
+AGENTS.md
+CLAUDE.md
+
 .env
 .env.*.local
 .env.local
-.gemini/
 .gocache/
 .golangci-cache/
 .gomodcache/
@@ -76,7 +85,6 @@
 # TypeScript
 # Workspace files
 certs/
-CLAUDE.md
 config.yaml
 configs/*.local.json
 configs/*.local.yaml
