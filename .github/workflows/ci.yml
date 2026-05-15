@@ -121,6 +121,47 @@ jobs:
           git diff --exit-code go.mod go.sum
 
   # ===========================================================================
+  # Go Race Detector
+  # ===========================================================================
+  # Race detection moved here from the pre-commit hook (#945). Hook ran fast
+  # short tests; this job runs the full suite under -race on every push/PR.
+  #
+  # continue-on-error is set today because pre-existing races in cmd/seed
+  # (TestCompletionCommandIsUsable, TestServeConstants, TestEnsureConfigDir,
+  # TestCredentialsCmdWithConfigFile, …) need investigation. Flip back to
+  # blocking once those land.
+  race:
+    name: Backend (race detector)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      GOMODCACHE: ${{ github.workspace }}/.cache/go/pkg/mod
+      GOCACHE: ${{ github.workspace }}/.cache/go/build
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: Set up Go
+        uses: ./.github/actions/setup-go
+
+      - name: Install libpcap-dev
+        uses: ./.github/actions/setup-libpcap
+
+      - name: Set up Node.js
+        uses: ./.github/actions/setup-node
+
+      - name: Build embedded UI assets
+        working-directory: ui
+        run: |
+          npm ci
+          npm run build
+
+      - name: Run tests with race detector
+        env:
+          SKIP_IPERF_TEST: "1"
+        run: go test -short -race ./...
+
+  # ===========================================================================
   # Frontend Checks
   # ===========================================================================
   frontend:
