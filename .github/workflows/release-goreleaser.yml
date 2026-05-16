@@ -148,18 +148,17 @@ jobs:
         # goreleaser-cross ships compilers but not libpcap headers.
         # gopacket/pcap needs pcap.h for cgo. Add the arm64 architecture
         # and pull libpcap-dev for both archs.
+        shell: bash
         run: |
+          set -euo pipefail
           dpkg --add-architecture arm64
-          # The image is Debian-based. Restrict default sources to amd64
-          # and add ports.ubuntu.com / debian arm64 sources.
           if [ -f /etc/apt/sources.list ]; then
             sed -i 's|^deb |deb [arch=amd64] |' /etc/apt/sources.list
           fi
-          for f in /etc/apt/sources.list.d/*.list 2>/dev/null; do
-            [ -f "$f" ] || continue
+          shopt -s nullglob
+          for f in /etc/apt/sources.list.d/*.list; do
             sed -i 's|^deb |deb [arch=amd64] |' "$f"
           done
-          # Add Debian arm64 source (image base is debian bookworm)
           cat > /etc/apt/sources.list.d/arm64.list <<'EOF'
           deb [arch=arm64] http://deb.debian.org/debian bookworm main
           deb [arch=arm64] http://deb.debian.org/debian-security bookworm-security main
