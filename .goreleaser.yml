@@ -36,11 +36,10 @@ project_name: seed
 before:
   hooks:
     - go mod download
-    # Build the embedded frontend. ui/embed.go relies on ui/dist existing
-    # before Go compiles. Mirrors the "verify embedded frontend" step in
-    # release.yml.
-    - bash -c "cd ui && npm ci && npm run build"
-    - bash -c 'test -d ui/dist && test -n "$(ls -A ui/dist)" || (echo "ui/dist empty — npm run build failed silently"; exit 1)'
+    # ui/dist is built BEFORE goreleaser runs (in the build-ui job inside
+    # release-goreleaser.yml) and the artifact is downloaded into ui/dist/.
+    # Just verify it's there before kicking off the Go build that embeds it.
+    - bash -c 'test -d ui/dist && test -n "$(ls -A ui/dist)" || (echo "ui/dist empty — UI build step failed or artifact missing"; exit 1)'
 
 builds:
   - id: seed-linux
@@ -59,6 +58,15 @@ builds:
       - -X github.com/krisarmstrong/seed/internal/version.Commit={{.Commit}}
       - -X github.com/krisarmstrong/seed/internal/version.BuildTime={{.Date}}
       - -X github.com/krisarmstrong/seed/internal/version.UIBuildHash={{.Env.UI_BUILD_HASH}}
+    # Per-target cross-compile settings. goreleaser-cross has all of
+    # these toolchains preinstalled; without them, building linux/arm64
+    # from an amd64 host fails on cgo runtime ARM64 assembly.
+    overrides:
+      - goos: linux
+        goarch: arm64
+        env:
+          - CC=aarch64-linux-gnu-gcc
+          - PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
 
   - id: seed-darwin
     main: ./cmd/seed
@@ -71,6 +79,19 @@ builds:
       - -trimpath
       - -buildvcs=false
     ldflags: *ldflags
+    # macOS cross-compile via osxcross (bundled in goreleaser-cross).
+    # The CC paths are stable inside the container image.
+    overrides:
+      - goos: darwin
+        goarch: amd64
+        env:
+          - CC=o64-clang
+          - CXX=o64-clang++
+      - goos: darwin
+        goarch: arm64
+        env:
+          - CC=oa64-clang
+          - CXX=oa64-clang++
 
   - id: seed-windows
     main: ./cmd/seed
