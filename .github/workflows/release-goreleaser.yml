@@ -144,6 +144,30 @@ jobs:
       - name: Mark workspace as safe (container runs as root)
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
+      - name: Install libpcap headers for amd64 + arm64
+        # goreleaser-cross ships compilers but not libpcap headers.
+        # gopacket/pcap needs pcap.h for cgo. Add the arm64 architecture
+        # and pull libpcap-dev for both archs.
+        run: |
+          dpkg --add-architecture arm64
+          # The image is Debian-based. Restrict default sources to amd64
+          # and add ports.ubuntu.com / debian arm64 sources.
+          if [ -f /etc/apt/sources.list ]; then
+            sed -i 's|^deb |deb [arch=amd64] |' /etc/apt/sources.list
+          fi
+          for f in /etc/apt/sources.list.d/*.list 2>/dev/null; do
+            [ -f "$f" ] || continue
+            sed -i 's|^deb |deb [arch=amd64] |' "$f"
+          done
+          # Add Debian arm64 source (image base is debian bookworm)
+          cat > /etc/apt/sources.list.d/arm64.list <<'EOF'
+          deb [arch=arm64] http://deb.debian.org/debian bookworm main
+          deb [arch=arm64] http://deb.debian.org/debian-security bookworm-security main
+          deb [arch=arm64] http://deb.debian.org/debian bookworm-updates main
+          EOF
+          apt-get update || true
+          apt-get install -y libpcap-dev libpcap-dev:arm64
+
       - name: Download iperf3 artifacts (amd64 + arm64)
         uses: actions/download-artifact@v8.0.1
         with:
