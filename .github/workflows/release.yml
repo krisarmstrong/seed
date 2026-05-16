@@ -149,6 +149,11 @@ jobs:
       # tracks Go 1.26.2 + goreleaser v2.15.4. Pin so behaviour stays
       # reproducible; bump via dependabot when newer revs land.
       image: goreleaser/goreleaser-cross:v1.26.2-3
+    outputs:
+      # base64-encoded SHA-256 hashes of all release artifacts, formatted
+      # for slsa-github-generator's base64-subjects input. Set only on a
+      # real (non-snapshot) release.
+      hashes: ${{ steps.hashes.outputs.hashes }}
     steps:
       - uses: actions/checkout@v6.0.2
         with:
@@ -220,6 +225,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: goreleaser release --clean
 
+      - name: Capture artifact hashes for SLSA provenance
+        if: ${{ !inputs.dry_run }}
+        id: hashes
+        shell: bash
+        run: |
+          # goreleaser drops artifacts.json describing every produced
+          # artifact. Filter to the user-facing ones (archive/package
+          # types) and base64-encode their SHA-256 list for the
+          # slsa-github-generator reusable workflow.
+          set -euo pipefail
+          hashes=$(jq -r '
+            map(select(.type == "Archive" or .type == "Linux Package")) |
+            map("\(.extra.Checksum | sub("^sha256:"; ""))  \(.name)") |
+            join("\n")
+          ' dist/artifacts.json | base64 -w0)
+          echo "hashes=${hashes}" >> "$GITHUB_OUTPUT"
+
       - name: Upload dry-run artifact bundle for inspection
         if: inputs.dry_run
         uses: actions/upload-artifact@v7.0.1
@@ -227,3 +249,23 @@ jobs:
           name: goreleaser-dryrun-${{ github.run_id }}
           path: dist/
           retention-days: 14
+
+  # =========================================================================
+  # SLSA Level 3 provenance — runs only on real releases (not dry-run).
+  # The slsa-github-generator reusable workflow builds an in-toto
+  # attestation signed via Sigstore keyless OIDC and uploads it alongside
+  # the release artifacts.
+  # =========================================================================
+  provenance:
+    name: SLSA provenance
+    if: ${{ !inputs.dry_run }}
+    needs: [goreleaser]
+    permissions:
+      id-token: write   # for Sigstore OIDC
+      contents: write   # for uploading attestation to the release
+      actions: read
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    with:
+      base64-subjects: ${{ needs.goreleaser.outputs.hashes }}
+      upload-assets: true
+      provenance-name: seed-slsa-provenance.intoto.jsonl
