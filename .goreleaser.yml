@@ -253,6 +253,35 @@ signs:
     artifacts: all
     output: true
 
+# Homebrew formula published to krisarmstrong/homebrew-tap on every
+# release. Requires a HOMEBREW_TAP_TOKEN repository secret (fine-grained
+# PAT with contents:write on both krisarmstrong/seed and
+# krisarmstrong/homebrew-tap). When the secret is absent, goreleaser
+# skips this step gracefully.
+brews:
+  - name: seed
+    repository:
+      owner: krisarmstrong
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: https://github.com/krisarmstrong/seed
+    description: |
+      The Seed — Network Diagnostic Tool by Mustard Seed Networks.
+      Plug into any network jack for real-time link, switch, DHCP, DNS,
+      gateway, Wi-Fi, and vulnerability diagnostics via a web UI.
+    license: BSL-1.1
+    # macOS only; Linux users have first-class .deb/.rpm/.tar.gz.
+    skip_upload: auto
+    test: |
+      system "#{bin}/seed --version"
+    install: |
+      bin.install "seed"
+    commit_author:
+      name: goreleaser-bot
+      email: bot@krisarmstrong.dev
+    commit_msg_template: "chore(brew): seed {{ .Tag }}"
+
 release:
   github:
     owner: krisarmstrong
