@@ -472,6 +472,13 @@ linters:
       - text: 'avoid meaningless package names'
         path: 'internal/api/'
         linters: [ revive ]
+      # DICOM A-ASSOCIATE PDU framing intentionally truncates length values
+      # (bounded by the DICOM protocol — max PDU size 16 KB) to bytes via
+      # explicit shift+mask. The int→byte conversion is exactly the desired
+      # behaviour and predates this exclusion.
+      - text: 'G115: integer overflow conversion int -> byte'
+        path: 'internal/api/health_checks_dicom\.go'
+        linters: [ gosec ]
       - path: '_test\.go'
         linters:
           - bodyclose
