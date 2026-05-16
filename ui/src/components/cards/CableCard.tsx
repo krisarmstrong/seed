@@ -183,6 +183,11 @@ export function CableCard({
           status={statusMap[data.status] || 'unknown'}
         />
 
+        {/* TDR support indicator (#740) — confirm the NIC can run diagnostics. */}
+        <p class={cn('caption text-text-muted', spacing.margin.top.tight)}>
+          {t('cable.tdrSupported', 'TDR diagnostics supported')}
+        </p>
+
         {/* Crossover indicator */}
         {data.isCrossover ? (
           <p class={cn('caption text-status-warning font-medium', spacing.margin.top.tight)}>

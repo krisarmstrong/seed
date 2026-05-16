@@ -947,7 +947,11 @@ function App(): JSX.Element {
               {!isWifi && (
                 <>
                   <LinkCard data={cards.link} loading={loading} />
-                  {cards.cable?.supported ? (
+                  {/* Cable Test card: only render when the link is DOWN
+                      (cable plugged in + working = nothing to diagnose).
+                      The card itself handles the supported/not-supported
+                      branches when rendered. Fixes #740. */}
+                  {cards.link && cards.link.linkUp === false ? (
                     <CableCard
                       data={cards.cable}
                       loading={loading}
