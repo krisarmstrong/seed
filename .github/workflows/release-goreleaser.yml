@@ -132,7 +132,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-iperf3, build-ui]
     container:
-      image: ghcr.io/goreleaser/goreleaser-cross:v2.5.1
+      # Docker Hub tag scheme: <go-version>-<bundle-revision>. v1.26.2-3
+      # tracks Go 1.26.2 + goreleaser v2.15.4. Pin so behaviour stays
+      # reproducible; bump via dependabot when newer revs land.
+      image: goreleaser/goreleaser-cross:v1.26.2-3
     steps:
       - uses: actions/checkout@v6.0.2
         with:
