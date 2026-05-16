@@ -3,6 +3,10 @@
 > Portable Network Diagnostic Tool with Real-Time Web UI
 
 [![CI](https://github.com/krisarmstrong/seed/actions/workflows/ci.yml/badge.svg)](https://github.com/krisarmstrong/seed/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/krisarmstrong/seed?logo=github)](https://github.com/krisarmstrong/seed/releases/latest)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/krisarmstrong/seed/badge)](https://scorecard.dev/viewer/?uri=github.com/krisarmstrong/seed)
+[![Go Reference](https://pkg.go.dev/badge/github.com/krisarmstrong/seed.svg)](https://pkg.go.dev/github.com/krisarmstrong/seed)
+[![Go Report Card](https://goreportcard.com/badge/github.com/krisarmstrong/seed)](https://goreportcard.com/report/github.com/krisarmstrong/seed)
 [![License: BSL 1.1](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 
 The Seed is a professional-grade network diagnostic appliance designed for network technicians and engineers. Plug it
