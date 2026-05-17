@@ -19,8 +19,23 @@ import (
 	"github.com/krisarmstrong/seed/internal/services/vlan"
 )
 
-// DefaultInterface is the default network interface to use when none is configured.
+// DefaultInterface is the last-ditch fallback interface name when both config
+// and live auto-detection fail to provide one (#572). Prefer resolveInterface
+// over reading this constant directly.
 const DefaultInterface = "eth0"
+
+// resolveInterface picks the interface name: config first, then live
+// auto-detection (preferring ethernet), then DefaultInterface as a last-ditch
+// fallback.
+func resolveInterface(cfg *config.Config) string {
+	if iface, ok := cfg.GetActiveInterface(); ok && iface != "" {
+		return iface
+	}
+	if iface := netif.AutoDetectInterfaceName("ethernet"); iface != "" {
+		return iface
+	}
+	return DefaultInterface
+}
 
 // InterfaceStateWaitMs is the time in milliseconds to wait for initial interface state detection.
 const InterfaceStateWaitMs = 100
@@ -51,11 +66,8 @@ func NewLinkService(cfg *config.Config) *LinkService {
 func (s *LinkService) Start(ctx context.Context) error {
 	_, s.cancel = context.WithCancel(ctx)
 
-	// Get active interface from config
-	iface, ok := s.cfg.GetActiveInterface()
-	if !ok || iface == "" {
-		iface = DefaultInterface
-	}
+	// Get active interface (config → auto-detect → fallback)
+	iface := resolveInterface(s.cfg)
 
 	// Create network manager for interface enumeration
 	var err error
@@ -539,10 +551,7 @@ type VLANService struct {
 
 // NewVLANService creates a new VLAN service.
 func NewVLANService(cfg *config.Config) *VLANService {
-	iface, ok := cfg.GetActiveInterface()
-	if !ok || iface == "" {
-		iface = DefaultInterface
-	}
+	iface := resolveInterface(cfg)
 	return &VLANService{
 		cfg:            cfg,
 		manager:        vlan.NewManager(iface),
@@ -587,10 +596,7 @@ func (s *VLANService) List(_ context.Context) ([]VLANConfig, error) {
 	}
 
 	// Get active interface for config
-	activeIface, _ := s.cfg.GetActiveInterface()
-	if activeIface == "" {
-		activeIface = DefaultInterface
-	}
+	activeIface := resolveInterface(s.cfg)
 
 	configs := make([]VLANConfig, 0)
 

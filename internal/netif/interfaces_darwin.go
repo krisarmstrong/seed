@@ -83,18 +83,13 @@ func configureDHCPPlatform(iface string) error {
 }
 
 // getNetworkServiceName gets the macOS network service name for an interface.
+//
+// Always queries `networksetup -listnetworkserviceorder` rather than relying on
+// hardcoded en0/en1 → service-name mappings: on Mac hardware en0 is sometimes
+// Wi-Fi (laptops without Ethernet) and en1 is sometimes a USB Ethernet adapter,
+// so any static mapping is wrong on some machines (#572).
 func getNetworkServiceName(iface string) (string, error) {
-	// Common mappings
-	serviceNames := map[string]string{
-		"en0": "Ethernet",
-		"en1": "Wi-Fi",
-	}
-
-	if name, ok := serviceNames[iface]; ok {
-		return name, nil
-	}
-
-	// Try to find the service by listing all
+	// Look up the live service order
 	ctx, cancel := context.WithTimeout(context.Background(), ifconfigTimeoutSeconds*time.Second)
 	defer cancel()
 	output, err := exec.CommandContext(ctx, "networksetup", "-listnetworkserviceorder").Output()
@@ -129,7 +124,6 @@ func setMTUPlatform(iface string, mtu int) error {
 	// Use ifconfig to set MTU
 	ctx, cancel := context.WithTimeout(context.Background(), ifconfigTimeoutSeconds*time.Second)
 	defer cancel()
-	//nolint:gosec // G204: ifconfig is a known macOS system binary, args are validated
 	if runErr := exec.CommandContext(ctx, "ifconfig", iface, "mtu", strconv.Itoa(mtu)).Run(); runErr != nil {
 		return fmt.Errorf("failed to set MTU: %w", runErr)
 	}
