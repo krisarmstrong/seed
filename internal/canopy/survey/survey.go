@@ -218,6 +218,50 @@ type Survey struct {
 	Interface    string `json:"interface"`              // WiFi interface to use
 	IperfServer  string `json:"iperfServer,omitempty"`  // For throughput surveys
 	TestDuration int    `json:"testDuration,omitempty"` // seconds, for throughput tests
+
+	// Imported / placed data (#727). These are sourced from AirMapper imports
+	// or user placement in the planner and are persisted with the survey so
+	// they survive reload.
+	APLocations      []APLocation        `json:"apLocations,omitempty"`
+	ClientLocations  []ClientLocation    `json:"clientLocations,omitempty"`
+	PassFailCriteria []PassFailCriterion `json:"passFailCriteria,omitempty"`
+}
+
+// APLocation marks the floorplan-relative position of an access point. Sourced
+// from imported survey data or user placement.
+type APLocation struct {
+	ID       string `json:"id"` // Stable identifier (uuid)
+	X        int    `json:"x"`  // Pixel offset on the floor plan
+	Y        int    `json:"y"`  // Pixel offset on the floor plan
+	Label    string `json:"label,omitempty"`
+	BSSID    string `json:"bssid,omitempty"`
+	Vendor   string `json:"vendor,omitempty"`
+	Notes    string `json:"notes,omitempty"`
+	Imported bool   `json:"imported,omitempty"` // True when added by an importer
+}
+
+// ClientLocation marks the floorplan-relative position of a client/station.
+// Sourced from imported AirMapper data; the placement UI may add more later.
+type ClientLocation struct {
+	ID       string `json:"id"`
+	X        int    `json:"x"`
+	Y        int    `json:"y"`
+	Label    string `json:"label,omitempty"`
+	MAC      string `json:"mac,omitempty"`
+	Imported bool   `json:"imported,omitempty"`
+}
+
+// PassFailCriterion is a single threshold expression used to flag survey
+// samples as pass or fail. Mirrors the frontend PassFailCriterion shape.
+type PassFailCriterion struct {
+	Option   string  `json:"option"`           // Metric name (e.g. "rssi", "throughput")
+	Name     string  `json:"name,omitempty"`   // Display label
+	Limit    float64 `json:"limit"`            // Threshold value
+	Suffix   string  `json:"suffix,omitempty"` // Unit suffix (e.g. "dBm", "Mbps")
+	Enabled  bool    `json:"enabled"`
+	Mode     string  `json:"mode,omitempty"` // "gte" or "lte"
+	APCount  int     `json:"ap,omitempty"`   // For AP-density criteria
+	Imported bool    `json:"imported,omitempty"`
 }
 
 // GetActiveFloor returns the currently active floor for data collection.
@@ -499,6 +543,43 @@ func (m *Manager) UpdateSurveySettings(
 	}
 	survey.TestDuration = testDuration
 	survey.IperfServer = iperfServer
+	survey.UpdatedAt = time.Now()
+
+	return m.saveSurvey(survey)
+}
+
+// ImportedDataUpdate carries the slices a caller wants to replace on a survey.
+// Each field is optional; nil means "leave as-is". An empty (non-nil) slice
+// clears the corresponding survey field, which is the right behaviour when an
+// importer wants to fully replace the existing list.
+type ImportedDataUpdate struct {
+	APLocations      []APLocation
+	ClientLocations  []ClientLocation
+	PassFailCriteria []PassFailCriterion
+}
+
+// UpdateImportedData replaces the survey's imported-data fields (#727).
+// Callers (most notably the AirMapper import flow) use this to persist the
+// AP/client placements and pass-fail criteria that come back from the parser
+// so the data survives a page reload.
+func (m *Manager) UpdateImportedData(id string, update ImportedDataUpdate) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	survey, exists := m.surveys[id]
+	if !exists {
+		return fmt.Errorf("survey not found: %s", id)
+	}
+
+	if update.APLocations != nil {
+		survey.APLocations = update.APLocations
+	}
+	if update.ClientLocations != nil {
+		survey.ClientLocations = update.ClientLocations
+	}
+	if update.PassFailCriteria != nil {
+		survey.PassFailCriteria = update.PassFailCriteria
+	}
 	survey.UpdatedAt = time.Now()
 
 	return m.saveSurvey(survey)

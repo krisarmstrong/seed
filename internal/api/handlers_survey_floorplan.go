@@ -202,6 +202,63 @@ func (s *Server) updateSurveySettings(w http.ResponseWriter, r *http.Request) {
 	sendJSONResponse(w, logger, http.StatusOK, settingsUpdatedSurvey)
 }
 
+// UpdateSurveyImportedDataRequest is the payload for #727's imported-data
+// endpoint. Any field left nil is left unchanged on the survey; an empty
+// slice clears the corresponding list.
+type UpdateSurveyImportedDataRequest struct {
+	APLocations      []survey.APLocation        `json:"apLocations"`
+	ClientLocations  []survey.ClientLocation    `json:"clientLocations"`
+	PassFailCriteria []survey.PassFailCriterion `json:"passFailCriteria"`
+}
+
+// updateSurveyImportedData handles PUT /api/canopy/survey/imported-data?id=xxx.
+// Replaces the survey's AP/client placements and pass-fail criteria. This is
+// what the AirMapper import flow uses to persist parsed survey data so it
+// survives reload (#727).
+func (s *Server) updateSurveyImportedData(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
+	localizer := i18n.FromRequest(r)
+	ctx := &surveyHandlerContext{w, logger, localizer}
+
+	if r.Method != http.MethodPut {
+		ctx.sendMethodNotAllowed()
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+	if !isValidSurveyID(id) {
+		ctx.sendValidationError("errors.survey.invalidId")
+		return
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodySizeJSON)
+	var req UpdateSurveyImportedDataRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.WarnContext(r.Context(), "Invalid imported-data body", "error", err)
+		ctx.sendBadRequestError("errors.api.invalidRequestBody")
+		return
+	}
+
+	update := survey.ImportedDataUpdate{
+		APLocations:      req.APLocations,
+		ClientLocations:  req.ClientLocations,
+		PassFailCriteria: req.PassFailCriteria,
+	}
+	if err := s.surveyManager().UpdateImportedData(id, update); err != nil {
+		logger.ErrorContext(r.Context(), "Failed to update imported data", "error", err)
+		ctx.sendBadRequestError("errors.survey.updateFailed")
+		return
+	}
+
+	updated, err := s.surveyManager().GetSurvey(id)
+	if err != nil {
+		logger.ErrorContext(r.Context(), "Failed to get survey after imported-data update", "error", err)
+		ctx.sendInternalError("errors.survey.getSurveyFailed")
+		return
+	}
+	sendJSONResponse(w, logger, http.StatusOK, updated)
+}
+
 // importAirMapper handles POST /api/survey/import/airmapper.
 // It accepts a multipart form with an .amp file and returns parsed calibration,
 // floor plan, and pass/fail criteria data.

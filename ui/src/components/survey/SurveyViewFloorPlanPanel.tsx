@@ -273,6 +273,8 @@ export function SurveyViewFloorPlanPanel({
                 }
               }
               samples={currentSamples}
+              // #727: render imported AP placements so they're not silently dropped.
+              apLocations={survey.apLocations}
               onPointClick={handlePointClick}
               interactive={
                 survey.status === 'in_progress' &&
