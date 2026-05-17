@@ -9,11 +9,27 @@ import (
 	"github.com/krisarmstrong/seed/internal/canopy/wifi"
 	"github.com/krisarmstrong/seed/internal/config"
 	"github.com/krisarmstrong/seed/internal/database"
+	"github.com/krisarmstrong/seed/internal/netif"
 	"github.com/krisarmstrong/seed/internal/services/iperf"
 )
 
-// DefaultInterface is the default network interface to use when none is configured.
+// DefaultInterface is the last-ditch fallback interface name when both config
+// and live auto-detection fail to provide one (#572). Prefer
+// netif.AutoDetectInterfaceName("wifi") over this constant.
 const DefaultInterface = "wlan0"
+
+// resolveWiFiInterface picks the WiFi interface name: config first, then live
+// auto-detection (preferring a wifi-typed interface), then DefaultInterface as
+// a last-ditch fallback.
+func resolveWiFiInterface(cfg *config.Config) string {
+	if iface, ok := cfg.GetActiveInterface(); ok && iface != "" {
+		return iface
+	}
+	if iface := netif.AutoDetectInterfaceName("wifi"); iface != "" {
+		return iface
+	}
+	return DefaultInterface
+}
 
 // Channel utilization constants.
 const (
@@ -62,10 +78,7 @@ type WiFiService struct {
 
 // NewWiFiService creates a new WiFi service.
 func NewWiFiService(cfg *config.Config) *WiFiService {
-	iface, ok := cfg.GetActiveInterface()
-	if !ok || iface == "" {
-		iface = DefaultInterface
-	}
+	iface := resolveWiFiInterface(cfg)
 
 	return &WiFiService{
 		cfg:     cfg,
@@ -101,10 +114,7 @@ func (s *WiFiService) Scan(_ context.Context) (*ScanResult, error) {
 	}
 
 	// Get active interface name
-	iface, _ := s.cfg.GetActiveInterface()
-	if iface == "" {
-		iface = DefaultInterface
-	}
+	iface := resolveWiFiInterface(s.cfg)
 
 	// Convert to canopy types
 	result := &ScanResult{
@@ -207,10 +217,7 @@ func (s *SurveyService) Create(_ context.Context, name, description string) (*Su
 		return nil, ErrNotInitialized
 	}
 
-	iface, ok := s.cfg.GetActiveInterface()
-	if !ok || iface == "" {
-		iface = DefaultInterface
-	}
+	iface := resolveWiFiInterface(s.cfg)
 
 	// Create using the underlying manager
 	surveyObj, err := s.manager.CreateSurvey(name, description, iface, survey.TypePassive)

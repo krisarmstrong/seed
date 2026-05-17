@@ -8,11 +8,27 @@ import (
 	"github.com/krisarmstrong/seed/internal/config"
 	"github.com/krisarmstrong/seed/internal/database"
 	"github.com/krisarmstrong/seed/internal/dhcp"
+	"github.com/krisarmstrong/seed/internal/netif"
 	"github.com/krisarmstrong/seed/internal/services/discovery"
 )
 
-// DefaultInterface is the default network interface to use when none is configured.
+// DefaultInterface is the last-ditch fallback interface name when both config
+// and live auto-detection fail to provide one (#572). Prefer resolveInterface
+// over reading this constant directly.
 const DefaultInterface = "eth0"
+
+// resolveInterface picks the interface name: config first, then live
+// auto-detection (preferring ethernet), then DefaultInterface as a last-ditch
+// fallback.
+func resolveInterface(cfg *config.Config) string {
+	if iface, ok := cfg.GetActiveInterface(); ok && iface != "" {
+		return iface
+	}
+	if iface := netif.AutoDetectInterfaceName("ethernet"); iface != "" {
+		return iface
+	}
+	return DefaultInterface
+}
 
 // perfectSecurityScore is the baseline score before any vulnerability deductions (100%).
 const perfectSecurityScore = 100
@@ -31,10 +47,7 @@ type DiscoveryService struct {
 
 // NewDiscoveryService creates a new discovery service.
 func NewDiscoveryService(cfg *config.Config, db *database.DB) *DiscoveryService {
-	iface, ok := cfg.GetActiveInterface()
-	if !ok || iface == "" {
-		iface = DefaultInterface
-	}
+	iface := resolveInterface(cfg)
 
 	return &DiscoveryService{
 		cfg:     cfg,
@@ -364,10 +377,7 @@ type RogueService struct {
 
 // NewRogueService creates a new rogue detection service.
 func NewRogueService(cfg *config.Config) *RogueService {
-	iface, ok := cfg.GetActiveInterface()
-	if !ok || iface == "" {
-		iface = DefaultInterface
-	}
+	iface := resolveInterface(cfg)
 
 	detectorCfg := &dhcp.RogueDetectorConfig{
 		Interface:        iface,
