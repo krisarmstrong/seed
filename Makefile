@@ -199,7 +199,7 @@ all: verify ## Full build and validation (recommended before release)
 clean: ## Clean build artifacts
 	rm -f $(BINARY_NAME) $(BINARY_NAME)-*
 	rm -f coverage.out coverage.html
-	rm -rf ui/dist
+	rm -rf internal/api/ui
 
 clean-all: clean ## Clean everything including dependencies
 	rm -rf ui/node_modules

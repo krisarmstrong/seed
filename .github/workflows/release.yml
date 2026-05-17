@@ -1,26 +1,29 @@
 # =============================================================================
 # Release (goreleaser)
 # =============================================================================
-# Canonical release pipeline as of #956 cutover.
+# Canonical release pipeline. Drives .goreleaser.yml inside the
+# goreleaser-cross container.
 #
 # Triggers:
-#   - push to a v* tag: real release, builds + signs + publishes
-#   - workflow_dispatch with dry_run=true: snapshot, no publish or sign
+#   - push to a v* tag: real release — builds, signs, publishes, generates
+#     SLSA L3 provenance
+#   - workflow_dispatch with dry_run=true: snapshot only — no publish, no
+#     signing, no provenance; artifacts uploaded for inspection
 #
 # Toolchain notes:
-#   Build runs inside the goreleaser-cross Docker image which ships:
+#   The goreleaser-cross Docker image ships:
 #     - gcc + gcc-aarch64-linux-gnu (Linux cross)
 #     - mingw-w64 (Windows cross; we use CGO_ENABLED=0 there anyway)
 #     - osxcross + macOS SDK (Darwin cross)
-#   Node + iperf3 produced in separate jobs and downloaded into the
+#   Node + iperf3 are produced in separate jobs and downloaded into the
 #   goreleaser workspace; the cross image is Go-focused.
 #   libpcap-dev:arm64 is apt-installed at the start because the cross
 #   image doesn't ship libpcap headers per target arch.
 #
-# Cutover differences from the pre-#956 release.yml:
-#   - macOS .pkg installer dropped (no native pkgbuild from Linux).
-#     macOS users get the .tar.gz. deploy/macos/build-pkg.sh stays in
-#     the tree for anyone who wants to assemble one locally.
+# Known limitation:
+#   macOS .pkg installer is not produced (no native pkgbuild from Linux).
+#   macOS users get the .tar.gz; deploy/macos/build-pkg.sh stays in-tree
+#   for anyone who wants to assemble one locally.
 # =============================================================================
 
 name: Release
@@ -98,8 +101,8 @@ jobs:
 
   # =========================================================================
   # UI build — done outside the goreleaser-cross container because that
-  # image is Go-focused and doesn't ship Node. We build ui/dist here and
-  # the next job inherits the workspace.
+  # image is Go-focused and doesn't ship Node. Vite writes directly into
+  # internal/api/ui/; the next job inherits the workspace.
   # =========================================================================
   build-ui:
     name: Build UI
@@ -125,14 +128,14 @@ jobs:
       - name: Compute UI build hash
         id: ui-hash
         run: |
-          UI_BUILD_HASH=$(find ui/dist -type f -exec md5sum {} \; | sort | md5sum | cut -d' ' -f1)
+          UI_BUILD_HASH=$(find internal/api/ui -type f -exec md5sum {} \; | sort | md5sum | cut -d' ' -f1)
           echo "hash=$UI_BUILD_HASH" >> "$GITHUB_OUTPUT"
 
       - name: Upload UI dist
         uses: actions/upload-artifact@v7.0.1
         with:
           name: ui-dist
-          path: ui/dist/
+          path: internal/api/ui/
           retention-days: 1
           include-hidden-files: true
 
@@ -199,7 +202,7 @@ jobs:
         uses: actions/download-artifact@v8.0.1
         with:
           name: ui-dist
-          path: ui/dist/
+          path: internal/api/ui/
 
       - name: Install Syft (SBOM) inside container
         run: |

@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/krisarmstrong/seed/internal/logging"
-	"github.com/krisarmstrong/seed/ui"
 )
 
 // setupRoutes configures all HTTP routes.
@@ -247,13 +246,13 @@ func (s *Server) setupHarvestRoutes() {
 func (s *Server) setupSSEAndStatic() {
 	// SSE endpoint for real-time updates
 	s.mux.HandleFunc(APIVersionPrefix+"/events", s.handleSSE)
-	frontendFS, err := ui.GetFS()
+	frontendFS, err := getUIFS()
 	if err != nil {
 		logging.GetLogger().
 			Warn("Failed to get embedded frontend FS, falling back to disk", "error", err)
-		s.mux.Handle("/", http.FileServer(http.Dir("ui/dist")))
+		s.mux.Handle("/", http.FileServer(http.Dir("internal/api/ui")))
 	} else {
-		logging.GetLogger().Info("Serving frontend from embedded filesystem", "embedded", ui.IsEmbedded())
+		logging.GetLogger().Info("Serving frontend from embedded filesystem", "embedded", isUIEmbedded())
 		s.mux.Handle("/", spaHandler(http.FS(frontendFS)))
 	}
 }

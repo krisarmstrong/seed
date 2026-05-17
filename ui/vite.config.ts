@@ -8,7 +8,7 @@
  * - React plugin: Enables JSX/TSX transformation and fast refresh during development
  * - Path alias: @ resolves to src/ directory for cleaner imports
  * - Dev server: Runs on port 3000 with HMR support
- * - Build output: Compiled to dist/ directory with source maps for debugging
+ * - Build output: Compiled directly to ../internal/api/ui for Go embed
  * - Embedding: Compiled frontend is embedded in Go binary via //go:embed directive
  *
  * Build Process:
@@ -16,7 +16,7 @@
  * 2. CSS processing and minification
  * 3. Asset optimization and tree-shaking
  * 4. Source map generation for production debugging
- * 5. Output to dist/ for Go embedding
+ * 5. Output to ../internal/api/ui for Go embedding (single source of truth)
  *
  * Usage:
  * ```bash
@@ -26,7 +26,7 @@
  * ```
  *
  * Dependencies: vite, @vitejs/plugin-react
- * See: web/embed.go for how dist/ is embedded in the Go binary
+ * See: internal/api/embed_ui.go for how the build is embedded in the Go binary
  */
 
 import { fileURLToPath, URL } from 'node:url';
@@ -48,7 +48,10 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    outDir: 'dist',
+    // Output directly into the Go embed directory — no copying or syncing.
+    // Canonical path shared with niac and stem: internal/api/ui/.
+    outDir: '../internal/api/ui',
+    emptyOutDir: true,
     sourcemap: true,
   },
 });

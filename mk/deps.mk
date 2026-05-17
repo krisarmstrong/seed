@@ -121,7 +121,7 @@ tools: tools-go tools-frontend ## Install all development tools (Go + Node)
 tools-go: ## Install Go development tools
 	@printf "$(BOLD)=== Installing Go Development Tools ===$(RESET)\n"
 	@printf "  golangci-lint (comprehensive linter)...\n"
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.1
 	@printf "  govulncheck (CVE vulnerability checker)...\n"
 	@go install golang.org/x/vuln/cmd/govulncheck@latest
 	@printf "  goimports (import formatter)...\n"
@@ -140,7 +140,7 @@ tools-go: ## Install Go development tools
 
 tools-go-quiet:
 	@printf "   Installing latest versions...\n"
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest 2>/dev/null
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.1 2>/dev/null
 	@go install golang.org/x/vuln/cmd/govulncheck@latest 2>/dev/null
 	@go install golang.org/x/tools/cmd/goimports@latest 2>/dev/null
 	@go install mvdan.cc/gofumpt@latest 2>/dev/null

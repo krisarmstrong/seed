@@ -97,8 +97,8 @@ build-frontend-quiet: frontend-deps
 	@printf "   Bundling React application...\n"
 	@command -v npm >/dev/null 2>&1 || { printf "$(RED)ERROR: npm not found. Frontend build requires npm.$(RESET)\n"; exit 1; }
 	@cd ui && npm run build
-	@SIZE=$$(du -sh ui/dist 2>/dev/null | cut -f1 || echo "unknown"); \
-	printf "   Output: ui/dist ($$SIZE)\n"
+	@SIZE=$$(du -sh internal/api/ui 2>/dev/null | cut -f1 || echo "unknown"); \
+	printf "   Output: internal/api/ui ($$SIZE)\n"
 
 # =============================================================================
 # Backend Build

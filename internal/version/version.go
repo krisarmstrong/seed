@@ -15,7 +15,7 @@ var (
 	Version     string // Set via -ldflags
 	Commit      string // Set via -ldflags
 	BuildTime   string // Set via -ldflags
-	UIBuildHash string // Set via -ldflags; md5 of all files under ui/dist
+	UIBuildHash string // Set via -ldflags; md5 of all files under internal/api/ui
 )
 
 const (

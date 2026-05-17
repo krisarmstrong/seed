@@ -1,30 +1,30 @@
 # =============================================================================
 # goreleaser config for The Seed
 # =============================================================================
-# First-pass migration of release.yml's hand-coded pipeline (#956).
+# Canonical release packager. Driven by .github/workflows/release.yml inside
+# the goreleaser-cross container (which ships gcc + osxcross + mingw-w64).
 #
-# Status: PARALLEL ROLLOUT. The canonical release pipeline is still
-# .github/workflows/release.yml. This config is exercised only by
-# .github/workflows/release-goreleaser.yml (workflow_dispatch). Once a
-# dry-run produces artifacts equivalent to release.yml's output, a
-# follow-up PR will swap the trigger over and delete the old workflow.
-#
-# Things this config covers natively:
-#   - Multi-arch builds (linux amd64/arm64, darwin amd64/arm64, windows
-#     amd64/arm64)
-#   - .tar.gz, .zip, .deb, .rpm
+# Covers natively:
+#   - Multi-arch builds (linux/darwin/windows × amd64/arm64)
+#   - Archives (.tar.gz, .zip), Linux packages (.deb, .rpm) via nfpm
 #   - ldflags injection (Version, Commit, BuildTime, UIBuildHash)
 #   - cosign keyless signing of every artifact
 #   - syft SBOM per archive
 #   - SHA-256 checksums
+#   - Homebrew tap publish (when HOMEBREW_TAP_TOKEN is set)
 #   - release-please CHANGELOG.md as release body
 #
-# Things still handled outside goreleaser (custom hooks / sidecar jobs):
-#   - iperf3 binary bundled into Linux archives — pre-built by the existing
-#     build-iperf3 matrix job; goreleaser picks it up via extra_files
-#   - macOS .pkg installer via deploy/macos/build-pkg.sh — see "after" hook
-#   - UI frontend build (npm run build) — runs in the "before" hook so
-#     ui/embed.go picks up the dist before the Go build starts
+# Handled outside goreleaser by sidecar jobs in release.yml:
+#   - iperf3 binary bundled into Linux archives — pre-built by the
+#     build-iperf3 matrix; goreleaser picks it up from bin/ via archive files
+#   - UI frontend (npm run build) — pre-built by the build-ui job and
+#     downloaded into ui/dist/ before the Go build embeds it
+#   - SLSA L3 provenance — slsa-github-generator v2 reads goreleaser's
+#     artifact hashes via its outputs.hashes step
+#
+# Not produced from this config:
+#   - macOS .pkg installer (no native pkgbuild from Linux). macOS users get
+#     the .tar.gz; deploy/macos/build-pkg.sh stays in-tree for local builds.
 #
 # Tested against goreleaser v2.x.
 # =============================================================================
@@ -36,10 +36,11 @@ project_name: seed
 before:
   hooks:
     - go mod download
-    # ui/dist is built BEFORE goreleaser runs (in the build-ui job inside
-    # release-goreleaser.yml) and the artifact is downloaded into ui/dist/.
-    # Just verify it's there before kicking off the Go build that embeds it.
-    - bash -c 'test -d ui/dist && test -n "$(ls -A ui/dist)" || (echo "ui/dist empty — UI build step failed or artifact missing"; exit 1)'
+    # The UI build runs BEFORE goreleaser (in the build-ui job inside
+    # release.yml). Vite writes directly to internal/api/ui/, and the
+    # artifact is downloaded into the same path. Verify it's there before
+    # kicking off the Go build that embeds it.
+    - bash -c 'test -d internal/api/ui && test -n "$(ls -A internal/api/ui)" || (echo "internal/api/ui empty — UI build step failed or artifact missing"; exit 1)'
 
 builds:
   - id: seed-linux
@@ -115,7 +116,7 @@ archives:
     files:
       - src: configs
         dst: configs
-      - src: ui/dist
+      - src: internal/api/ui
         dst: ui
       # iperf3 binary, pre-built by the build-iperf3 job and downloaded into
       # bin/ before goreleaser runs. One per arch.
@@ -131,7 +132,7 @@ archives:
     files:
       - src: configs
         dst: configs
-      - src: ui/dist
+      - src: internal/api/ui
         dst: ui
 
   - id: windows-archive
@@ -141,7 +142,7 @@ archives:
     files:
       - src: configs
         dst: configs
-      - src: ui/dist
+      - src: internal/api/ui
         dst: ui
       - src: deploy/windows/build.ps1
         dst: install.ps1

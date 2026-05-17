@@ -112,6 +112,10 @@ ui/coverage/
 ui/dist/
 ui/node_modules/
 ui/playwright-report/
+
+# Frontend build outputs (Vite builds directly to internal/api/ui)
+internal/api/ui/*
+!internal/api/ui/.gitkeep
 ui/test-results/
 vendor/
 yarn-error.log*

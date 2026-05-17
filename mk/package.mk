@@ -13,7 +13,8 @@
 
 .PHONY: deb rpm pkg windows-zip packages packages-all \
         deb-amd64 deb-arm64 rpm-amd64 rpm-arm64 _deb-arch _rpm-arch \
-        container
+        container \
+        deploy-validate deploy-ubuntu deploy-fedora deploy-all
 
 # =============================================================================
 # Package Variables
@@ -173,5 +174,70 @@ container: ## Build container image locally (Pack/Buildpacks)
 	@pack build $(CONTAINER_IMAGE):$(VERSION) \
 		--builder paketobuildpacks/builder-jammy-base \
 		--env BP_GO_TARGETS="./cmd/seed" \
-		--env BP_GO_BUILD_LDFLAGS="-s -w -X $(VERSION_PKG).Version=$(VERSION) -X $(VERSION_PKG).Commit=$(COMMIT)"
+		--env BP_GO_BUILD_LDFLAGS="-s -w -X $(VERSION_PKG).Version=$(VERSION) -X $(VERSION_PKG).Commit=$(COMMIT) -X $(VERSION_PKG).BuildTime=$(BUILD_TIME) -X $(VERSION_PKG).UIBuildHash=$(UI_BUILD_HASH)"
 	@printf "$(GREEN)Container: $(CONTAINER_IMAGE):$(VERSION) (local)$(RESET)\n"
+
+# =============================================================================
+# Deployment Targets
+# =============================================================================
+# Mirrors niac/go's deploy block so the three projects share a deployment
+# contract. Honors the Universal Build Contract in CLAUDE.md.
+#
+# Prerequisites:
+#   - SSH access to target servers (key-based auth recommended)
+#   - Packages built with 'make packages'
+#   - Target servers configured in ~/.ssh/config
+# =============================================================================
+
+DEPLOY_UBUNTU_HOST ?= niac-srv-ubuntu
+DEPLOY_FEDORA_HOST ?= niac-srv-fedora
+DEPLOY_PORT ?= 8443
+
+deploy-validate: ## Validate deployment on a remote host (HOST=hostname)
+	@if [ -z "$(HOST)" ]; then \
+		printf "$(RED)ERROR: HOST is required. Usage: make deploy-validate HOST=hostname$(RESET)\n"; \
+		exit 1; \
+	fi
+	@printf "$(BOLD)Validating deployment on $(HOST)...$(RESET)\n"
+	./scripts/deploy-validate.sh $(VERSION) $(COMMIT) $(HOST) $(DEPLOY_PORT)
+
+deploy-ubuntu: packages ## Deploy .deb to Ubuntu test server and validate
+	@printf "$(BOLD)Deploying to $(DEPLOY_UBUNTU_HOST)...$(RESET)\n"
+	@DEB_FILE=$$(ls -t dist/seed_*_amd64.deb 2>/dev/null | head -1); \
+	if [ -z "$$DEB_FILE" ]; then \
+		printf "$(RED)ERROR: No .deb file found in dist/. Run 'make packages' first.$(RESET)\n"; \
+		exit 1; \
+	fi; \
+	printf "  Uploading $$DEB_FILE...\n"; \
+	scp "$$DEB_FILE" $(DEPLOY_UBUNTU_HOST):/tmp/seed.deb; \
+	printf "  Installing package...\n"; \
+	ssh $(DEPLOY_UBUNTU_HOST) 'sudo dpkg -i /tmp/seed.deb'; \
+	printf "  Restarting service...\n"; \
+	ssh $(DEPLOY_UBUNTU_HOST) 'sudo systemctl restart seed || sudo systemctl start seed'; \
+	printf "  Waiting for service startup...\n"; \
+	sleep 3; \
+	printf "  Validating deployment...\n"
+	@./scripts/deploy-validate.sh $(VERSION) $(COMMIT) $(DEPLOY_UBUNTU_HOST) $(DEPLOY_PORT)
+	@printf "$(GREEN)✓ Ubuntu deployment complete and validated$(RESET)\n"
+
+deploy-fedora: packages ## Deploy .rpm to Fedora test server and validate
+	@printf "$(BOLD)Deploying to $(DEPLOY_FEDORA_HOST)...$(RESET)\n"
+	@RPM_FILE=$$(ls -t dist/seed-*-1.*.rpm 2>/dev/null | head -1); \
+	if [ -z "$$RPM_FILE" ]; then \
+		printf "$(RED)ERROR: No .rpm file found in dist/. Run 'make packages' first.$(RESET)\n"; \
+		exit 1; \
+	fi; \
+	printf "  Uploading $$RPM_FILE...\n"; \
+	scp "$$RPM_FILE" $(DEPLOY_FEDORA_HOST):/tmp/seed.rpm; \
+	printf "  Installing package...\n"; \
+	ssh $(DEPLOY_FEDORA_HOST) 'sudo rpm -Uvh --nodeps /tmp/seed.rpm || sudo rpm -ivh --nodeps /tmp/seed.rpm'; \
+	printf "  Restarting service...\n"; \
+	ssh $(DEPLOY_FEDORA_HOST) 'sudo systemctl restart seed || sudo systemctl start seed'; \
+	printf "  Waiting for service startup...\n"; \
+	sleep 3; \
+	printf "  Validating deployment...\n"
+	@./scripts/deploy-validate.sh $(VERSION) $(COMMIT) $(DEPLOY_FEDORA_HOST) $(DEPLOY_PORT)
+	@printf "$(GREEN)✓ Fedora deployment complete and validated$(RESET)\n"
+
+deploy-all: deploy-ubuntu deploy-fedora ## Deploy to all test servers
+	@printf "\n$(GREEN)✓ ALL DEPLOYMENTS VALIDATED$(RESET)\n"
