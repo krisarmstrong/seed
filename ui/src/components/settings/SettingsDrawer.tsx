@@ -31,17 +31,17 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettings } from '../../contexts/useSettings';
 import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave';
+import { useSettingsDrawerLoaders } from '../../hooks/useSettingsDrawerLoaders';
+import { useSettingsDrawerSavers } from '../../hooks/useSettingsDrawerSavers';
 import { useSubnetSettings } from '../../hooks/useSubnetSettings';
 import { useTheme } from '../../hooks/useTheme';
 import { useVulnerabilitySettings } from '../../hooks/useVulnerabilitySettings';
-import { LogComponents, logger } from '../../lib/logger';
 import { button, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
 import type {
   CableTestSettings as CableTestSettingsType,
   IperfSuggestion,
   IpSettings,
   LinkSettings as LinkSettingsType,
-  LogsResponse,
   NetworkDiscoverySettings,
   SettingsThresholds,
   SnmpSettings as SnmpSettingsType,
@@ -65,8 +65,6 @@ import { WiFiSettings } from './sections/WiFiSettings';
 import {
   INLINE_DEFAULT_CABLE_TEST_SETTINGS,
   INLINE_DEFAULT_LINK_SETTINGS,
-  normalizeTestsSettingsForSave,
-  withIds,
 } from './settingsDrawerNormalizer';
 
 const API_BASE: string = import.meta.env.VITE_API_BASE || '';
@@ -322,401 +320,65 @@ export const SettingsDrawer: React.MemoExoticComponent<
   const [savingIp, setSavingIp] = useState(false);
   const [ipMessage, setIpMessage] = useState<string | null>(null);
 
-  // Fetch current thresholds
-  const fetchThresholds = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        if (data.thresholds) {
-          setThresholds((prev) => ({
-            ...prev,
-            ...data.thresholds,
-          }));
-        }
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch thresholds', err);
-    }
-  }, []);
-
-  // Fetch current IP settings
-  const fetchIpSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/ipconfig/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setIpSettings({
-          mode: data.mode || 'dhcp',
-          address: data.address || '',
-          netmask: data.netmask || '24',
-          gateway: data.gateway || '',
-          dns: data.dns || [],
-        });
-        setDnsInput((data.dns || []).join(', '));
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch IP settings', err);
-    }
-  }, []);
-
-  // Fetch current tests settings
-  const fetchTestsSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/health-checks/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setTestsSettings({
-          dnsHostname: data.dnsHostname || 'google.com',
-          dnsServers: withIds(data.dnsServers || []).map((server) => ({
-            ...server,
-            enabled: server.enabled !== false,
-          })),
-          pingTargets: withIds(data.pingTargets || []).map((target) => ({
-            ...target,
-            enabled: target.enabled !== false,
-          })),
-          tcpPorts: withIds(data.tcpPorts || []).map((port) => ({
-            ...port,
-            port: port.port || 80,
-            enabled: port.enabled !== false,
-          })),
-          udpPorts: withIds(data.udpPorts || []).map((port) => ({
-            ...port,
-            port: port.port || 53,
-            enabled: port.enabled !== false,
-          })),
-          httpEndpoints: withIds(data.httpEndpoints || []).map((endpoint) => ({
-            ...endpoint,
-            expectedStatus: endpoint.expectedStatus || 200,
-            enabled: endpoint.enabled !== false,
-          })),
-          runPerformance: data.runPerformance ?? true,
-          runSpeedtest: data.runSpeedtest ?? true,
-          runIperf: data.runIperf ?? true,
-          runDiscovery: data.runDiscovery ?? true,
-          speedtest: {
-            serverId: data.speedtest?.serverId || '',
-            autoRunOnLink: data.speedtest?.autoRunOnLink ?? true, // Default to true
-          },
-          iperf: {
-            autoRunOnLink: data.iperf?.autoRunOnLink,
-          },
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch tests settings', err);
-    }
-  }, []);
-
-  const fetchIperfSuggestions = useCallback(async () => {
-    setIperfSuggestionsStatus('loading');
-    setIperfSuggestionsError(null);
-    try {
-      const response = await fetch(`${API_BASE}/api/sap/iperf/suggestions`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setIperfSuggestions(Array.isArray(data) ? data : []);
-        setIperfSuggestionsStatus('idle');
-      } else {
-        setIperfSuggestionsStatus('error');
-        setIperfSuggestionsError('No iperf hosts found');
-      }
-    } catch (err) {
-      setIperfSuggestionsStatus('error');
-      setIperfSuggestionsError(err instanceof Error ? err.message : 'Failed to find iperf hosts');
-    }
-  }, []);
-
-  // Fetch WiFi settings
-  const fetchWifiSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/canopy/wifi/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setWifiSettings({
-          interface: data.interface || '',
-          availableWifi: data.availableWifi || [],
-          isWireless: data.isWireless,
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.Wifi, 'Failed to fetch WiFi settings', err);
-    }
-  }, []);
-
-  // FAB options, display options, and iperf settings now come from SettingsContext
-  // (loaded automatically by the context provider)
-
-  // Fetch Network Discovery settings from API
-  const fetchNetworkDiscoverySettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/devices/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setNetworkDiscoverySettings({
-          enabled: data.enabled ?? true,
-          arpScanWorkers: data.arpScanWorkers ?? 50,
-          pingTimeoutMs: data.pingTimeoutMs ?? 500,
-          scanTimeoutMs: data.scanTimeoutMs ?? 30000,
-          autoScan: data.autoScan ?? false,
-          scanIntervalMs: data.scanIntervalMs ?? 0,
-          ipv6Enabled: data.ipv6Enabled ?? true,
-          options: data.options ?? {
-            passiveProtocols: {
-              lldp: true,
-              cdp: true,
-              edp: true,
-              ndp: true,
-            },
-            arpScan: true,
-            icmpScan: true,
-            portScan: {
-              enabled: false,
-              preset: 'common',
-              tcpPorts: '22,80,443,8080-8100',
-              udpPorts: '53,123,161',
-              bannerTimeoutMs: 2000,
-            },
-            tcpProbe: {
-              timeoutMs: 2000,
-              workers: 20,
-            },
-            traceroute: false,
-            snmpQuery: false,
-          },
-          timing: data.timing ?? {
-            probeIntervalMs: 75,
-            rescanIntervalMs: 600000,
-            workers: 50,
-          },
-          profiler: data.profiler ?? {
-            enabled: true,
-            timeoutMs: 2000,
-            maxConcurrent: 5,
-            quickPorts: [22, 80, 443, 8080],
-          },
-          fingerprinting: data.fingerprinting ?? {
-            enabled: false,
-            osDetection: false,
-            serviceProbes: false,
-          },
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.Discovery, 'Failed to fetch network discovery settings', err);
-    }
-  }, []);
-
-  // Fetch SNMP settings from API
-  const fetchSnmpSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/sap/snmp/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setSnmpSettings({
-          communities: data.communities ?? ['public'],
-          v3Credentials: data.v3Credentials ?? [],
-          timeout: data.timeout ?? 5000,
-          retries: data.retries ?? 2,
-          port: data.port ?? 161,
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch SNMP settings', err);
-    }
-  }, []);
-
-  // Fetch link settings from API (fixes #734)
-  const fetchLinkSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/settings/link`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        // Backend may send separate speed/duplex or combined mode
-        const mode = data.mode ?? (data.auto_negotiation ? 'auto' : `${data.speed}/${data.duplex}`);
-        setLinkSettings({
-          mode: mode,
-          availableModes: data.available_modes ?? [],
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch link settings', err);
-    }
-  }, []);
-
-  // Fetch cable test settings from API (fixes #740)
-  const fetchCableTestSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/settings/cable`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setCableTestSettings({
-          enabled: data.enabled ?? true,
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch cable test settings', err);
-    }
-  }, []);
-
-  // Fetch a small tail of the application log (debug)
-  // Security fix #301: Removed VITE_LOG_ACCESS_TOKEN - JWT authentication is sufficient
-  const fetchLogPreview = useCallback(async () => {
-    setLogLoading(true);
-    setLogError(null);
-    try {
-      const response = await fetch(`${API_BASE}/api/harvest/logs?lines=200`, {
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        throw new Error('Unable to load logs');
-      }
-      const data = await (response.json() as Promise<LogsResponse>);
-      setLogPreview(data.lines || []);
-    } catch (err) {
-      setLogPreview([]);
-      setLogError(err instanceof Error ? err.message : 'Failed to load log file');
-    } finally {
-      setLogLoading(false);
-    }
-  }, []);
-
-  // Save Network Discovery settings to API
-  const saveNetworkDiscoverySettings = useCallback(async () => {
-    setNetworkDiscoveryStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/devices/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(networkDiscoverySettings),
-      });
-      if (response.ok) {
-        setNetworkDiscoveryStatus('saved');
-        setTimeout(() => setNetworkDiscoveryStatus('idle'), 2000);
-      } else {
-        setNetworkDiscoveryStatus('error');
-      }
-    } catch {
-      setNetworkDiscoveryStatus('error');
-    }
-  }, [networkDiscoverySettings]);
-
-  const saveSnmpSettings = useCallback(async () => {
-    setSnmpStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/sap/snmp/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(snmpSettings),
-      });
-      if (response.ok) {
-        setSnmpStatus('saved');
-        setTimeout(() => setSnmpStatus('idle'), 2000);
-      } else {
-        setSnmpStatus('error');
-      }
-    } catch {
-      setSnmpStatus('error');
-    }
-  }, [snmpSettings]);
-  useEffect(() => {
-    if (isOpen) {
-      // Reset init refs on open
-      initialLoadRef.current = true;
-      thresholdsInitRef.current = true;
-      testsInitRef.current = true;
-      wifiInitRef.current = true;
-      linkInitRef.current = true;
-      cableTestInitRef.current = true;
-      networkDiscoveryInitRef.current = true;
-      snmpInitRef.current = true;
-      vulnInitRef.current = true;
-
-      fetchThresholds().catch(() => undefined);
-      fetchIpSettings().catch(() => undefined);
-      fetchTestsSettings().catch(() => undefined);
-      fetchWifiSettings().catch(() => undefined);
-      // FAB options, display options, and iperf settings come from SettingsContext
-      fetchNetworkDiscoverySettings().catch(() => undefined);
-      fetchSnmpSettings().catch(() => undefined);
-      fetchVulnSettings().catch(() => undefined);
-      fetchLinkSettings().catch(() => undefined);
-      fetchCableTestSettings().catch(() => undefined);
-      fetchSubnets().catch(() => undefined);
-
-      // Mark initial load as done after a short delay
-      setTimeout(() => {
-        initialLoadRef.current = false;
-        thresholdsInitRef.current = false;
-        testsInitRef.current = false;
-        wifiInitRef.current = false;
-        linkInitRef.current = false;
-        cableTestInitRef.current = false;
-        networkDiscoveryInitRef.current = false;
-        snmpInitRef.current = false;
-        vulnInitRef.current = false;
-      }, 500);
-    }
-  }, [
+  // Per-section fetch callbacks + open-time orchestration live in their hook
+  const { fetchIperfSuggestions, fetchLogPreview } = useSettingsDrawerLoaders({
     isOpen,
-    fetchThresholds,
-    fetchIpSettings,
-    fetchTestsSettings,
-    fetchWifiSettings,
-    fetchNetworkDiscoverySettings,
-    fetchSnmpSettings,
-    fetchVulnSettings,
-    fetchLinkSettings,
-    fetchCableTestSettings,
+    initRefs: {
+      initialLoadRef,
+      thresholdsInitRef,
+      testsInitRef,
+      wifiInitRef,
+      linkInitRef,
+      cableTestInitRef,
+      networkDiscoveryInitRef,
+      snmpInitRef,
+      vulnInitRef,
+    },
+    setThresholds,
+    setIpSettings,
+    setDnsInput,
+    setTestsSettings,
+    setIperfSuggestions,
+    setIperfSuggestionsStatus,
+    setIperfSuggestionsError,
+    setWifiSettings,
+    setNetworkDiscoverySettings,
+    setSnmpSettings,
+    setLinkSettings,
+    setCableTestSettings,
+    setLogPreview,
+    setLogLoading,
+    setLogError,
     fetchSubnets,
-  ]);
+    fetchVulnSettings,
+  });
 
-  const saveThresholds = useCallback(async () => {
-    setThresholdsStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ thresholds }),
-      });
-      if (response.ok) {
-        setThresholdsStatus('saved');
-        setTimeout(() => setThresholdsStatus('idle'), 2000);
-      } else {
-        setThresholdsStatus('error');
-      }
-    } catch {
-      setThresholdsStatus('error');
-    }
-  }, [thresholds]);
+  // Per-section save callbacks live in their own hook
+  const {
+    saveThresholds,
+    saveTestsSettings,
+    saveWifiSettings,
+    saveLinkSettings,
+    saveCableTestSettings,
+    saveNetworkDiscoverySettings,
+    saveSnmpSettings,
+  } = useSettingsDrawerSavers({
+    thresholds,
+    setThresholdsStatus,
+    testsSettings,
+    setTestsStatus,
+    testsSettingsChangedRef,
+    wifiSettings,
+    setWifiStatus,
+    linkSettings,
+    setLinkStatus,
+    cableTestSettings,
+    setCableTestStatus,
+    networkDiscoverySettings,
+    setNetworkDiscoveryStatus,
+    snmpSettings,
+    setSnmpStatus,
+  });
 
   const saveIpSettings = async (): Promise<void> => {
     setSavingIp(true);
@@ -755,104 +417,6 @@ export const SettingsDrawer: React.MemoExoticComponent<
       setSavingIp(false);
     }
   };
-
-  const saveTestsSettings = useCallback(async () => {
-    setTestsStatus('saving');
-    try {
-      const payload = normalizeTestsSettingsForSave(testsSettings);
-      const response = await fetch(`${API_BASE}/api/health-checks/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      });
-      if (response.ok) {
-        setTestsStatus('saved');
-        setTimeout(() => setTestsStatus('idle'), 2000);
-        // Mark that test settings changed - event dispatched on drawer close
-        testsSettingsChangedRef.current = true;
-      } else {
-        setTestsStatus('error');
-      }
-    } catch {
-      setTestsStatus('error');
-    }
-  }, [testsSettings]);
-
-  const saveWifiSettings = useCallback(async () => {
-    setWifiStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/canopy/wifi/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ interface: wifiSettings.interface }),
-      });
-      if (response.ok) {
-        setWifiStatus('saved');
-        setTimeout(() => setWifiStatus('idle'), 2000);
-      } else {
-        setWifiStatus('error');
-      }
-    } catch {
-      setWifiStatus('error');
-    }
-  }, [wifiSettings.interface]);
-
-  // Save link settings to backend (fixes #734)
-  const saveLinkSettings = useCallback(async () => {
-    setLinkStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/settings/link`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          mode: linkSettings.mode,
-          availableModes: linkSettings.availableModes,
-        }),
-      });
-      if (response.ok) {
-        setLinkStatus('saved');
-        setTimeout(() => setLinkStatus('idle'), 2000);
-      } else {
-        setLinkStatus('error');
-      }
-    } catch {
-      setLinkStatus('error');
-    }
-  }, [linkSettings]);
-
-  // Save cable test settings to backend (fixes #740)
-  const saveCableTestSettings = useCallback(async () => {
-    setCableTestStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/settings/cable`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          enabled: cableTestSettings.enabled,
-        }),
-      });
-      if (response.ok) {
-        setCableTestStatus('saved');
-        setTimeout(() => setCableTestStatus('idle'), 2000);
-      } else {
-        setCableTestStatus('error');
-      }
-    } catch {
-      setCableTestStatus('error');
-    }
-  }, [cableTestSettings]);
 
   // Debounced auto-save effects for every settings group
   useDebouncedAutoSave(saveThresholds, thresholdsInitRef, thresholdsTimerRef);
