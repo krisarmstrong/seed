@@ -65,7 +65,7 @@ jobs:
           - arch: arm64
             runner: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install build dependencies
         run: |
@@ -93,7 +93,7 @@ jobs:
           chmod +x ../dist/iperf3-linux-${{ matrix.arch }}
 
       - name: Upload iperf3 artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: iperf3-linux-${{ matrix.arch }}
           path: dist/iperf3-linux-${{ matrix.arch }}
@@ -110,10 +110,10 @@ jobs:
     outputs:
       ui_hash: ${{ steps.ui-hash.outputs.hash }}
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: "25.2.1"
           cache: npm
@@ -132,7 +132,7 @@ jobs:
           echo "hash=$UI_BUILD_HASH" >> "$GITHUB_OUTPUT"
 
       - name: Upload UI dist
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ui-dist
           path: internal/api/ui/
@@ -158,7 +158,7 @@ jobs:
       # real (non-snapshot) release.
       hashes: ${{ steps.hashes.outputs.hashes }}
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
 
@@ -189,7 +189,7 @@ jobs:
           apt-get install -y libpcap-dev libpcap-dev:arm64
 
       - name: Download iperf3 artifacts (amd64 + arm64)
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: iperf3-linux-*
           path: bin/
@@ -199,7 +199,7 @@ jobs:
         run: chmod +x bin/iperf3-linux-*
 
       - name: Download UI dist
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ui-dist
           path: internal/api/ui/
@@ -252,7 +252,7 @@ jobs:
 
       - name: Upload dry-run artifact bundle for inspection
         if: inputs.dry_run
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: goreleaser-dryrun-${{ github.run_id }}
           path: dist/
@@ -272,7 +272,7 @@ jobs:
       id-token: write   # for Sigstore OIDC
       contents: write   # for uploading attestation to the release
       actions: read
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@5a775b367a56d5bd118a224a811bba288150a563 # v2.0.0
     with:
       base64-subjects: ${{ needs.goreleaser.outputs.hashes }}
       upload-assets: true
