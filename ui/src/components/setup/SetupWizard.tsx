@@ -27,6 +27,7 @@ import { Activity, Copy, Eye, EyeOff, Lock, Zap } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LogComponents, logger } from '../../lib/logger';
 import { evaluatePassword, type PasswordRule } from '../../lib/passwordPolicy';
 import {
   button,
@@ -95,8 +96,17 @@ export function SetupWizard({
   useEffect(() => {
     fetch(`${API_BASE}/api/sso/providers`)
       .then((res) => (res.ok ? res.json() : { providers: [] }))
-      .then((data: { providers?: string[] }) => setSsoProviders(data.providers ?? []))
-      .catch(() => setSsoProviders([]));
+      .then((data: { providers?: string[] }) => {
+        const providers = data.providers ?? [];
+        setSsoProviders(providers);
+        logger.info(LogComponents.SETUP, 'SSO provider list loaded', {
+          count: providers.length,
+        });
+      })
+      .catch((err: unknown) => {
+        setSsoProviders([]);
+        logger.warn(LogComponents.SETUP, 'Failed to load SSO providers', err);
+      });
   }, []);
 
   // Update password fields when switching to generated mode
@@ -147,15 +157,20 @@ export function SetupWizard({
     const policy = evaluatePassword(password);
     if (!policy.valid) {
       setError(t('errors.passwordTooShort'));
+      logger.warn(LogComponents.SETUP, 'Setup rejected - password policy not met', {
+        failedRules: policy.rules.filter((r) => !r.ok).map((r) => r.id),
+      });
       return;
     }
 
     if (password !== confirmPassword) {
       setError(t('errors.passwordMismatch'));
+      logger.warn(LogComponents.SETUP, 'Setup rejected - password confirmation mismatch');
       return;
     }
 
     setIsSubmitting(true);
+    logger.info(LogComponents.SETUP, 'Setup submission started', { username });
 
     try {
       // Step 1: Complete setup (set password on server)
@@ -172,8 +187,15 @@ export function SetupWizard({
         // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
         const data = await response.json();
         setError(data.error || t('errors.setupFailed'));
+        logger.error(LogComponents.SETUP, 'Setup complete request failed', null, {
+          status: response.status,
+          serverError: typeof data?.error === 'string' ? data.error : undefined,
+          username,
+        });
         return;
       }
+
+      logger.info(LogComponents.SETUP, 'Setup complete request succeeded', { username });
 
       // Step 2: Automatically log in with the new password (fixes #768 - use username from config)
       const loginSuccess = await onLogin(username, password);
@@ -183,13 +205,16 @@ export function SetupWizard({
         // would land in the main UI unauthenticated. Keep the wizard open with
         // the error visible so they can retry or surface the real failure.
         setError(t('errors.loginFailed'));
+        logger.error(LogComponents.SETUP, 'Auto-login after setup failed', null, { username });
         return;
       }
 
       // Step 3: Setup complete and user is logged in
+      logger.info(LogComponents.SETUP, 'Setup wizard completed - user logged in', { username });
       onComplete();
-    } catch {
+    } catch (err) {
       setError(t('errors.networkError'));
+      logger.error(LogComponents.SETUP, 'Setup network error', err, { username });
     } finally {
       setIsSubmitting(false);
     }
