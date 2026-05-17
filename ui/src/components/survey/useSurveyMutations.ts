@@ -16,6 +16,73 @@ import type { ImportOptions } from './AirMapperImport';
 
 const API_BASE: string = import.meta.env.VITE_API_BASE || '';
 
+/** Stable id derived from index. Backend treats id as opaque. */
+function importedId(prefix: string, index: number): string {
+  return `${prefix}-imported-${index}`;
+}
+
+/**
+ * Pulls AP locations, client locations, and pass-fail criteria off the
+ * parsed AirMapper payload and shapes them for the survey/imported-data
+ * endpoint. Returns null when there's nothing to send so callers can
+ * short-circuit.
+ */
+function buildImportedDataPayload(data: AirMapperData): {
+  apLocations: Array<{ id: string; x: number; y: number; label?: string; imported: boolean }>;
+  clientLocations: Array<{ id: string; x: number; y: number; label?: string; imported: boolean }>;
+  passFailCriteria: Array<{
+    option: string;
+    name?: string;
+    limit: number;
+    suffix?: string;
+    enabled: boolean;
+    mode?: string;
+    ap?: number;
+    imported: boolean;
+  }>;
+} | null {
+  // .locations.passive carries AP positions in AirMapper passive surveys.
+  const apLocations = data.locations.passive.map((loc, idx) => ({
+    id: importedId('ap', idx),
+    x: Math.round(loc.x),
+    y: Math.round(loc.y),
+    label: loc.label || undefined,
+    imported: true,
+  }));
+
+  const clientLocations = data.locations.client.map((loc, idx) => ({
+    id: importedId('client', idx),
+    x: Math.round(loc.x),
+    y: Math.round(loc.y),
+    label: loc.label || undefined,
+    imported: true,
+  }));
+
+  // passFailCriteria lives on the raw backend response (when import went
+  // through the backend route). Be defensive about the shape since
+  // rawSerial is typed as unknown.
+  const raw = data.rawSerial as { passFailCriteria?: unknown } | undefined;
+  const rawCriteria = Array.isArray(raw?.passFailCriteria) ? raw.passFailCriteria : [];
+  const passFailCriteria = rawCriteria
+    .filter((c): c is Record<string, unknown> => typeof c === 'object' && c !== null)
+    .map((c) => ({
+      option: typeof c.option === 'string' ? c.option : '',
+      name: typeof c.name === 'string' ? c.name : undefined,
+      limit: typeof c.limit === 'number' ? c.limit : 0,
+      suffix: typeof c.suffix === 'string' ? c.suffix : undefined,
+      enabled: c.enabled !== false,
+      mode: typeof c.mode === 'string' ? c.mode : undefined,
+      ap: typeof c.ap === 'number' ? c.ap : undefined,
+      imported: true,
+    }))
+    .filter((c) => c.option !== '');
+
+  if (apLocations.length === 0 && clientLocations.length === 0 && passFailCriteria.length === 0) {
+    return null;
+  }
+  return { apLocations, clientLocations, passFailCriteria };
+}
+
 interface UseSurveyMutationsArgs {
   survey: Survey;
   setSurvey: (s: Survey) => void;
@@ -214,6 +281,27 @@ export function useSurveyMutations({
             scaleSource: 'imported',
             propagationM: data.calibration.propagationM,
           });
+        }
+
+        // Fixes #727: persist AP / client placements and pass-fail criteria
+        // from the parsed AirMapper data. Previously these were dropped on
+        // the floor (literally) and the user saw a floor plan with no markers.
+        const importedData = buildImportedDataPayload(data);
+        if (importedData) {
+          const dataRes = await fetch(
+            `${API_BASE}/api/canopy/survey/imported-data?id=${survey.id}`,
+            {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify(importedData),
+            },
+          );
+          if (dataRes.ok) {
+            const updated = await (dataRes.json() as Promise<Survey>);
+            setSurvey(updated);
+            onUpdate();
+          }
         }
 
         setShowImport(false);

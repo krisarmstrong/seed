@@ -206,6 +206,7 @@ func (s *Server) setupCanopyRoutes() {
 	s.mux.HandleFunc(APIVersionPrefix+"/canopy/survey/sample", s.addSurveySample)
 	s.mux.HandleFunc(APIVersionPrefix+"/canopy/survey/floorplan", s.updateSurveyFloorPlan)
 	s.mux.HandleFunc(APIVersionPrefix+"/canopy/survey/settings", s.updateSurveySettings)
+	s.mux.HandleFunc(APIVersionPrefix+"/canopy/survey/imported-data", s.updateSurveyImportedData)
 	s.mux.Handle(
 		APIVersionPrefix+"/canopy/survey/import/airmapper",
 		s.endpointRateLimiter().RateLimitMiddleware(http.HandlerFunc(s.importAirMapper)),
