@@ -121,5 +121,6 @@ vendor/
 yarn-error.log*
 
 # Build output
+build/
 dist/
 coverage.out
