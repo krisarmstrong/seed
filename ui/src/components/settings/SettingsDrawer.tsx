@@ -30,7 +30,10 @@ import type React from 'react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettings } from '../../contexts/useSettings';
+import { useDebouncedAutoSave } from '../../hooks/useDebouncedAutoSave';
+import { useSubnetSettings } from '../../hooks/useSubnetSettings';
 import { useTheme } from '../../hooks/useTheme';
+import { useVulnerabilitySettings } from '../../hooks/useVulnerabilitySettings';
 import { LogComponents, logger } from '../../lib/logger';
 import { button, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
 import type {
@@ -42,32 +45,26 @@ import type {
   NetworkDiscoverySettings,
   SettingsThresholds,
   SnmpSettings as SnmpSettingsType,
-  SubnetConfig,
   TestsSettings,
-  VulnerabilityScanSettings,
   WiFiSettings as WiFiSettingsType,
 } from '../../types/settings';
-import { CollapsibleSection } from '../ui/CollapsibleSection';
-import { Network } from '../ui/icons';
+import { SettingsDrawerFooter } from './SettingsDrawerFooter';
+import { SettingsDrawerNetworkSection } from './SettingsDrawerNetworkSection';
 import { AppearanceSettings } from './sections/AppearanceSettings';
-import { AutoSaveIndicator } from './sections/AutoSaveIndicator';
 import { CableTestSettings } from './sections/CableTestSettings';
 import { ConfigBackupsSection } from './sections/ConfigBackupsSection';
 import { DiscoverySettings } from './sections/DiscoverySettings';
 import { DnsSettings } from './sections/DnsSettings';
 import { HealthChecksSettings } from './sections/HealthChecksSettings';
 import { LinkSettings } from './sections/LinkSettings';
-import { MtuControl } from './sections/MtuControl';
 import { PerformanceSettings } from './sections/PerformanceSettings';
 import { ThresholdsSettings } from './sections/ThresholdsSettings';
 import { UpdateSettings } from './sections/UpdateSettings';
-import { VlanControl } from './sections/VlanControl';
 import { VulnerabilitySettings } from './sections/VulnerabilitySettings';
 import { WiFiSettings } from './sections/WiFiSettings';
 import {
   INLINE_DEFAULT_CABLE_TEST_SETTINGS,
   INLINE_DEFAULT_LINK_SETTINGS,
-  INLINE_DEFAULT_VULNERABILITY_SETTINGS,
   normalizeTestsSettingsForSave,
   withIds,
 } from './settingsDrawerNormalizer';
@@ -260,16 +257,25 @@ export const SettingsDrawer: React.MemoExoticComponent<
     retries: 2,
     port: 161,
   });
-  // Additional subnets for scanning
-  const [subnets, setSubnets] = useState<SubnetConfig[]>([]);
-  const [newSubnetCidr, setNewSubnetCidr] = useState('');
-  const [newSubnetName, setNewSubnetName] = useState('');
-  const [subnetError, setSubnetError] = useState<string | null>(null);
+  // Subnet management lives in its own hook
+  const {
+    subnets,
+    newSubnetCidr,
+    setNewSubnetCidr,
+    newSubnetName,
+    setNewSubnetName,
+    subnetError,
+    setSubnetError,
+    subnetsStatus,
+    fetchSubnets,
+    addSubnet,
+    toggleSubnet,
+    deleteSubnet,
+  } = useSubnetSettings(isOpen);
   // Log preview (debug)
   const [logPreview, setLogPreview] = useState<string[]>([]);
   const [logLoading, setLogLoading] = useState(false);
   const [logError, setLogError] = useState<string | null>(null);
-  const [subnetsStatus, setSubnetsStatus] = useState<SaveStatus>('idle');
   // Auto-save status for each section
   type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
   const [thresholdsStatus, setThresholdsStatus] = useState<SaveStatus>('idle');
@@ -278,10 +284,15 @@ export const SettingsDrawer: React.MemoExoticComponent<
   const [linkStatus, setLinkStatus] = useState<SaveStatus>('idle');
   const [cableTestStatus, setCableTestStatus] = useState<SaveStatus>('idle');
   const [snmpStatus, setSnmpStatus] = useState<SaveStatus>('idle');
-  const [vulnSettings, setVulnSettings] = useState<VulnerabilityScanSettings>(
-    INLINE_DEFAULT_VULNERABILITY_SETTINGS,
-  );
-  const [vulnStatus, setVulnStatus] = useState<SaveStatus>('idle');
+  const {
+    vulnSettings,
+    setVulnSettings,
+    vulnStatus,
+    vulnInitRef,
+    vulnTimerRef,
+    fetchVulnSettings,
+    saveVulnSettings,
+  } = useVulnerabilitySettings();
   // Status for display, iperf comes from context (settingsStatus)
   const displayStatus = settingsStatus.display;
   const iperfStatus = settingsStatus.iperf;
@@ -297,7 +308,6 @@ export const SettingsDrawer: React.MemoExoticComponent<
   const cableTestInitRef = useRef(true);
   const networkDiscoveryInitRef = useRef(true);
   const snmpInitRef = useRef(true);
-  const vulnInitRef = useRef(true);
 
   // Debounce timers (fab, display, iperf now handled by context)
   const thresholdsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -307,7 +317,6 @@ export const SettingsDrawer: React.MemoExoticComponent<
   const cableTestTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const networkDiscoveryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const snmpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const vulnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Legacy state (keep for IP settings which still needs manual apply)
   const [savingIp, setSavingIp] = useState(false);
@@ -569,21 +578,6 @@ export const SettingsDrawer: React.MemoExoticComponent<
     }
   }, []);
 
-  // Fetch configured subnets from API
-  const fetchSubnets = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/devices/subnets`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setSubnets(Array.isArray(data) ? data : []);
-      }
-    } catch (err) {
-      logger.error(LogComponents.Discovery, 'Failed to fetch subnets', err);
-    }
-  }, []);
-
   // Fetch a small tail of the application log (debug)
   // Security fix #301: Removed VITE_LOG_ACCESS_TOKEN - JWT authentication is sufficient
   const fetchLogPreview = useCallback(async () => {
@@ -605,111 +599,6 @@ export const SettingsDrawer: React.MemoExoticComponent<
       setLogLoading(false);
     }
   }, []);
-
-  // Fetch subnets when drawer opens
-  useEffect(() => {
-    if (isOpen) {
-      fetchSubnets().catch(() => undefined);
-    }
-  }, [isOpen, fetchSubnets]);
-
-  // Add a new subnet
-  const addSubnet = async (): Promise<void> => {
-    if (!newSubnetCidr.trim()) {
-      setSubnetError(t('network.cidrRequired'));
-      return;
-    }
-
-    setSubnetError(null);
-    setSubnetsStatus('saving');
-
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/devices/subnets`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          cidr: newSubnetCidr.trim(),
-          name: newSubnetName.trim() || newSubnetCidr.trim(),
-          enabled: true,
-        }),
-      });
-
-      if (response.ok) {
-        setNewSubnetCidr('');
-        setNewSubnetName('');
-        setSubnetsStatus('saved');
-        setTimeout(() => setSubnetsStatus('idle'), 2000);
-        await fetchSubnets();
-      } else {
-        // Handle both JSON and plain text error responses
-        const contentType = response.headers.get('content-type');
-        if (contentType?.includes('application/json')) {
-          const errorData = await (response.json() as Promise<{ error?: string }>);
-          setSubnetError(errorData.error || 'Failed to add subnet');
-        } else {
-          const errorText = await (response.text() as Promise<string>);
-          setSubnetError(errorText || 'Failed to add subnet');
-        }
-        setSubnetsStatus('error');
-      }
-    } catch (err) {
-      setSubnetError(err instanceof Error ? err.message : 'Network error adding subnet');
-      setSubnetsStatus('error');
-    }
-  };
-
-  // Toggle subnet enabled state
-  const toggleSubnet = async (cidr: string, enabled: boolean): Promise<void> => {
-    setSubnetsStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/devices/subnets`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ cidr, enabled }),
-      });
-
-      if (response.ok) {
-        setSubnetsStatus('saved');
-        setTimeout(() => setSubnetsStatus('idle'), 2000);
-        await fetchSubnets();
-      } else {
-        setSubnetsStatus('error');
-      }
-    } catch {
-      setSubnetsStatus('error');
-    }
-  };
-
-  // Delete a subnet
-  const deleteSubnet = async (cidr: string): Promise<void> => {
-    setSubnetsStatus('saving');
-    try {
-      // Backend expects CIDR as query parameter, not in body
-      const response = await fetch(
-        `${API_BASE}/api/v1/shell/devices/subnets?cidr=${encodeURIComponent(cidr)}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        },
-      );
-
-      if (response.ok) {
-        setSubnetsStatus('saved');
-        setTimeout(() => setSubnetsStatus('idle'), 2000);
-        await fetchSubnets();
-      } else {
-        setSubnetsStatus('error');
-      }
-    } catch {
-      setSubnetsStatus('error');
-    }
-  };
 
   // Save Network Discovery settings to API
   const saveNetworkDiscoverySettings = useCallback(async () => {
@@ -755,60 +644,6 @@ export const SettingsDrawer: React.MemoExoticComponent<
       setSnmpStatus('error');
     }
   }, [snmpSettings]);
-
-  // Fetch vulnerability scanner settings from API
-  const fetchVulnSettings = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/vulnerabilities/settings`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await (response.json() as Promise<Record<string, unknown>>);
-        setVulnSettings({
-          enabled: data.enabled ?? false,
-          cveDatabase: data.cve_database ?? data.cveDatabase ?? 'nvd',
-          nvdApiKey: data.nvd_api_key ?? data.nvdApiKey ?? '',
-          updateInterval: data.update_interval ?? data.updateInterval ?? 86400,
-          severityThreshold: data.severity_threshold ?? data.severityThreshold ?? 'medium',
-          maxConcurrent: data.max_concurrent ?? data.maxConcurrent ?? 5,
-          autoScan: data.auto_scan ?? data.autoScan ?? false,
-        });
-      }
-    } catch (err) {
-      logger.error(LogComponents.CONFIG, 'Failed to fetch vulnerability settings', err);
-    }
-  }, []);
-
-  const saveVulnSettings = useCallback(async () => {
-    setVulnStatus('saving');
-    try {
-      const response = await fetch(`${API_BASE}/api/v1/shell/vulnerabilities/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          enabled: vulnSettings.enabled,
-          cveDatabase: vulnSettings.cveDatabase,
-          nvdApiKey: vulnSettings.nvdApiKey,
-          updateInterval: vulnSettings.updateInterval,
-          severityThreshold: vulnSettings.severityThreshold,
-          maxConcurrent: vulnSettings.maxConcurrent,
-          autoScan: vulnSettings.autoScan,
-        }),
-      });
-      if (response.ok) {
-        setVulnStatus('saved');
-        setTimeout(() => setVulnStatus('idle'), 2000);
-      } else {
-        setVulnStatus('error');
-      }
-    } catch {
-      setVulnStatus('error');
-    }
-  }, [vulnSettings]);
-
   useEffect(() => {
     if (isOpen) {
       // Reset init refs on open
@@ -1019,151 +854,19 @@ export const SettingsDrawer: React.MemoExoticComponent<
     }
   }, [cableTestSettings]);
 
-  // Auto-save thresholds with debounce
-  useEffect(() => {
-    if (thresholdsInitRef.current) {
-      return;
-    }
-    if (thresholdsTimerRef.current) {
-      clearTimeout(thresholdsTimerRef.current);
-    }
-    thresholdsTimerRef.current = setTimeout(() => {
-      saveThresholds().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (thresholdsTimerRef.current) {
-        clearTimeout(thresholdsTimerRef.current);
-      }
-    };
-  }, [saveThresholds]);
-
-  // Auto-save tests settings with debounce
-  useEffect(() => {
-    if (testsInitRef.current) {
-      return;
-    }
-    if (testsTimerRef.current) {
-      clearTimeout(testsTimerRef.current);
-    }
-    testsTimerRef.current = setTimeout(() => {
-      saveTestsSettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (testsTimerRef.current) {
-        clearTimeout(testsTimerRef.current);
-      }
-    };
-  }, [saveTestsSettings]);
-
-  // Auto-save wifi settings with debounce
-  useEffect(() => {
-    if (wifiInitRef.current) {
-      return;
-    }
-    if (wifiTimerRef.current) {
-      clearTimeout(wifiTimerRef.current);
-    }
-    wifiTimerRef.current = setTimeout(() => {
-      saveWifiSettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (wifiTimerRef.current) {
-        clearTimeout(wifiTimerRef.current);
-      }
-    };
-  }, [saveWifiSettings]);
-
-  // Auto-save link settings with debounce (fixes #734)
-  useEffect(() => {
-    if (linkInitRef.current) {
-      return;
-    }
-    if (linkTimerRef.current) {
-      clearTimeout(linkTimerRef.current);
-    }
-    linkTimerRef.current = setTimeout(() => {
-      saveLinkSettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (linkTimerRef.current) {
-        clearTimeout(linkTimerRef.current);
-      }
-    };
-  }, [saveLinkSettings]);
-
-  // Auto-save cable test settings with debounce (fixes #740)
-  useEffect(() => {
-    if (cableTestInitRef.current) {
-      return;
-    }
-    if (cableTestTimerRef.current) {
-      clearTimeout(cableTestTimerRef.current);
-    }
-    cableTestTimerRef.current = setTimeout(() => {
-      saveCableTestSettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (cableTestTimerRef.current) {
-        clearTimeout(cableTestTimerRef.current);
-      }
-    };
-  }, [saveCableTestSettings]);
-
-  // Display options and iperf settings auto-save is handled by SettingsContext
-
-  // Auto-save Network Discovery settings with debounce
-  useEffect(() => {
-    if (networkDiscoveryInitRef.current) {
-      return;
-    }
-    if (networkDiscoveryTimerRef.current) {
-      clearTimeout(networkDiscoveryTimerRef.current);
-    }
-    networkDiscoveryTimerRef.current = setTimeout(() => {
-      saveNetworkDiscoverySettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (networkDiscoveryTimerRef.current) {
-        clearTimeout(networkDiscoveryTimerRef.current);
-      }
-    };
-  }, [saveNetworkDiscoverySettings]);
-
-  // Auto-save SNMP settings with debounce
-  useEffect(() => {
-    if (snmpInitRef.current) {
-      return;
-    }
-    if (snmpTimerRef.current) {
-      clearTimeout(snmpTimerRef.current);
-    }
-    snmpTimerRef.current = setTimeout(() => {
-      saveSnmpSettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (snmpTimerRef.current) {
-        clearTimeout(snmpTimerRef.current);
-      }
-    };
-  }, [saveSnmpSettings]);
-
-  // Auto-save vulnerability settings with debounce
-  useEffect(() => {
-    if (vulnInitRef.current) {
-      return;
-    }
-    if (vulnTimerRef.current) {
-      clearTimeout(vulnTimerRef.current);
-    }
-    vulnTimerRef.current = setTimeout(() => {
-      saveVulnSettings().catch(() => undefined);
-    }, 800);
-    return (): void => {
-      if (vulnTimerRef.current) {
-        clearTimeout(vulnTimerRef.current);
-      }
-    };
-  }, [saveVulnSettings]);
+  // Debounced auto-save effects for every settings group
+  useDebouncedAutoSave(saveThresholds, thresholdsInitRef, thresholdsTimerRef);
+  useDebouncedAutoSave(saveTestsSettings, testsInitRef, testsTimerRef);
+  useDebouncedAutoSave(saveWifiSettings, wifiInitRef, wifiTimerRef);
+  useDebouncedAutoSave(saveLinkSettings, linkInitRef, linkTimerRef);
+  useDebouncedAutoSave(saveCableTestSettings, cableTestInitRef, cableTestTimerRef);
+  useDebouncedAutoSave(
+    saveNetworkDiscoverySettings,
+    networkDiscoveryInitRef,
+    networkDiscoveryTimerRef,
+  );
+  useDebouncedAutoSave(saveSnmpSettings, snmpInitRef, snmpTimerRef);
+  useDebouncedAutoSave(saveVulnSettings, vulnInitRef, vulnTimerRef);
 
   // Fixes #917: Master cleanup effect for all timer refs on unmount
   // Individual useEffects clean up on re-render, but this ensures cleanup on unmount
@@ -1325,269 +1028,19 @@ export const SettingsDrawer: React.MemoExoticComponent<
           />
 
           {/* Network Section - IP/DHCP config (third) */}
-          <CollapsibleSection
-            title={
-              <div class={layout.inline.default}>
-                <Network class={iconTokens.size.sm} />
-                <span>{t('sections.network')}</span>
-              </div>
-            }
-          >
-            {/* Network Configuration */}
-            <div class="stack">
-              <p class="section-title">{t('network.title')}</p>
-              {/* Mode Toggle */}
-              <div class={cn('grid grid-cols-2', spacing.gap.compact)}>
-                <button
-                  type="button"
-                  onClick={(): void => setIpSettings((prev) => ({ ...prev, mode: 'dhcp' }))}
-                  class={cn(
-                    spacing.tab,
-                    radius.md,
-                    'body-small font-medium transition-colors',
-                    ipSettings.mode === 'dhcp'
-                      ? 'bg-brand-primary text-text-inverse'
-                      : 'bg-surface-base border border-surface-border text-text-primary hover:bg-surface-hover',
-                  )}
-                >
-                  {t('network.dhcp')}
-                </button>
-                <button
-                  type="button"
-                  onClick={(): void => setIpSettings((prev) => ({ ...prev, mode: 'static' }))}
-                  class={cn(
-                    spacing.tab,
-                    radius.md,
-                    'body-small font-medium transition-colors',
-                    ipSettings.mode === 'static'
-                      ? 'bg-brand-primary text-text-inverse'
-                      : 'bg-surface-base border border-surface-border text-text-primary hover:bg-surface-hover',
-                  )}
-                >
-                  {t('network.static')}
-                </button>
-              </div>
-
-              {/* Static IP Fields */}
-              {ipSettings.mode === 'static' && (
-                <div
-                  class={cn('stack', spacing.padding.top.heading, 'border-t border-surface-border')}
-                >
-                  <div>
-                    <label for="static-ip-address" class="caption font-medium">
-                      {t('network.ipAddress')} *
-                    </label>
-                    <input
-                      id="static-ip-address"
-                      type="text"
-                      value={ipSettings.address}
-                      onChange={(
-                        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-                      ): void =>
-                        setIpSettings((prev) => ({
-                          ...prev,
-                          address: e.target.value,
-                        }))
-                      }
-                      placeholder="192.168.1.100"
-                      class={cn(
-                        'w-full',
-                        spacing.margin.top.tight,
-                        spacing.chip.sm,
-                        'bg-surface-base border',
-                        radius.md,
-                        'body-small text-text-primary',
-                        ipSettings.address && !isValidIp(ipSettings.address)
-                          ? 'border-status-error'
-                          : 'border-surface-border',
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <label for="static-subnet-mask" class="caption font-medium">
-                      {t('network.subnetMask')} *
-                    </label>
-                    <input
-                      id="static-subnet-mask"
-                      type="text"
-                      value={ipSettings.netmask}
-                      onChange={(
-                        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-                      ): void =>
-                        setIpSettings((prev) => ({
-                          ...prev,
-                          netmask: e.target.value,
-                        }))
-                      }
-                      placeholder="24 or 255.255.255.0"
-                      class={cn(
-                        'w-full',
-                        spacing.margin.top.tight,
-                        spacing.chip.lg,
-                        'bg-surface-base border border-surface-border',
-                        radius.md,
-                        'body-small text-text-primary',
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <label for="static-gateway" class="caption font-medium">
-                      {t('network.gateway')}
-                    </label>
-                    <input
-                      id="static-gateway"
-                      type="text"
-                      value={ipSettings.gateway}
-                      onChange={(
-                        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-                      ): void =>
-                        setIpSettings((prev) => ({
-                          ...prev,
-                          gateway: e.target.value,
-                        }))
-                      }
-                      placeholder="192.168.1.1"
-                      class={cn(
-                        'w-full',
-                        spacing.margin.top.tight,
-                        spacing.chip.sm,
-                        'bg-surface-base border',
-                        radius.md,
-                        'body-small text-text-primary',
-                        ipSettings.gateway && !isValidIp(ipSettings.gateway)
-                          ? 'border-status-error'
-                          : 'border-surface-border',
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <label for="static-dns-servers" class="caption font-medium">
-                      {t('network.dnsServers')}
-                    </label>
-                    <input
-                      id="static-dns-servers"
-                      type="text"
-                      value={dnsInput}
-                      onChange={(
-                        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-                      ): void => setDnsInput(e.target.value)}
-                      placeholder="8.8.8.8, 8.8.4.4"
-                      class={cn(
-                        'w-full',
-                        spacing.margin.top.tight,
-                        spacing.chip.lg,
-                        'bg-surface-base border border-surface-border',
-                        radius.md,
-                        'body-small text-text-primary',
-                      )}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Apply Button */}
-              <button
-                type="button"
-                onClick={saveIpSettings}
-                disabled={savingIp || (ipSettings.mode === 'static' && !ipSettings.address)}
-                class={cn(
-                  'w-full',
-                  button.size.md,
-                  'bg-brand-primary text-text-inverse',
-                  radius.md,
-                  'font-medium hover:bg-brand-accent disabled:opacity-50 transition-colors',
-                )}
-              >
-                {savingIp ? t('network.applying') : t('network.applyIpSettings')}
-              </button>
-
-              {ipMessage ? (
-                <p
-                  class={cn(
-                    'caption text-center',
-                    ipMessage.includes('Failed') || ipMessage.includes('Error')
-                      ? 'text-status-error'
-                      : 'text-status-success',
-                  )}
-                >
-                  {ipMessage}
-                </p>
-              ) : null}
-
-              <p class="caption">{t('network.requiresRoot')}</p>
-            </div>
-
-            {/* Display Options */}
-            <div
-              class={cn(
-                'border-t border-surface-border',
-                spacing.padding.top.heading,
-                spacing.margin.top.heading,
-              )}
-            >
-              <p class={cn('caption font-medium', spacing.margin.bottom.inline)}>
-                {t('network.displayOptions')} <AutoSaveIndicator status={displayStatus} />
-              </p>
-              <div class="stack-sm">
-                {/* Show Public IP */}
-                <label
-                  class={cn(
-                    'flex items-center justify-between',
-                    spacing.pad.xs,
-                    'bg-surface-base',
-                    radius.md,
-                    'border border-surface-border',
-                  )}
-                >
-                  <div>
-                    <span class="body-small text-text-primary font-medium">
-                      {t('network.showPublicIp')}
-                    </span>
-                    <p class="caption text-text-muted">{t('network.displayInNetworkCard')}</p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={displayOptions.showPublicIp}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-                      setDisplayOptions((prev) => ({
-                        ...prev,
-                        showPublicIp: e.target.checked,
-                      }))
-                    }
-                    class={iconTokens.size.sm}
-                  />
-                </label>
-              </div>
-            </div>
-
-            {/* VLAN Configuration */}
-            <div
-              class={cn(
-                'border-t border-surface-border',
-                spacing.padding.top.heading,
-                spacing.margin.top.heading,
-              )}
-            >
-              <p class={cn('section-title', spacing.margin.bottom.inline)}>
-                {t('network.vlanTag')}
-              </p>
-              <VlanControl />
-            </div>
-
-            {/* MTU Configuration */}
-            <div
-              class={cn(
-                'border-t border-surface-border',
-                spacing.padding.top.heading,
-                spacing.margin.top.heading,
-              )}
-            >
-              <p class={cn('section-title', spacing.margin.bottom.inline)}>
-                {t('network.mtuSetting')}
-              </p>
-              <MtuControl />
-            </div>
-          </CollapsibleSection>
+          <SettingsDrawerNetworkSection
+            ipSettings={ipSettings}
+            setIpSettings={setIpSettings}
+            dnsInput={dnsInput}
+            setDnsInput={setDnsInput}
+            saveIpSettings={saveIpSettings}
+            savingIp={savingIp}
+            ipMessage={ipMessage}
+            displayOptions={displayOptions}
+            setDisplayOptions={setDisplayOptions}
+            displayStatus={displayStatus}
+            isValidIp={isValidIp}
+          />
 
           {/* WiFi Settings - only shown in WiFi mode (#754) */}
           {isWifi ? (
@@ -1680,95 +1133,13 @@ export const SettingsDrawer: React.MemoExoticComponent<
           {/* Updates Section (implements #862) */}
           <UpdateSettings currentVersion={version} />
 
-          {/* Logs (debug) */}
-          <section class={cn(spacing.padding.top.section, 'border-t border-surface-border')}>
-            <div class="flex items-start justify-between">
-              <div>
-                <h3 class="body-small font-medium text-text-muted">{t('logs.title')}</h3>
-                <p class="caption text-text-muted">{t('logs.description')}</p>
-              </div>
-              <button
-                type="button"
-                onClick={fetchLogPreview}
-                class={cn(
-                  'caption',
-                  spacing.chip.sm,
-                  'border border-surface-border',
-                  radius.md,
-                  'text-text-muted hover:text-text-primary hover:border-text-muted transition-colors',
-                )}
-              >
-                {logLoading ? t('logs.loading') : t('logs.view')}
-              </button>
-            </div>
-            {logError ? (
-              <p class={cn('caption text-status-error', spacing.margin.top.inline)}>{logError}</p>
-            ) : null}
-            {!logError && logPreview.length > 0 ? (
-              <pre
-                class={cn(
-                  spacing.margin.top.inline,
-                  'max-h-48 overflow-y-auto text-2xs leading-5 bg-surface-base border border-surface-border',
-                  radius.md,
-                  spacing.chip.lg,
-                  'text-text-primary whitespace-pre-wrap',
-                )}
-              >
-                {logPreview.join('\n')}
-              </pre>
-            ) : null}
-          </section>
-
-          {/* Export Section */}
-          <section class={cn(spacing.padding.top.section, 'border-t border-surface-border')}>
-            <h3 class={cn('body-small font-medium text-text-muted', spacing.margin.bottom.heading)}>
-              {t('export.title')}
-            </h3>
-            <a
-              href={`${API_BASE}/api/harvest/export`}
-              download="seed-export.json"
-              class={cn(
-                'w-full',
-                button.size.md,
-                'bg-surface-base border border-surface-border text-text-primary',
-                radius.md,
-                'font-medium hover:bg-surface-hover transition-colors flex items-center justify-center',
-                spacing.gap.compact,
-                'touch-manipulation',
-              )}
-            >
-              <svg
-                class={iconTokens.size.sm}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-              {t('export.download')}
-            </a>
-            <p class={cn('caption text-text-muted', spacing.margin.top.inline)}>
-              {t('export.description')}
-            </p>
-          </section>
-
-          {/* About Section */}
-          <section class={cn(spacing.padding.top.section, 'border-t border-surface-border')}>
-            <h3 class={cn('body-small font-medium text-text-muted', spacing.margin.bottom.inline)}>
-              {t('about.title')}
-            </h3>
-            <p class="caption text-text-muted">
-              {t('about.appName')} {version}
-              <br />
-              {t('about.description')}
-            </p>
-          </section>
+          <SettingsDrawerFooter
+            version={version}
+            fetchLogPreview={fetchLogPreview}
+            logLoading={logLoading}
+            logError={logError}
+            logPreview={logPreview}
+          />
         </div>
       </div>
     </>
