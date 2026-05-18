@@ -1,189 +1,221 @@
 # The Seed
 
-> Portable Network Diagnostic Tool with Real-Time Web UI
+> Portable network diagnostic appliance with real-time web UI.
 
 [![CI](https://github.com/krisarmstrong/seed/actions/workflows/ci.yml/badge.svg)](https://github.com/krisarmstrong/seed/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/krisarmstrong/seed?logo=github)](https://github.com/krisarmstrong/seed/releases/latest)
+[![CodeQL](https://github.com/krisarmstrong/seed/actions/workflows/codeql.yml/badge.svg)](https://github.com/krisarmstrong/seed/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/krisarmstrong/seed/badge)](https://scorecard.dev/viewer/?uri=github.com/krisarmstrong/seed)
 [![Go Reference](https://pkg.go.dev/badge/github.com/krisarmstrong/seed.svg)](https://pkg.go.dev/github.com/krisarmstrong/seed)
 [![Go Report Card](https://goreportcard.com/badge/github.com/krisarmstrong/seed)](https://goreportcard.com/report/github.com/krisarmstrong/seed)
 [![License: BSL 1.1](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
 
-The Seed is a professional-grade network diagnostic appliance designed for network technicians and engineers. Plug it
-into any network jack and instantly see link status, switch information, DHCP details, DNS health, and gateway
-connectivity through a modern web interface.
+The Seed is a network diagnostic appliance from **Mustard Seed Networks**.
+Plug it into any network jack and the web UI shows link status, switch
+information, DHCP/DNS health, gateway reachability, Wi-Fi survey data, and
+security posture in real time. Built to run on a Raspberry Pi or any modern
+Linux box.
+
+## Modules
+
+| Module | Purpose | Color |
+|--------|---------|-------|
+| **Roots** | Path analysis, traceroute, deep connectivity | Amber |
+| **Canopy** | Wi-Fi planning, surveys, coverage heat maps | Green |
+| **Shell** | Security posture, hardening, vulnerability checks | Orange |
+| **Sap** | Live telemetry, monitoring, data flow | Cyan |
+| **Harvest** | Reporting, compliance, exports | Gold |
 
 ## Features
 
-- **Real-time diagnostics** - Live updates via WebSocket
-- **Link status** - Speed, duplex, advertised capabilities
-- **Switch discovery** - LLDP/CDP/EDP/FDP support
-- **DHCP analysis** - Phase timing breakdown (Discover/Offer/Request/Ack)
-- **DNS testing** - Forward/reverse lookups with timing
-- **Gateway health** - Ping tests with latency tracking
-- **VLAN detection** - Tagged and native VLAN identification
-- **Wi-Fi support** - Signal strength, channel, security info
-- **Threshold alerts** - Configurable green/yellow/red indicators
-- **Modern UI** - Dark/light mode, mobile-responsive
-- **Secure** - HTTPS by default, authentication required
-
-## Screenshots
-
-Screenshots coming soon.
+- **Real-time diagnostics** — live updates over WebSocket
+- **Link status** — speed, duplex, advertised capabilities, flap counts
+- **Switch discovery** — LLDP / CDP / EDP / FDP / Foundry
+- **DHCP analysis** — phase timing breakdown (Discover/Offer/Request/Ack)
+- **DNS testing** — forward + reverse lookups with timing
+- **Gateway health** — ping, traceroute, latency tracking
+- **VLAN detection** — tagged and native VLAN identification
+- **Wi-Fi** — signal strength, channel survey, security info (nl80211)
+- **Path discovery** — multi-hop topology mapping
+- **Health checks** — TCP / UDP / HTTP probes with thresholds
+- **Vulnerability scanning** — CISA KEV + CVE feeds
+- **Threshold alerts** — configurable green / yellow / red indicators
+- **Modern UI** — Tailwind v4 design system, dark/light themes, mobile-responsive
+- **i18n-ready** — translated UI namespaces
+- **Secure** — HTTPS by default with self-signed cert; password-only after first-run setup
 
 ## Quick Start
 
 ### Prerequisites
 
-- Raspberry Pi 4 (or any Linux system)
-- Go 1.22+
-- Node.js 24+ (LTS)
+- Linux (Raspberry Pi 4 or any modern x86/arm64 box)
+- Go 1.26+
+- Node.js 26+
 - libpcap-dev
 
-#### Hardware Considerations
+### Hardware notes
 
-- **Wi-Fi Diagnostics:** Requires nl80211-compatible adapter (Intel AX200/210 recommended)
-- **Cable Diagnostics (TDR):** Requires Intel I350/I210 or Broadcom BCM5719/5720
-- **Basic Diagnostics:** Works with any network adapter
+| Capability | Recommended adapter |
+|------------|---------------------|
+| Basic diagnostics | any |
+| Wi-Fi survey | nl80211-compatible (Intel AX200/210) |
+| Cable diagnostics (TDR) | Intel I350/I210 or Broadcom BCM5719/5720 |
 
-See **[HARDWARE.md](HARDWARE.md)** for detailed compatibility guide and recommendations.
+See [HARDWARE.md](HARDWARE.md) for the full compatibility matrix.
 
-**Note:** The Seed requires raw socket access for network diagnostics. On Linux, this requires either:
+The Seed needs raw-socket access for diagnostics. On Linux either:
 
-- Running as root (`sudo ./seed`), or
-- Setting capabilities: `sudo setcap cap_net_raw,cap_net_admin=+ep ./seed`
+```bash
+# run as root
+sudo ./seed
 
-### Installation
+# or grant capabilities once
+sudo setcap cap_net_raw,cap_net_admin=+ep ./seed
+./seed
+```
 
-````bash
-# Clone the repository
+### Install + run
+
+```bash
 git clone https://github.com/krisarmstrong/seed.git
 cd seed
+make build            # builds frontend + backend in one step
+sudo ./seed           # listens on https://localhost:8443
+```
 
-# Build backend
-make build
+Or grab a package from the [releases page](https://github.com/krisarmstrong/seed/releases)
+(`.deb`, `.rpm`, macOS `.pkg`, Windows `.zip`) or install via Homebrew:
 
-# Build frontend
-cd web && npm ci && npm run build && cd ..
+```bash
+brew install krisarmstrong/tap/seed
+```
 
-# Run
-sudo ./seed
-```text
+### First run
 
-### Access
-
-Open `https://<device-ip>:8443` in your browser.
-
-Default credentials:
-
-- Username: `admin`
-- Password: `seed`
-
-#### Change these on first login!
+1. Open `https://<device-ip>:8443` (accept the self-signed cert).
+2. Walk the first-run setup wizard to create the admin password — there is
+   no shipped default password.
 
 ## Configuration
 
-Configuration is stored in `seed.yaml`. Default settings:
+`seed.yaml` (and `SEED_*` env vars) configure the appliance:
 
 ```yaml
 server:
-  port: 8443 # Default HTTPS port
-  https: true # HTTPS enabled by default
+  port: 8443      # HTTPS
+  https: true
 
 interface:
   default: eth0
 
 thresholds:
-  dhcp:
-    warning: 500ms
-    critical: 2s
-  dns:
-    warning: 100ms
-    critical: 500ms
-  ping:
-    warning: 50ms
-    critical: 200ms
-```bash
+  dhcp:  { warning: 500ms, critical: 2s }
+  dns:   { warning: 100ms, critical: 500ms }
+  ping:  { warning:  50ms, critical: 200ms }
+```
 
-## Development
+Common environment overrides:
 
 ```bash
-# Run backend in development mode (requires privileges for ICMP)
-sudo go run cmd/seed/main.go
-
-# Or build and set capabilities (preferred for repeated runs)
-go build -o seed ./cmd/seed
-sudo setcap cap_net_raw,cap_net_admin=+ep ./seed
-./seed
-
-# Run frontend in development mode
-cd web && npm run dev
-```text
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
-
-### Frontend Development
-
-The frontend uses a centralized design system with semantic tokens. See:
-
-- **[web/THEMING.md](web/THEMING.md)** - Color tokens, typography, spacing, and component patterns
-- **[STYLE_GUIDE.md](STYLE_GUIDE.md)** - Naming conventions and code standards
+SEED_HTTP_PORT=8443
+SEED_LOG_LEVEL=info       # debug | info | warn | error
+SEED_DB_PATH=/var/lib/seed/data.db
+```
 
 ## Architecture
 
-```text
-┌─────────────────────────────────────────┐
-│              Web Browser                │
-│         (React + WebSocket)             │
-└─────────────────┬───────────────────────┘
-                  │ HTTPS/WSS
-┌─────────────────▼───────────────────────┐
-│             Go Backend                  │
-│  ┌─────────┬─────────┬─────────┐       │
-│  │   API   │   WS    │  Auth   │       │
-│  └────┬────┴────┬────┴────┬────┘       │
-│       │         │         │             │
-│  ┌────▼────┬────▼────┬────▼────┐       │
-│  │ Network │ Capture │  DHCP   │       │
-│  │  Mgmt   │ (pcap)  │ Client  │       │
-│  └─────────┴─────────┴─────────┘       │
-└─────────────────────────────────────────┘
-```text
+```
+ui/src/              → React/TypeScript frontend (Vite)
+                            ↓ npm run build
+internal/api/ui/     → Built assets (embedded via go:embed)
+                            ↓
+cmd/seed/            → Entry point
+internal/
+├── api/             → HTTP/WebSocket handlers
+├── database/        → SQLite store + migrations
+├── network/         → Link, DHCP, DNS, Wi-Fi, cable, path probes
+├── config/          → YAML + env loading
+├── auth/            → JWT + first-run setup
+├── telemetry/       → Metrics, structured logging
+├── i18n/locales/    → Translation namespaces
+└── version/         → Build metadata (injected via ldflags)
+```
 
-## Roadmap
+The frontend builds **directly into `internal/api/ui/`** and is embedded
+via `//go:embed` — no copy step, no runtime dependency on the source tree.
 
-- [x] Project setup
-- [ ] v0.1.0 - Foundation (CI/CD, scaffold)
-- [ ] v0.2.0 - Core infrastructure (WebSocket, auth)
-- [ ] v0.3.0 - Link & Switch cards
-- [ ] v0.4.0 - DHCP & DNS cards
-- [ ] v0.5.0 - Gateway & VLAN cards
-- [ ] v0.6.0 - Wi-Fi & Cable cards
-- [ ] v0.7.0 - Settings & Polish
-- [ ] v1.0.0 - Production release
+## Build
 
-### Future (v2+)
+| Command | Purpose |
+|---------|---------|
+| `make build` | Full build (frontend + backend) |
+| `make test` | Go + frontend unit/integration tests |
+| `make test-e2e` | Playwright UI tests |
+| `make lint` | golangci-lint + Biome |
+| `make security` | govulncheck + gosec + npm audit + gitleaks |
+| `make fmt-check` | Format check (Go + TS) |
+| `make fmt-all` | Auto-format everything |
+| `make packages` | `.deb` + `.rpm` via GoReleaser |
+| `make pkg` | macOS `.pkg` |
+| `make verify` | Full local CI gate (lint + test + security + build) |
 
-- Historical sparklines
-- iperf performance testing
-- PDF export
-- Alerting (webhooks)
+Frontend-only iteration:
+```bash
+cd ui
+npm run dev          # http://localhost:3000 with proxy to backend
+npm run lint
+npm run test
+npm run e2e
+```
+
+Verified versions: **Go 1.26.3**, Node.js 26, golangci-lint v2.12.1.
+Cross-platform releases (linux/macOS/windows × amd64/arm64) are built by
+`release.yml` on tag push and signed with cosign keyless OIDC.
+
+## Container
+
+```bash
+docker run --rm --net host --cap-add NET_RAW --cap-add NET_ADMIN \
+  ghcr.io/krisarmstrong/seed:latest
+```
+
+Multi-arch images (linux/amd64, linux/arm64) built on native runners with
+SLSA-3 provenance and Syft-generated SBOM.
+
+## Frontend design system
+
+The UI uses a Tailwind v4 CSS-first theme with semantic tokens:
+
+- [`ui/src/styles/DESIGN_SYSTEM.md`](ui/src/styles/DESIGN_SYSTEM.md) —
+  full token reference (colors, typography, spacing, components)
+- [`STYLE_GUIDE.md`](STYLE_GUIDE.md) — coding conventions
+
+## Versioning & Releases
+
+Conventional commits drive [release-please](https://github.com/googleapis/release-please).
+Tags trigger `release.yml` which builds binaries, packages, container
+images, and (when configured) updates the Homebrew tap.
 
 ## License
 
-This project is licensed under the [Business Source License 1.1](LICENSE).
+[Business Source License 1.1](LICENSE) — free for non-commercial use;
+commercial use requires a license. Converts to Apache-2.0 on the change
+date stated in the LICENSE file.
 
-- **Free for non-commercial use**
-- **Commercial use requires a license**
-- **Converts to Apache 2.0 on 2029-12-01**
-
-For commercial licensing inquiries, contact: [your-email]
-
-## Contributing
-
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting PRs.
+For commercial licensing inquiries: `kris.armstrong@gmail.com`.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
-````
+See [SECURITY.md](SECURITY.md) for the vulnerability-disclosure policy.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Related projects
+
+The Seed is the diagnostic appliance. Two sibling tools complete the
+Mustard Seed Networks testing toolkit:
+
+- **[stem](https://github.com/krisarmstrong/stem)** — RFC-compliant network performance testing
+- **[niac-go](https://github.com/krisarmstrong/niac-go)** — network device simulator
