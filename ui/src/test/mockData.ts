@@ -485,7 +485,6 @@ export const mockNetworkDiscoveryData: Record<string, NetworkDiscoveryData> = {
       deviceCount: 3,
       lastScan: new Date(Date.now() - 60000).toISOString(),
       subnet: '192.168.1.0/24',
-      // biome-ignore lint/style/useNamingConvention: Matches backend API
       localIP: '192.168.1.100',
       interface: 'eth0',
     },
@@ -498,7 +497,6 @@ export const mockNetworkDiscoveryData: Record<string, NetworkDiscoveryData> = {
       deviceCount: 0,
       lastScan: '',
       subnet: '192.168.1.0/24',
-      // biome-ignore lint/style/useNamingConvention: Matches backend API
       localIP: '192.168.1.100',
       interface: 'eth0',
     },
@@ -511,7 +509,6 @@ export const mockNetworkDiscoveryData: Record<string, NetworkDiscoveryData> = {
       deviceCount: 0,
       lastScan: new Date(Date.now() - 300000).toISOString(),
       subnet: '192.168.1.0/24',
-      // biome-ignore lint/style/useNamingConvention: Matches backend API
       localIP: '192.168.1.100',
       interface: 'eth0',
     },

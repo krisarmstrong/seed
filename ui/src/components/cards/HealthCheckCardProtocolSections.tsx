@@ -8,7 +8,7 @@
  */
 
 import type { TFunction } from 'i18next';
-import { cn, layout, radius, spacing } from '../../styles/theme';
+import { cn, layout, radius, spacing, status as statusColor } from '../../styles/theme';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { StatusBadge } from '../ui/StatusBadge';
 import type { HealthCheckData } from './healthCheckCardTypes';
@@ -42,7 +42,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -92,7 +92,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -139,7 +139,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -186,7 +186,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -231,7 +231,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -275,7 +275,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -325,7 +325,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -372,7 +372,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -413,7 +413,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>
@@ -462,7 +462,7 @@ export function HealthCheckCardProtocolSections({
                 layout.flex.between,
                 spacing.pad.xs,
                 radius.default,
-                r.success ? 'bg-surface-raised' : 'bg-status-error/10',
+                r.success ? 'bg-surface-raised' : statusColor.bg.errorSoft,
               )}
             >
               <div class={layout.stack.compact}>

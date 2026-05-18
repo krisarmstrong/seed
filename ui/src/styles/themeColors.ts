@@ -31,10 +31,77 @@ export const progressBar = {
 
 /**
  * Status indicator variants - for connection status, health, etc.
+ *
+ * Composition surfaces (pick by what the call site needs):
+ *   - text.*    — text color only
+ *   - bg.*      — background at 100/20/10/5% alpha
+ *   - border.*  — solid + 20% alpha borders
+ *   - badge.*   — compound bg+text for chip/pill/banner patterns
+ *   - color.*   — legacy alias for bg.{success,warning,error,info}
+ *   - dot       — small circular indicator base class
+ *   - withLabel — inline flex helper for "dot + label" pairings
  */
 export const status = {
   dot: 'inline-block w-2 h-2 rounded-full',
+  withLabel: 'inline-flex items-center gap-2',
 
+  text: {
+    success: 'text-status-success',
+    warning: 'text-status-warning',
+    error: 'text-status-error',
+    info: 'text-status-info',
+    muted: 'text-text-muted',
+  },
+
+  bg: {
+    success: 'bg-status-success',
+    warning: 'bg-status-warning',
+    error: 'bg-status-error',
+    info: 'bg-status-info',
+    inactive: 'bg-surface-border',
+
+    successStrong: 'bg-status-success/20',
+    warningStrong: 'bg-status-warning/20',
+    errorStrong: 'bg-status-error/20',
+    infoStrong: 'bg-status-info/20',
+
+    successSoft: 'bg-status-success/10',
+    warningSoft: 'bg-status-warning/10',
+    errorSoft: 'bg-status-error/10',
+    infoSoft: 'bg-status-info/10',
+
+    successSubtle: 'bg-status-success/5',
+    warningSubtle: 'bg-status-warning/5',
+    errorSubtle: 'bg-status-error/5',
+    infoSubtle: 'bg-status-info/5',
+  },
+
+  border: {
+    success: 'border-status-success',
+    warning: 'border-status-warning',
+    error: 'border-status-error',
+    info: 'border-status-info',
+
+    successSoft: 'border-status-success/20',
+    warningSoft: 'border-status-warning/20',
+    errorSoft: 'border-status-error/20',
+    infoSoft: 'border-status-info/20',
+  },
+
+  badge: {
+    success: 'bg-status-success/10 text-status-success',
+    warning: 'bg-status-warning/10 text-status-warning',
+    error: 'bg-status-error/10 text-status-error',
+    info: 'bg-status-info/10 text-status-info',
+
+    successStrong: 'bg-status-success/20 text-status-success',
+    warningStrong: 'bg-status-warning/20 text-status-warning',
+    errorStrong: 'bg-status-error/20 text-status-error',
+    infoStrong: 'bg-status-info/20 text-status-info',
+  },
+
+  // Legacy alias retained for existing call sites that use status.color.X.
+  // Mirrors status.bg.* for the four solid colors.
   color: {
     success: 'bg-status-success',
     warning: 'bg-status-warning',
@@ -42,8 +109,6 @@ export const status = {
     info: 'bg-status-info',
     inactive: 'bg-surface-border',
   },
-
-  withLabel: 'inline-flex items-center gap-2',
 } as const;
 
 /**

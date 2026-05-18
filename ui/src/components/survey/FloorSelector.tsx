@@ -126,7 +126,6 @@ export function FloorSelector({
 
     setLoading(true);
     try {
-      // biome-ignore lint/nursery/useAwaitThenable: onRenameFloor is typed as Promise<void>
       await onRenameFloor(editingFloorId, editName.trim(), editLevel);
       handleCancelEdit();
     } catch (err) {

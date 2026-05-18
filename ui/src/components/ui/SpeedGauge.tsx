@@ -39,7 +39,13 @@
 
 import type React from 'react';
 import { memo, useMemo } from 'react';
-import { cn, gauge, radius as radiusTokens, spacing } from '../../styles/theme';
+import {
+  cn,
+  gauge,
+  radius as radiusTokens,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 
 interface SpeedGaugeProps {
   value: number; // Current speed in Mbps
@@ -344,11 +350,11 @@ function PulsingDotComponent({
       case 'primary':
         return 'bg-brand-primary';
       case 'success':
-        return 'bg-status-success';
+        return statusColor.bg.success;
       case 'warning':
-        return 'bg-status-warning';
+        return statusColor.bg.warning;
       case 'error':
-        return 'bg-status-error';
+        return statusColor.bg.error;
       default:
         return 'bg-brand-primary';
     }

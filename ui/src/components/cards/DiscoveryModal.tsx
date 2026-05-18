@@ -169,7 +169,6 @@ export function DiscoveryModal({
       }
       setScanningDevices((prev) => new Set(prev).add(ip));
       try {
-        // biome-ignore lint/nursery/useAwaitThenable: onDeepScan returns Promise<void>
         await onDeepScan(ip);
       } finally {
         setScanningDevices((prev) => {

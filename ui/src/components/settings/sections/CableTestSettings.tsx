@@ -19,7 +19,14 @@
 import type React from 'react';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, icon as iconTokens, layout, radius, spacing } from '../../../styles/theme';
+import {
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../../styles/theme';
 import type {
   CableTestSettings as CableTestSettingsType,
   SaveStatus,
@@ -64,7 +71,6 @@ export const CableTestSettings: React.NamedExoticComponent<CableTestSettingsProp
           credentials: 'include',
         });
         if (response.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() is a Promise
           const data = (await response.json()) as TdrSupportStatus;
           setTdrSupport(data);
         } else {
@@ -87,7 +93,7 @@ export const CableTestSettings: React.NamedExoticComponent<CableTestSettingsProp
         return 'bg-status-warning animate-pulse';
       }
       if (tdrSupport?.supported) {
-        return 'bg-status-success';
+        return statusColor.bg.success;
       }
       return 'bg-text-muted';
     };

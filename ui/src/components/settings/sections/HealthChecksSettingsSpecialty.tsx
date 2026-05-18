@@ -17,7 +17,6 @@ interface HealthChecksSettingsSpecialtyProps {
   setTestsSettings: React.Dispatch<React.SetStateAction<TestsSettings>>;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Renders seven optional protocol editors; matches original inline structure
 export function HealthChecksSettingsSpecialty({
   testsSettings,
   setTestsSettings,

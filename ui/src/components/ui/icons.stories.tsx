@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type React from 'react';
-import { button, cn, icon as iconTheme, layout, section, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTheme,
+  layout,
+  section,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import { ICON_SIZES } from './iconConfig';
 import {
   // Card header icons
@@ -144,10 +152,10 @@ export const AllIcons: Story = {
       </iconCategory>
 
       <iconCategory title="Status Icons">
-        <iconItem icon={<CheckCircle class="text-status-success" />} name="CheckCircle" />
-        <iconItem icon={<XCircle class="text-status-error" />} name="XCircle" />
-        <iconItem icon={<AlertTriangle class="text-status-warning" />} name="AlertTriangle" />
-        <iconItem icon={<AlertCircle class="text-status-info" />} name="AlertCircle" />
+        <iconItem icon={<CheckCircle class={statusColor.text.success} />} name="CheckCircle" />
+        <iconItem icon={<XCircle class={statusColor.text.error} />} name="XCircle" />
+        <iconItem icon={<AlertTriangle class={statusColor.text.warning} />} name="AlertTriangle" />
+        <iconItem icon={<AlertCircle class={statusColor.text.info} />} name="AlertCircle" />
         <iconItem icon={<Info class="text-brand-primary" />} name="Info" />
       </iconCategory>
 
@@ -227,8 +235,8 @@ export const AllIcons: Story = {
         <iconItem icon={<Unlock />} name="Unlock" />
         <iconItem icon={<Key />} name="Key" />
         <iconItem icon={<Shield />} name="Shield" />
-        <iconItem icon={<ShieldCheck class="text-status-success" />} name="ShieldCheck" />
-        <iconItem icon={<ShieldAlert class="text-status-warning" />} name="ShieldAlert" />
+        <iconItem icon={<ShieldCheck class={statusColor.text.success} />} name="ShieldCheck" />
+        <iconItem icon={<ShieldAlert class={statusColor.text.warning} />} name="ShieldAlert" />
       </iconCategory>
 
       <iconCategory title="Layout Icons">
@@ -285,22 +293,22 @@ export const StatusIcons: Story = {
       </h3>
       <div class={cn('grid grid-cols-2 md:grid-cols-4', spacing.gap.comfortable)}>
         <statusExample
-          icon={<CheckCircle class={cn(iconTheme.size.lg, 'text-status-success')} />}
+          icon={<CheckCircle class={cn(iconTheme.size.lg, statusColor.text.success)} />}
           label="Success"
           description="Operation completed"
         />
         <statusExample
-          icon={<AlertTriangle class={cn(iconTheme.size.lg, 'text-status-warning')} />}
+          icon={<AlertTriangle class={cn(iconTheme.size.lg, statusColor.text.warning)} />}
           label="Warning"
           description="Needs attention"
         />
         <statusExample
-          icon={<XCircle class={cn(iconTheme.size.lg, 'text-status-error')} />}
+          icon={<XCircle class={cn(iconTheme.size.lg, statusColor.text.error)} />}
           label="Error"
           description="Operation failed"
         />
         <statusExample
-          icon={<Info class={cn(iconTheme.size.lg, 'text-status-info')} />}
+          icon={<Info class={cn(iconTheme.size.lg, statusColor.text.info)} />}
           label="Info"
           description="Additional info"
         />
@@ -327,7 +335,7 @@ export const NetworkStatus: Story = {
               spacing.margin.bottom.inline,
             )}
           >
-            <Wifi class={cn(iconTheme.size.lg, 'text-status-success')} />
+            <Wifi class={cn(iconTheme.size.lg, statusColor.text.success)} />
           </div>
           <p class="body-small">Connected</p>
         </div>
@@ -339,7 +347,7 @@ export const NetworkStatus: Story = {
               spacing.margin.bottom.inline,
             )}
           >
-            <SignalLow class={cn(iconTheme.size.lg, 'text-status-warning')} />
+            <SignalLow class={cn(iconTheme.size.lg, statusColor.text.warning)} />
           </div>
           <p class="body-small">Weak Signal</p>
         </div>
@@ -351,7 +359,7 @@ export const NetworkStatus: Story = {
               spacing.margin.bottom.inline,
             )}
           >
-            <Unplug class={cn(iconTheme.size.lg, 'text-status-error')} />
+            <Unplug class={cn(iconTheme.size.lg, statusColor.text.error)} />
           </div>
           <p class="body-small">Disconnected</p>
         </div>

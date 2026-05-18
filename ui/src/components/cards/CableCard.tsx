@@ -28,7 +28,14 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import { cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import type { UnitSystem } from '../../types/settings';
 import { CardDivider, CardRow, CardValue, type Status } from '../ui/card';
 import { Cable } from '../ui/icons';
@@ -146,12 +153,12 @@ export function CableCard({
   // Helper function to get pair status color class (avoids nested ternary)
   const getPairStatusClass = (status: string): string => {
     if (status === 'ok') {
-      return 'text-status-success';
+      return statusColor.text.success;
     }
     if (status === 'unknown') {
       return 'text-text-muted';
     }
-    return 'text-status-error';
+    return statusColor.text.error;
   };
 
   // Helper function to render card content (avoids nested ternary)

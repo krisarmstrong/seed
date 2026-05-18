@@ -23,10 +23,8 @@ export interface UpdateInfo {
   latestVersion: string;
   releaseNotes: string;
   publishedAt: string;
-  // biome-ignore lint/style/useNamingConvention: Matches Go JSON field naming
   downloadURL: string;
   downloadSize: number;
-  // biome-ignore lint/style/useNamingConvention: Matches Go JSON field naming
   checksumURL: string;
 }
 
@@ -80,10 +78,8 @@ export interface UpdateCheckResponse {
   latestVersion: string;
   releaseNotes: string;
   publishedAt: string;
-  // biome-ignore lint/style/useNamingConvention: Matches Go JSON field naming
   downloadURL: string;
   downloadSize: number;
-  // biome-ignore lint/style/useNamingConvention: Matches Go JSON field naming
   checksumURL: string;
 }
 

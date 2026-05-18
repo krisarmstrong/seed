@@ -13,7 +13,13 @@ import type React from 'react';
 import { useMemo, useState } from 'react';
 import type { useTranslation } from 'react-i18next';
 import type { usePipelineStatus } from '../../hooks/usePipelineStatus';
-import { category as categoryTheme, cn, icon as iconTokens, spacing } from '../../styles/theme';
+import {
+  category as categoryTheme,
+  cn,
+  icon as iconTokens,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import {
   CheckCircle,
   ChevronDown,
@@ -336,7 +342,7 @@ export function discoverySummary({
             </>
           ) : (
             <>
-              <CheckCircle class={cn(iconTokens.size.sm, 'text-status-success')} />
+              <CheckCircle class={cn(iconTokens.size.sm, statusColor.text.success)} />
               <span class="text-status-success font-medium">{t('discovery.complete')}</span>
             </>
           )}

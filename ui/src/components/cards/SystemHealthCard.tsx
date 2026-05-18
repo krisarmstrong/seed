@@ -31,7 +31,7 @@ import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatBytes } from '../../lib/format';
-import { cn, icon as iconTokens, radius, spacing } from '../../styles/theme';
+import { cn, icon as iconTokens, radius, spacing, status as statusColor } from '../../styles/theme';
 import { CardDivider, CardRow } from '../ui/card';
 import type { Status } from '../ui/StatusBadge';
 import { BaseCard } from './BaseCard';
@@ -136,11 +136,11 @@ function _resourceBar({
   const barColor = ((): string => {
     switch (status) {
       case 'success':
-        return 'bg-status-success';
+        return statusColor.bg.success;
       case 'warning':
-        return 'bg-status-warning';
+        return statusColor.bg.warning;
       case 'error':
-        return 'bg-status-error';
+        return statusColor.bg.error;
       default:
         return 'bg-text-muted';
     }
@@ -206,7 +206,6 @@ export function SystemHealthCard(): React.ReactElement {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
       const result = await response.json();
       setData(result.system);
       setError(null);

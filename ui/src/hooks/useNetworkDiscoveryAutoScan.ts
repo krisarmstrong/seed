@@ -32,7 +32,6 @@ interface UseNetworkDiscoveryAutoScanResult {
   handleDeepScan: (ip: string) => Promise<void>;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Coordinates two automation effects (port-scan and vuln-scan) plus manual deep-scan; same structure as the original inline code
 export function useNetworkDiscoveryAutoScan(
   data: NetworkDiscoveryData | null,
 ): UseNetworkDiscoveryAutoScanResult {
@@ -54,7 +53,6 @@ export function useNetworkDiscoveryAutoScan(
           credentials: 'include',
         });
         if (discoveryResponse.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns Promise
           const discoveryData = await discoveryResponse.json();
           // Backend returns { options: { PortScan: { Enabled: true, ... } } }
           const portScanEnabled = discoveryData?.options?.PortScan?.Enabled ?? false;
@@ -66,7 +64,6 @@ export function useNetworkDiscoveryAutoScan(
           let vulnEnabled = false;
           let vulnAutoScan = false;
           if (vulnResponse.ok) {
-            // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns Promise
             const vulnData = await vulnResponse.json();
             // Backend returns { Enabled: false, AutoScan: false, ... }
             vulnEnabled = vulnData?.Enabled ?? false;
@@ -90,7 +87,6 @@ export function useNetworkDiscoveryAutoScan(
   }, []);
 
   // Trigger vulnerability scan for a device based on any good info we have
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Inspect several optional discovery hints before deciding to scan
   const triggerVulnScan = useCallback(
     async (ip: string, device?: DiscoveredDevice, services?: ServiceInfo[]) => {
       if (!(autoScanSettings.vulnScanEnabled && autoScanSettings.vulnAutoScan)) {

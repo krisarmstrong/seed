@@ -83,7 +83,6 @@ export const DiscoverySettings: React.NamedExoticComponent<DiscoverySettingsProp
       try {
         const response = await fetch('/api/v1/shell/discovery/service/status');
         if (response.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() is a Promise
           const data = (await response.json()) as DiscoveryServiceStatusType;
           setServiceStatus(data);
         } else {

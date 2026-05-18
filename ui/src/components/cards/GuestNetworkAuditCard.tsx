@@ -13,7 +13,14 @@
 
 import { useTranslation } from 'react-i18next';
 import { useGuestNetworkAudit } from '../../hooks/useGuestNetworkAudit';
-import { button, cn, icon as iconTokens, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import { Card, type Status } from '../ui/card';
 import { AlertTriangle, CheckCircle, Shield } from '../ui/icons';
 
@@ -83,7 +90,7 @@ export function GuestNetworkAuditCard(): JSX.Element | null {
             </button>
 
             {error ? (
-              <div class={cn(spacing.pad.sm, 'bg-status-error/10', radius.md)} role="alert">
+              <div class={cn(spacing.pad.sm, statusColor.bg.errorSoft, radius.md)} role="alert">
                 <span class="body-small text-status-error">{error}</span>
               </div>
             ) : null}
@@ -99,7 +106,7 @@ export function GuestNetworkAuditCard(): JSX.Element | null {
                 role="alert"
               >
                 <div class={cn('flex items-center', spacing.gap.compact)}>
-                  <AlertTriangle class={cn(iconTokens.size.sm, 'text-status-error')} />
+                  <AlertTriangle class={cn(iconTokens.size.sm, statusColor.text.error)} />
                   <span class="body-small font-semibold text-status-error">
                     {t(
                       'guestAudit.criticalAlert',
@@ -141,7 +148,7 @@ export function GuestNetworkAuditCard(): JSX.Element | null {
                 role="status"
               >
                 <div class={cn('flex items-center', spacing.gap.compact)}>
-                  <CheckCircle class={cn(iconTokens.size.sm, 'text-status-success')} />
+                  <CheckCircle class={cn(iconTokens.size.sm, statusColor.text.success)} />
                   <span class="body-small font-medium text-status-success">
                     {t(
                       'guestAudit.passed',

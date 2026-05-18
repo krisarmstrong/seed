@@ -91,13 +91,11 @@ export function ReportDialog({
       });
 
       if (!response.ok) {
-        // biome-ignore lint/nursery/useAwaitThenable: Response.text() returns Promise
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to generate report');
       }
 
       // Get the PDF blob
-      // biome-ignore lint/nursery/useAwaitThenable: Response.blob() returns Promise
       const blob = await response.blob();
 
       // Create download link

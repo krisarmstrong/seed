@@ -35,7 +35,14 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../api';
 import { useSettings } from '../../contexts/useSettings';
 import { LogComponents, logger } from '../../lib/logger';
-import { cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import { Card, CardDivider, CardRow, CardValue, type Status } from '../ui/card';
 import { Gauge } from '../ui/icons';
 import { ProgressRing, PulsingDot, SpeedGauge } from '../ui/SpeedGauge';
@@ -190,7 +197,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
             credentials: 'include',
           });
           if (statusRes.ok) {
-            // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
             setIperfServerStatus(await statusRes.json());
           }
         }
@@ -209,7 +215,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
             credentials: 'include',
           });
           if (speedRes.ok) {
-            // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
             const data = await speedRes.json();
             setSpeedtestStatus(data);
             if (data.last) {
@@ -223,7 +228,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
             credentials: 'include',
           });
           if (iperfInfoRes.ok) {
-            // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
             setIperfInfo(await iperfInfoRes.json());
           }
 
@@ -232,7 +236,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
             credentials: 'include',
           });
           if (iperfClientRes.ok) {
-            // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
             const data = await iperfClientRes.json();
             setIperfClientStatus(data);
             if (data.last) {
@@ -246,7 +249,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
             credentials: 'include',
           });
           if (iperfServerRes.ok) {
-            // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
             setIperfServerStatus(await iperfServerRes.json());
           }
         } catch (err) {
@@ -277,7 +279,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
               credentials: 'include',
             });
             if (res.ok) {
-              // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
               const data = await res.json();
               const serverRunning = data.running === true;
               const shouldBeRunning = iperfSettings.enableServer;
@@ -329,7 +330,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
               credentials: 'include',
             });
             if (res.ok) {
-              // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
               const data = await res.json();
               setSpeedtestStatus(data);
               if (!data.running) {
@@ -370,7 +370,6 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
               credentials: 'include',
             });
             if (res.ok) {
-              // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
               const data = await res.json();
               setIperfClientStatus(data);
               if (!data.running) {
@@ -766,7 +765,9 @@ export const PerformanceCard: React.NamedExoticComponent<PerformanceCardProps> =
                 >
                   <span>{t('performance.serverMode')}</span>
                   <span
-                    class={iperfServerStatus?.running ? 'text-status-success' : 'text-text-muted'}
+                    class={
+                      iperfServerStatus?.running ? statusColor.text.success : 'text-text-muted'
+                    }
                   >
                     {iperfServerStatus?.running
                       ? t('performance.listening', {

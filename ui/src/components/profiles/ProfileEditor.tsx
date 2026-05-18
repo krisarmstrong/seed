@@ -38,7 +38,6 @@ export function ProfileEditor({
       await onSave({
         name,
         description,
-        // biome-ignore lint/style/useNamingConvention: API requires snake_case for this field
         is_default: isDefault,
         config: { notes },
       });

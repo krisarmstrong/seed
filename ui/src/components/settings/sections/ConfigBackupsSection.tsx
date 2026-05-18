@@ -67,7 +67,6 @@ export const ConfigBackupsSection: React.NamedExoticComponent<Record<string, nev
         ]);
 
         if (backupsRes.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() is a Promise
           const data = await backupsRes.json();
           setBackups(data.backups || []);
         } else {
@@ -75,7 +74,6 @@ export const ConfigBackupsSection: React.NamedExoticComponent<Record<string, nev
         }
 
         if (versionRes.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() is a Promise
           setVersion(await versionRes.json());
         }
       } catch {
@@ -124,7 +122,6 @@ export const ConfigBackupsSection: React.NamedExoticComponent<Record<string, nev
           // Reload page to apply restored config
           window.location.reload();
         } else {
-          // biome-ignore lint/nursery/useAwaitThenable: response.text() is a Promise
           const text = await response.text();
           setError(text || t('configBackups.restoreError'));
         }

@@ -17,7 +17,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLogs } from '../../hooks/useLogs';
-import { cn, icon as iconTokens, radius, spacing } from '../../styles/theme';
+import { cn, icon as iconTokens, radius, spacing, status as statusColor } from '../../styles/theme';
 import { Card, CardDivider, CardRow, CardValue, type Status } from '../ui/card';
 import { AlertCircle, AlertTriangle, FileText, Maximize2 } from '../ui/icons';
 import { LogViewerModal } from './LogViewerModal';
@@ -136,13 +136,13 @@ export function LogViewerCard({ className = '' }: LogViewerCardProps): JSX.Eleme
       {/* Error count */}
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <AlertCircle class={cn(iconTokens.size.sm, 'text-status-error')} />
+          <AlertCircle class={cn(iconTokens.size.sm, statusColor.text.error)} />
           <span class="text-sm text-text-secondary">{t('logs.errors', 'Errors')}</span>
         </div>
         <span
           class={cn(
             'text-sm font-medium',
-            errorCount > 0 ? 'text-status-error' : 'text-text-muted',
+            errorCount > 0 ? statusColor.text.error : 'text-text-muted',
           )}
         >
           {errorCount}
@@ -152,13 +152,13 @@ export function LogViewerCard({ className = '' }: LogViewerCardProps): JSX.Eleme
       {/* Warning count */}
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <AlertTriangle class={cn(iconTokens.size.sm, 'text-status-warning')} />
+          <AlertTriangle class={cn(iconTokens.size.sm, statusColor.text.warning)} />
           <span class="text-sm text-text-secondary">{t('logs.warnings', 'Warnings')}</span>
         </div>
         <span
           class={cn(
             'text-sm font-medium',
-            warnCount > 0 ? 'text-status-warning' : 'text-text-muted',
+            warnCount > 0 ? statusColor.text.warning : 'text-text-muted',
           )}
         >
           {warnCount}
@@ -172,7 +172,7 @@ export function LogViewerCard({ className = '' }: LogViewerCardProps): JSX.Eleme
           <CardRow
             label={t('logs.errorsLastHour', 'Errors (last hour)')}
             value={stats.errors_last_hour}
-            valueClassName="text-status-error"
+            valueClassName={statusColor.text.error}
           />
         </>
       )}

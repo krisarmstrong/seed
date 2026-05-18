@@ -1,7 +1,15 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProfileContext } from '../../contexts/profileContext';
-import { cn, icon as iconTokens, layout, radius, section, spacing } from '../../styles/theme';
+import {
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  section,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import type { Profile } from '../../types/profile';
 import type { NetworkInterface } from '../ui/InterfaceSelector';
 
@@ -121,14 +129,14 @@ export const HeaderBar: React.FC<HeaderBarProps> = memo(function headerBar({
   const getSeedColor = (): string => {
     switch (wsStatus) {
       case 'connected':
-        return 'text-status-success';
+        return statusColor.text.success;
       case 'connecting':
-        return 'text-status-warning';
+        return statusColor.text.warning;
       case 'disconnected':
       case 'error':
-        return 'text-status-error';
+        return statusColor.text.error;
       default:
-        return 'text-status-error';
+        return statusColor.text.error;
     }
   };
 
@@ -667,7 +675,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = memo(function headerBar({
             onClick={onReconnect}
             class={cn(
               'caption flex items-center gap-1.5',
-              wsStatus === 'connecting' ? 'text-status-warning' : 'text-status-error',
+              wsStatus === 'connecting' ? statusColor.text.warning : statusColor.text.error,
             )}
           >
             {wsStatus === 'connecting' ? (

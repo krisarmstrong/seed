@@ -67,7 +67,6 @@ interface UseSettingsDrawerLoadersResult {
   fetchLogPreview: () => Promise<void>;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Aggregates ten per-section fetch callbacks and the open-time orchestration that previously lived inline in SettingsDrawer
 export function useSettingsDrawerLoaders({
   isOpen,
   initRefs,

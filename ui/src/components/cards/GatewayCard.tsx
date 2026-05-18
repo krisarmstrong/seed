@@ -28,7 +28,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettings } from '../../contexts/useSettings';
 import { formatTime, isValidNumber } from '../../lib/format';
-import { cn, icon as iconTokens, layout, spacing } from '../../styles/theme';
+import { cn, icon as iconTokens, layout, spacing, status as statusColor } from '../../styles/theme';
 import { Card, CardDivider, CardRow, CardValue, type Status } from '../ui/card';
 import { Router } from '../ui/icons';
 import { StatusBadge } from '../ui/StatusBadge';
@@ -85,12 +85,12 @@ export const GatewayCard: React.FC<GatewayCardProps> = memo(function gatewayCard
   const getLatencyClassName = (time: number): string => {
     const status = getLatencyStatus(time, th);
     if (status === 'success') {
-      return 'text-status-success';
+      return statusColor.text.success;
     }
     if (status === 'warning') {
-      return 'text-status-warning';
+      return statusColor.text.warning;
     }
-    return 'text-status-error';
+    return statusColor.text.error;
   };
 
   const getPacketLossStatus = (lossPercent: number): 'success' | 'warning' | 'error' => {

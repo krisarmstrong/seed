@@ -23,7 +23,7 @@
 import type React from 'react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, icon as iconTokens, radius, spacing } from '../../styles/theme';
+import { cn, icon as iconTokens, radius, spacing, status as statusColor } from '../../styles/theme';
 
 export interface NetworkInterface {
   name: string;
@@ -174,7 +174,7 @@ function InterfaceSelectorComponent({
     if (type === 'wifi') {
       return (
         <svg
-          class={cn(iconTokens.size.sm, up ? 'text-status-success' : 'text-text-muted')}
+          class={cn(iconTokens.size.sm, up ? statusColor.text.success : 'text-text-muted')}
           fill="currentColor"
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -185,7 +185,7 @@ function InterfaceSelectorComponent({
     }
     return (
       <svg
-        class={cn(iconTokens.size.sm, up ? 'text-status-success' : 'text-text-muted')}
+        class={cn(iconTokens.size.sm, up ? statusColor.text.success : 'text-text-muted')}
         fill="currentColor"
         viewBox="0 0 24 24"
         aria-hidden="true"
@@ -364,7 +364,7 @@ function InterfaceSelectorComponent({
                   <div class="flex items-center gap-1">
                     {isRecommended(iface.name, 'ethernet') && (
                       <span
-                        class="text-status-success"
+                        class={statusColor.text.success}
                         title={t('interface.recommended', 'Recommended')}
                       >
                         <svg
@@ -443,7 +443,7 @@ function InterfaceSelectorComponent({
                   <div class="flex items-center gap-1">
                     {isRecommended(iface.name, 'wifi') && (
                       <span
-                        class="text-status-success"
+                        class={statusColor.text.success}
                         title={t('interface.recommended', 'Recommended')}
                       >
                         <svg

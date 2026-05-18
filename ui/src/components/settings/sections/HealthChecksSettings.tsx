@@ -55,7 +55,6 @@ interface HealthChecksSettingsProps {
 }
 
 export const HealthChecksSettings: React.NamedExoticComponent<HealthChecksSettingsProps> = memo(
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex form with multiple protocol sections
   function healthChecksSettings({
     testsSettings,
     setTestsSettings,

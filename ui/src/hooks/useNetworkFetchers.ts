@@ -572,7 +572,6 @@ export function useNetworkFetchers({
             deviceCount: 0,
             lastScan: '',
             subnet: '',
-            // biome-ignore lint/style/useNamingConvention: Matches backend API
             localIP: '',
             interface: requestedInterface,
           },

@@ -9,7 +9,14 @@
 
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { button, cn, icon as iconTokens, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import type { DisplayOptions, IpSettings, SaveStatus } from '../../types/settings';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { Network } from '../ui/icons';
@@ -31,7 +38,6 @@ interface SettingsDrawerNetworkSectionProps {
   isValidIp: (ip: string) => boolean;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Renders five sub-blocks (mode toggle, static fields, apply, display options, VLAN/MTU); mirrors original inline structure
 export function SettingsDrawerNetworkSection({
   ipSettings,
   setIpSettings,
@@ -117,7 +123,7 @@ export function SettingsDrawerNetworkSection({
                   radius.md,
                   'body-small text-text-primary',
                   ipSettings.address && !isValidIp(ipSettings.address)
-                    ? 'border-status-error'
+                    ? statusColor.border.error
                     : 'border-surface-border',
                 )}
               />
@@ -170,7 +176,7 @@ export function SettingsDrawerNetworkSection({
                   radius.md,
                   'body-small text-text-primary',
                   ipSettings.gateway && !isValidIp(ipSettings.gateway)
-                    ? 'border-status-error'
+                    ? statusColor.border.error
                     : 'border-surface-border',
                 )}
               />
@@ -221,8 +227,8 @@ export function SettingsDrawerNetworkSection({
             class={cn(
               'caption text-center',
               ipMessage.includes('Failed') || ipMessage.includes('Error')
-                ? 'text-status-error'
-                : 'text-status-success',
+                ? statusColor.text.error
+                : statusColor.text.success,
             )}
           >
             {ipMessage}

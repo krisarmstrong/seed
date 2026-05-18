@@ -399,7 +399,6 @@ export interface DiscoveryServiceStatus {
   deviceCount: number;
   lastScan: string;
   subnet: string;
-  // biome-ignore lint/style/useNamingConvention: Matches backend API json:"localIP"
   localIP: string;
   interface: string;
   activeMethods: string[];

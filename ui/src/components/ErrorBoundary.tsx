@@ -32,7 +32,7 @@ import type React from 'react';
 import { Component, type ReactNode } from 'react';
 import { Translation } from 'react-i18next';
 import { LogComponents, logger } from '../lib/logger';
-import { button, cn, radius, spacing } from '../styles/theme';
+import { button, cn, radius, spacing, status as statusColor } from '../styles/theme';
 
 /**
  * Props for ErrorBoundary component
@@ -117,7 +117,7 @@ export class ErrorBoundary extends Component<Props, State> {
             >
               <div class="w-full max-w-md text-center">
                 <div class={cn('text-4xl', spacing.margin.bottom.content)}>
-                  <span class="text-status-error">!</span>
+                  <span class={statusColor.text.error}>!</span>
                 </div>
                 <h1 class={cn('heading-2', spacing.margin.bottom.inline)}>
                   {t('errorBoundary.title')}

@@ -10,7 +10,7 @@
 
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, radius, spacing } from '../../styles/theme';
+import { cn, radius, spacing, status as statusColor } from '../../styles/theme';
 
 // ============================================================================
 // CONTENT SECTIONS
@@ -142,7 +142,7 @@ function _gettingStartedSection(): React.JSX.Element {
             spacing.gap.compact,
           )}
         >
-          <span class="text-status-info">💡</span>
+          <span class={statusColor.text.info}>💡</span>
           {t('content.gettingStarted.proTips.title')}
         </h4>
         <ul class={cn('body-small stack-sm', spacing.margin.left.spacious, 'list-disc')}>

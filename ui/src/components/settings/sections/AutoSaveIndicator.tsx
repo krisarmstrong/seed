@@ -24,7 +24,7 @@
 
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, spacing } from '../../../styles/theme';
+import { cn, spacing, status as statusColor } from '../../../styles/theme';
 import type { SaveStatus } from '../../../types/settings';
 
 interface AutoSaveIndicatorProps {
@@ -44,9 +44,9 @@ export function AutoSaveIndicator({ status }: AutoSaveIndicatorProps): React.Rea
       return 'text-text-muted';
     }
     if (status === 'saved') {
-      return 'text-status-success';
+      return statusColor.text.success;
     }
-    return 'text-status-error';
+    return statusColor.text.error;
   };
 
   // Helper function to get the translated status text

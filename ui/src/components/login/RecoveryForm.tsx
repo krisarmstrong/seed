@@ -20,7 +20,17 @@ import { Eye, EyeOff, KeyRound, Lock, Timer } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { alert, button, cn, icon, input, layout, radius, spacing } from '../../styles/theme';
+import {
+  alert,
+  button,
+  cn,
+  icon,
+  input,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 
 // API base URL - configurable via environment variable
 const API_BASE: string = import.meta.env.VITE_API_BASE || '';
@@ -137,7 +147,6 @@ export function RecoveryForm({
         }),
       });
 
-      // biome-ignore lint/nursery/useAwaitThenable: response.json() is a Promise
       const data = (await response.json()) as {
         success?: boolean;
         message?: string;
@@ -276,7 +285,7 @@ export function RecoveryForm({
                   input.size.md,
                   radius.md,
                   'border bg-surface-base text-text-primary',
-                  password && !passwordValid ? 'border-status-error' : 'border-surface-border',
+                  password && !passwordValid ? statusColor.border.error : 'border-surface-border',
                   'focus:outline-none focus:border-brand-primary',
                 )}
                 placeholder="••••••••••••"
@@ -297,7 +306,7 @@ export function RecoveryForm({
             <p
               class={cn(
                 'caption mt-1',
-                password && !passwordValid ? 'text-status-error' : 'text-text-muted',
+                password && !passwordValid ? statusColor.text.error : 'text-text-muted',
               )}
             >
               {t('recovery.passwordRequirement', 'Minimum {{min}} characters', {
@@ -331,7 +340,7 @@ export function RecoveryForm({
                   radius.md,
                   'border bg-surface-base text-text-primary',
                   confirmPassword && !passwordsMatch
-                    ? 'border-status-error'
+                    ? statusColor.border.error
                     : 'border-surface-border',
                   'focus:outline-none focus:border-brand-primary',
                 )}

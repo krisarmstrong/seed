@@ -39,6 +39,7 @@ import {
   layout,
   radius,
   spacing,
+  status as statusColor,
 } from '../../styles/theme';
 
 // API base URL for setup endpoints
@@ -128,7 +129,6 @@ export function SetupWizard({
 
   const handleCopyPassword = async (): Promise<void> => {
     if (suggestedPassword) {
-      // biome-ignore lint/nursery/useAwaitThenable: navigator.clipboard.writeText returns a Promise
       await navigator.clipboard.writeText(suggestedPassword);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -184,7 +184,6 @@ export function SetupWizard({
       });
 
       if (!response.ok) {
-        // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
         const data = await response.json();
         setError(data.error || t('errors.setupFailed'));
         logger.error(LogComponents.SETUP, 'Setup complete request failed', null, {
@@ -403,7 +402,7 @@ export function SetupWizard({
                         key={rule.id}
                         class={cn(
                           'flex items-center gap-2',
-                          rule.ok ? 'text-status-success' : 'text-text-muted',
+                          rule.ok ? statusColor.text.success : 'text-text-muted',
                         )}
                       >
                         <span aria-hidden="true">{rule.ok ? '✓' : '○'}</span>

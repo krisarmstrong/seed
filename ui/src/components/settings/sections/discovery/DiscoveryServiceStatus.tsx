@@ -1,7 +1,7 @@
 import type React from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, layout, radius, spacing } from '../../../../styles/theme';
+import { cn, layout, radius, spacing, status as statusColor } from '../../../../styles/theme';
 import type { DiscoveryServiceStatus as DiscoveryServiceStatusType } from '../../../../types/settings';
 
 interface DiscoveryServiceStatusProps {
@@ -25,12 +25,12 @@ export const DiscoveryServiceStatus: React.NamedExoticComponent<DiscoveryService
     // Helper to get status indicator color
     const getStatusIndicatorColor = (): string => {
       if (!status.running) {
-        return 'bg-status-error';
+        return statusColor.bg.error;
       }
       if (status.scanning) {
         return 'bg-status-warning animate-pulse';
       }
-      return 'bg-status-success';
+      return statusColor.bg.success;
     };
 
     // Helper to get status text

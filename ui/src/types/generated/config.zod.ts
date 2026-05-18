@@ -281,7 +281,6 @@ export const configSchema = z
     vlan: vlanSchema.optional(),
     ip: ipSchema.optional(),
     discovery: discoverySchema.optional(),
-    // biome-ignore lint/style/useNamingConvention: Generated schema - properties match backend API using snake_case
     network_discovery: networkDiscoverySchema.optional(),
     dns: dnsSchema.optional(),
     tests: testsSchema.optional(),
@@ -292,9 +291,7 @@ export const configSchema = z
     security: securitySchema.optional(),
     dhcp: dhcpSchema.optional(),
     snmp: snmpSchema.optional(),
-    // biome-ignore lint/style/useNamingConvention: Generated schema - properties match backend API using snake_case
     fab_options: fabOptionsSchema.optional(),
-    // biome-ignore lint/style/useNamingConvention: Generated schema - properties match backend API using snake_case
     display_options: displayOptionsSchema.optional(),
     logging: loggingSchema.optional(),
   })

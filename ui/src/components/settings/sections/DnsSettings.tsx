@@ -37,6 +37,7 @@ import {
   layout,
   radius,
   spacing,
+  status as statusColor,
 } from '../../../styles/theme';
 import type { CardSettings, DnsServer, SaveStatus, TestsSettings } from '../../../types/settings';
 import { generateId } from '../../../utils/id';
@@ -230,7 +231,11 @@ export const DnsSettings: React.NamedExoticComponent<DnsSettingsProps> = memo(
                 <button
                   type="button"
                   onClick={(): void => removeDnsServer(server.id ?? '')}
-                  class={cn('text-status-error', 'hover:text-status-error/80', spacing.actionBtn)}
+                  class={cn(
+                    statusColor.text.error,
+                    'hover:text-status-error/80',
+                    spacing.actionBtn,
+                  )}
                   aria-label={t('common.remove')}
                 >
                   {t('common.remove')}

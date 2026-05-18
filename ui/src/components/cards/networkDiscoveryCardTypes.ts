@@ -166,7 +166,6 @@ export interface DiscoveryStatus {
   lastScan: string;
   subnet: string;
   subnets?: string[]; // All subnets being scanned (I3)
-  // biome-ignore lint/style/useNamingConvention: Matches backend API
   localIP: string;
   interface: string;
 }

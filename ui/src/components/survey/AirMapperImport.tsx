@@ -24,7 +24,15 @@ import type React from 'react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LogComponents, logger } from '../../lib/logger';
-import { button, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import {
   type AirMapperData,
   type AirMapperParseResult,
@@ -88,7 +96,6 @@ export function AirMapperImport({ onImport, onCancel }: AirMapperImportProps): R
           logger.warn(LogComponents.Survey, 'Backend parsing failed, falling back to client-side', {
             error: backendResult.error,
           });
-          // biome-ignore lint/nursery/useAwaitThenable: File.arrayBuffer() returns a Promise
           const buffer = await file.arrayBuffer();
           const result = await parseAirMapperFile(buffer);
           setParseResult(result);
@@ -96,7 +103,6 @@ export function AirMapperImport({ onImport, onCancel }: AirMapperImportProps): R
       } catch {
         // Final fallback - try client-side parsing directly
         try {
-          // biome-ignore lint/nursery/useAwaitThenable: File.arrayBuffer() returns a Promise
           const buffer = await file.arrayBuffer();
           const result = await parseAirMapperFile(buffer);
           setParseResult(result);
@@ -228,7 +234,7 @@ export function AirMapperImport({ onImport, onCancel }: AirMapperImportProps): R
           spacing.pad.default,
         )}
       >
-        <div class={cn(layout.inline.default, 'text-status-error')}>
+        <div class={cn(layout.inline.default, statusColor.text.error)}>
           <AlertTriangle class={iconTokens.size.sm} />
           <span class="body-small font-medium">{t('import.error')}</span>
         </div>
@@ -284,7 +290,7 @@ export function AirMapperImport({ onImport, onCancel }: AirMapperImportProps): R
               spacing.pad.sm,
             )}
           >
-            <div class={cn(layout.inline.default, 'text-status-warning')}>
+            <div class={cn(layout.inline.default, statusColor.text.warning)}>
               <AlertTriangle class={iconTokens.size.sm} />
               <span class="caption font-medium">{t('import.warnings')}</span>
             </div>

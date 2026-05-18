@@ -1,3 +1,5 @@
+import { status as statusColor } from '../../styles/theme';
+
 /**
  * Card.test.tsx - Card Component Tests
  *
@@ -48,7 +50,7 @@ describe('Card', () => {
     );
 
     const statusIcon = screen.getByLabelText('Status: success');
-    expect(statusIcon).toHaveClass('text-status-success');
+    expect(statusIcon).toHaveClass(statusColor.text.success);
   });
 
   it('applies correct status styling for warning', () => {
@@ -59,7 +61,7 @@ describe('Card', () => {
     );
 
     const statusIcon = screen.getByLabelText('Status: warning');
-    expect(statusIcon).toHaveClass('text-status-warning');
+    expect(statusIcon).toHaveClass(statusColor.text.warning);
   });
 
   it('applies correct status styling for error', () => {
@@ -70,7 +72,7 @@ describe('Card', () => {
     );
 
     const statusIcon = screen.getByLabelText('Status: error');
-    expect(statusIcon).toHaveClass('text-status-error');
+    expect(statusIcon).toHaveClass(statusColor.text.error);
   });
 
   it('shows unknown status correctly', () => {
@@ -155,7 +157,7 @@ describe('CardValue', () => {
 
   it('applies status color', () => {
     render(<CardValue value="Error" status="error" />);
-    expect(screen.getByTestId('card-value')).toHaveClass('text-status-error');
+    expect(screen.getByTestId('card-value')).toHaveClass(statusColor.text.error);
   });
 });
 
@@ -174,7 +176,7 @@ describe('CardRow', () => {
 
   it('applies status color to value', () => {
     render(<CardRow label="Status" value="Failed" status="error" />);
-    expect(screen.getByTestId('card-row-value')).toHaveClass('text-status-error');
+    expect(screen.getByTestId('card-row-value')).toHaveClass(statusColor.text.error);
   });
 
   it('sets title attribute for truncation', () => {

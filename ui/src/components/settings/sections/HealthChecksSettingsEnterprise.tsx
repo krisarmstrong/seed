@@ -17,7 +17,6 @@ interface HealthChecksSettingsEnterpriseProps {
   setTestsSettings: React.Dispatch<React.SetStateAction<TestsSettings>>;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Renders three optional protocol editors (SQL, file share, LDAP); matches original inline structure
 export function HealthChecksSettingsEnterprise({
   testsSettings,
   setTestsSettings,

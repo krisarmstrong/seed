@@ -17,7 +17,6 @@ interface HealthChecksSettingsAdvancedProps {
   setTestsSettings: React.Dispatch<React.SetStateAction<TestsSettings>>;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Three protocol-independent settings panels (SLA, Alert, Anomaly) sharing the same flat shape
 export function HealthChecksSettingsAdvanced({
   testsSettings,
   setTestsSettings,

@@ -19,7 +19,7 @@
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../api';
-import { button, cn, input, layout, radius } from '../../../styles/theme';
+import { button, cn, input, layout, radius, status as statusColor } from '../../../styles/theme';
 
 export const VlanControl: React.NamedExoticComponent<Record<string, never>> = memo(
   function vlanControl() {
@@ -123,7 +123,12 @@ export const VlanControl: React.NamedExoticComponent<Record<string, never>> = me
           </button>
         </div>
         {message ? (
-          <p class={cn('caption', message.isError ? 'text-status-error' : 'text-status-success')}>
+          <p
+            class={cn(
+              'caption',
+              message.isError ? statusColor.text.error : statusColor.text.success,
+            )}
+          >
             {message.text}
           </p>
         ) : null}

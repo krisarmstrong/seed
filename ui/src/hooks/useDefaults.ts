@@ -63,7 +63,6 @@ export function useDefaults(): UseDefaultsResult {
     // biome-ignore lint/nursery/noMisusedPromises: checking if promise exists, not its resolved value
     if (existingPromise) {
       try {
-        // biome-ignore lint/nursery/useAwaitThenable: existingPromise is a Promise<DefaultSettings>
         const result: DefaultSettings = await existingPromise;
         if (isMountedRef.current) {
           setDefaults(result);

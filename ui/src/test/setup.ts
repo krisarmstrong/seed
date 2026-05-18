@@ -79,7 +79,6 @@ vi.mock(
         changeLanguage: vi.fn(),
       },
     }),
-    // biome-ignore lint/style/useNamingConvention: react-i18next API requires this component name
     Trans: ({ children }: { children: React.ReactNode }) => children,
     initReactI18next: { type: '3rdParty', init: vi.fn() },
   }),

@@ -63,7 +63,6 @@ export const NoDevices: Story = {
         deviceCount: 0,
         lastScan: new Date().toISOString(),
         subnet: '192.168.1.0/24',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '192.168.1.100',
         interface: 'en0',
       },
@@ -137,7 +136,6 @@ export const SmallHomeNetwork: Story = {
         deviceCount: 3,
         lastScan: new Date(Date.now() - 300000).toISOString(),
         subnet: '192.168.1.0/24',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '192.168.1.100',
         interface: 'en0',
       },
@@ -223,7 +221,6 @@ export const EnterpriseNetwork: Story = {
         deviceCount: 3,
         lastScan: new Date(Date.now() - 600000).toISOString(),
         subnet: '10.0.0.0/16',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '10.0.1.100',
         interface: 'eth0',
       },
@@ -291,7 +288,6 @@ export const DevicesWithVulnerabilities: Story = {
         deviceCount: 3,
         lastScan: new Date().toISOString(),
         subnet: '192.168.1.0/24',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '192.168.1.100',
         interface: 'en0',
       },
@@ -352,7 +348,6 @@ export const LocalAndExtended: Story = {
         deviceCount: 4,
         lastScan: new Date().toISOString(),
         subnet: '192.168.1.0/24',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '192.168.1.100',
         interface: 'en0',
       },
@@ -402,7 +397,6 @@ export const Ipv6Network: Story = {
         deviceCount: 2,
         lastScan: new Date().toISOString(),
         subnet: '192.168.1.0/24',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '192.168.1.100',
         interface: 'en0',
       },
@@ -503,7 +497,6 @@ export const ScanComplete: Story = {
         deviceCount: 6,
         lastScan: new Date().toISOString(),
         subnet: '192.168.1.0/24',
-        // biome-ignore lint/style/useNamingConvention: Matches backend API
         localIP: '192.168.1.100',
         interface: 'en0',
       },

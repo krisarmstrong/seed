@@ -17,7 +17,15 @@ import type {
   SurveyConfig,
   SurveyType,
 } from '../../hooks/useSurvey';
-import { button, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import { CheckCircle, Clock } from '../ui/icons';
 import { ScaleCalibrationPanel } from './ScaleCalibrationPanel';
 import { SurveyConfigPanel } from './SurveyConfigPanel';
@@ -105,7 +113,7 @@ export function SurveyViewSidePanel({
               >
                 <div class={layout.inline.default}>
                   {step.done ? (
-                    <CheckCircle class={cn(iconTokens.size.sm, 'text-status-success')} />
+                    <CheckCircle class={cn(iconTokens.size.sm, statusColor.text.success)} />
                   ) : (
                     <Clock class={cn(iconTokens.size.sm, 'text-text-muted')} />
                   )}

@@ -34,6 +34,7 @@ import {
   layout,
   radius,
   spacing,
+  status as statusColor,
 } from '../../styles/theme';
 import type { PathResponse, TracerouteHop } from '../../types';
 import { Card, CardDivider, CardValue, type Status } from '../ui/card';
@@ -472,7 +473,7 @@ export const PathDiscoveryCard: React.NamedExoticComponent<PathDiscoveryCardProp
 
         {/* Error State */}
         {error && !loading ? (
-          <div class={cn(spacing.pad.sm, 'bg-status-error/10', radius.default)}>
+          <div class={cn(spacing.pad.sm, statusColor.bg.errorSoft, radius.default)}>
             <span class="body-small text-status-error">{error}</span>
           </div>
         ) : null}

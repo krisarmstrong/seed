@@ -10,7 +10,6 @@ const sampleProfile = {
   isDefault: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  // biome-ignore lint/style/useNamingConvention: ProfileEditor reads snake_case from API
   is_default: true,
 } as Profile;
 

@@ -123,7 +123,6 @@ export function _deviceRow({
   const handleScan = async (e: React.MouseEvent): Promise<void> => {
     e.stopPropagation();
     if (onDeepScan && device.ip) {
-      // biome-ignore lint/nursery/useAwaitThenable: onDeepScan returns Promise<void>
       await onDeepScan(device.ip);
     }
   };

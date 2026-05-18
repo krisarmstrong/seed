@@ -1,7 +1,7 @@
 import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import { Settings } from 'lucide-react';
 import type React from 'react';
-import { cn, spacing } from '../../styles/theme';
+import { cn, spacing, status as statusColor } from '../../styles/theme';
 import { CollapsibleSection } from './CollapsibleSection';
 
 const meta: Meta<typeof CollapsibleSection> = {
@@ -97,15 +97,15 @@ export const Compact: Story = {
       <div class="stack-xs">
         <div class="flex justify-between body-small">
           <span>8.8.8.8</span>
-          <span class="text-status-success">12ms</span>
+          <span class={statusColor.text.success}>12ms</span>
         </div>
         <div class="flex justify-between body-small">
           <span>1.1.1.1</span>
-          <span class="text-status-success">8ms</span>
+          <span class={statusColor.text.success}>8ms</span>
         </div>
         <div class="flex justify-between body-small">
           <span>192.168.1.1</span>
-          <span class="text-status-warning">45ms</span>
+          <span class={statusColor.text.warning}>45ms</span>
         </div>
       </div>
     ),
@@ -123,11 +123,11 @@ export const WithStatus: Story = {
       <div class="stack-sm">
         <div class="flex justify-between body-small">
           <span>Primary: 8.8.8.8</span>
-          <span class="text-status-success">Online</span>
+          <span class={statusColor.text.success}>Online</span>
         </div>
         <div class="flex justify-between body-small">
           <span>Secondary: 8.8.4.4</span>
-          <span class="text-status-success">Online</span>
+          <span class={statusColor.text.success}>Online</span>
         </div>
       </div>
     ),
@@ -145,11 +145,11 @@ export const WithWarningStatus: Story = {
       <div class="stack-sm">
         <div class="flex justify-between body-small">
           <span>eth0</span>
-          <span class="text-status-success">Connected</span>
+          <span class={statusColor.text.success}>Connected</span>
         </div>
         <div class="flex justify-between body-small">
           <span>wlan0</span>
-          <span class="text-status-warning">Weak Signal</span>
+          <span class={statusColor.text.warning}>Weak Signal</span>
         </div>
         <div class="flex justify-between body-small">
           <span>eth1</span>

@@ -35,7 +35,16 @@ import {
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { button, cn, icon as iconTokens, layout, modal, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  layout,
+  modal,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 import type { SurveyReport } from '../../utils/reportGenerator';
 import { downloadReportAsHtml, openReportForPrint } from '../../utils/reportRenderer';
 
@@ -179,8 +188,8 @@ export function ReportPreviewModal({
     return null;
   }
 
-  const statusColor =
-    report.summary.overallStatus === 'pass' ? 'text-status-success' : 'text-status-error';
+  const statusClass =
+    report.summary.overallStatus === 'pass' ? statusColor.text.success : statusColor.text.error;
   const STATUS_ICON = report.summary.overallStatus === 'pass' ? CheckCircle2 : XCircle;
 
   return (
@@ -250,9 +259,9 @@ export function ReportPreviewModal({
           >
             <div class={cn(layout.inline.default, 'justify-between')}>
               <div class={layout.inline.default}>
-                <STATUS_ICON class={cn(iconTokens.size.lg, statusColor)} />
+                <STATUS_ICON class={cn(iconTokens.size.lg, statusClass)} />
                 <div>
-                  <div class={cn('body-default font-semibold', statusColor)}>
+                  <div class={cn('body-default font-semibold', statusClass)}>
                     {t('report.overallStatus')}:{' '}
                     {t(
                       `criteria.status${report.summary.overallStatus === 'pass' ? 'Pass' : 'Fail'}`,
@@ -267,7 +276,7 @@ export function ReportPreviewModal({
                   </div>
                 </div>
               </div>
-              <div class={cn('heading-2', statusColor)}>
+              <div class={cn('heading-2', statusClass)}>
                 {report.summary.overallPercentage.toFixed(0)}%
               </div>
             </div>

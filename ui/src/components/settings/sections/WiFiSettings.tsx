@@ -25,7 +25,14 @@ import type React from 'react';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../api';
-import { cn, icon as iconTokens, layout, radius, spacing } from '../../../styles/theme';
+import {
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../../styles/theme';
 import type { SaveStatus, WiFiSettings as WiFiSettingsType } from '../../../types/settings';
 import { CollapsibleSection } from '../../ui/CollapsibleSection';
 import { Wifi } from '../../ui/icons';
@@ -211,15 +218,15 @@ export const WiFiSettings: React.NamedExoticComponent<WiFiSettingsProps> = memo(
 
     const getSignalColor = (signal: number): string => {
       if (signal >= -50) {
-        return 'text-status-success';
+        return statusColor.text.success;
       }
       if (signal >= -60) {
-        return 'text-status-success';
+        return statusColor.text.success;
       }
       if (signal >= -70) {
-        return 'text-status-warning';
+        return statusColor.text.warning;
       }
-      return 'text-status-error';
+      return statusColor.text.error;
     };
 
     return (
@@ -453,8 +460,8 @@ export const WiFiSettings: React.NamedExoticComponent<WiFiSettingsProps> = memo(
                     class={cn(
                       'caption mt-2',
                       connectionStatus.includes('Connected')
-                        ? 'text-status-success'
-                        : 'text-status-error',
+                        ? statusColor.text.success
+                        : statusColor.text.error,
                     )}
                   >
                     {connectionStatus}

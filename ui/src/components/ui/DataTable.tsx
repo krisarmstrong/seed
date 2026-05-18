@@ -42,7 +42,15 @@ import type React from 'react';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { logger } from '../../lib/logger';
-import { border, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  border,
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -288,7 +296,6 @@ export function DataTable<T>({
 
       {/* Loading state (fixes #680) */}
       {loading ? (
-        // biome-ignore lint/a11y/useSemanticElements: Status role is semantically correct for loading indicator
         <div
           class={cn(
             spacing.pad.sm,
@@ -501,7 +508,7 @@ export function DataTable<T>({
                                 column.hiddenOnMobile && 'hidden sm:table-cell',
                               )}
                             >
-                              <span class="text-status-error">{t('status.error')}</span>
+                              <span class={statusColor.text.error}>{t('status.error')}</span>
                             </td>
                           );
                         }

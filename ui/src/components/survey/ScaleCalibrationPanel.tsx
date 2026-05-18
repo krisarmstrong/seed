@@ -132,7 +132,6 @@ export function ScaleCalibrationPanel({
   // Unit conversion helpers
   const metersToDisplay = (meters: number): number => (isMetric ? meters : meters * 3.281);
   const displayToMeters = (display: number): number => (isMetric ? display : display * 0.3048);
-  // biome-ignore lint/nursery/useExplicitType: Default parameter type is inferred from value
   const formatDistance = (meters: number, decimals = 1): string =>
     `${metersToDisplay(meters).toFixed(decimals)} ${isMetric ? 'm' : 'ft'}`;
   const formatArea = (sqMeters: number): string =>

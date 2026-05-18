@@ -25,12 +25,11 @@ import { AlertTriangle, CheckCircle2, Shield, TrendingUp, XCircle } from 'lucide
 import type React from 'react';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, icon as iconTokens, radius, spacing } from '../../styles/theme';
+import { cn, icon as iconTokens, radius, spacing, status as statusColor } from '../../styles/theme';
 import { Card, CardDivider } from '../ui/card';
 import type { Status } from '../ui/StatusBadge';
 import { StatusBadge } from '../ui/StatusBadge';
 
-// biome-ignore lint/style/useNamingConvention: SLA is a standard acronym
 interface SLASummary {
   period: string;
   periodStart: string;
@@ -67,7 +66,6 @@ interface DashboardData {
   anomalyCount: number;
 }
 
-// biome-ignore lint/style/useNamingConvention: SLA is a standard acronym
 interface SLADashboardCardProps {
   className?: string;
 }
@@ -176,7 +174,6 @@ function _statBlock({
   );
 }
 
-// biome-ignore lint/style/useNamingConvention: SLA is a standard acronym
 export const SLADashboardCard: React.NamedExoticComponent<SLADashboardCardProps> = memo(
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Dashboard cards require multiple conditional UI sections
   function slaDashboardCardInner({ className }: SLADashboardCardProps): React.ReactElement {
@@ -211,21 +208,17 @@ export const SLADashboardCard: React.NamedExoticComponent<SLADashboardCardProps>
         };
 
         if (slaRes.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
           newData.sla = await slaRes.json();
         }
         if (scoresRes.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
           const scoresData = await scoresRes.json();
           newData.scores = scoresData.summary;
         }
         if (alertsRes.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
           const alertsData = await alertsRes.json();
           newData.alerts = alertsData.stats;
         }
         if (anomaliesRes.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: response.json() returns a Promise
           const anomaliesData = await anomaliesRes.json();
           newData.anomalyCount = anomaliesData.activeCount ?? 0;
         }
@@ -380,7 +373,7 @@ export const SLADashboardCard: React.NamedExoticComponent<SLADashboardCardProps>
                     <span
                       class={cn(
                         'text-2xl font-bold',
-                        data.alerts.active > 0 ? 'text-status-error' : 'text-text-primary',
+                        data.alerts.active > 0 ? statusColor.text.error : 'text-text-primary',
                       )}
                     >
                       {data.alerts.active}
@@ -402,7 +395,7 @@ export const SLADashboardCard: React.NamedExoticComponent<SLADashboardCardProps>
                   <span
                     class={cn(
                       'text-2xl font-bold',
-                      data.anomalyCount > 0 ? 'text-status-warning' : 'text-text-primary',
+                      data.anomalyCount > 0 ? statusColor.text.warning : 'text-text-primary',
                     )}
                   >
                     {data.anomalyCount}

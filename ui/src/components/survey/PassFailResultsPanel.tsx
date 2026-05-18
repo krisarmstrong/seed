@@ -36,7 +36,15 @@ import type React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PassFailResult, SurveyValidation } from '../../hooks/useSurvey';
-import { button, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 
 interface PassFailResultsPanelProps {
   validation: SurveyValidation;
@@ -55,21 +63,21 @@ function getResultStatus(result: PassFailResult): {
   if (result.passed) {
     return {
       icon: CheckCircle2,
-      colorClass: 'text-status-success',
-      bgClass: 'bg-status-success/10',
+      colorClass: statusColor.text.success,
+      bgClass: statusColor.bg.successSoft,
     };
   }
   if (result.percentage >= 80) {
     return {
       icon: AlertTriangle,
-      colorClass: 'text-status-warning',
-      bgClass: 'bg-status-warning/10',
+      colorClass: statusColor.text.warning,
+      bgClass: statusColor.bg.warningSoft,
     };
   }
   return {
     icon: XCircle,
-    colorClass: 'text-status-error',
-    bgClass: 'bg-status-error/10',
+    colorClass: statusColor.text.error,
+    bgClass: statusColor.bg.errorSoft,
   };
 }
 
@@ -215,13 +223,13 @@ function _statusBanner({
   const statusConfig = overallPass
     ? {
         icon: CheckCircle2,
-        colorClass: 'text-status-success',
+        colorClass: statusColor.text.success,
         bgClass: 'bg-status-success/10 border-status-success/20',
         label: t('criteria.statusPass'),
       }
     : {
         icon: XCircle,
-        colorClass: 'text-status-error',
+        colorClass: statusColor.text.error,
         bgClass: 'bg-status-error/10 border-status-error/20',
         label: t('criteria.statusFail'),
       };

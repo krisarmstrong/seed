@@ -33,13 +33,10 @@ export interface LogEntry {
   timestamp: string;
   level: LogLevel;
   layer: LogLayer;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   request_id?: string;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   session_id?: string;
   message: string;
   component?: string;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   duration_ms?: number;
   metadata?: Record<string, unknown>;
   stack?: string;
@@ -55,17 +52,11 @@ export interface LogFilters {
 
 /** Log statistics from backend */
 export interface LogStats {
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   total_count: number;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   by_level: Record<string, number>;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   by_layer: Record<string, number>;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   by_component: Record<string, number>;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   errors_last_hour: number;
-  // biome-ignore lint/style/useNamingConvention: API response property names match backend schema
   warnings_last_hour: number;
 }
 
@@ -119,17 +110,11 @@ const DEFAULT_FILTERS: LogFilters = {
 };
 
 const DEFAULT_STATS: LogStats = {
-  // biome-ignore lint/style/useNamingConvention: Mock data uses API response property names
   total_count: 0,
-  // biome-ignore lint/style/useNamingConvention: Mock data uses API response property names
   by_level: {},
-  // biome-ignore lint/style/useNamingConvention: Mock data uses API response property names
   by_layer: {},
-  // biome-ignore lint/style/useNamingConvention: Mock data uses API response property names
   by_component: {},
-  // biome-ignore lint/style/useNamingConvention: Mock data uses API response property names
   errors_last_hour: 0,
-  // biome-ignore lint/style/useNamingConvention: Mock data uses API response property names
   warnings_last_hour: 0,
 };
 
@@ -306,28 +291,24 @@ export function useLogs({
  * Color configuration for log levels using design system tokens.
  */
 export const LOG_LEVEL_COLORS = {
-  // biome-ignore lint/style/useNamingConvention: LogLevel enum-like keys for color mapping
   ERROR: {
     bg: 'bg-red-50 dark:bg-red-950',
     text: 'text-red-700 dark:text-red-300',
     badge: 'bg-status-error text-text-inverse',
     border: 'border-l-4 border-status-error',
   },
-  // biome-ignore lint/style/useNamingConvention: LogLevel enum-like keys for color mapping
   WARN: {
     bg: 'bg-yellow-50 dark:bg-yellow-950',
     text: 'text-yellow-700 dark:text-yellow-300',
     badge: 'bg-status-warning text-text-inverse',
     border: 'border-l-4 border-status-warning',
   },
-  // biome-ignore lint/style/useNamingConvention: LogLevel enum-like keys for color mapping
   INFO: {
     bg: 'bg-blue-50 dark:bg-blue-950',
     text: 'text-blue-700 dark:text-blue-300',
     badge: 'bg-status-info text-text-inverse',
     border: 'border-l-4 border-status-info',
   },
-  // biome-ignore lint/style/useNamingConvention: LogLevel enum-like keys for color mapping
   DEBUG: {
     bg: 'bg-surface-secondary dark:bg-dark-surface-secondary',
     text: 'text-content-secondary dark:text-dark-content-secondary',

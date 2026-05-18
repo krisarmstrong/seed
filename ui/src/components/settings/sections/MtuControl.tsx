@@ -19,7 +19,7 @@
 import type React from 'react';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { button, cn, input, layout, radius } from '../../../styles/theme';
+import { button, cn, input, layout, radius, status as statusColor } from '../../../styles/theme';
 
 const API_BASE: string = import.meta.env.VITE_API_BASE || '';
 
@@ -54,7 +54,6 @@ export const MtuControl: React.NamedExoticComponent<Record<string, never>> = mem
             isError: false,
           });
         } else {
-          // biome-ignore lint/nursery/useAwaitThenable: response.text() is a Promise
           const text = await response.text();
           setMessage({
             text: text || t('network.mtuControl.setFailed'),
@@ -107,7 +106,12 @@ export const MtuControl: React.NamedExoticComponent<Record<string, never>> = mem
           </button>
         </div>
         {message ? (
-          <p class={cn('caption', message.isError ? 'text-status-error' : 'text-status-success')}>
+          <p
+            class={cn(
+              'caption',
+              message.isError ? statusColor.text.error : statusColor.text.success,
+            )}
+          >
             {message.text}
           </p>
         ) : null}

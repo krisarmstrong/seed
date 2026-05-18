@@ -29,7 +29,15 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSettings } from '../../contexts/useSettings';
-import { cn, icon as iconTokens, layout, radius, spacing, timing } from '../../styles/theme';
+import {
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+  timing,
+} from '../../styles/theme';
 import { HTTP_TIMING_HELP } from '../help/HelpContent';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { Card, type Status } from '../ui/card';
@@ -62,7 +70,6 @@ export const HealthCheckCard: React.MemoExoticComponent<
           credentials: 'include',
         });
         if (res.ok) {
-          // biome-ignore lint/nursery/useAwaitThenable: Response.json() returns a Promise
           const result: HealthCheckData = (await res.json()) as HealthCheckData;
           setData(result);
         } else {
@@ -189,12 +196,12 @@ export const HealthCheckCard: React.MemoExoticComponent<
     // Helper to get status color class
     const getStatusColor = (statusLabel: 'success' | 'warning' | 'error'): string => {
       if (statusLabel === 'success') {
-        return 'text-status-success';
+        return statusColor.text.success;
       }
       if (statusLabel === 'warning') {
-        return 'text-status-warning';
+        return statusColor.text.warning;
       }
-      return 'text-status-error';
+      return statusColor.text.error;
     };
 
     const renderTestResult = (
@@ -203,7 +210,7 @@ export const HealthCheckCard: React.MemoExoticComponent<
     ): React.JSX.Element => {
       // Use testStatus for threshold-based coloring, fall back to success/error
       const statusLabel: 'success' | 'warning' | 'error' = getStatusLabel(result);
-      const statusColor: string = getStatusColor(statusLabel);
+      const statusClass: string = getStatusColor(statusLabel);
 
       // Display name - backend already formats as host:port when name is empty
       // Only add HTTP status code, not ports (already in name)
@@ -228,7 +235,7 @@ export const HealthCheckCard: React.MemoExoticComponent<
             </span>
             <span class={cn('inline-flex items-center', spacing.gap.compact)}>
               <StatusBadge status={statusLabel} size="sm" />
-              <span class={cn('body-small font-medium', statusColor)}>
+              <span class={cn('body-small font-medium', statusClass)}>
                 {result.success ? formatLatency(result.latency) : 'fail'}
               </span>
             </span>
@@ -265,10 +272,10 @@ export const HealthCheckCard: React.MemoExoticComponent<
       // Get status-based text color for legend (bar colors stay fixed for phase identification)
       const getStatusTextColor = (status?: StatusValue): string => {
         if (status === 'error') {
-          return 'text-status-error';
+          return statusColor.text.error;
         }
         if (status === 'warning') {
-          return 'text-status-warning';
+          return statusColor.text.warning;
         }
         return 'text-text-muted';
       };
@@ -372,15 +379,15 @@ export const HealthCheckCard: React.MemoExoticComponent<
     // Helper to get HTTP result status color
     const getHttpStatusColor = (result: TestResult): string => {
       if (!result.success) {
-        return 'text-status-error';
+        return statusColor.text.error;
       }
       if (result.testStatus === 'warning') {
-        return 'text-status-warning';
+        return statusColor.text.warning;
       }
       if (result.testStatus === 'error') {
-        return 'text-status-error';
+        return statusColor.text.error;
       }
-      return 'text-status-success';
+      return statusColor.text.success;
     };
 
     // Helper to determine section status from test results
@@ -408,13 +415,13 @@ export const HealthCheckCard: React.MemoExoticComponent<
     // Helper to get cert status color
     const getCertStatusColor = (status?: StatusValue): string => {
       if (status === 'error') {
-        return 'text-status-error';
+        return statusColor.text.error;
       }
       if (status === 'warning') {
-        return 'text-status-warning';
+        return statusColor.text.warning;
       }
       if (status === 'success') {
-        return 'text-status-success';
+        return statusColor.text.success;
       }
       return 'text-text-muted';
     };
@@ -422,7 +429,7 @@ export const HealthCheckCard: React.MemoExoticComponent<
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: HTTP result rendering requires handling timing breakdown, certificate info, TLS version, and multiple conditional displays
     const renderHttpResult = (result: TestResult): React.JSX.Element => {
       // Use testStatus for threshold-based coloring
-      const statusColor: string = getHttpStatusColor(result);
+      const statusClass: string = getHttpStatusColor(result);
 
       // Certificate status coloring
       const certColor: string = getCertStatusColor(result.certStatus);
@@ -466,7 +473,7 @@ export const HealthCheckCard: React.MemoExoticComponent<
               {result.name}
               {result.status ? ` (${result.status})` : ''}
             </span>
-            <span class={cn('body-small font-medium', statusColor)}>
+            <span class={cn('body-small font-medium', statusClass)}>
               {result.success ? formatLatency(result.latency) : 'fail'}
             </span>
           </div>

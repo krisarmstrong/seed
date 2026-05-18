@@ -14,6 +14,7 @@ import type {
   SamplePoint,
   ThroughputSample,
 } from '../../hooks/useSurvey';
+import { status as statusColor } from '../../styles/theme';
 
 // Helper to render sample data
 export function renderSampleData(
@@ -58,7 +59,7 @@ export function renderSampleData(
         <div>↑ {throughputData.uploadMbps.toFixed(1)} Mbps</div>
         <div>Jitter: {throughputData.jitter.toFixed(1)} ms</div>
         {throughputData.packetLoss > 0 && (
-          <div class="text-status-error">Loss: {throughputData.packetLoss.toFixed(1)}%</div>
+          <div class={statusColor.text.error}>Loss: {throughputData.packetLoss.toFixed(1)}%</div>
         )}
       </>
     );

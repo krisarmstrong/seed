@@ -45,7 +45,15 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ApLocation, SamplePoint, ScannedNetwork, Survey } from '../../hooks/useSurvey';
-import { button, cn, icon as iconTokens, layout, radius, spacing } from '../../styles/theme';
+import {
+  button,
+  cn,
+  icon as iconTokens,
+  layout,
+  radius,
+  spacing,
+  status as statusColor,
+} from '../../styles/theme';
 
 /** Finding severity level */
 export type FindingSeverity = 'critical' | 'warning' | 'info' | 'success';
@@ -372,11 +380,11 @@ function getFindingIcon(category: FindingCategory, severity: FindingSeverity): t
 function getSeverityColor(severity: FindingSeverity): string {
   switch (severity) {
     case 'critical':
-      return 'text-status-error';
+      return statusColor.text.error;
     case 'warning':
-      return 'text-status-warning';
+      return statusColor.text.warning;
     case 'success':
-      return 'text-status-success';
+      return statusColor.text.success;
     default:
       return 'text-brand-primary';
   }
@@ -540,7 +548,7 @@ export function SurveyAnalysisPanel({
       {/* Summary */}
       <div class={cn(layout.inline.default, spacing.margin.bottom.content)}>
         {criticalFindings.length > 0 ? (
-          <div class={cn(layout.inline.tight, 'text-status-error')}>
+          <div class={cn(layout.inline.tight, statusColor.text.error)}>
             <AlertOctagon class="w-4 h-4" />
             <span class="caption">
               {criticalFindings.length} {t('analysis.critical')}
@@ -548,7 +556,7 @@ export function SurveyAnalysisPanel({
           </div>
         ) : null}
         {warningFindings.length > 0 ? (
-          <div class={cn(layout.inline.tight, 'text-status-warning')}>
+          <div class={cn(layout.inline.tight, statusColor.text.warning)}>
             <AlertTriangle class="w-4 h-4" />
             <span class="caption">
               {warningFindings.length} {t('analysis.warnings')}
@@ -556,7 +564,7 @@ export function SurveyAnalysisPanel({
           </div>
         ) : null}
         {criticalFindings.length === 0 && warningFindings.length === 0 ? (
-          <div class={cn(layout.inline.tight, 'text-status-success')}>
+          <div class={cn(layout.inline.tight, statusColor.text.success)}>
             <CheckCircle2 class="w-4 h-4" />
             <span class="caption">{t('analysis.noIssues')}</span>
           </div>

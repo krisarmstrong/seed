@@ -28,7 +28,7 @@ import type React from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatTime } from '../../lib/format';
-import { cn, icon as iconTokens, layout, spacing } from '../../styles/theme';
+import { cn, icon as iconTokens, layout, spacing, status as statusColor } from '../../styles/theme';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { Card, CardDivider, CardValue, type Status } from '../ui/card';
 import { Globe } from '../ui/icons';
@@ -69,12 +69,12 @@ interface DnsCardProps {
 
 function getStatusColorClass(status: string): string {
   if (status === 'success') {
-    return 'text-status-success';
+    return statusColor.text.success;
   }
   if (status === 'warning') {
-    return 'text-status-warning';
+    return statusColor.text.warning;
   }
-  return 'text-status-error';
+  return statusColor.text.error;
 }
 
 // Helper to get aggregated status from server results (avoids nested ternary)
@@ -100,7 +100,7 @@ function _lookupRow({
   }
 
   const statusBadge = lookup.status;
-  const statusColor = getStatusColorClass(statusBadge);
+  const statusClass = getStatusColorClass(statusBadge);
 
   return (
     <div class={spacing.margin.bottom.inline}>
@@ -108,7 +108,7 @@ function _lookupRow({
         <span class="caption">{label}</span>
         <span class={layout.inline.default}>
           <StatusBadge status={statusBadge} size="sm" />
-          <span class={cn('caption font-medium', statusColor)}>
+          <span class={cn('caption font-medium', statusClass)}>
             {formatTime(lookup.timeMs || lookup.time)}
           </span>
         </span>

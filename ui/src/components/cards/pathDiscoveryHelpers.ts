@@ -1,3 +1,4 @@
+import { status as statusColor } from '../../styles/theme';
 import type { TracerouteHop } from '../../types';
 
 export function formatRtt(ns: number): string {
@@ -21,12 +22,12 @@ export function getMaxRtt(hops: TracerouteHop[]): number {
 
 export function getRttBarColor(state: string, rtt: number, maxRtt: number): string {
   if (state === 'error') {
-    return 'bg-status-error';
+    return statusColor.bg.error;
   }
   if (rtt / maxRtt > 0.7) {
-    return 'bg-status-warning';
+    return statusColor.bg.warning;
   }
-  return 'bg-status-success';
+  return statusColor.bg.success;
 }
 
 export function getSourceColor(source: string): string {
@@ -34,7 +35,7 @@ export function getSourceColor(source: string): string {
     return 'text-brand-primary';
   }
   if (source === 'cdp') {
-    return 'text-status-success';
+    return statusColor.text.success;
   }
   return 'text-text-muted';
 }
