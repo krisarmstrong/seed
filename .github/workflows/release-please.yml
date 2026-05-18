@@ -31,7 +31,13 @@ jobs:
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
         with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          # PAT (not GITHUB_TOKEN) so the release PR's CI runs and the
+          # tag-push event triggers release.yml. With GITHUB_TOKEN those
+          # downstream workflows are silently skipped per GitHub's
+          # anti-recursion policy. Falls back to GITHUB_TOKEN if the
+          # secret isn't set, so the workflow doesn't break if the PAT
+          # expires before being renewed (cascade is lost until renewed).
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
           release-type: go
 
       - name: Release created
