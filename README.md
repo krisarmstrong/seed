@@ -202,7 +202,7 @@ images, and (when configured) updates the Homebrew tap.
 commercial use requires a license. Converts to Apache-2.0 on the change
 date stated in the LICENSE file.
 
-For commercial licensing inquiries: `kris.armstrong@gmail.com`.
+For commercial licensing inquiries: `kris.armstrong@icloud.com`.
 
 ## Security
 

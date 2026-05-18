@@ -166,7 +166,7 @@ When The Seed launches publicly:
 
 ### Questions about documentation
 
-- Email: kris.armstrong@mustardseednetworks.com
+- Email: kris.armstrong@icloud.com
 
 ---
 

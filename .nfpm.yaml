@@ -10,7 +10,7 @@ arch: ${SEED_ARCH}
 platform: linux
 section: net
 priority: optional
-maintainer: Kris Armstrong <kris@mustardseednetworks.com>
+maintainer: Kris Armstrong <kris.armstrong@icloud.com>
 description: |
   The Seed - Network Diagnostic Tool by Mustard Seed Networks
   .
