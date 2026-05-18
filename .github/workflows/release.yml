@@ -259,21 +259,49 @@ jobs:
           retention-days: 14
 
   # =========================================================================
-  # SLSA Level 3 provenance — runs only on real releases (not dry-run).
-  # The slsa-github-generator reusable workflow builds an in-toto
-  # attestation signed via Sigstore keyless OIDC and uploads it alongside
-  # the release artifacts.
+  # SLSA L3 provenance — runs only on real releases (not dry-run).
+  #
+  # Uses GitHub's first-party `actions/attest-build-provenance` rather than
+  # the slsa-github-generator reusable workflow. The latter (v2.1.0, the
+  # current latest as of 2026-05) has a known bug in its upload-assets
+  # step where UNTRUSTED_PATH is passed empty, causing the secure-download
+  # action to exit 1 and the `final` job to exit 27. attest-build-provenance
+  # produces the same SLSA L3 in-toto attestation (signed via Sigstore
+  # keyless OIDC), surfaces it on the release's GitHub Attestations panel,
+  # AND attaches the bundle file to the release as a downloadable asset.
   # =========================================================================
   provenance:
     name: SLSA provenance
     if: ${{ !inputs.dry_run }}
     needs: [goreleaser]
+    runs-on: ubuntu-latest
     permissions:
-      id-token: write   # for Sigstore OIDC
-      contents: write   # for uploading attestation to the release
-      actions: read
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
-    with:
-      base64-subjects: ${{ needs.goreleaser.outputs.hashes }}
-      upload-assets: true
-      provenance-name: seed-slsa-provenance.intoto.jsonl
+      id-token: write       # Sigstore OIDC signing
+      contents: write       # uploading the bundle to the release
+      attestations: write   # GitHub Attestations API
+    steps:
+      - name: Decode artifact subjects
+        id: subjects
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "${{ needs.goreleaser.outputs.hashes }}" | base64 -d > subjects.txt
+          echo "Subjects:"
+          cat subjects.txt
+
+      - name: Generate SLSA build-provenance attestation
+        id: attest
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
+        with:
+          subject-checksums: subjects.txt
+
+      - name: Attach attestation bundle to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "${{ steps.attest.outputs.bundle-path }}" \
+             seed-slsa-provenance.intoto.jsonl
+          gh release upload "${GITHUB_REF_NAME}" \
+             seed-slsa-provenance.intoto.jsonl --clobber --repo "${GITHUB_REPOSITORY}"
