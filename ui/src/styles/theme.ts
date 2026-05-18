@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 
-import { badge, button, card, input, modal } from './themeComponents';
+import { button, card, input } from './themeComponents';
 
 /**
  * =============================================================================
@@ -125,40 +125,4 @@ export function cardClass(
   className?: string,
 ): string {
   return cn(card.base, cardVariantMap.get(variant), cardPaddingMap.get(padding), className);
-}
-
-// Type-safe Map for badge lookups
-const badgeVariantMap: Map<keyof typeof badge.variant, string> = new Map<
-  keyof typeof badge.variant,
-  string
->(Object.entries(badge.variant) as [keyof typeof badge.variant, string][]);
-
-/**
- * Build a badge class string
- */
-export function badgeClass(
-  variant: keyof typeof badge.variant = 'default',
-  className?: string,
-): string {
-  return cn(badge.base, badgeVariantMap.get(variant), className);
-}
-
-// Type-safe Maps for modal lookups
-const modalSizeMap: Map<keyof typeof modal.size, string> = new Map<keyof typeof modal.size, string>(
-  Object.entries(modal.size) as [keyof typeof modal.size, string][],
-);
-const modalPaddingMap: Map<keyof typeof modal.padding, string> = new Map<
-  keyof typeof modal.padding,
-  string
->(Object.entries(modal.padding) as [keyof typeof modal.padding, string][]);
-
-/**
- * Build a modal class string
- */
-export function modalClass(
-  size: keyof typeof modal.size = 'md',
-  padding: keyof typeof modal.padding = 'md',
-  className?: string,
-): string {
-  return cn(modal.content, modalSizeMap.get(size), modalPaddingMap.get(padding), className);
 }
