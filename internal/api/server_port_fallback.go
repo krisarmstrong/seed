@@ -39,7 +39,8 @@ func bindWithFallback(ctx context.Context, host string, port int) (net.Listener,
 		ln, err := lc.Listen(ctx, "tcp", addr)
 		if err == nil {
 			if offset > 0 {
-				logging.GetLogger().Warn(
+				logging.WarnContext(
+					ctx,
 					"requested port is in use, bound fallback port instead",
 					"requested", port,
 					"bound", actual,
