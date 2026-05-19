@@ -14,7 +14,7 @@
  * Flow:
  * 1. User enters password (or accepts suggested password)
  * 2. Confirms password matches
- * 3. SetupWizard sends POST /api/setup/complete with new password
+ * 3. SetupWizard sends POST /api/v1/setup/complete with new password
  * 4. Server hashes and stores password
  * 5. Component automatically logs in user
  * 6. Calls onComplete callback to exit setup flow
@@ -175,7 +175,7 @@ export function SetupWizard({
     try {
       // Step 1: Complete setup (set password on server)
       // Security fix #724, #758: Include the one-time setup token to prevent CSRF attacks
-      const response = await fetch(`${API_BASE}/api/setup/complete`, {
+      const response = await fetch(`${API_BASE}/api/v1/setup/complete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
