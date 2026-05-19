@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.192.0](https://github.com/krisarmstrong/seed/compare/v0.191.2...v0.192.0) (2026-05-19)
+
+
+### Features
+
+* Graceful port fallback when canonical port is in use ([#69](https://github.com/krisarmstrong/seed/issues/69)) ([#1038](https://github.com/krisarmstrong/seed/issues/1038)) ([4327f97](https://github.com/krisarmstrong/seed/commit/4327f97cac3e939ed8c8626bd35a5eb73d55539f))
+
+
+### Bug Fixes
+
+* **setup:** point wizard at /api/v1/setup/* (was /api/setup/*) ([#1033](https://github.com/krisarmstrong/seed/issues/1033)) ([bc724bd](https://github.com/krisarmstrong/seed/commit/bc724bdf510c5794b092f71513d1b70b5cd46933))
+
 ## [0.191.2](https://github.com/krisarmstrong/seed/compare/v0.191.1...v0.191.2) (2026-05-18)
 
 
