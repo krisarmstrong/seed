@@ -814,7 +814,7 @@ jobs:
         working-directory: ui
         env:
           E2E_BASE_URL: https://localhost:8443
-        run: npx playwright test e2e/smoke.spec.ts e2e/setup-wizard.spec.ts --project=chromium --reporter=html
+        run: npx playwright test --project=chromium --reporter=html
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
