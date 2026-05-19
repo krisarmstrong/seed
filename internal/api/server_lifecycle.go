@@ -121,10 +121,20 @@ func (s *Server) Start() error {
 }
 
 // startHTTP starts the server in HTTP mode.
+//
+// Uses bindWithFallback so that a busy canonical port falls back to
+// port+1..+9 instead of failing outright. The actual bound port is
+// reflected back into s.httpServer.Addr so /__version and log lines
+// match reality (fixes #69).
 func (s *Server) startHTTP() error {
-	logging.GetLogger().Info("Starting HTTP server", "addr", s.httpServer.Addr)
-	if err := s.httpServer.ListenAndServe(); err != nil {
+	ln, actualPort, err := bindWithFallback(context.Background(), "", s.config.Server.Port)
+	if err != nil {
 		return fmt.Errorf("http server: %w", err)
+	}
+	s.httpServer.Addr = fmt.Sprintf(":%d", actualPort)
+	logging.GetLogger().Info("Starting HTTP server", "addr", s.httpServer.Addr)
+	if serveErr := s.httpServer.Serve(ln); serveErr != nil {
+		return fmt.Errorf("http server: %w", serveErr)
 	}
 	return nil
 }
@@ -154,7 +164,18 @@ func (s *Server) startHTTPRedirect(port int) {
 		http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
 	})
 
-	addr := fmt.Sprintf(":%d", port)
+	// Bind via the port-fallback helper so a busy :80 (or whatever is
+	// configured) walks up to +9 instead of killing the redirect goroutine.
+	ln, actualPort, bindErr := bindWithFallback(context.Background(), "", port)
+	if bindErr != nil {
+		logging.GetLogger().Error("HTTP redirect server bind failed", "error", bindErr)
+		if s.redirectServerErr == nil {
+			s.redirectServerErr = make(chan error, 1)
+		}
+		s.redirectServerErr <- bindErr
+		return
+	}
+	addr := fmt.Sprintf(":%d", actualPort)
 	logging.GetLogger().Info("Starting HTTP→HTTPS redirect server", "addr", addr)
 
 	// Store redirect server for proper shutdown (fixes #515)
@@ -171,7 +192,7 @@ func (s *Server) startHTTPRedirect(port int) {
 	}
 
 	// Run server and report errors
-	err := s.redirectServer.ListenAndServe()
+	err := s.redirectServer.Serve(ln)
 	if err != nil && err != http.ErrServerClosed {
 		logging.GetLogger().Error("HTTP redirect server error", "error", err)
 		s.redirectServerErr <- err
@@ -213,9 +234,15 @@ func (s *Server) startHTTPS() error {
 	}
 	s.httpServer.TLSConfig = tlsConfig
 
+	ln, actualPort, bindErr := bindWithFallback(context.Background(), "", s.config.Server.Port)
+	if bindErr != nil {
+		return fmt.Errorf("https server: %w", bindErr)
+	}
+	s.httpServer.Addr = fmt.Sprintf(":%d", actualPort)
+
 	logging.GetLogger().
 		Info("Starting HTTPS server", "addr", s.httpServer.Addr, "tls_version", "1.3")
-	if err := s.httpServer.ListenAndServeTLS(certFile, keyFile); err != nil {
+	if err := s.httpServer.ServeTLS(ln, certFile, keyFile); err != nil {
 		return fmt.Errorf("https server: %w", err)
 	}
 	return nil
@@ -275,8 +302,14 @@ func (s *Server) startHTTPSWithACME() error {
 		}
 	}()
 
-	// ListenAndServeTLS with empty cert/key paths uses GetCertificate from TLSConfig
-	if err := s.httpServer.ListenAndServeTLS("", ""); err != nil {
+	ln, actualPort, bindErr := bindWithFallback(context.Background(), "", s.config.Server.Port)
+	if bindErr != nil {
+		return fmt.Errorf("https server with ACME: %w", bindErr)
+	}
+	s.httpServer.Addr = fmt.Sprintf(":%d", actualPort)
+
+	// ServeTLS with empty cert/key paths uses GetCertificate from TLSConfig.
+	if err := s.httpServer.ServeTLS(ln, "", ""); err != nil {
 		return fmt.Errorf("https server with ACME: %w", err)
 	}
 	return nil

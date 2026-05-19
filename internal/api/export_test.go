@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"log/slog"
+	"net"
 	"net/http"
 
 	"github.com/krisarmstrong/seed/internal/auth"
@@ -405,4 +406,18 @@ type ExportEngineDiscoveryResponse = EngineDiscoveryResponse
 // GetEngine returns the discovery engine for testing.
 func (s *Server) GetEngine() any {
 	return s.services.Discovery.Engine
+}
+
+// ExportBindWithFallback exposes bindWithFallback for testing.
+func ExportBindWithFallback(
+	ctx context.Context,
+	host string,
+	port int,
+) (net.Listener, int, error) {
+	return bindWithFallback(ctx, host, port)
+}
+
+// ExportIsAddrInUse exposes isAddrInUse for testing.
+func ExportIsAddrInUse(err error) bool {
+	return isAddrInUse(err)
 }
