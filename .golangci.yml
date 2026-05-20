@@ -479,6 +479,17 @@ linters:
       - text: 'G115: integer overflow conversion int -> byte'
         path: 'internal/api/health_checks_dicom\.go'
         linters: [ gosec ]
+      # internal/truststore writes trust-anchor PEMs into the four OS-specific
+      # CA directories (Debian/Ubuntu, RHEL/Fedora, Arch, openSUSE). The
+      # destination is computed by detectLinuxStore from a hardcoded
+      # candidate list, then filepath.Clean'd and bounded under its root
+      # via filepath.Rel before writing. gosec G703 cannot follow that
+      # provenance and reports the os.WriteFile call as taint-derived. The
+      # write is preceded by an explicit containment check — see
+      # writeAnchorFile in truststore_linux.go.
+      - text: 'G703: Path traversal via taint analysis'
+        path: 'internal/truststore/truststore_linux\.go'
+        linters: [ gosec ]
       # profiler_infer.go contains portToService, an intentional literal-
       # reference table mapping port numbers to user-facing protocol names.
       # The repeated strings (ftp/ssh/http/etc.) are protocol identifiers,
